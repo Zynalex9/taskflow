@@ -1,11 +1,10 @@
-import { useEffect } from "react";
+import { useContext } from "react";
 import "./App.css";
-import socketIOClient from "socket.io-client";
+import { socketContext } from "./context/SocketContext";
+
 
 function App() {
-  useEffect(() => {
-   socketIOClient("http://localhost:3000");
-  },[]);
+  const ws = useContext(socketContext);
   return (
     <>
       <h1 className="text-3xl font-bold underline bg-red-500 ">Hello world!</h1>
