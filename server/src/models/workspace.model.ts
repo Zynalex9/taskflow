@@ -5,29 +5,36 @@ const workspaceSchema = new Schema({
     type: String,
     required: true,
   },
-  admin: {
+  admin: [{
     type: mongoose.Schema.Types.ObjectId,
     ref: "User",
-  },
+  }],
   calender: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "Calender",
   },
-  boards: {
+  boards: [{
     type: mongoose.Schema.Types.ObjectId,
     ref: "Board",
-  },
-  tables: {
+  }],
+  table: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "Table",
   },
   members: [
     {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "User",
+      user: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "User",
+      },
+      role: {
+        type: String,
+        enum: ["admin", "member"],
+        default: "member",
+      },
     },
   ],
-},{timestamps:true});
+}, { timestamps: true });
 
 
-export const workSpaceSchema = mongoose.model("Workspace", workspaceSchema);
+export const workSpaceModel = mongoose.model("Workspace", workspaceSchema);

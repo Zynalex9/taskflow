@@ -8,8 +8,11 @@ import {
 } from "../controller/user.controller";
 import { upload } from "../middleware/multer.middleware";
 import { verifyJWT } from "../middleware/auth.middleware";
+import { verify } from "crypto";
+import { createWorkSpace } from "../controller/workspace.controller";
 
 const userRouter = Router();
+const workSpaceRouter = Router();
 
 userRouter
   .route("/register")
@@ -25,3 +28,6 @@ userRouter
     changeProfilePicture
   );
 export { userRouter };
+
+workSpaceRouter.route("/create-workspace").post(verifyJWT, createWorkSpace);
+export {workSpaceRouter}

@@ -4,19 +4,14 @@ const boardSchema = new Schema({
         type:String,
         required:true,
     },
-    admin:{
+    lists:[{
         type:mongoose.Schema.Types.ObjectId,
-        ref:"User"
-    },
-    projects:[{
-        type:mongoose.Schema.Types.ObjectId,
-        ref:"Project"
+        ref:"List"
     }],
-    members:[{
-        type:mongoose.Schema.Types.ObjectId,
-        ref:"User"
-    }],
-
+    favourite:{
+        type: Boolean,
+        default: false
+    }
 
 },{timestamps:true});
 export const boardModel = mongoose.model("Board", boardSchema);
