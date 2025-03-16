@@ -20,6 +20,13 @@ export const createWorkSpace = async (req: Request, res: Response) => {
       res.status(409).json({ message: "Please name your workspace" });
       return;
     }
+    const alreadyNamed = await workSpaceModel.findOne({ name, admin: userId });
+    if (alreadyNamed) {
+       res.status(409).json({
+        message: "You already have a workspace with this name",
+      });
+      return
+    }
     const workspaceAdmins = [userId];
     const fetchUsersByIdentifiers = async (identifiers: string[]) => {
       const users = await UserModel.find({
@@ -61,6 +68,16 @@ export const createWorkSpace = async (req: Request, res: Response) => {
       admin: workspaceAdmins,
       members: workspaceMembers || [],
     });
+
+    const allUsers = [...workspaceAdmins, ...workspaceMembers];
+    await UserModel.updateMany(
+      { _id: { $in: allUsers } },
+      {
+        $push: {
+          workspace: workSpace._id,
+        },
+      }
+    );
     res.status(201).json({
       message: "Workspace Created",
       workSpace,
