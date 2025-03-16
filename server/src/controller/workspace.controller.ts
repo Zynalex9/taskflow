@@ -67,6 +67,7 @@ export const createWorkSpace = async (req: Request, res: Response) => {
       name,
       admin: workspaceAdmins,
       members: workspaceMembers || [],
+      createdBy:userId
     });
 
     const allUsers = [...workspaceAdmins, ...workspaceMembers];
