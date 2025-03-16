@@ -1,6 +1,7 @@
 import { Request, Response } from "express";
 import { workSpaceModel } from "../models/workspace.model";
 import { UserModel } from "../models/user.model";
+import { boardModel } from "../models/board.models";
 
 interface IParams {
   name: string;
@@ -22,10 +23,10 @@ export const createWorkSpace = async (req: Request, res: Response) => {
     }
     const alreadyNamed = await workSpaceModel.findOne({ name, admin: userId });
     if (alreadyNamed) {
-       res.status(409).json({
+      res.status(409).json({
         message: "You already have a workspace with this name",
       });
-      return
+      return;
     }
     const workspaceAdmins = [userId];
     const fetchUsersByIdentifiers = async (identifiers: string[]) => {
@@ -67,7 +68,7 @@ export const createWorkSpace = async (req: Request, res: Response) => {
       name,
       admin: workspaceAdmins,
       members: workspaceMembers || [],
-      createdBy:userId
+      createdBy: userId,
     });
 
     const allUsers = [...workspaceAdmins, ...workspaceMembers];
@@ -83,5 +84,66 @@ export const createWorkSpace = async (req: Request, res: Response) => {
       message: "Workspace Created",
       workSpace,
     });
-  } catch (error) {}
+  } catch (error) {
+    res.status(500).json({ message: "Internal server error", success: false });
+  }
+};
+
+export const createBoard = async (req: Request, res: Response) => {
+  try {
+    const { title, visibility, backgroundOptions, workspaceId } = req.body;
+    const userId = req.user._id;
+    if (!title) {
+      res
+        .status(409)
+        .json({ message: "Please enter a title for board", success: false });
+      return;
+    }
+    const alreadyExisting = await boardModel.findOne({
+      title,
+      createdBy: userId,
+      workspace: workspaceId,
+    });
+    if (alreadyExisting) {
+      res.status(409).json({
+        message: "You already have a board with this name",
+      });
+      return;
+    }
+    let visibilityStatus = visibility ? visibility : "workspace";
+    let backgroundStatus = backgroundOptions ? backgroundOptions : "#000000";
+
+    const workspace = await workSpaceModel.findById(workspaceId);
+    if (!workspace) {
+      res.status(404).json({
+        message: "Workspace not found",
+        success: false,
+      });
+      return;
+    }
+    if (!workspace.admin.includes(userId)) {
+      res.status(403).json({
+        message: "You are not authorized to create a board in this workspace",
+        success: false,
+      });
+      return;
+    }
+    const newBoard = await boardModel.create({
+      title,
+      visibility: visibilityStatus,
+      backgroundOptions: backgroundStatus,
+      createdBy: userId,
+      workspace: workspaceId,
+    });
+    await workSpaceModel.findByIdAndUpdate(
+      workspaceId,
+      { $push: { boards: newBoard._id } }, 
+      { new: true }
+    );
+    res
+      .status(201)
+      .json({ message: "New board created", sucess: true, newBoard });
+  } catch (error) {
+    res.status(500).json({ message: "Internal server error", success: false });
+  }
 };

@@ -9,7 +9,7 @@ import {
 import { upload } from "../middleware/multer.middleware";
 import { verifyJWT } from "../middleware/auth.middleware";
 import { verify } from "crypto";
-import { createWorkSpace } from "../controller/workspace.controller";
+import { createBoard, createWorkSpace } from "../controller/workspace.controller";
 
 const userRouter = Router();
 const workSpaceRouter = Router();
@@ -30,4 +30,5 @@ userRouter
 export { userRouter };
 
 workSpaceRouter.route("/create-workspace").post(verifyJWT, createWorkSpace);
+workSpaceRouter.route("/create-board").post(verifyJWT, createBoard);
 export {workSpaceRouter}
