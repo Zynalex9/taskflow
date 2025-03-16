@@ -1,6 +1,17 @@
 import mongoose, { Schema } from "mongoose";
 import jwt from "jsonwebtoken";
-
+export interface IUser extends Document {
+username: string
+password:string
+email:string
+GenerateAccessToken: () => string
+GenerateRefreshToken: () => string
+profilePicture:string
+workspace?: mongoose.Schema.Types.ObjectId[];
+  teamspace?: mongoose.Schema.Types.ObjectId[];
+  accessToken?: string;
+  refreshToken?: string;
+}
 const userSchema = new Schema(
   {
     username: {
@@ -44,16 +55,16 @@ const userSchema = new Schema(
 );
 
 userSchema.methods.GenerateAccessToken = function () {
-  return jwt.sign({ id: this._id }, process.env.ACCESS_TOKEN_SECRET!,{
+  return jwt.sign({ id: this._id }, process.env.JWT_TOKEN_SECRET!,{
     expiresIn: "3d",
   });
 };
 
 userSchema.methods.GenerateRefreshToken = function () {
-  return jwt.sign({ id: this._id }, process.env.ACCESS_TOKEN_SECRET!,{
+  return jwt.sign({ id: this._id }, process.env.JWT_TOKEN_SECRET!,{
     expiresIn: "15d",
   });
 };
 
 
-export const UserModel = mongoose.model("User", userSchema);
+export const UserModel = mongoose.model<IUser>("User", userSchema);

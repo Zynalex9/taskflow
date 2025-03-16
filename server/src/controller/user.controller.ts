@@ -3,7 +3,10 @@ import { UserModel } from "../models/user.model";
 import bcryptjs from "bcryptjs";
 import { UploadOnCloudinary } from "../utils/cloudinary";
 
-export const registerUser = async (req: Request, res: Response): Promise<void> => {
+export const registerUser = async (
+  req: Request,
+  res: Response
+): Promise<void> => {
   try {
     const { username, email, password } = req.body;
 
@@ -18,7 +21,7 @@ export const registerUser = async (req: Request, res: Response): Promise<void> =
     }
 
     const existingUser = await UserModel.findOne({
-      $or: [{ email }, { username }]
+      $or: [{ email }, { username }],
     });
 
     if (existingUser) {
@@ -31,14 +34,19 @@ export const registerUser = async (req: Request, res: Response): Promise<void> =
     const localPath = files?.profilePicture?.[0]?.path;
 
     if (!localPath) {
-      res.status(400).json({ message: "Profile picture file missing" });
+      res
+        .status(400)
+        .json({ message: "Profile picture file missing", success: false });
       return;
     }
 
     const uploadedPfp = await UploadOnCloudinary({ localFilePath: localPath });
-    
+
     if (!uploadedPfp) {
-      res.status(500).json({ message: "Error in uploading profile picture" });
+      res.status(500).json({
+        message: "Error in uploading profile picture",
+        success: false,
+      });
       return;
     }
 
@@ -46,7 +54,7 @@ export const registerUser = async (req: Request, res: Response): Promise<void> =
       username,
       email,
       password: hashedPassword,
-      profilePicture: uploadedPfp.url
+      profilePicture: uploadedPfp.url,
     });
 
     res.status(201).json({
@@ -55,11 +63,58 @@ export const registerUser = async (req: Request, res: Response): Promise<void> =
         id: newUser._id,
         username: newUser.username,
         email: newUser.email,
-        profilePicture: newUser.profilePicture
-      }
+        profilePicture: newUser.profilePicture,
+      },
+      success: true,
     });
   } catch (error) {
     console.error("Registration error:", error);
-    res.status(500).json({ message: "Internal server error" });
+    res.status(500).json({ message: "Internal server error", success: false });
   }
+};
+export const loginUser = async (req: Request, res: Response) => {
+  try {
+    const { login, password } = req.body;
+    if (!login || !password) {
+      res
+        .status(404)
+        .json({ message: "Please enter all details", success: false });
+    }
+    const user = await UserModel.findOne({
+      $or: [{ username: login }, { email: login }],
+    });
+    if (!user) {
+      res
+        .status(404)
+        .json({ message: "Incorrect username or email", success: false });
+      return;
+    }
+    const isCorrectPassword = await bcryptjs.compare(password, user.password);
+    if (!isCorrectPassword) {
+      res.status(401).json({ message: "Incorrect password", success: false });
+      return;
+    }
+    const accessToken = user.GenerateAccessToken();
+    const options = {
+      httpOnly: true,
+      secure: true,
+    };
+    res
+      .status(201)
+      .cookie("accessToken", accessToken, options)
+      .json({ message: "User logged in", success: true });
+  } catch (error) {
+    console.error("Login error:", error);
+    res.status(500).json({ message: "Internal server error", success: false });
+  }
+};
+export const logOutUser = async (req: Request, res: Response) => {
+  const options = {
+    httpOnly: true,
+    secure: true,
+  };
+  res
+    .status(201)
+    .clearCookie("accessToken", options)
+    .json({ message: "User logged Out" });
 };
