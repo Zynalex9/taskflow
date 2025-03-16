@@ -118,3 +118,30 @@ export const logOutUser = async (req: Request, res: Response) => {
     .clearCookie("accessToken", options)
     .json({ message: "User logged Out" });
 };
+export const changePassword = async (req: Request, res: Response) => {
+  try {
+    const { password } = req.body;
+    const user = req.user;
+
+    if (!user) {
+      res.status(401).json({ message: "Unauthorized", success: false });
+      return;
+    }
+
+    const hashedPassword = await bcryptjs.hash(password, 10);
+    const updatedUser = await UserModel.findByIdAndUpdate(
+      user._id,
+      { password: hashedPassword },
+      { new: true }
+    );
+
+    res.status(200).json({
+      message: "Password changed successfully",
+      updatedUser,
+      success: true,
+    });
+  } catch (error) {
+    console.error("Change password error:", error);
+    res.status(500).json({ message: "Internal server error", success: false });
+  }
+};
