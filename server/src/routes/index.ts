@@ -1,6 +1,7 @@
 import { Router } from "express";
 import {
   changePassword,
+  changeProfilePicture,
   loginUser,
   logOutUser,
   registerUser,
@@ -16,4 +17,11 @@ userRouter
 userRouter.route("/login").post(loginUser);
 userRouter.route("/logout").post(verifyJWT, logOutUser);
 userRouter.route("/change-password").patch(verifyJWT, changePassword);
+userRouter
+  .route("/change-profile-picture")
+  .patch(
+    verifyJWT,
+    upload.fields([{ name: "newPicture", maxCount: 1 }]),
+    changeProfilePicture
+  );
 export { userRouter };

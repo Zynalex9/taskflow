@@ -145,3 +145,34 @@ export const changePassword = async (req: Request, res: Response) => {
     res.status(500).json({ message: "Internal server error", success: false });
   }
 };
+export const changeProfilePicture = async (req: Request, res: Response) => {
+  try {
+    const files = req.files as { [fieldname: string]: Express.Multer.File[] };
+    console.log(files);
+    const localFilePath = files?.newPicture?.[0].path;
+    if (!localFilePath) {
+      res
+        .status(400)
+        .json({ message: "Profile picture file missing", success: false });
+      return;
+    }
+    const updatedPfp = await UploadOnCloudinary({ localFilePath });
+    if (!updatedPfp) {
+      res.status(500).json({
+        message: "Error in updating profile picture",
+        success: false,
+      });
+      return;
+    }
+    const user = await UserModel.findByIdAndUpdate(
+      req.user._id,
+      {
+        profilePicture: updatedPfp.url,
+      },
+      {
+        new: true,
+      }
+    );
+    res.status(201).json({ message: "Profile picture changed" });
+  } catch (error) {}
+};
