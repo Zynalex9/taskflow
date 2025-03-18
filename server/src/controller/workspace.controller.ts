@@ -2,6 +2,7 @@ import { Request, Response } from "express";
 import { workSpaceModel } from "../models/workspace.model";
 import { UserModel } from "../models/user.model";
 import { boardModel } from "../models/board.models";
+import { ListModel } from "../models/list.models";
 
 interface IParams {
   name: string;
@@ -137,13 +138,88 @@ export const createBoard = async (req: Request, res: Response) => {
     });
     await workSpaceModel.findByIdAndUpdate(
       workspaceId,
-      { $push: { boards: newBoard._id } }, 
+      { $push: { boards: newBoard._id } },
       { new: true }
     );
     res
       .status(201)
       .json({ message: "New board created", sucess: true, newBoard });
   } catch (error) {
-    res.status(500).json({ message: "Internal server error", success: false });
+    res.status(500).json({
+      message: "Internal server error in creating board",
+      success: false,
+    });
+  }
+};
+export const createList = async (req: Request, res: Response) => {
+  try {
+    const { name, boardId } = req.body;
+    const userId = req.user._id;
+
+    if (!name) {
+      res.status(401).json({
+        message: "Please provide a name for your List",
+        success: false,
+      });
+      return;
+    }
+    if (!boardId) {
+      res.status(401).json({
+        message: "Board ID is required",
+        success: false,
+      });
+      return;
+    }
+
+    const board = await boardModel.findById(boardId);
+    if (!board) {
+      res.status(401).json({
+        message: "No board found",
+        success: false,
+      });
+      return;
+    }
+    const workspace = await workSpaceModel.findById(board.workspace);
+    if (!workspace) {
+      res.status(401).json({
+        message: "No workspace found",
+        success: false,
+      });
+      return;
+    }
+    if (!workspace.admin.includes(userId)) {
+      res.status(401).json({
+        message: "You're not authorized to create board in this workspace",
+        success: false,
+      });
+      return;
+    }
+    const existingList = await ListModel.findOne({ name, board: boardId });
+    if (existingList) {
+      res.status(401).json({
+        message: "Name already exist, please choose another name",
+        success: false,
+      });
+      return;
+    }
+    const newList = await ListModel.create({
+      name,
+      createdBy: userId,
+      board: boardId,
+    });
+    await boardModel.findByIdAndUpdate(boardId, {
+      $push: { lists: newList._id },
+    });
+     res.status(201).json({
+      message: "List created successfully",
+      success: true,
+      newList,
+      
+    });
+  } catch (error) {
+    res.status(500).json({
+      message: "Internal server error in creating list",
+      success: false,
+    });
   }
 };
