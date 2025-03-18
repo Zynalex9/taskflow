@@ -9,12 +9,28 @@ const listSchema = new Schema({
     type: String,
     default: "#000000",
   },
-  todos: [
+  cards: [
     {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "Todo",
+      ref: "Card",
     },
   ],
+  createdBy: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "User",
+  },
+  position: {
+    type: Number,
+    default: 0,
+  },
+  board: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "Board",
+  },
+  isArchived: {
+    type: Boolean,
+    default: false,
+  },
 });
 
-export const listModel = mongoose.model("List",listSchema);
+export const ListModel = mongoose.model("List", listSchema);
