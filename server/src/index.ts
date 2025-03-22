@@ -5,7 +5,7 @@ import { Server } from "socket.io";
 import { connectDB } from "./database/index";
 import cors from "cors";
 import cookieParser from "cookie-parser";
-import { userRouter, workSpaceRouter } from "./routes";
+import { cardRouter, userRouter, workSpaceRouter } from "./routes";
 configDotenv();
 connectDB();
 
@@ -30,8 +30,9 @@ app.get("/", (req, res) => {
   });
 });
 
-app.use("/api/",userRouter)
-app.use("/api/workspace/",workSpaceRouter)
+app.use("/api/", userRouter);
+app.use("/api/workspace/", workSpaceRouter);
+app.use("/api/c/card/", cardRouter);
 
 const PORT = process.env.PORT || 3000;
 server.listen(PORT, () => {

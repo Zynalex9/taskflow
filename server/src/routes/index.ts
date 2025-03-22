@@ -8,16 +8,17 @@ import {
 } from "../controller/user.controller";
 import { upload } from "../middleware/multer.middleware";
 import { verifyJWT } from "../middleware/auth.middleware";
-import { verify } from "crypto";
 import {
   createBoard,
   createCard,
   createList,
   createWorkSpace,
 } from "../controller/workspace.controller";
+import { addLabel, joinCard, leaveCard } from "../controller/card.controller";
 
 const userRouter = Router();
 const workSpaceRouter = Router();
+const cardRouter = Router();
 
 userRouter
   .route("/register")
@@ -39,3 +40,9 @@ workSpaceRouter.route("/create-board").post(verifyJWT, createBoard);
 workSpaceRouter.route("/create-list").post(verifyJWT, createList);
 workSpaceRouter.route("/create-card").post(verifyJWT, createCard);
 export { workSpaceRouter };
+
+
+cardRouter.route("/join-card").post(verifyJWT, joinCard);
+cardRouter.route("/leave-card").post(verifyJWT, leaveCard);
+cardRouter.route("/add-label").post(verifyJWT, addLabel);
+export { cardRouter };

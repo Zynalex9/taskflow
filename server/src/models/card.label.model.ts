@@ -8,7 +8,7 @@ interface ICardLabel extends Document {
 }
 const CardLabelSchema: Schema = new Schema(
   {
-    name: { type: String, required: true },
+    name: { type: String},
     color: { type: String, required: true },
     card: {
       type: mongoose.Schema.Types.ObjectId,

@@ -1,12 +1,9 @@
 import { Request, Response } from "express";
-import { CardModel,ICard } from "../models/card.model";
+import { CardModel, ICard } from "../models/card.model";
 import { Types } from "mongoose";
-export interface AuthenticatedRequest extends Request {
-  user: {
-    _id: Types.ObjectId;
-  };
-}
-export const joinCard = async (req: AuthenticatedRequest, res: Response) => {
+import { CardLabelModel } from "../models/card.label.model";
+
+export const joinCard = async (req: Request, res: Response) => {
   try {
     const { cardId } = req.body;
     const userId = req.user._id;
@@ -21,7 +18,7 @@ export const joinCard = async (req: AuthenticatedRequest, res: Response) => {
         .json({ message: "You're already member", success: false });
       return;
     }
-    
+
     card.members.push(userId);
     await card.save();
     res.status(200).json({
@@ -36,10 +33,9 @@ export const joinCard = async (req: AuthenticatedRequest, res: Response) => {
       message: "Internal server error",
       success: false,
     });
-    return;
   }
 };
-export const leaveCard = async (req: AuthenticatedRequest, res: Response) => {
+export const leaveCard = async (req: Request, res: Response) => {
   try {
     const { cardId } = req.body;
     const userId = req.user._id;
@@ -58,6 +54,11 @@ export const leaveCard = async (req: AuthenticatedRequest, res: Response) => {
 
     card.members.pull(userId);
     await card.save();
+    res.status(200).json({
+        message: "User removed from the card successfully",
+        success: true,
+        card,
+      });
   } catch (error) {
     console.error(error);
     res.status(500).json({
@@ -66,4 +67,32 @@ export const leaveCard = async (req: AuthenticatedRequest, res: Response) => {
     });
     return;
   }
+};
+export const addLabel = async (req: Request, res: Response) => {
+  try {
+    const { name, color, cardId } = req.body;
+    if (!color || !cardId) {
+      res
+        .status(404)
+        .json({ message: "No Card-ID or Color given", success: false });
+      return;
+    }
+    const card = await CardModel.findById(cardId);
+    if (!card) {
+      res.status(404).json({ message: "Card not found", success: false });
+      return;
+    }
+    const label = await CardLabelModel.create({
+      name,
+      color,
+      card: cardId,
+    });
+    card.labels.push(label._id);
+    await card.save();
+    res.status(201).json({
+      message: "Label added successfully",
+      success: true,
+      label,
+    });
+  } catch (error) {}
 };
