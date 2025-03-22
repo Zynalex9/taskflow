@@ -1,5 +1,8 @@
-import mongoose, { Schema } from "mongoose";
-
+import mongoose, { Schema, Document, Types } from "mongoose";
+interface IComment extends Document {
+  comment: string;
+  author: Types.ObjectId;
+}
 const commentsSchema = new Schema(
   {
     comment: {
@@ -14,4 +17,7 @@ const commentsSchema = new Schema(
   { timestamps: true }
 );
 
-export const commentsModel = mongoose.model("Comment", commentsSchema);
+export const commentsModel = mongoose.model<IComment>(
+  "Comment",
+  commentsSchema
+);

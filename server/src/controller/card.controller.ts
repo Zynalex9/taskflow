@@ -2,6 +2,7 @@ import { Request, Response } from "express";
 import { CardModel, ICard } from "../models/card.model";
 import { Types } from "mongoose";
 import { CardLabelModel } from "../models/card.label.model";
+import { commentsModel } from "../models/card.comments.models";
 
 export const joinCard = async (req: Request, res: Response) => {
   try {
@@ -45,7 +46,7 @@ export const leaveCard = async (req: Request, res: Response) => {
       return;
     }
     if (!card.members.includes(userId)) {
-      res.status(409).json({
+      res.status(401).json({
         message: "User is not a member of this card",
         success: false,
       });
@@ -55,10 +56,10 @@ export const leaveCard = async (req: Request, res: Response) => {
     card.members.pull(userId);
     await card.save();
     res.status(200).json({
-        message: "User removed from the card successfully",
-        success: true,
-        card,
-      });
+      message: "User removed from the card successfully",
+      success: true,
+      card,
+    });
   } catch (error) {
     console.error(error);
     res.status(500).json({
@@ -95,4 +96,38 @@ export const addLabel = async (req: Request, res: Response) => {
       label,
     });
   } catch (error) {}
+};
+export const addComment = async (req: Request, res: Response) => {
+  try {
+    const { comment, cardId } = req.body;
+    const userId = req.user._id;
+    if (!comment || !cardId) {
+      res
+        .status(409)
+        .json({ message: "No Comment or Card-ID given", success: false });
+      return;
+    }
+    const card = await CardModel.findById(cardId);
+    if (!card) {
+      res.status(404).json({ message: "Card not found", success: false });
+      return;
+    }
+    const newComment = await commentsModel.create({
+      comment,
+      author: userId,
+    });
+    card.comments.push(newComment._id);
+    await card.save();
+    res.status(201).json({
+      message: `New comment ${comment} has been made`,
+      success: true,
+      card,
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({
+      message: "Internal server error",
+      success: false,
+    });
+  }
 };

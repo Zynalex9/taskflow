@@ -14,7 +14,7 @@ import {
   createList,
   createWorkSpace,
 } from "../controller/workspace.controller";
-import { addLabel, joinCard, leaveCard } from "../controller/card.controller";
+import { addComment, addLabel, joinCard, leaveCard } from "../controller/card.controller";
 
 const userRouter = Router();
 const workSpaceRouter = Router();
@@ -45,4 +45,5 @@ export { workSpaceRouter };
 cardRouter.route("/join-card").post(verifyJWT, joinCard);
 cardRouter.route("/leave-card").post(verifyJWT, leaveCard);
 cardRouter.route("/add-label").post(verifyJWT, addLabel);
+cardRouter.route("/add-comment").post(verifyJWT, addComment);
 export { cardRouter };
