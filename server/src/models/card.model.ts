@@ -21,10 +21,6 @@ const CardSchema = new Schema({
     type: mongoose.Schema.Types.ObjectId,
     ref: "List",
   },
-  board: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: "Board",
-  },
   comments: [
     {
       type: mongoose.Schema.Types.ObjectId,

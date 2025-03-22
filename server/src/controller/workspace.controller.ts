@@ -3,6 +3,8 @@ import { workSpaceModel } from "../models/workspace.model";
 import { UserModel } from "../models/user.model";
 import { boardModel } from "../models/board.models";
 import { ListModel } from "../models/list.models";
+import { CardModel } from "../models/card.model";
+import mongoose from "mongoose";
 
 interface IParams {
   name: string;
@@ -210,16 +212,127 @@ export const createList = async (req: Request, res: Response) => {
     await boardModel.findByIdAndUpdate(boardId, {
       $push: { lists: newList._id },
     });
-     res.status(201).json({
+    res.status(201).json({
       message: "List created successfully",
       success: true,
       newList,
-      
     });
   } catch (error) {
     res.status(500).json({
       message: "Internal server error in creating list",
       success: false,
     });
+  }
+};
+export const createCard = async (req: Request, res: Response) => {
+  try {
+    const { name, listId } = req.body;
+    if (!name) {
+      res.status(409).json({
+        message: "Please choose a title for your card",
+        success: false,
+      });
+      return;
+    }
+    if (!listId) {
+      res.status(409).json({
+        message: "List ID is required",
+        success: false,
+      });
+      return;
+    }
+    const userId = req.user._id;
+    // const list = await ListModel.findById(listId).populate({
+    //   path: "board",
+    //   populate: {
+    //     path: "workspace",
+    //     select: "admin",
+    //   },
+    // });
+    const list = await ListModel.aggregate([
+      {
+        $match: { _id: new mongoose.Types.ObjectId(listId) },
+      },
+      {
+        $lookup: {
+          from: "boards",
+          localField: "board",
+          foreignField: "_id",
+          as: "board",
+        },
+      },
+      {
+        $unwind: "$board",
+      },
+      {
+        $lookup: {
+          from: "workspaces",
+          localField: "board.workspace",
+          foreignField: "_id",
+          as: "targetedWorkSpace",
+        },
+      },
+      {
+        $unwind: "$targetedWorkSpace",
+      },
+      {
+        $project: {
+          name: 1,
+          "board.title": 1,
+          "targetedWorkSpace.admin": 1,
+        },
+      },
+    ]);
+    console.log(list[0]);
+    const adminsId = list[0].targetedWorkSpace.admin.map((id:any) => id.toString());
+  
+    if (!adminsId.includes(userId.toString())) {
+      res.status(408).json({
+        message:
+          "Sorry, you're not authorized to create card in this workspace",
+        success: false,
+      });
+      return;
+    }
+    const existingCards = await CardModel.find({
+      name: { $regex: `^${name}( \\d+)?$`, $options: "i" },
+      list: listId,
+    });
+    let uniqueName = name;
+    if (existingCards.length > 0) {
+      let maxNumber = 0;
+      existingCards.forEach((card) => {
+        const match = card.name.match(/\d+$/); 
+        if (match) {
+          const number = parseInt(match[0], 10);
+          if (number > maxNumber) {
+            maxNumber = number;
+          }
+        }
+      });
+      uniqueName = `${name} ${maxNumber + 1}`;
+    }
+
+    const newCard = await CardModel.create({
+      name:uniqueName,
+      createdBy: userId,
+      list: listId,
+    });
+    await ListModel.findOneAndUpdate({ _id: listId }, {
+      $push: { cards: newCard._id },
+    });
+    res.status(201).json({
+      message: "Card created successfully",
+      success: true,
+      newCard,
+    });
+    return
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({
+      message: "Internal server error",
+      success: false,
+    });
+    return;
   }
 };
