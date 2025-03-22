@@ -16,6 +16,7 @@ import {
 } from "../controller/workspace.controller";
 import {
   addAttachment,
+  addChecklist,
   addComment,
   addLabel,
   joinCard,
@@ -58,4 +59,6 @@ cardRouter
     upload.fields([{ name: "uploadedFile", maxCount: 1 }]),
     addAttachment
   );
+cardRouter.route("/add-checklist").post(verifyJWT, addChecklist);
+
 export { cardRouter };

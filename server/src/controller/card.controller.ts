@@ -4,6 +4,7 @@ import { CardLabelModel } from "../models/card.label.model";
 import { commentsModel } from "../models/card.comments.models";
 import { UploadOnCloudinary } from "../utils/cloudinary";
 import { CardAttachmentModel } from "../models/card.attachments.model";
+import { CheckListModel } from "../models/card.checklist.model";
 
 export const joinCard = async (req: Request, res: Response) => {
   try {
@@ -205,5 +206,40 @@ export const addAttachment = async (req: Request, res: Response) => {
       message: "Internal server error",
       success: false,
     });
+  }
+};
+export const addChecklist = async (req: Request, res: Response) => {
+  try {
+    const { title, cardId } = req.body;
+    const userId = req.user._id;
+    if (!title || !cardId) {
+      res
+        .status(404)
+        .json({ message: "Card ID or title missing", success: false });
+      return;
+    }
+    const card = await CardModel.findById(cardId);
+    if (!card) {
+      res.status(401).json({ message: "Invalid card ID", success: false });
+      return;
+    }
+    const checkList = await CheckListModel.create({
+      title,
+      createdBy: userId,
+      card: card._id,
+    });
+    card.checklist.push(checkList._id);
+    await card.save();
+    res
+      .status(200)
+      .json({
+        message: `Checklist (${checkList.title}) added to ${card.name}`,
+        card,
+        checkList,
+        success: true,
+      });
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ message: "Internal server error", success: false });
   }
 };
