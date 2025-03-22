@@ -1,4 +1,21 @@
-import mongoose, { Schema } from "mongoose";
+import mongoose, { Schema, Types } from "mongoose";
+
+export interface ICard extends Document {
+  name: string;
+  description: string;
+  startDate: Date;
+  endDate: Date;
+  createdBy: Types.ObjectId;
+  members: Types.Array<Types.ObjectId>;
+  list: Types.ObjectId;
+  comments: Types.Array<Types.ObjectId>; 
+  labels: Types.Array<Types.ObjectId>; 
+  cover: string;
+  priority: string;
+  checklist: Types.Array<Types.ObjectId>;
+  checked: boolean;
+}
+
 const CardSchema = new Schema({
   name: {
     type: String,
@@ -53,4 +70,4 @@ const CardSchema = new Schema({
   },
 });
 
-export const CardModel = mongoose.model("Todo", CardSchema);
+export const CardModel = mongoose.model<ICard>("Todo", CardSchema);
