@@ -14,6 +14,7 @@ export interface ICard extends Document {
   priority: string;
   checklist: Types.Array<Types.ObjectId>;
   checked: boolean;
+  attachments:Types.Array<Types.ObjectId>
 }
 
 const CardSchema = new Schema({
@@ -68,6 +69,12 @@ const CardSchema = new Schema({
     type: Boolean,
     default: false,
   },
+  attachments:[
+    {
+      type:mongoose.Schema.Types.ObjectId,
+      ref:"CardAttachment"
+    }
+  ]
 });
 
 export const CardModel = mongoose.model<ICard>("Todo", CardSchema);

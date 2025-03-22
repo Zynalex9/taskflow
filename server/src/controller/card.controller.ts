@@ -1,8 +1,9 @@
 import { Request, Response } from "express";
-import { CardModel, ICard } from "../models/card.model";
-import { Types } from "mongoose";
+import { CardModel } from "../models/card.model";
 import { CardLabelModel } from "../models/card.label.model";
 import { commentsModel } from "../models/card.comments.models";
+import { UploadOnCloudinary } from "../utils/cloudinary";
+import { CardAttachmentModel } from "../models/card.attachments.model";
 
 export const joinCard = async (req: Request, res: Response) => {
   try {
@@ -122,6 +123,81 @@ export const addComment = async (req: Request, res: Response) => {
       message: `New comment ${comment} has been made`,
       success: true,
       card,
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({
+      message: "Internal server error",
+      success: false,
+    });
+  }
+};
+export const addAttachment = async (req: Request, res: Response) => {
+  try {
+    const { cardId, name, resourceType } = req.body;
+    const userId = req.user._id;
+    if (!cardId) {
+      res.status(404).json({ message: "No Card Found", success: false });
+      return;
+    }
+    if (!resourceType) {
+      res
+        .status(404)
+        .json({ message: "No resourceTyped Found", success: false });
+      return;
+    }
+    const card = await CardModel.findById(cardId);
+    if (!card) {
+      res
+        .status(404)
+        .json({ message: "Invalid ID, No Card Found", success: false });
+      return;
+    }
+    const files = req.files as { [fieldname: string]: Express.Multer.File[] };
+    if (!files || !files.uploadedFile) {
+      res.status(400).json({ message: "No file uploaded", success: false });
+      return;
+    }
+    const filePath = files.uploadedFile[0].path;
+    let filename = name ? name : files.uploadedFile[0].originalname;
+    const existingAttachments = await CardAttachmentModel.find({
+      cardId: card._id,
+    });
+    const duplicateAttachments = existingAttachments
+      .filter((attachment) => attachment.filename?.startsWith(filename))
+      .map((attachment) => attachment.filename);
+    if (duplicateAttachments.length > 0) {
+      let counter = 1;
+      let newFilename = filename;
+      while (duplicateAttachments.includes(newFilename)) {
+        newFilename = `${filename} (${counter})`;
+        counter++;
+      }
+      filename = newFilename;
+    }
+    const cloudinaryResponse = await UploadOnCloudinary({
+      localFilePath: filePath,
+      folderName: "taskflow/card-attachments",
+    });
+    if (!cloudinaryResponse) {
+      res
+        .status(404)
+        .json({ message: "Error in uploading to cloudinary", success: false });
+      return;
+    }
+    const attachment = await CardAttachmentModel.create({
+      filename,
+      cardId: card._id,
+      fileUrl: cloudinaryResponse.url,
+      uploadedBy: userId,
+    });
+    card.attachments.push(attachment._id);
+    await card.save();
+    res.status(201).json({
+      message: `${filename} is uploaded`,
+      success: true,
+      card,
+      attachment,
     });
   } catch (error) {
     console.error(error);
