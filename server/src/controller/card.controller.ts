@@ -5,6 +5,15 @@ import { commentsModel } from "../models/card.comments.models";
 import { UploadOnCloudinary } from "../utils/cloudinary";
 import { CardAttachmentModel } from "../models/card.attachments.model";
 import { CheckListModel } from "../models/card.checklist.model";
+import { Types } from "mongoose";
+import { UserModel } from "../models/user.model";
+import mongoose from "mongoose";
+interface INewItem {
+  title: string;
+  completed: boolean;
+  assignedTo?: Types.ObjectId[] | any;
+  createdBy: Types.ObjectId;
+}
 
 export const joinCard = async (req: Request, res: Response) => {
   try {
@@ -230,16 +239,77 @@ export const addChecklist = async (req: Request, res: Response) => {
     });
     card.checklist.push(checkList._id);
     await card.save();
-    res
-      .status(200)
-      .json({
-        message: `Checklist (${checkList.title}) added to ${card.name}`,
-        card,
-        checkList,
-        success: true,
-      });
+    res.status(200).json({
+      message: `Checklist (${checkList.title}) added to ${card.name}`,
+      card,
+      checkList,
+      success: true,
+    });
   } catch (error) {
     console.log(error);
+    res.status(500).json({ message: "Internal server error", success: false });
+  }
+};
+export const addItemToCheckList = async (req: Request, res: Response) => {
+  try {
+    const { title, assignedTo } = req.body;
+    const { checkListId } = req.params;
+    const userId = req.user._id;
+  
+    if (!title || !checkListId) {
+      res
+        .status(404)
+        .json({ message: "Checklist ID or title missing", success: false });
+      return;
+    }
+  
+    const checkList = await CheckListModel.findById(checkListId);
+    if (!checkList) {
+      res.status(401).json({ message: "Invalid checklist ID", success: false });
+      return;
+    }
+  
+    let validAssignedTo: Types.ObjectId[] = [];
+    if (assignedTo && assignedTo.length > 0) {
+      const objectIdAssignedTo = assignedTo.filter((id: string) =>
+        mongoose.Types.ObjectId.isValid(id)
+      );
+  
+      const assignedUsers = await UserModel.find({
+        $or: [
+          { _id: { $in: objectIdAssignedTo } }, 
+          { email: { $in: assignedTo } }, 
+          { username: { $in: assignedTo } }, 
+        ],
+      });
+  
+      if (assignedUsers.length !== assignedTo.length) {
+        res.status(404).json({
+          message: "One or more assigned users not found",
+          success: false,
+        });
+        return;
+      }
+  
+      validAssignedTo = assignedUsers.map((user) => user._id);
+    }
+  
+    const newItem: INewItem = {
+      title,
+      completed: false,
+      assignedTo: validAssignedTo,
+      createdBy: userId,
+    };
+  
+    checkList?.items.push(newItem);
+    await checkList.save();
+    res.status(201).json({
+      message: `${newItem.title} is added to ${checkList.title}`,
+      checkList,
+      success: true,
+    });
+  } catch (error: any) {
+    console.log(error.message);
     res.status(500).json({ message: "Internal server error", success: false });
   }
 };

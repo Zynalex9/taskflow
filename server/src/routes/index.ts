@@ -18,6 +18,7 @@ import {
   addAttachment,
   addChecklist,
   addComment,
+  addItemToCheckList,
   addLabel,
   joinCard,
   leaveCard,
@@ -60,5 +61,6 @@ cardRouter
     addAttachment
   );
 cardRouter.route("/add-checklist").post(verifyJWT, addChecklist);
+cardRouter.route("/checklist/:checkListId/add-items").post(verifyJWT, addItemToCheckList);
 
 export { cardRouter };

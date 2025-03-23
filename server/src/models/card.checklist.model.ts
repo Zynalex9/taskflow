@@ -1,14 +1,16 @@
 import mongoose, { Document, Schema, Types } from "mongoose";
 interface IChecklistItem {
-  _id: Types.ObjectId;
-  text: string;
+  _id?: Types.ObjectId;
+  title: string;
   completed: Boolean;
-  assignedTo: Types.Array<Types.ObjectId>;
+  assignedTo?: Types.ObjectId[] | any;
+  createdBy: Types.ObjectId;
+  
 }
 export interface IChecklist extends Document {
   title: string;
-  items: IChecklistItem[]; 
-  createdBy: Types.ObjectId; 
+  items: IChecklistItem[];
+  createdBy: Types.ObjectId;
   card: Types.ObjectId;
   createdAt: Date;
   updatedAt: Date;
@@ -25,7 +27,7 @@ const CheckListSchema: Schema = new Schema(
           type: mongoose.Schema.Types.ObjectId,
           auto: true,
         },
-        text: {
+        title: {
           type: String,
           required: true,
         },
@@ -39,6 +41,10 @@ const CheckListSchema: Schema = new Schema(
             ref: "User",
           },
         ],
+        createdBy: {
+          type: mongoose.Schema.Types.ObjectId,
+          ref: "User",
+        },
       },
     ],
     createdBy: {
@@ -54,4 +60,7 @@ const CheckListSchema: Schema = new Schema(
   },
   { timestamps: true }
 );
-export const CheckListModel = mongoose.model<IChecklist>("Checklist", CheckListSchema);
+export const CheckListModel = mongoose.model<IChecklist>(
+  "Checklist",
+  CheckListSchema
+);
