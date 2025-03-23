@@ -20,8 +20,10 @@ import {
   addComment,
   addItemToCheckList,
   addLabel,
+  editItem,
   joinCard,
   leaveCard,
+  toggleCheckListItem,
 } from "../controller/card.controller";
 
 const userRouter = Router();
@@ -62,5 +64,7 @@ cardRouter
   );
 cardRouter.route("/add-checklist").post(verifyJWT, addChecklist);
 cardRouter.route("/checklist/:checkListId/add-items").post(verifyJWT, addItemToCheckList);
+cardRouter.route("/checklist/toggle/:checklistId/:itemId").post(verifyJWT,toggleCheckListItem)
+cardRouter.route("/checklist/edit/:checklistId/:itemId").patch(verifyJWT,editItem)
 
 export { cardRouter };

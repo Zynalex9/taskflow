@@ -5,14 +5,16 @@ import { commentsModel } from "../models/card.comments.models";
 import { UploadOnCloudinary } from "../utils/cloudinary";
 import { CardAttachmentModel } from "../models/card.attachments.model";
 import { CheckListModel } from "../models/card.checklist.model";
-import { Types } from "mongoose";
+import { mongo, Types } from "mongoose";
 import { UserModel } from "../models/user.model";
 import mongoose from "mongoose";
+
 interface INewItem {
   title: string;
   completed: boolean;
   assignedTo?: Types.ObjectId[] | any;
   createdBy: Types.ObjectId;
+  dueDate: Date | undefined;
 }
 
 export const joinCard = async (req: Request, res: Response) => {
@@ -252,37 +254,37 @@ export const addChecklist = async (req: Request, res: Response) => {
 };
 export const addItemToCheckList = async (req: Request, res: Response) => {
   try {
-    const { title, assignedTo } = req.body;
+    const { title, assignedTo, dueDate } = req.body;
     const { checkListId } = req.params;
     const userId = req.user._id;
-  
+
     if (!title || !checkListId) {
       res
         .status(404)
         .json({ message: "Checklist ID or title missing", success: false });
       return;
     }
-  
+
     const checkList = await CheckListModel.findById(checkListId);
     if (!checkList) {
       res.status(401).json({ message: "Invalid checklist ID", success: false });
       return;
     }
-  
+
     let validAssignedTo: Types.ObjectId[] = [];
     if (assignedTo && assignedTo.length > 0) {
       const objectIdAssignedTo = assignedTo.filter((id: string) =>
         mongoose.Types.ObjectId.isValid(id)
       );
-  
+
       const assignedUsers = await UserModel.find({
         $or: [
-          { _id: { $in: objectIdAssignedTo } }, 
-          { email: { $in: assignedTo } }, 
-          { username: { $in: assignedTo } }, 
+          { _id: { $in: objectIdAssignedTo } },
+          { email: { $in: assignedTo } },
+          { username: { $in: assignedTo } },
         ],
       });
-  
+
       if (assignedUsers.length !== assignedTo.length) {
         res.status(404).json({
           message: "One or more assigned users not found",
@@ -290,17 +292,18 @@ export const addItemToCheckList = async (req: Request, res: Response) => {
         });
         return;
       }
-  
+
       validAssignedTo = assignedUsers.map((user) => user._id);
     }
-  
+
     const newItem: INewItem = {
       title,
       completed: false,
       assignedTo: validAssignedTo,
       createdBy: userId,
+      dueDate: dueDate ? new Date(dueDate) : undefined,
     };
-  
+
     checkList?.items.push(newItem);
     await checkList.save();
     res.status(201).json({
@@ -311,5 +314,175 @@ export const addItemToCheckList = async (req: Request, res: Response) => {
   } catch (error: any) {
     console.log(error.message);
     res.status(500).json({ message: "Internal server error", success: false });
+  }
+};
+export const toggleCheckListItem = async (
+  req: Request,
+  res: Response
+): Promise<void> => {
+  try {
+    const { checklistId, itemId } = req.params;
+    const checkList = await CheckListModel.findById(checklistId);
+    if (!checkList) {
+      res.status(404).json({ message: "Checklist not found", success: false });
+      return;
+    }
+
+    const item = checkList.items.find(
+      (item) => item._id?.toString() === itemId
+    );
+    if (!item) {
+      res
+        .status(404)
+        .json({ message: "Checklist item not found", success: false });
+      return;
+    }
+
+    item.completed = !item.completed;
+    await checkList.save();
+
+    res.status(200).json({
+      message: `Item "${item.title}" is now ${
+        item.completed ? "completed" : "incomplete"
+      }.`,
+      checklist: checkList,
+      success: true,
+    });
+  } catch (error: unknown) {
+    if (error instanceof Error) {
+      console.error(error.message);
+      res.status(500).json({ message: error.message, success: false });
+    } else {
+      res
+        .status(500)
+        .json({ message: "Internal server error", success: false });
+    }
+  }
+};
+export const editItem = async (req: Request, res: Response) => {
+  try {
+    const { checklistId, itemId } = req.params;
+    const { title, assignedTo, removeAssignedTo, dueDate } = req.body;
+    if (!checklistId || !itemId) {
+      res.status(407).json({
+        message: "Checklist ID or Item ID missing in params",
+        success: false,
+      });
+      return;
+    }
+    const checkList = await CheckListModel.findById(checklistId);
+    if (!checkList) {
+      res.status(401).json({ message: "Invalid checklist ID", success: false });
+      return;
+    }
+    const item = checkList.items.find(
+      (item) => item._id?.toString() === itemId
+    );
+    if (!item) {
+      res.status(401).json({ message: "Invalid item ID", success: false });
+      return;
+    }
+    if (!title && !dueDate && !assignedTo) {
+      res.status(200).json({
+        message: `No detaileds provided to update.`,
+        checklist: checkList,
+        success: true,
+      });
+      return;
+    }
+    if (title) {
+      item.title = title;
+    }
+    if (dueDate) {
+      item.dueDate = dueDate;
+    }
+    /*
+    1) Get all the already assigned users to this item in an array.
+    2) Check if there is assignedTo?
+    3) Separate array for quering object id in db 
+    4) find all the users by ID or email or username
+    5) create an addIds list store all the ids found
+    6) merge them by new Set
+    7) splice them
+    */
+    const currentAssignedUsers = item.assignedTo.map((id: Types.ObjectId) =>
+      id.toString()
+    );
+    if (assignedTo && assignedTo.length > 0) {
+      const objectIdAssignedTo = assignedTo.filter((id: string) =>
+        mongoose.Types.ObjectId.isValid(id)
+      );
+      const usersToAdd = await UserModel.find({
+        $or: [
+          { _id: { $in: objectIdAssignedTo } },
+          { email: { $in: assignedTo } },
+          { username: { $in: assignedTo } },
+        ],
+      });
+      if (usersToAdd.length !== assignedTo.length) {
+        res.status(404).json({
+          message: "One or more assigned users not found",
+          success: false,
+        });
+        return;
+      }
+      const addIds = usersToAdd.map((user) => user._id.toString());
+      const mergedIdsSet = new Set([...currentAssignedUsers, ...addIds]);
+      currentAssignedUsers.splice(
+        0,
+        currentAssignedUsers.length,
+        ...mergedIdsSet
+      );
+    }
+    if (
+      removeAssignedTo &&
+      Array.isArray(removeAssignedTo) &&
+      removeAssignedTo.length > 0
+    ) {
+      const ObjectIdtoRemove = removeAssignedTo.filter((id: string) =>
+        mongoose.Types.ObjectId.isValid(id)
+      );
+      const usersToRemove = await UserModel.find({
+        $or: [
+          { _id: { $in: ObjectIdtoRemove } },
+          { email: { $in: removeAssignedTo } },
+          { username: { $in: removeAssignedTo } },
+        ],
+      });
+      if (usersToRemove.length !== removeAssignedTo.length) {
+        res.status(404).json({
+          message: "One or more assigned users not found",
+          success: false,
+        });
+        return;
+      }
+      const removeIds = usersToRemove.map((user) => user._id.toString());
+      const filteredIds = currentAssignedUsers.filter(
+        (id: string) => !removeIds.includes(id)
+      );
+      currentAssignedUsers.splice(
+        0,
+        currentAssignedUsers.length,
+        ...filteredIds
+      );
+    }
+    item.assignedTo = currentAssignedUsers;
+    await checkList.save();
+    res.status(200).json({
+      message: `Checklist item updated successfully.`,
+      checklist: checkList,
+      success: true,
+    });
+  } catch (error: unknown) {
+    if (error instanceof Error) {
+      console.log(error.message);
+      res
+        .status(500)
+        .json({ message: "Internal server error", success: false });
+    } else {
+      res
+        .status(500)
+        .json({ message: "Internal server error", success: false });
+    }
   }
 };

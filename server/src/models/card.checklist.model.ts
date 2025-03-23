@@ -5,6 +5,7 @@ interface IChecklistItem {
   completed: Boolean;
   assignedTo?: Types.ObjectId[] | any;
   createdBy: Types.ObjectId;
+  dueDate: Date | undefined;
   
 }
 export interface IChecklist extends Document {
@@ -45,6 +46,7 @@ const CheckListSchema: Schema = new Schema(
           type: mongoose.Schema.Types.ObjectId,
           ref: "User",
         },
+        dueDate: Date
       },
     ],
     createdBy: {
