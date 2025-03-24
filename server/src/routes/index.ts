@@ -13,6 +13,7 @@ import {
   createCard,
   createList,
   createWorkSpace,
+  getWorkspaceTableData,
 } from "../controller/workspace.controller";
 import {
   addAttachment,
@@ -49,6 +50,7 @@ workSpaceRouter.route("/create-workspace").post(verifyJWT, createWorkSpace);
 workSpaceRouter.route("/create-board").post(verifyJWT, createBoard);
 workSpaceRouter.route("/create-list").post(verifyJWT, createList);
 workSpaceRouter.route("/create-card").post(verifyJWT, createCard);
+workSpaceRouter.route("/:workspaceId/get-table-data").get(verifyJWT, getWorkspaceTableData);
 export { workSpaceRouter };
 
 cardRouter.route("/join-card").post(verifyJWT, joinCard);

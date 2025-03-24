@@ -5,6 +5,7 @@ import { boardModel } from "../models/board.models";
 import { ListModel } from "../models/list.models";
 import { CardModel } from "../models/card.model";
 import mongoose from "mongoose";
+import { table } from "console";
 
 interface IParams {
   name: string;
@@ -284,8 +285,10 @@ export const createCard = async (req: Request, res: Response) => {
       },
     ]);
     console.log(list[0]);
-    const adminsId = list[0].targetedWorkSpace.admin.map((id:any) => id.toString());
-  
+    const adminsId = list[0].targetedWorkSpace.admin.map((id: any) =>
+      id.toString()
+    );
+
     if (!adminsId.includes(userId.toString())) {
       res.status(408).json({
         message:
@@ -302,7 +305,7 @@ export const createCard = async (req: Request, res: Response) => {
     if (existingCards.length > 0) {
       let maxNumber = 0;
       existingCards.forEach((card) => {
-        const match = card.name.match(/\d+$/); 
+        const match = card.name.match(/\d+$/);
         if (match) {
           const number = parseInt(match[0], 10);
           if (number > maxNumber) {
@@ -314,19 +317,22 @@ export const createCard = async (req: Request, res: Response) => {
     }
 
     const newCard = await CardModel.create({
-      name:uniqueName,
+      name: uniqueName,
       createdBy: userId,
       list: listId,
     });
-    await ListModel.findOneAndUpdate({ _id: listId }, {
-      $push: { cards: newCard._id },
-    });
+    await ListModel.findOneAndUpdate(
+      { _id: listId },
+      {
+        $push: { cards: newCard._id },
+      }
+    );
     res.status(201).json({
       message: "Card created successfully",
       success: true,
       newCard,
     });
-    return
+    return;
   } catch (error) {
     console.error(error);
     res.status(500).json({
@@ -334,5 +340,89 @@ export const createCard = async (req: Request, res: Response) => {
       success: false,
     });
     return;
+  }
+};
+export const getWorkspaceTableData = async (req: Request, res: Response) => {
+  try {
+    const { workspaceId } = req.params;
+    if (!workspaceId) {
+      res
+        .status(400)
+        .json({ message: "Workspace ID is required", success: false });
+      return;
+    }
+    const tableData = await boardModel.aggregate([
+      {
+        $match: { workspace: new mongoose.Types.ObjectId(workspaceId) },
+      },
+      {
+        $lookup: {
+          from: "lists",
+          localField: "_id",
+          foreignField: "board",
+          as: "listsDetails",
+        },
+      },
+      {
+        $unwind: {
+          path: "$listsDetails",
+        },
+      },
+      {
+        $lookup: {
+          from: "todos",
+          localField: "listsDetails._id",
+          foreignField: "list",
+          as: "cardsDetails",
+        },
+      },
+      { $unwind: "$cardsDetails" },
+      {
+        $lookup: {
+          from: "labels",
+          localField: "cardsDetails.labels",
+          foreignField: "_id",
+          as: "LabelDetails",
+        },
+      },
+      {
+        $lookup: {
+          from: "users",
+          localField: "cardsDetails.members",
+          foreignField: "_id",
+          as: "userDetails",
+        },
+      },
+      {
+        $project: {
+          _id: 0,
+          boardName: "$title",
+          listName: "$listDetails.name",
+          cardName: "$cardsDetails.name",
+          labels: "$LabelDetails.name",
+          members: "$userDetails.username",
+        },
+      },
+    ]);
+    if (!tableData || tableData.length === 0) {
+      res.status(404).json({
+        message: "No Table Found",
+        success: false,
+      });
+      return;
+    }
+    res.status(200).json({
+      message: "Table Found",
+      tableData,
+      success: false,
+    });
+  } catch (error: unknown) {
+    if (error instanceof Error) {
+      res
+        .status(500)
+        .json({ message: "Internal server error", success: false });
+      console.log(error.message);
+    }
+    res.status(500).json({ message: "Internal server error", success: false });
   }
 };

@@ -1,4 +1,15 @@
 import mongoose, { Mongoose, Schema } from "mongoose";
+import { Types } from "mongoose";
+interface IBoard extends Document{
+  title:string,
+  lists: Types.ObjectId[],
+  favourite:Boolean,
+  background:string,
+  backgroundOptions:string,
+  visibility:string,
+  createdBy: Types.ObjectId,
+  workspace:Types.ObjectId
+}
 const boardSchema = new Schema(
   {
     title: {
@@ -39,4 +50,4 @@ const boardSchema = new Schema(
   },
   { timestamps: true }
 );
-export const boardModel = mongoose.model("Board", boardSchema);
+export const boardModel = mongoose.model<IBoard>("Board", boardSchema);

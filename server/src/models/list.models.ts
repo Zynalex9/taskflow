@@ -1,5 +1,13 @@
-import mongoose, { mongo, Schema } from "mongoose";
-
+import mongoose, { Schema, Types } from "mongoose";
+interface IList extends Document{
+  name:string
+  color:string
+  cards:Types.ObjectId[]
+  createdBy:Types.ObjectId,
+  position:Number,
+  board:Types.ObjectId,
+  isArchived:Boolean
+}
 const listSchema = new Schema({
   name: {
     type: String,
@@ -33,4 +41,4 @@ const listSchema = new Schema({
   },
 });
 
-export const ListModel = mongoose.model("List", listSchema);
+export const ListModel = mongoose.model<IList>("List", listSchema);
