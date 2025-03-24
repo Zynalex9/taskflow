@@ -5,7 +5,6 @@ import { boardModel } from "../models/board.models";
 import { ListModel } from "../models/list.models";
 import { CardModel } from "../models/card.model";
 import mongoose from "mongoose";
-import { table } from "console";
 
 interface IParams {
   name: string;
@@ -227,7 +226,7 @@ export const createList = async (req: Request, res: Response) => {
 };
 export const createCard = async (req: Request, res: Response) => {
   try {
-    const { name, listId } = req.body;
+    const { name, listId, startDate, endDate, description } = req.body;
     if (!name) {
       res.status(409).json({
         message: "Please choose a title for your card",
@@ -320,6 +319,9 @@ export const createCard = async (req: Request, res: Response) => {
       name: uniqueName,
       createdBy: userId,
       list: listId,
+      startDate: startDate ? startDate : undefined,
+      endDate: endDate ? endDate : undefined,
+      description: description ? description : "",
     });
     await ListModel.findOneAndUpdate(
       { _id: listId },
@@ -416,6 +418,71 @@ export const getWorkspaceTableData = async (req: Request, res: Response) => {
       tableData,
       success: false,
     });
+  } catch (error: unknown) {
+    if (error instanceof Error) {
+      res
+        .status(500)
+        .json({ message: "Internal server error", success: false });
+      console.log(error.message);
+    }
+    res.status(500).json({ message: "Internal server error", success: false });
+  }
+};
+export const getCalendarData = async (req: Request, res: Response) => {
+  try {
+    const { workspaceId } = req.params;
+    if (!workspaceId) {
+      res.status(400).json({ error: "Workspace ID is required" });
+      return;
+    }
+    const calenderData = await CardModel.aggregate([
+      {
+        $lookup: {
+          from: "lists",
+          localField: "list",
+          foreignField: "_id",
+          as: "listDetails",
+        },
+      },
+      { $unwind: "$listDetails" },
+      {
+        $lookup: {
+          from: "boards",
+          localField: "listDetails.board",
+          foreignField: "_id",
+          as: "boardDetails",
+        },
+      },
+      { $unwind: "$boardDetails" },
+      {
+        $match: {
+          "boardDetails.workspace": new mongoose.Types.ObjectId(workspaceId),
+          endDate: { $ne: null },
+        },
+      },
+      {
+        $lookup: {
+          from: "labels",
+          localField: "labels",
+          foreignField: "_id",
+          as: "labelDetails",
+        },
+      },
+      {
+        $project: {
+          name: 1,
+          endDate: 1,
+          labels: {
+            $map: {
+              input: "$labelDetails",
+              as: "label",
+              in: "$$label.name",
+            },
+          },
+        },
+      },
+    ]);
+    res.status(200).json({ message: "ok", calenderData });
   } catch (error: unknown) {
     if (error instanceof Error) {
       res

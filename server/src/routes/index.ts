@@ -13,6 +13,7 @@ import {
   createCard,
   createList,
   createWorkSpace,
+  getCalendarData,
   getWorkspaceTableData,
 } from "../controller/workspace.controller";
 import {
@@ -51,6 +52,7 @@ workSpaceRouter.route("/create-board").post(verifyJWT, createBoard);
 workSpaceRouter.route("/create-list").post(verifyJWT, createList);
 workSpaceRouter.route("/create-card").post(verifyJWT, createCard);
 workSpaceRouter.route("/:workspaceId/get-table-data").get(verifyJWT, getWorkspaceTableData);
+workSpaceRouter.route("/:workspaceId/get-calendar-data").get(verifyJWT, getCalendarData);
 export { workSpaceRouter };
 
 cardRouter.route("/join-card").post(verifyJWT, joinCard);
