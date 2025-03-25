@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
 import { UserModel } from "../models/user.model";
-import bcryptjs from "bcryptjs";
+import bcryptjs, { compareSync } from "bcryptjs";
 import { UploadOnCloudinary } from "../utils/cloudinary";
 
 export const registerUser = async (
@@ -118,27 +118,42 @@ export const logOutUser = async (req: Request, res: Response) => {
     .clearCookie("accessToken", options)
     .json({ message: "User logged Out" });
 };
-export const changePassword = async (req: Request, res: Response) => {
+export const changeDetails = async (req: Request, res: Response) => {
   try {
-    const { password } = req.body;
-    const user = req.user;
+    const { username, email, password } = req.body;
+    const userId = req.user;
 
-    if (!user) {
+    if (!userId) {
       res.status(401).json({ message: "Unauthorized", success: false });
       return;
     }
 
-    const hashedPassword = await bcryptjs.hash(password, 10);
-    const updatedUser = await UserModel.findByIdAndUpdate(
-      user._id,
-      { password: hashedPassword },
-      { new: true }
-    );
-
+    const user = await UserModel.findById(userId);
+    if (!user) {
+      res.status(404).json({ message: "User not found" });
+      return;
+    }
+    if (username) {
+      const alreadyTaken = await UserModel.findOne({ username });
+      if (alreadyTaken) {
+        res
+          .status(400)
+          .json({ message: "Username is taken choose another one" });
+        return;
+      }
+      user.username = username;
+    }
+    if (password) {
+      user.password = await bcryptjs.hash(password, 10);
+    }
+    if (email) {
+      user.email = email;
+    }
+    await user.save();
     res.status(200).json({
-      message: "Password changed successfully",
-      updatedUser,
+      message: "User details updated  successfully",
       success: true,
+      user,
     });
   } catch (error) {
     console.error("Change password error:", error);
@@ -148,7 +163,6 @@ export const changePassword = async (req: Request, res: Response) => {
 export const changeProfilePicture = async (req: Request, res: Response) => {
   try {
     const files = req.files as { [fieldname: string]: Express.Multer.File[] };
-    console.log(files);
     const localFilePath = files?.newPicture?.[0].path;
     if (!localFilePath) {
       res
@@ -175,4 +189,57 @@ export const changeProfilePicture = async (req: Request, res: Response) => {
     );
     res.status(201).json({ message: "Profile picture changed" });
   } catch (error) {}
+};
+export const GetUserDetail = async (req: Request, res: Response) => {
+  try {
+    const userId = req.user;
+    if (!userId) {
+      res.status(401).json({ message: "Unauthorized", success: false });
+      return;
+    }
+
+    const user = await UserModel.findById(userId).select("-password");
+    if (!user) {
+      res.status(404).json({ message: "User not found" });
+      return;
+    }
+    res.status(200).json({ user, success: true });
+  } catch (error: unknown) {
+    if (error instanceof Error) {
+      console.log(error.message);
+      res
+        .status(500)
+        .json({ message: "Internal server error", error: error.message });
+    }
+    res.status(500).json({ message: "Internal server error" });
+  }
+};
+export const deleteUser = async (req: Request, res: Response) => {
+  try {
+    const userId = req.user;
+    if (!userId) {
+      res.status(401).json({ message: "Unauthorized", success: false });
+      return;
+    }
+
+    const user = await UserModel.findById(userId);
+    if (!user) {
+      res.status(404).json({ message: "User not found" });
+      return;
+    }
+    await UserModel.findByIdAndDelete(userId);
+
+    res.status(200).json({
+      message: "User deleted successfully",
+      success: true,
+    });
+  } catch (error: unknown) {
+    if (error instanceof Error) {
+      console.log(error.message);
+      res
+        .status(500)
+        .json({ message: "Internal server error", error: error.message });
+    }
+    res.status(500).json({ message: "Internal server error" });
+  }
 };

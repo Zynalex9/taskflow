@@ -1,7 +1,9 @@
 import { Router } from "express";
 import {
-  changePassword,
+  changeDetails,
   changeProfilePicture,
+  deleteUser,
+  GetUserDetail,
   loginUser,
   logOutUser,
   registerUser,
@@ -37,7 +39,7 @@ userRouter
   .post(upload.fields([{ name: "profilePicture", maxCount: 1 }]), registerUser);
 userRouter.route("/login").post(loginUser);
 userRouter.route("/logout").post(verifyJWT, logOutUser);
-userRouter.route("/change-password").patch(verifyJWT, changePassword);
+userRouter.route("/change-details").patch(verifyJWT, changeDetails);
 userRouter
   .route("/change-profile-picture")
   .patch(
@@ -45,14 +47,20 @@ userRouter
     upload.fields([{ name: "newPicture", maxCount: 1 }]),
     changeProfilePicture
   );
+userRouter.route("/get-user-details").get(verifyJWT, GetUserDetail);
+userRouter.route("/delete-user").delete(verifyJWT, deleteUser);
 export { userRouter };
 
 workSpaceRouter.route("/create-workspace").post(verifyJWT, createWorkSpace);
 workSpaceRouter.route("/create-board").post(verifyJWT, createBoard);
 workSpaceRouter.route("/create-list").post(verifyJWT, createList);
 workSpaceRouter.route("/create-card").post(verifyJWT, createCard);
-workSpaceRouter.route("/:workspaceId/get-table-data").get(verifyJWT, getWorkspaceTableData);
-workSpaceRouter.route("/:workspaceId/get-calendar-data").get(verifyJWT, getCalendarData);
+workSpaceRouter
+  .route("/:workspaceId/get-table-data")
+  .get(verifyJWT, getWorkspaceTableData);
+workSpaceRouter
+  .route("/:workspaceId/get-calendar-data")
+  .get(verifyJWT, getCalendarData);
 export { workSpaceRouter };
 
 cardRouter.route("/join-card").post(verifyJWT, joinCard);
@@ -67,8 +75,14 @@ cardRouter
     addAttachment
   );
 cardRouter.route("/add-checklist").post(verifyJWT, addChecklist);
-cardRouter.route("/checklist/:checkListId/add-items").post(verifyJWT, addItemToCheckList);
-cardRouter.route("/checklist/toggle/:checklistId/:itemId").post(verifyJWT,toggleCheckListItem)
-cardRouter.route("/checklist/edit/:checklistId/:itemId").patch(verifyJWT,editItem)
+cardRouter
+  .route("/checklist/:checkListId/add-items")
+  .post(verifyJWT, addItemToCheckList);
+cardRouter
+  .route("/checklist/toggle/:checklistId/:itemId")
+  .post(verifyJWT, toggleCheckListItem);
+cardRouter
+  .route("/checklist/edit/:checklistId/:itemId")
+  .patch(verifyJWT, editItem);
 
 export { cardRouter };
