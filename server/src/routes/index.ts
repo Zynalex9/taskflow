@@ -24,11 +24,14 @@ import {
   addComment,
   addItemToCheckList,
   addLabel,
+  editCardDetails,
   editItem,
+  getCardsByUser,
   joinCard,
   leaveCard,
   toggleCheckListItem,
 } from "../controller/card.controller";
+import { verify } from "crypto";
 
 const userRouter = Router();
 const workSpaceRouter = Router();
@@ -84,5 +87,8 @@ cardRouter
 cardRouter
   .route("/checklist/edit/:checklistId/:itemId")
   .patch(verifyJWT, editItem);
-
+cardRouter
+  .route("/edit/:listId/:cardId")
+  .patch(verifyJWT, editCardDetails);
+cardRouter.route("/get-all-cards").get(verifyJWT, getCardsByUser);
 export { cardRouter };

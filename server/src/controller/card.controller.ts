@@ -486,3 +486,199 @@ export const editItem = async (req: Request, res: Response) => {
     }
   }
 };
+export const editCardDetails = async (req: Request, res: Response) => {
+  try {
+    const {
+      name,
+      description,
+      startDate,
+      endDate,
+      addMembers,
+      removeMembers,
+      addLabels,
+      removeLabels,
+      priority,
+    }: {
+      name?: string;
+      description?: string;
+      startDate?: Date;
+      endDate?: Date;
+      addMembers?: string[];
+      removeMembers?: string[];
+      addLabels?: string[];
+      removeLabels?: string[];
+      priority: string;
+    } = req.body;
+    const { listId, cardId } = req.params;
+    if (!listId || !cardId) {
+      res.status(407).json({ message: "Card ID or List ID is missing" });
+      return;
+    }
+    const card = await CardModel.findById(cardId);
+    if (!card) {
+      res.status(404).json({ message: "Card not found" });
+      return;
+    }
+    if (name) card.name = name;
+    if (description) card.description = description;
+    if (startDate) card.startDate = startDate;
+    if (endDate) card.endDate = endDate;
+    if (priority) card.priority = priority;
+    //Add Members
+    const currentMembers = card.members.map((member) => member.toString());
+    if (addMembers && addMembers.length > 0) {
+      const objectIds = addMembers.filter((id: string) =>
+        mongoose.Types.ObjectId.isValid(id)
+      );
+      const membersToAdd = await UserModel.find({
+        $or: [
+          {
+            _id: { $in: objectIds },
+          },
+          { email: { $in: addMembers } },
+          { username: { $in: addMembers } },
+        ],
+      });
+      if (membersToAdd.length !== addMembers.length) {
+        res.status(404).json({
+          message: "One or more  users to add not found",
+          success: false,
+        });
+        return;
+      }
+      const addIds = membersToAdd.map((member) => member._id.toString());
+      const mergedIds = new Set([...currentMembers, ...addIds]);
+      card.members.splice(
+        0,
+        card.members.length,
+        ...Array.from(mergedIds).map((id) => new mongoose.Types.ObjectId(id))
+      );
+    }
+    //Add Labels
+    if (addLabels && addLabels.length > 0) {
+      for (const label of addLabels) {
+        const { name, color }: any = label;
+        if (!color) {
+          res
+            .status(400)
+            .json({ message: "Color is required for labels", success: false });
+          return;
+        }
+
+        let existingLabel = await CardLabelModel.findOne({
+          color,
+          card: card._id,
+        });
+
+        if (!existingLabel) {
+          existingLabel = await CardLabelModel.create({
+            name,
+            color,
+            card: card._id,
+          });
+        }
+
+        if (
+          !card.labels.includes(existingLabel._id as mongoose.Types.ObjectId)
+        ) {
+          card.labels.push(existingLabel._id);
+        }
+      }
+    }
+    //Remove Members
+    if (removeMembers && removeMembers.length > 0) {
+      const objectIds = removeMembers.filter((id: string) =>
+        mongoose.Types.ObjectId.isValid(id)
+      );
+      const membersToRemove = await UserModel.find({
+        $or: [
+          {
+            _id: { $in: objectIds },
+          },
+          { email: { $in: removeMembers } },
+          { username: { $in: removeMembers } },
+        ],
+      });
+      if (membersToRemove.length !== removeMembers.length) {
+        res.status(404).json({
+          message: "One or more users to remove not found",
+          success: false,
+        });
+        return;
+      }
+      const removeIds = membersToRemove.map((member) => member._id.toString());
+      card.members = card.members
+        .toObject()
+        .filter(
+          (id: mongoose.Types.ObjectId) => !removeIds.includes(id.toString())
+        );
+    }
+    //Remove Members
+    if (removeLabels && removeLabels.length > 0) {
+      const objectIds = removeLabels.filter((id: string) =>
+        mongoose.Types.ObjectId.isValid(id)
+      );
+      const labelsToRemove = await CardLabelModel.find({
+        $or: [
+          {
+            _id: { $in: objectIds },
+          },
+          { name: { $in: removeLabels } },
+          { color: { $in: removeLabels } },
+        ],
+        card: card._id,
+      });
+      if (labelsToRemove.length === 0) {
+        res.status(404).json({
+          message: "One or more labels to remove not found",
+          success: false,
+        });
+        return;
+      }
+      const removeLabelIds = labelsToRemove.map((label) =>
+        (label._id as mongoose.Types.ObjectId).toString()
+      );
+      card.labels = card.labels
+        .toObject()
+        .filter(
+          (id: mongoose.Types.ObjectId) =>
+            !removeLabelIds.includes(id.toString())
+        );
+    }
+    await card.save();
+    res.status(201).json({ card });
+  } catch (error: unknown) {
+    if (error instanceof Error) {
+      console.log(error.message);
+      res
+        .status(500)
+        .json({ message: "Internal server error", success: false });
+    } else {
+      res
+        .status(500)
+        .json({ message: "Internal server error", success: false });
+    }
+  }
+};
+export const getCardsByUser = async (req: Request, res: Response) => {
+  try {
+    const userId = req.user;
+    const cards = await CardModel.find({ createdBy: userId });
+    if (!cards) {
+      res.status(404).json({ message: "user have no cards" });
+      return;
+    }
+    res.status(200).json({ cards });
+  } catch (error: unknown) {
+    if (error instanceof Error) {
+      console.log(error.message);
+      res
+        .status(500)
+        .json({ message: "Internal server error", success: false });
+    } else {
+      res
+        .status(500)
+        .json({ message: "Internal server error", success: false });
+    }
+  }
+};

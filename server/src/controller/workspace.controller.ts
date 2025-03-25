@@ -226,7 +226,8 @@ export const createList = async (req: Request, res: Response) => {
 };
 export const createCard = async (req: Request, res: Response) => {
   try {
-    const { name, listId, startDate, endDate, description } = req.body;
+    const { name, listId, startDate, endDate, description, priority } =
+      req.body;
     if (!name) {
       res.status(409).json({
         message: "Please choose a title for your card",
@@ -322,6 +323,7 @@ export const createCard = async (req: Request, res: Response) => {
       startDate: startDate ? startDate : undefined,
       endDate: endDate ? endDate : undefined,
       description: description ? description : "",
+      priority: priority ? priority : "",
     });
     await ListModel.findOneAndUpdate(
       { _id: listId },
