@@ -11,10 +11,13 @@ import {
 import { upload } from "../middleware/multer.middleware";
 import { verifyJWT } from "../middleware/auth.middleware";
 import {
+  allBoards,
+  allWorkspaces,
   createBoard,
   createCard,
   createList,
   createWorkSpace,
+  getAllLists,
   getCalendarData,
   getWorkspaceTableData,
 } from "../controller/workspace.controller";
@@ -26,6 +29,7 @@ import {
   addLabel,
   editCardDetails,
   editItem,
+  getCardsByList,
   getCardsByUser,
   joinCard,
   leaveCard,
@@ -58,12 +62,11 @@ workSpaceRouter.route("/create-workspace").post(verifyJWT, createWorkSpace);
 workSpaceRouter.route("/create-board").post(verifyJWT, createBoard);
 workSpaceRouter.route("/create-list").post(verifyJWT, createList);
 workSpaceRouter.route("/create-card").post(verifyJWT, createCard);
-workSpaceRouter
-  .route("/:workspaceId/get-table-data")
-  .get(verifyJWT, getWorkspaceTableData);
-workSpaceRouter
-  .route("/:workspaceId/get-calendar-data")
-  .get(verifyJWT, getCalendarData);
+workSpaceRouter.route("/:workspaceId/get-table-data").get(verifyJWT, getWorkspaceTableData);
+workSpaceRouter.route("/:workspaceId/get-calendar-data").get(verifyJWT, getCalendarData);
+workSpaceRouter.route("/:boardId/get-lists").get(verifyJWT, getAllLists);
+workSpaceRouter.route("/get-workspaces").get(verifyJWT, allWorkspaces);
+workSpaceRouter.route("/:workspaceId/get-boards").get(verifyJWT, allBoards);
 export { workSpaceRouter };
 
 cardRouter.route("/join-card").post(verifyJWT, joinCard);
@@ -91,4 +94,5 @@ cardRouter
   .route("/edit/:listId/:cardId")
   .patch(verifyJWT, editCardDetails);
 cardRouter.route("/get-all-cards").get(verifyJWT, getCardsByUser);
+cardRouter.route("/:listId/get-list-cards").get(verifyJWT, getCardsByList);
 export { cardRouter };

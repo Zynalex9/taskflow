@@ -5,7 +5,7 @@ import { commentsModel } from "../models/card.comments.models";
 import { UploadOnCloudinary } from "../utils/cloudinary";
 import { CardAttachmentModel } from "../models/card.attachments.model";
 import { CheckListModel } from "../models/card.checklist.model";
-import { mongo, Types } from "mongoose";
+import { Types } from "mongoose";
 import { UserModel } from "../models/user.model";
 import mongoose from "mongoose";
 
@@ -670,6 +670,33 @@ export const getCardsByUser = async (req: Request, res: Response) => {
     }
     res.status(200).json({ cards });
   } catch (error: unknown) {
+    if (error instanceof Error) {
+      console.log(error.message);
+      res
+        .status(500)
+        .json({ message: "Internal server error", success: false });
+    } else {
+      res
+        .status(500)
+        .json({ message: "Internal server error", success: false });
+    }
+  }
+};
+export const getCardsByList = async(req:Request,res:Response)=>{
+  try {
+    const userId=req.user
+    const {listId} = req.params
+    if (!listId ) {
+      res.status(400).json({ message: "workspace ID is required" });
+      return;
+    }
+    const cards = await CardModel.find({createdBy:userId,list:listId})  
+    if(cards.length===0){
+      res.status(404).json({message:"No Cards found in the given list"})
+      return
+    }
+    res.status(200).json({message:"Cards found",cards})
+  }catch (error: unknown) {
     if (error instanceof Error) {
       console.log(error.message);
       res

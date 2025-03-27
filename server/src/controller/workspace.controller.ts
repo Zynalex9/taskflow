@@ -399,7 +399,7 @@ export const getWorkspaceTableData = async (req: Request, res: Response) => {
       },
       {
         $project: {
-          _id: 0,
+          _id: 1,
           boardName: "$title",
           listName: "$listDetails.name",
           cardName: "$cardsDetails.name",
@@ -493,5 +493,84 @@ export const getCalendarData = async (req: Request, res: Response) => {
       console.log(error.message);
     }
     res.status(500).json({ message: "Internal server error", success: false });
+  }
+};
+
+export const getAllLists = async (
+  req: Request,
+  res: Response
+): Promise<void> => {
+  try {
+    const { boardId } = req.params;
+    const userId = req.user;
+
+    if (!boardId) {
+      res.status(400).json({ message: "Board ID is required" });
+      return;
+    }
+
+    const board = await boardModel
+      .findOne({ _id: boardId, createdBy: userId })
+      .lean();
+    if (!board) {
+      res.status(404).json({ message: "Board not found" });
+      return;
+    }
+
+    const allLists = await ListModel.find({ board: boardId });
+
+    if (allLists.length === 0) {
+      res.status(404).json({ message: "No lists found for this board" });
+      return;
+    }
+
+    res.status(200).json({
+      message: "Lists retrieved",
+      allLists,
+      workspaceId: board.workspace,
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Internal server error" });
+  }
+};
+export const allWorkspaces = async (
+  req: Request,
+  res: Response
+): Promise<void> => {
+  try {
+    const userId = req.user;
+    const workspaces = await workSpaceModel.find({ createdBy: userId }).lean();
+    if (workspaces.length === 0) {
+      res.status(404).json({ message: "workspace not found" });
+      return;
+    }
+    res.status(201).json({ message: "Workspace(s) Found", workspaces });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Internal server error" });
+  }
+};
+export const allBoards = async (req: Request, res: Response): Promise<void> => {
+  try {
+    const userId = req.user;
+    const { workspaceId } = req.params;
+    
+    if (!workspaceId ) {
+      res.status(400).json({ message: "workspace ID is required" });
+      return;
+    }
+    const allBoards = await boardModel
+      .find({ createdBy: userId, workspace: workspaceId })
+      .lean();
+    if (allBoards.length === 0) {
+      res.status(404).json({ message: "boards not found" });
+      return;
+    }
+    
+    res.status(201).json({ message: "board(s) Found", allBoards });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Internal server error" });
   }
 };
