@@ -17,6 +17,7 @@ import {
   createCard,
   createList,
   createWorkSpace,
+  deleteBoard,
   deleteWorkSpace,
   getAllLists,
   getCalendarData,
@@ -72,6 +73,7 @@ workSpaceRouter.route("/:boardId/get-lists").get(verifyJWT, getAllLists);
 workSpaceRouter.route("/get-workspaces").get(verifyJWT, allWorkspaces);
 workSpaceRouter.route("/:workspaceId/get-boards").get(verifyJWT, allBoards);
 workSpaceRouter.route("/delete-workspace").delete(verifyJWT, deleteWorkSpace);
+workSpaceRouter.route("/:boardId/delete-board").delete(verifyJWT, deleteBoard);
 export { workSpaceRouter };
 
 cardRouter.route("/join-card").post(verifyJWT, joinCard);

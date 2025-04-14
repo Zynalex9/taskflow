@@ -247,13 +247,6 @@ export const createCard = async (req: Request, res: Response) => {
       return;
     }
     const userId = req.user._id;
-    // const list = await ListModel.findById(listId).populate({
-    //   path: "board",
-    //   populate: {
-    //     path: "workspace",
-    //     select: "admin",
-    //   },
-    // });
     const list = await ListModel.aggregate([
       {
         $match: { _id: new mongoose.Types.ObjectId(listId) },
@@ -583,8 +576,11 @@ export const deleteWorkSpace = async (req: Request, res: Response) => {
     const { workspaceId } = req.body;
     const userId = req.user._id;
     const workspace = await workSpaceModel.findById(workspaceId);
-    if(!workspace?.admin.includes(userId) ){
-      res.status(200).json({message:"You are not authorized to delete the workspace"})
+    if (!workspace?.admin.includes(userId)) {
+      res
+        .status(200)
+        .json({ message: "You are not authorized to delete the workspace" });
+      return;
     }
     const boards = await boardModel.find({ workspace: workspaceId });
     if (boards.length === 0) {
@@ -649,3 +645,82 @@ export const deleteWorkSpace = async (req: Request, res: Response) => {
       .json({ message: "Internal server error in deleting workspace", error });
   }
 };
+export const deleteBoard = async (req: Request, res: Response) => {
+  const session = await mongoose.startSession();
+  try {
+    session.startTransaction();
+
+    const { boardId } = req.params;
+    const user = req.user._id;
+
+    if (!boardId) {
+      res.status(407).json({ message: "Board Id is required" });
+      return;
+    }
+
+    const board = await boardModel.findById(boardId).session(session);
+    if (!board) {
+      res.status(404).json({ message: "No Board found" });
+      return;
+    }
+
+    const workspace = await workSpaceModel.findById(board.workspace).session(session);
+    if (!workspace?.admin.includes(user)) {
+      res.status(403).json({ message: "You are not authorized to delete the board" });
+      return;
+    }
+
+    const lists = await ListModel.find({ board }).session(session);
+    if (lists.length === 0) {
+      await boardModel.findByIdAndDelete(boardId).session(session);
+      await session.commitTransaction();
+      res.status(200).json({ message: "Board Deleted.." });
+      return;
+    }
+
+    const listIds = lists.map((l) => l._id);
+    const cards = await CardModel.find({ list: { $in: listIds } }).session(session);
+
+    if (cards.length === 0) {
+      await ListModel.deleteMany({ _id: { $in: listIds } }).session(session);
+      await boardModel.findByIdAndDelete(boardId).session(session);
+      await session.commitTransaction();
+      res.status(200).json({ message: "Board and list(s) deleted" });
+      return;
+    }
+
+    const cardIds = cards.map((c) => c._id);
+    const allCommentsIds = cards.flatMap((c) => c.comments);
+    const allLabelsIds = cards.flatMap((c) => c.labels);
+    const allChecklistIDs = cards.flatMap((c) => c.checklist);
+    const allAttachmentsId = cards.flatMap((c) => c.attachments);
+
+    if (allCommentsIds.length > 0) {
+      await commentsModel.deleteMany({ _id: { $in: allCommentsIds } }).session(session);
+    }
+    if (allLabelsIds.length > 0) {
+      await CardLabelModel.deleteMany({ _id: { $in: allLabelsIds } }).session(session);
+    }
+    if (allChecklistIDs.length > 0) {
+      await CheckListModel.deleteMany({ _id: { $in: allChecklistIDs } }).session(session);
+    }
+    if (allAttachmentsId.length > 0) {
+      await CardAttachmentModel.deleteMany({ _id: { $in: allAttachmentsId } }).session(session);
+    }
+
+    await CardModel.deleteMany({ _id: { $in: cardIds } }).session(session);
+    await ListModel.deleteMany({ _id: { $in: listIds } }).session(session);
+    await boardModel.deleteOne({ _id: boardId }).session(session);
+
+    await session.commitTransaction();
+    res.status(200).json({ message: "Board deleted with all related data" });
+
+  } catch (error) {
+    await session.abortTransaction();
+    console.error("Delete Board Error:", error);
+    res.status(500).json({ message: "Internal server error", error });
+  } finally {
+    session.endSession();
+  }
+};
+
