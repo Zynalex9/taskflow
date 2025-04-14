@@ -5,6 +5,10 @@ import { boardModel } from "../models/board.models";
 import { ListModel } from "../models/list.models";
 import { CardModel } from "../models/card.model";
 import mongoose from "mongoose";
+import { commentsModel } from "../models/card.comments.models";
+import { CardLabelModel } from "../models/card.label.model";
+import { CardAttachmentModel } from "../models/card.attachments.model";
+import { CheckListModel } from "../models/card.checklist.model";
 
 interface IParams {
   name: string;
@@ -284,7 +288,6 @@ export const createCard = async (req: Request, res: Response) => {
         },
       },
     ]);
-    console.log(list[0]);
     const adminsId = list[0].targetedWorkSpace.admin.map((id: any) =>
       id.toString()
     );
@@ -555,8 +558,8 @@ export const allBoards = async (req: Request, res: Response): Promise<void> => {
   try {
     const userId = req.user;
     const { workspaceId } = req.params;
-    
-    if (!workspaceId ) {
+
+    if (!workspaceId) {
       res.status(400).json({ message: "workspace ID is required" });
       return;
     }
@@ -567,10 +570,82 @@ export const allBoards = async (req: Request, res: Response): Promise<void> => {
       res.status(404).json({ message: "boards not found" });
       return;
     }
-    
+
     res.status(201).json({ message: "board(s) Found", allBoards });
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: "Internal server error" });
+  }
+};
+
+export const deleteWorkSpace = async (req: Request, res: Response) => {
+  try {
+    const { workspaceId } = req.body;
+    const userId = req.user._id;
+    const workspace = await workSpaceModel.findById(workspaceId);
+    if(!workspace?.admin.includes(userId) ){
+      res.status(200).json({message:"You are not authorized to delete the workspace"})
+    }
+    const boards = await boardModel.find({ workspace: workspaceId });
+    if (boards.length === 0) {
+      await workSpaceModel.findByIdAndDelete(workspaceId);
+      res.status(201).json({ message: "Workspace deleted.." });
+      return;
+    }
+    const boardIds = boards.map((b) => b._id);
+
+    const lists = await ListModel.find({ board: { $in: boardIds } });
+    if (lists.length === 0) {
+      await boardModel.deleteMany({ _id: { $in: boardIds } });
+      await workSpaceModel.findByIdAndDelete(workspaceId);
+      res.status(201).json({
+        message: "Workspace deleted and corresponding boards are deleted",
+      });
+      return;
+    }
+    const listIds = lists.map((list) => list._id);
+
+    const cards = await CardModel.find({ list: { $in: listIds } });
+    if (cards.length === 0) {
+      await ListModel.deleteMany({ _id: { $in: listIds } });
+      await boardModel.deleteMany({ _id: { $in: boardIds } });
+      await workSpaceModel.findByIdAndDelete(workspaceId);
+      res.status(201).json({
+        message:
+          "Workspace deleted and corresponding boards and lists are deleted",
+      });
+      return;
+    }
+    const cardIds = cards.map((c) => c._id);
+
+    const allCommentsIds = cards.flatMap((c) => c.comments);
+    const allLabelsIds = cards.flatMap((c) => c.labels);
+    const allChecklistIDs = cards.flatMap((c) => c.checklist);
+    const allAttachmentsId = cards.flatMap((c) => c.attachments);
+    if (allCommentsIds.length > 0) {
+      await commentsModel.deleteMany({ _id: { $in: allCommentsIds } });
+    }
+    if (allLabelsIds.length > 0) {
+      await CardLabelModel.deleteMany({ _id: { $in: allLabelsIds } });
+    }
+    if (allChecklistIDs.length > 0) {
+      await CheckListModel.deleteMany({ _id: { $in: allChecklistIDs } });
+    }
+    if (allAttachmentsId.length > 0) {
+      await CardAttachmentModel.deleteMany({ _id: { $in: allAttachmentsId } });
+    }
+
+    await CardModel.deleteMany({ _id: { $in: cardIds } });
+    await ListModel.deleteMany({ _id: { $in: listIds } });
+    await boardModel.deleteMany({ _id: { $in: boardIds } });
+    await workSpaceModel.findByIdAndDelete(workspaceId);
+    res.status(200).json({
+      message: "Workspace deleted",
+    });
+  } catch (error) {
+    console.error(error);
+    res
+      .status(500)
+      .json({ message: "Internal server error in deleting workspace", error });
   }
 };

@@ -17,6 +17,7 @@ import {
   createCard,
   createList,
   createWorkSpace,
+  deleteWorkSpace,
   getAllLists,
   getCalendarData,
   getWorkspaceTableData,
@@ -35,7 +36,6 @@ import {
   leaveCard,
   toggleCheckListItem,
 } from "../controller/card.controller";
-import { verify } from "crypto";
 
 const userRouter = Router();
 const workSpaceRouter = Router();
@@ -62,11 +62,16 @@ workSpaceRouter.route("/create-workspace").post(verifyJWT, createWorkSpace);
 workSpaceRouter.route("/create-board").post(verifyJWT, createBoard);
 workSpaceRouter.route("/create-list").post(verifyJWT, createList);
 workSpaceRouter.route("/create-card").post(verifyJWT, createCard);
-workSpaceRouter.route("/:workspaceId/get-table-data").get(verifyJWT, getWorkspaceTableData);
-workSpaceRouter.route("/:workspaceId/get-calendar-data").get(verifyJWT, getCalendarData);
+workSpaceRouter
+  .route("/:workspaceId/get-table-data")
+  .get(verifyJWT, getWorkspaceTableData);
+workSpaceRouter
+  .route("/:workspaceId/get-calendar-data")
+  .get(verifyJWT, getCalendarData);
 workSpaceRouter.route("/:boardId/get-lists").get(verifyJWT, getAllLists);
 workSpaceRouter.route("/get-workspaces").get(verifyJWT, allWorkspaces);
 workSpaceRouter.route("/:workspaceId/get-boards").get(verifyJWT, allBoards);
+workSpaceRouter.route("/delete-workspace").delete(verifyJWT, deleteWorkSpace);
 export { workSpaceRouter };
 
 cardRouter.route("/join-card").post(verifyJWT, joinCard);
@@ -90,9 +95,7 @@ cardRouter
 cardRouter
   .route("/checklist/edit/:checklistId/:itemId")
   .patch(verifyJWT, editItem);
-cardRouter
-  .route("/edit/:listId/:cardId")
-  .patch(verifyJWT, editCardDetails);
+cardRouter.route("/edit/:listId/:cardId").patch(verifyJWT, editCardDetails);
 cardRouter.route("/get-all-cards").get(verifyJWT, getCardsByUser);
 cardRouter.route("/:listId/get-list-cards").get(verifyJWT, getCardsByList);
 export { cardRouter };

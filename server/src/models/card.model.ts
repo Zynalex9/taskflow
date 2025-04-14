@@ -57,7 +57,8 @@ const CardSchema = new Schema({
   },
   priority: {
     type: String,
-    enum: ["highest", "high", "medium", "low", "lowest"],
+    enum: ["highest", "high", "medium", "low", "lowest",""],
+    
   },
   checklist: [
     {

@@ -33,14 +33,16 @@ export const joinCard = async (req: Request, res: Response) => {
       return;
     }
 
-    card.members.push(userId);
-    await card.save();
+    const updatedCard = await UserModel.findByIdAndUpdate(
+      cardId,
+      { $addToSet: { members: userId } },
+      { new: true }
+    );
     res.status(200).json({
       message: "User added to the card successfully",
       success: true,
-      card,
+      card: updatedCard,
     });
-    return;
   } catch (error) {
     console.error(error);
     res.status(500).json({
@@ -55,23 +57,26 @@ export const leaveCard = async (req: Request, res: Response) => {
     const userId = req.user._id;
     const card = await CardModel.findById(cardId);
     if (!card) {
-      res.status(404).json({ message: "Card does not found", success: false });
+      res.status(404).json({ message: "Card not found", success: false });
       return;
     }
-    if (!card.members.includes(userId)) {
-      res.status(401).json({
-        message: "User is not a member of this card",
+    if (card.createdBy.toString() === userId.toString()) {
+      res.status(403).json({
+        message:
+          "You are the admin of this card. You must delete it instead of leaving.",
         success: false,
       });
       return;
     }
-
-    card.members.pull(userId);
-    await card.save();
+    const updatedCard = await CardModel.findByIdAndUpdate(
+      cardId,
+      { $pull: { members: userId } },
+      { new: true }
+    );
     res.status(200).json({
       message: "User removed from the card successfully",
       success: true,
-      card,
+      card: updatedCard,
     });
   } catch (error) {
     console.error(error);
@@ -79,37 +84,47 @@ export const leaveCard = async (req: Request, res: Response) => {
       message: "Internal server error",
       success: false,
     });
-    return;
   }
 };
+
 export const addLabel = async (req: Request, res: Response) => {
   try {
     const { name, color, cardId } = req.body;
+
     if (!color || !cardId) {
-      res
-        .status(404)
-        .json({ message: "No Card-ID or Color given", success: false });
+      res.status(400).json({
+        message: "No Card-ID or Color given",
+        success: false,
+      });
       return;
     }
-    const card = await CardModel.findById(cardId);
-    if (!card) {
+    const cardExists = await CardModel.exists({ _id: cardId });
+    if (!cardExists) {
       res.status(404).json({ message: "Card not found", success: false });
       return;
     }
     const label = await CardLabelModel.create({
-      name,
+      name: name || "",
       color,
       card: cardId,
     });
-    card.labels.push(label._id);
-    await card.save();
+    await CardModel.findByIdAndUpdate(cardId, {
+      $push: { labels: label._id },
+    });
     res.status(201).json({
       message: "Label added successfully",
       success: true,
       label,
     });
-  } catch (error) {}
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({
+      message: "Internal server error",
+      success: false,
+    });
+  }
 };
+
 export const addComment = async (req: Request, res: Response) => {
   try {
     const { comment, cardId } = req.body;
@@ -682,21 +697,21 @@ export const getCardsByUser = async (req: Request, res: Response) => {
     }
   }
 };
-export const getCardsByList = async(req:Request,res:Response)=>{
+export const getCardsByList = async (req: Request, res: Response) => {
   try {
-    const userId=req.user
-    const {listId} = req.params
-    if (!listId ) {
+    const userId = req.user;
+    const { listId } = req.params;
+    if (!listId) {
       res.status(400).json({ message: "workspace ID is required" });
       return;
     }
-    const cards = await CardModel.find({createdBy:userId,list:listId})  
-    if(cards.length===0){
-      res.status(404).json({message:"No Cards found in the given list"})
-      return
+    const cards = await CardModel.find({ createdBy: userId, list: listId });
+    if (cards.length === 0) {
+      res.status(404).json({ message: "No Cards found in the given list" });
+      return;
     }
-    res.status(200).json({message:"Cards found",cards})
-  }catch (error: unknown) {
+    res.status(200).json({ message: "Cards found", cards });
+  } catch (error: unknown) {
     if (error instanceof Error) {
       console.log(error.message);
       res
