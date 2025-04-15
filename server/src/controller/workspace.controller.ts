@@ -4,11 +4,12 @@ import { UserModel } from "../models/user.model";
 import { boardModel } from "../models/board.models";
 import { ListModel } from "../models/list.models";
 import { CardModel } from "../models/card.model";
-import mongoose from "mongoose";
+import mongoose, { ClientSession, Model, Types } from "mongoose";
 import { commentsModel } from "../models/card.comments.models";
 import { CardLabelModel } from "../models/card.label.model";
 import { CardAttachmentModel } from "../models/card.attachments.model";
 import { CheckListModel } from "../models/card.checklist.model";
+import { findData, deleteIfExists, CheckAdmin } from "../utils/helpers";
 
 interface IParams {
   name: string;
@@ -664,9 +665,13 @@ export const deleteBoard = async (req: Request, res: Response) => {
       return;
     }
 
-    const workspace = await workSpaceModel.findById(board.workspace).session(session);
+    const workspace = await workSpaceModel
+      .findById(board.workspace)
+      .session(session);
     if (!workspace?.admin.includes(user)) {
-      res.status(403).json({ message: "You are not authorized to delete the board" });
+      res
+        .status(403)
+        .json({ message: "You are not authorized to delete the board" });
       return;
     }
 
@@ -679,7 +684,9 @@ export const deleteBoard = async (req: Request, res: Response) => {
     }
 
     const listIds = lists.map((l) => l._id);
-    const cards = await CardModel.find({ list: { $in: listIds } }).session(session);
+    const cards = await CardModel.find({ list: { $in: listIds } }).session(
+      session
+    );
 
     if (cards.length === 0) {
       await ListModel.deleteMany({ _id: { $in: listIds } }).session(session);
@@ -696,16 +703,24 @@ export const deleteBoard = async (req: Request, res: Response) => {
     const allAttachmentsId = cards.flatMap((c) => c.attachments);
 
     if (allCommentsIds.length > 0) {
-      await commentsModel.deleteMany({ _id: { $in: allCommentsIds } }).session(session);
+      await commentsModel
+        .deleteMany({ _id: { $in: allCommentsIds } })
+        .session(session);
     }
     if (allLabelsIds.length > 0) {
-      await CardLabelModel.deleteMany({ _id: { $in: allLabelsIds } }).session(session);
+      await CardLabelModel.deleteMany({ _id: { $in: allLabelsIds } }).session(
+        session
+      );
     }
     if (allChecklistIDs.length > 0) {
-      await CheckListModel.deleteMany({ _id: { $in: allChecklistIDs } }).session(session);
+      await CheckListModel.deleteMany({
+        _id: { $in: allChecklistIDs },
+      }).session(session);
     }
     if (allAttachmentsId.length > 0) {
-      await CardAttachmentModel.deleteMany({ _id: { $in: allAttachmentsId } }).session(session);
+      await CardAttachmentModel.deleteMany({
+        _id: { $in: allAttachmentsId },
+      }).session(session);
     }
 
     await CardModel.deleteMany({ _id: { $in: cardIds } }).session(session);
@@ -714,7 +729,6 @@ export const deleteBoard = async (req: Request, res: Response) => {
 
     await session.commitTransaction();
     res.status(200).json({ message: "Board deleted with all related data" });
-
   } catch (error) {
     await session.abortTransaction();
     console.error("Delete Board Error:", error);
@@ -724,3 +738,64 @@ export const deleteBoard = async (req: Request, res: Response) => {
   }
 };
 
+export const deleteList = async (req: Request, res: Response) => {
+  const session = await mongoose.startSession();
+  try {
+    session.startTransaction();
+    const { listId, workspaceId } = req.params;
+    const userId = req.user._id;
+    if (!listId) {
+      await session.abortTransaction();
+      res.status(400).json({ message: "List id missing" });
+      return;
+    }
+    const isAuthorized = await CheckAdmin(userId, workspaceId);
+    if (!isAuthorized) {
+      await session.abortTransaction();
+      res
+        .status(403)
+        .json({ message: "You are not authorized to delete the board" });
+      return;
+    }
+    const list = await ListModel.findById(listId).session(session);
+    if (!list) {
+      await session.abortTransaction();
+      res.status(400).json({ message: "List not found" });
+      return;
+    }
+
+    const cards = await CardModel.find({ list: listId });
+    if (cards.length == 0) {
+      await ListModel.findByIdAndDelete(listId).session(session);
+      session.commitTransaction();
+      res
+        .status(200)
+        .json({ message: "List deleted. There was no cards in the list" });
+      return;
+    }
+
+    const cardIds = cards.flatMap((c) => c._id);
+
+    const allCommentsIds = findData(cards, "comments");
+    const allLabelsIds = findData(cards, "labels");
+    const allAttachmentsId = findData(cards, "attachments");
+    const allChecklistIDs = findData(cards, "checklist");
+
+    await deleteIfExists(commentsModel, allCommentsIds, session);
+    await deleteIfExists(CardLabelModel, allLabelsIds, session);
+    await deleteIfExists(CardAttachmentModel, allAttachmentsId, session);
+    await deleteIfExists(CheckListModel, allChecklistIDs, session);
+
+    await CardModel.deleteMany({ _id: { $in: cardIds } }).session(session);
+    await ListModel.findByIdAndDelete(listId).session(session);
+    session.commitTransaction();
+    res.status(200).json({ message: `List is deleted with related data` });
+    return;
+  } catch (error) {
+    await session.abortTransaction();
+    console.error("Delete List Error:", error);
+    res.status(500).json({ message: "Internal server error", error });
+  } finally {
+    session.endSession();
+  }
+};
