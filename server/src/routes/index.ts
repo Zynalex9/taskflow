@@ -38,6 +38,7 @@ import {
   leaveCard,
   toggleCheckListItem,
 } from "../controller/card.controller";
+import { deleteCard, deleteComment, deleteLabel } from "../controller/card.delete.controller";
 
 const userRouter = Router();
 const workSpaceRouter = Router();
@@ -75,7 +76,9 @@ workSpaceRouter.route("/get-workspaces").get(verifyJWT, allWorkspaces);
 workSpaceRouter.route("/:workspaceId/get-boards").get(verifyJWT, allBoards);
 workSpaceRouter.route("/delete-workspace").delete(verifyJWT, deleteWorkSpace);
 workSpaceRouter.route("/:boardId/delete-board").delete(verifyJWT, deleteBoard);
-workSpaceRouter.route("/:workspaceId/:listId/delete-list").delete(verifyJWT, deleteList);
+workSpaceRouter
+  .route("/:workspaceId/:listId/delete-list")
+  .delete(verifyJWT, deleteList);
 export { workSpaceRouter };
 
 cardRouter.route("/join-card").post(verifyJWT, joinCard);
@@ -102,4 +105,9 @@ cardRouter
 cardRouter.route("/edit/:listId/:cardId").patch(verifyJWT, editCardDetails);
 cardRouter.route("/get-all-cards").get(verifyJWT, getCardsByUser);
 cardRouter.route("/:listId/get-list-cards").get(verifyJWT, getCardsByList);
+cardRouter
+  .route("/:workspaceId/:cardId/delete-card")
+  .delete(verifyJWT, deleteCard);
+cardRouter.route("/delete-label").delete(deleteLabel);
+cardRouter.route("/:commentId/delete-comment").delete(verifyJWT, deleteComment);
 export { cardRouter };
