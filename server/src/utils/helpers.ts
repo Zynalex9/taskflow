@@ -1,6 +1,7 @@
 import { ClientSession, Model, Types } from "mongoose";
 import { workSpaceModel } from "../models/workspace.model";
 import { Request, Response } from "express";
+import ApiResponse from "./ApiResponse";
 
 export const findData = <T>(param: T[], key: keyof T) => {
   const data = param.flatMap((item) => item[key]);
@@ -47,7 +48,7 @@ export const checkRequiredBody = (
   req: Request,
   res: Response,
   requiredBody: string[]
-):Boolean => {
+): Boolean => {
   for (const body of requiredBody) {
     if (!req.body[body]) {
       res.status(400).json({
@@ -63,17 +64,22 @@ export const checkRequiredQuery = (
   req: Request,
   res: Response,
   requiredQuery: string[]
-):Boolean => {
-  for(const query of requiredQuery ){
-    if(!req.query[query]){
+): Boolean => {
+  for (const query of requiredQuery) {
+    if (!req.query[query]) {
       res.status(400).json({
         message: `Missing required parameter: ${query}`,
       });
       return false;
     }
   }
-  return true
+  return true;
 };
 
-
-
+export const notFound = <T>(item: T, name: string, res: Response): Boolean => {
+  if (!item) {
+    res.status(404).json(new ApiResponse(404, {}, `${name} not found`));
+    return true;
+  }
+  return false;
+};

@@ -8,7 +8,10 @@ import { CheckListModel } from "../models/card.checklist.model";
 import { Types } from "mongoose";
 import { UserModel } from "../models/user.model";
 import mongoose from "mongoose";
-
+import { asyncHandler } from "../utils/asyncHandler";
+import { checkRequiredBody, notFound } from "../utils/helpers";
+import { ListModel } from "../models/list.models";
+import ApiResponse from "../utils/ApiResponse";
 
 interface INewItem {
   title: string;
@@ -21,7 +24,11 @@ interface INewItem {
 export const joinCard = async (req: Request, res: Response) => {
   try {
     const { cardId } = req.body;
-    const userId = req.user._id;
+    const userId = req.user?._id;
+    if (!userId) {
+      res.status(401).json(new ApiResponse(401, {}, "You're not authorized"));
+      return;
+    }
     const card = await CardModel.findById(cardId);
     if (!card) {
       res.status(404).json({ message: "Card does not found", success: false });
@@ -725,3 +732,44 @@ export const getCardsByList = async (req: Request, res: Response) => {
     }
   }
 };
+
+export const copyCard = asyncHandler(async (req, res) => {
+  const required = ["cardId", "ListId"];
+  if (!checkRequiredBody(req, res, required)) return;
+  const { cardId, ListId } = req.body;
+  const card = await CardModel.findById(cardId);
+  if (notFound(card, "Card", res)) return;
+  const list = await ListModel.findById(ListId);
+  if (notFound(list, "List", res)) return;
+
+  list?.cards.push(cardId);
+  await list?.save();
+  res.status(200).json(new ApiResponse(200, list, "Card copied"));
+});
+
+export const moveCard = asyncHandler(async (req, res) => {
+  const required = ["cardId", "ListId"];
+  if (!checkRequiredBody(req, res, required)) return;
+  const { cardId, ListId } = req.body;
+  const card = await CardModel.findById(cardId);
+  if (notFound(card, "Card", res)) return;
+
+  const list = await ListModel.findById(ListId);
+  if (!list) {
+    notFound(list, "List", res);
+    return;
+  }
+  const oldList = await ListModel.findOne({ cards: cardId });
+  if (!oldList) {
+    notFound(oldList, "Old List", res);
+    return;
+  }
+
+  list?.cards.push(cardId);
+  oldList.cards = oldList.cards.filter(
+    (id) => id.toString() !== cardId.toString()
+  );
+  await list.save();
+  await oldList.save();
+  res.status(200).json(new ApiResponse(200, list, "Card moved"));
+});
