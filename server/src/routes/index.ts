@@ -7,38 +7,24 @@ import {
   loginUser,
   logOutUser,
   registerUser,
-} from "../controller/user.controller";
+} from "../controller/user/user.controller";
 import { upload } from "../middleware/multer.middleware";
 import { verifyJWT } from "../middleware/auth.middleware";
 import {
-  allBoards,
   allWorkspaces,
-  createBoard,
-  createCard,
-  createList,
   createWorkSpace,
-  deleteBoard,
-  deleteList,
   deleteWorkSpace,
-  getAllLists,
   getCalendarData,
   getWorkspaceTableData,
-} from "../controller/workspace.controller";
-import {
-  addAttachment,
-  addChecklist,
-  addComment,
-  addItemToCheckList,
-  addLabel,
-  editCardDetails,
-  editItem,
-  getCardsByList,
-  getCardsByUser,
-  joinCard,
-  leaveCard,
-  toggleCheckListItem,
-} from "../controller/card.controller";
-import { deleteCard, deleteComment, deleteLabel } from "../controller/card.delete.controller";
+} from "../controller/workspace/workspace.controller";
+import { allBoards, createBoard, deleteBoard } from "../controller/board/board";
+import { createList, deleteList, getAllLists } from "../controller/list/list";
+import { createCard, deleteCard, editCardDetails, getCardsByList, getCardsByUser, joinCard, leaveCard } from "../controller/card/card";
+import { addLabel, deleteLabel } from "../controller/card/label";
+import { addComment, deleteComment } from "../controller/card/comment";
+import { addAttachment } from "../controller/card/attachment";
+import { addChecklist, addItemToCheckList, editItem, toggleCheckListItem } from "../controller/card/checklist";
+
 
 const userRouter = Router();
 const workSpaceRouter = Router();

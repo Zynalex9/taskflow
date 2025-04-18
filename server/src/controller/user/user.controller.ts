@@ -1,7 +1,7 @@
 import { Request, Response } from "express";
-import { UserModel } from "../models/user.model";
-import bcryptjs, { compareSync } from "bcryptjs";
-import { UploadOnCloudinary } from "../utils/cloudinary";
+import { UserModel } from "../../models/user.model";
+import bcryptjs from "bcryptjs";
+import { UploadOnCloudinary } from "../../utils/cloudinary";
 
 export const registerUser = async (
   req: Request,
