@@ -9,6 +9,9 @@ import { commentsModel } from "../../models/card.comments.models";
 import { CardLabelModel } from "../../models/card.label.model";
 import { CardAttachmentModel } from "../../models/card.attachments.model";
 import { CheckListModel } from "../../models/card.checklist.model";
+import { asyncHandler } from "../../utils/asyncHandler";
+import { CheckAdmin, checkRequiredBody, notFound } from "../../utils/helpers";
+import ApiResponse from "../../utils/ApiResponse";
 interface IParams {
   name: string;
   members?: string[];
@@ -334,3 +337,80 @@ export const deleteWorkSpace = async (req: Request, res: Response) => {
       .json({ message: "Internal server error in deleting workspace", error });
   }
 };
+export const addAdmin = asyncHandler(async (req: Request, res: Response) => {
+  const required = ["workspaceId,adminId"];
+  if (!checkRequiredBody(req, res, required)) return;
+  const { workspaceId, adminId } = req.body;
+  const userId = req.user._id;
+  const isAuthorized = await CheckAdmin(userId, workspaceId);
+  if (!isAuthorized) {
+    res
+      .status(400)
+      .json(new ApiResponse(400, {}, "You are not authorized to add an admin"));
+    return;
+  }
+  const workspace = await workSpaceModel.findById(workspaceId);
+  if (!workspace) {
+    notFound(workspace, "workspace", res);
+    return;
+  }
+  const admin = await UserModel.findById(adminId);
+  if (!admin) {
+    notFound(admin, "admin", res);
+    return;
+  }
+  if (workspace.admin.includes(admin._id)) {
+    res
+      .status(400)
+      .json(
+        new ApiResponse(
+          400,
+          {},
+          `${admin.username} is already an admin in this workspace`
+        )
+      );
+    return;
+  }
+  workspace.admin.push(admin._id);
+  await workspace.save();
+  res
+    .status(200)
+    .json(new ApiResponse(200, {}, `${admin.username} now an admin`));
+});
+export const removeAdmin = asyncHandler(async (req: Request, res: Response) => {
+  const required = ["workspaceId,adminId"];
+  if (!checkRequiredBody(req, res, required)) return;
+  const { workspaceId, adminId } = req.body;
+  const userId = req.user._id;
+  const isAuthorized = await CheckAdmin(userId, workspaceId);
+  if (!isAuthorized) {
+    res
+      .status(400)
+      .json(new ApiResponse(400, {}, "You are not authorized to add an admin"));
+    return;
+  }
+  const workspace = await workSpaceModel.findById(workspaceId);
+  if (!workspace) {
+    notFound(workspace, "workspace", res);
+    return;
+  }
+  const admin = await UserModel.findById(adminId);
+  if (!admin) {
+    notFound(admin, "admin", res);
+    return;
+  }
+  if (!workspace.admin.includes(admin._id)) {
+    res
+      .status(400)
+      .json(new ApiResponse(400, {}, `${admin.username} is not an admin`));
+    return;
+  }
+  workspace.admin = workspace.admin.filter(
+    (id) => id.toString() !== admin._id.toString()
+  );
+  await workspace.save();
+  res
+    .status(200)
+    .json(new ApiResponse(200, {}, `${admin.username} is removed from admins`));
+  return;
+});

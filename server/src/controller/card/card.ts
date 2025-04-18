@@ -485,7 +485,6 @@ export const copyCard = asyncHandler(async (req, res) => {
   await list?.save();
   res.status(200).json(new ApiResponse(200, list, "Card copied"));
 });
-
 export const moveCard = asyncHandler(async (req, res) => {
   const required = ["cardId", "ListId"];
   if (!checkRequiredBody(req, res, required)) return;
