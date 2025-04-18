@@ -1,4 +1,21 @@
-import mongoose, { Mongoose, Schema } from "mongoose";
+import mongoose, { Schema } from "mongoose";
+import { Types } from "mongoose";
+
+export interface IWorkspace {
+  _id?: Types.ObjectId;
+  name: string;
+  admin: Types.ObjectId[];
+  calendar: Types.ObjectId;
+  boards: Types.ObjectId[];
+  table: Types.ObjectId;
+  members: {
+    user: Types.ObjectId;
+    role: "admin" | "member";
+  }[];
+  createdBy: Types.ObjectId;
+  createdAt?: Date;
+  updatedAt?: Date;
+}
 
 const workspaceSchema = new Schema(
   {
@@ -12,7 +29,7 @@ const workspaceSchema = new Schema(
         ref: "User",
       },
     ],
-    calender: {
+    calendar: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Calender",
     },
@@ -47,5 +64,4 @@ const workspaceSchema = new Schema(
   { timestamps: true }
 );
 
-
-export const workSpaceModel = mongoose.model("Workspace", workspaceSchema);
+export const workSpaceModel = mongoose.model<IWorkspace>("Workspace", workspaceSchema);

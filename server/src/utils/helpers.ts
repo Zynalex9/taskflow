@@ -2,6 +2,7 @@ import { ClientSession, Model, Types } from "mongoose";
 import { workSpaceModel } from "../models/workspace.model";
 import { Request, Response } from "express";
 import ApiResponse from "./ApiResponse";
+import { UserModel } from "../models/user.model";
 
 export const findData = <T>(param: T[], key: keyof T) => {
   const data = param.flatMap((item) => item[key]);
@@ -82,4 +83,17 @@ export const notFound = <T>(item: T, name: string, res: Response): Boolean => {
     return true;
   }
   return false;
+};
+export const fetchUsersByIdentifiers = async (identifiers: string[]) => {
+  const users = await UserModel.find({
+    $or: [
+      {
+        email: { $in: identifiers },
+      },
+      {
+        username: { $in: identifiers },
+      },
+    ],
+  });
+  return users;
 };

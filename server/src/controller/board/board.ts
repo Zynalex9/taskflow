@@ -1,4 +1,4 @@
-import mongoose from "mongoose";
+import mongoose, { Mongoose, Types } from "mongoose";
 import { boardModel } from "../../models/board.models";
 import { workSpaceModel } from "../../models/workspace.model";
 import { Request, Response } from "express";
@@ -8,10 +8,20 @@ import { CardLabelModel } from "../../models/card.label.model";
 import { CheckListModel } from "../../models/card.checklist.model";
 import { CardAttachmentModel } from "../../models/card.attachments.model";
 import { CardModel } from "../../models/card.model";
+import { UserModel } from "../../models/user.model";
+export interface IBoardMember {
+  user: string | Types.ObjectId;
+  role: "member" | "admin";
+}
 export const createBoard = async (req: Request, res: Response) => {
   try {
-    const { title, visibility, backgroundOptions, workspaceId } = req.body;
+    const { title, visibility, backgroundOptions, workspaceId, memberId } =
+      req.body;
     const userId = req.user._id;
+    if (!Array.isArray(memberId)) {
+      res.status(400).json({ message: "memberId must be an array" });
+      return 
+    }
     if (!title) {
       res
         .status(409)
@@ -47,11 +57,19 @@ export const createBoard = async (req: Request, res: Response) => {
       });
       return;
     }
+
+    const users = await UserModel.find({ _id: { $in: memberId } });
+    const boardMembers: IBoardMember[] = users.map((user) => ({
+      user: user._id,
+      role: "member",
+    }));
+
     const newBoard = await boardModel.create({
       title,
       visibility: visibilityStatus,
       backgroundOptions: backgroundStatus,
       createdBy: userId,
+      members: boardMembers,
       workspace: workspaceId,
     });
     await workSpaceModel.findByIdAndUpdate(

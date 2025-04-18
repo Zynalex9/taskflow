@@ -276,6 +276,12 @@ export const deleteWorkSpace = async (req: Request, res: Response) => {
     }
     const boards = await boardModel.find({ workspace: workspaceId });
     if (boards.length === 0) {
+      await UserModel.updateOne(
+        { _id: userId },
+        {
+          $pull: { workspace: workspaceId },
+        }
+      );
       await workSpaceModel.findByIdAndDelete(workspaceId);
       res.status(201).json({ message: "Workspace deleted.." });
       return;
@@ -284,6 +290,12 @@ export const deleteWorkSpace = async (req: Request, res: Response) => {
 
     const lists = await ListModel.find({ board: { $in: boardIds } });
     if (lists.length === 0) {
+      await UserModel.updateOne(
+        { _id: userId },
+        {
+          $pull: { workspace: workspaceId },
+        }
+      );
       await boardModel.deleteMany({ _id: { $in: boardIds } });
       await workSpaceModel.findByIdAndDelete(workspaceId);
       res.status(201).json({
@@ -295,6 +307,12 @@ export const deleteWorkSpace = async (req: Request, res: Response) => {
 
     const cards = await CardModel.find({ list: { $in: listIds } });
     if (cards.length === 0) {
+      await UserModel.updateOne(
+        { _id: userId },
+        {
+          $pull: { workspace: workspaceId },
+        }
+      );
       await ListModel.deleteMany({ _id: { $in: listIds } });
       await boardModel.deleteMany({ _id: { $in: boardIds } });
       await workSpaceModel.findByIdAndDelete(workspaceId);
@@ -326,6 +344,12 @@ export const deleteWorkSpace = async (req: Request, res: Response) => {
     await CardModel.deleteMany({ _id: { $in: cardIds } });
     await ListModel.deleteMany({ _id: { $in: listIds } });
     await boardModel.deleteMany({ _id: { $in: boardIds } });
+    await UserModel.updateOne(
+      { workspace: workspaceId },
+      {
+        $pull: { workspace: workspaceId },
+      }
+    );
     await workSpaceModel.findByIdAndDelete(workspaceId);
     res.status(200).json({
       message: "Workspace deleted",

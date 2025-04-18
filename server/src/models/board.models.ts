@@ -1,14 +1,18 @@
 import mongoose, { Mongoose, Schema } from "mongoose";
 import { Types } from "mongoose";
-interface IBoard extends Document{
-  title:string,
-  lists: Types.ObjectId[],
-  favourite:Boolean,
-  background:string,
-  backgroundOptions:string,
-  visibility:string,
-  createdBy: Types.ObjectId,
-  workspace:Types.ObjectId
+interface IBoard extends Document {
+  title: string;
+  lists: Types.ObjectId[];
+  favourite: Boolean;
+  background: string;
+  backgroundOptions: string;
+  visibility: string;
+  createdBy: Types.ObjectId;
+  workspace: Types.ObjectId;
+  members: {
+    user: Types.ObjectId;
+    role: "member" | "admin";
+  };
 }
 const boardSchema = new Schema(
   {
@@ -28,7 +32,7 @@ const boardSchema = new Schema(
     },
     background: {
       type: String,
-      default: "#ffffff", 
+      default: "#ffffff",
     },
     backgroundOptions: {
       type: [String],
@@ -43,10 +47,23 @@ const boardSchema = new Schema(
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",
     },
-    workspace:{
+    workspace: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Workspace",
-    }
+    },
+    members: [
+      {
+        user: {
+          type: mongoose.Schema.Types.ObjectId,
+          ref: "User",
+        },
+        role: {
+          type: String,
+          enum: ["admin", "member"],
+          default: "member",
+        },
+      },
+    ],
   },
   { timestamps: true }
 );

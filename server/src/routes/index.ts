@@ -7,6 +7,7 @@ import {
   loginUser,
   logOutUser,
   registerUser,
+  resetPassword,
 } from "../controller/user/user.controller";
 import { upload } from "../middleware/multer.middleware";
 import { verifyJWT } from "../middleware/auth.middleware";
@@ -62,6 +63,7 @@ userRouter
   );
 userRouter.route("/get-user-details").get(verifyJWT, GetUserDetail);
 userRouter.route("/delete-user").delete(verifyJWT, deleteUser);
+userRouter.route("/reset-password").patch(verifyJWT, resetPassword);
 export { userRouter };
 
 workSpaceRouter.route("/create-workspace").post(verifyJWT, createWorkSpace);

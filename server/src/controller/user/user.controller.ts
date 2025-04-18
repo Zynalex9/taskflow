@@ -2,6 +2,9 @@ import { Request, Response } from "express";
 import { UserModel } from "../../models/user.model";
 import bcryptjs from "bcryptjs";
 import { UploadOnCloudinary } from "../../utils/cloudinary";
+import { asyncHandler } from "../../utils/asyncHandler";
+import { checkRequiredBody, notFound } from "../../utils/helpers";
+import ApiResponse from "../../utils/ApiResponse";
 
 export const registerUser = async (
   req: Request,
@@ -214,6 +217,26 @@ export const GetUserDetail = async (req: Request, res: Response) => {
     res.status(500).json({ message: "Internal server error" });
   }
 };
+export const resetPassword = asyncHandler(async (req, res) => {
+  const userId = req.user._id;
+  const required = ["oldPassword", "newPassword"];
+  if (!checkRequiredBody(req, res, required)) return;
+  const { oldPassword, newPassword } = req.body;
+  const user = await UserModel.findById(userId);
+  if (!user) {
+    notFound(user, "User", res);
+    return;
+  }
+  const isValidOldPassword = await bcryptjs.compare(oldPassword, user.password);
+  if (!isValidOldPassword) {
+    res.status(400).json(new ApiResponse(400, {}, "Invalid old password"));
+    return;
+  }
+  const hashedPassword  = await bcryptjs.hash(newPassword,10)
+  user.password = hashedPassword;
+  await user.save();
+  res.status(200).json(new ApiResponse(200, user, "Password changed"));
+});
 export const deleteUser = async (req: Request, res: Response) => {
   try {
     const userId = req.user;
