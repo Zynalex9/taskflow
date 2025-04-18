@@ -9,10 +9,10 @@ interface IBoard extends Document {
   visibility: string;
   createdBy: Types.ObjectId;
   workspace: Types.ObjectId;
-  members: {
+  members: [{
     user: Types.ObjectId;
     role: "member" | "admin";
-  };
+  }];
 }
 const boardSchema = new Schema(
   {

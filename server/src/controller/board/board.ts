@@ -9,6 +9,9 @@ import { CheckListModel } from "../../models/card.checklist.model";
 import { CardAttachmentModel } from "../../models/card.attachments.model";
 import { CardModel } from "../../models/card.model";
 import { UserModel } from "../../models/user.model";
+import { asyncHandler } from "../../utils/asyncHandler";
+import { CheckAdmin, checkRequiredBody, notFound } from "../../utils/helpers";
+import ApiResponse from "../../utils/ApiResponse";
 export interface IBoardMember {
   user: string | Types.ObjectId;
   role: "member" | "admin";
@@ -20,7 +23,7 @@ export const createBoard = async (req: Request, res: Response) => {
     const userId = req.user._id;
     if (!Array.isArray(memberId)) {
       res.status(400).json({ message: "memberId must be an array" });
-      return 
+      return;
     }
     if (!title) {
       res
@@ -201,3 +204,47 @@ export const deleteBoard = async (req: Request, res: Response) => {
     session.endSession();
   }
 };
+export const makeBoardAdmin = asyncHandler(
+  async (req: Request, res: Response) => {
+    const required = ["boardId", "targetedId"];
+    if (!checkRequiredBody(req, res, required)) return;
+    const { boardId, targetedId } = req.body;
+    const currentUserId = req.user._id;
+    const board = await boardModel.findById(boardId);
+    if (!board) {
+      notFound(board, "Board", res);
+      return;
+    }
+    const currentUser = board.members.find(
+      (member) => member.user.toString() === currentUserId.toString()
+    );
+    if (
+      board.createdBy.toString() !== currentUserId.toString() ||
+      !currentUser ||
+      currentUser.role !== "admin"
+    ) {
+      res
+        .status(403)
+        .json(
+          new ApiResponse(
+            400,
+            {},
+            "You are not authorized to make changes in this board"
+          )
+        );
+      return;
+    }
+    const targetUser = board.members.find(
+      (member) => member.user._id.toString() === targetedId.toString()
+    );
+    if (!targetUser) {
+      res
+        .status(404)
+        .json(new ApiResponse(4040, {}, "User is not a member of this board"));
+      return;
+    }
+    targetUser.role = "admin";
+    await board.save();
+    res.status(200).json(new ApiResponse(200, {}, "User is promoted to admin"));
+  }
+);
