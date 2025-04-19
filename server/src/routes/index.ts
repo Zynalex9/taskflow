@@ -3,11 +3,13 @@ import {
   changeDetails,
   changeProfilePicture,
   deleteUser,
+  forgetPasswordReset,
   GetUserDetail,
   loginUser,
   logOutUser,
   registerUser,
   resetPassword,
+  sendForgetPasswordOTP,
 } from "../controller/user/user.controller";
 import { upload } from "../middleware/multer.middleware";
 import { verifyJWT } from "../middleware/auth.middleware";
@@ -64,20 +66,28 @@ userRouter
 userRouter.route("/get-user-details").get(verifyJWT, GetUserDetail);
 userRouter.route("/delete-user").delete(verifyJWT, deleteUser);
 userRouter.route("/reset-password").patch(verifyJWT, resetPassword);
+userRouter.route("/send-otp").post(sendForgetPasswordOTP);
+userRouter.route("/forget-password").patch(forgetPasswordReset);
 export { userRouter };
 
 workSpaceRouter.route("/create-workspace").post(verifyJWT, createWorkSpace);
 workSpaceRouter.route("/create-board").post(verifyJWT, createBoard);
 workSpaceRouter.route("/create-list").post(verifyJWT, createList);
 workSpaceRouter.route("/create-card").post(verifyJWT, createCard);
-workSpaceRouter .route("/:workspaceId/get-table-data").get(verifyJWT, getWorkspaceTableData);
-workSpaceRouter.route("/:workspaceId/get-calendar-data").get(verifyJWT, getCalendarData);
+workSpaceRouter
+  .route("/:workspaceId/get-table-data")
+  .get(verifyJWT, getWorkspaceTableData);
+workSpaceRouter
+  .route("/:workspaceId/get-calendar-data")
+  .get(verifyJWT, getCalendarData);
 workSpaceRouter.route("/:boardId/get-lists").get(verifyJWT, getAllLists);
 workSpaceRouter.route("/get-workspaces").get(verifyJWT, allWorkspaces);
 workSpaceRouter.route("/:workspaceId/get-boards").get(verifyJWT, allBoards);
 workSpaceRouter.route("/delete-workspace").delete(verifyJWT, deleteWorkSpace);
 workSpaceRouter.route("/:boardId/delete-board").delete(verifyJWT, deleteBoard);
-workSpaceRouter.route("/:workspaceId/:listId/delete-list").delete(verifyJWT, deleteList);
+workSpaceRouter
+  .route("/:workspaceId/:listId/delete-list")
+  .delete(verifyJWT, deleteList);
 workSpaceRouter.route("/add-admin").patch(verifyJWT, addAdmin);
 workSpaceRouter.route("/remove-admin").patch(verifyJWT, removeAdmin);
 export { workSpaceRouter };
@@ -86,7 +96,13 @@ cardRouter.route("/join-card").post(verifyJWT, joinCard);
 cardRouter.route("/leave-card").post(verifyJWT, leaveCard);
 cardRouter.route("/add-label").post(verifyJWT, addLabel);
 cardRouter.route("/add-comment").post(verifyJWT, addComment);
-cardRouter.route("/add-attachment").post(verifyJWT,upload.fields([{ name: "uploadedFile", maxCount: 1 }]),addAttachment);
+cardRouter
+  .route("/add-attachment")
+  .post(
+    verifyJWT,
+    upload.fields([{ name: "uploadedFile", maxCount: 1 }]),
+    addAttachment
+  );
 cardRouter.route("/add-checklist").post(verifyJWT, addChecklist);
 cardRouter
   .route("/checklist/:checkListId/add-items")

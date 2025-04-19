@@ -3,8 +3,9 @@ import { UserModel } from "../../models/user.model";
 import bcryptjs from "bcryptjs";
 import { UploadOnCloudinary } from "../../utils/cloudinary";
 import { asyncHandler } from "../../utils/asyncHandler";
-import { checkRequiredBody, notFound } from "../../utils/helpers";
+import { checkRequiredBody, generateOTP, notFound } from "../../utils/helpers";
 import ApiResponse from "../../utils/ApiResponse";
+import { forgetPasswordEmail, welcomeEmail } from "../../utils/mailer";
 
 export const registerUser = async (
   req: Request,
@@ -59,7 +60,7 @@ export const registerUser = async (
       password: hashedPassword,
       profilePicture: uploadedPfp.url,
     });
-
+    welcomeEmail(email, username);
     res.status(201).json({
       message: "User registered successfully",
       user: {
@@ -232,10 +233,71 @@ export const resetPassword = asyncHandler(async (req, res) => {
     res.status(400).json(new ApiResponse(400, {}, "Invalid old password"));
     return;
   }
-  const hashedPassword  = await bcryptjs.hash(newPassword,10)
+  const hashedPassword = await bcryptjs.hash(newPassword, 10);
   user.password = hashedPassword;
   await user.save();
   res.status(200).json(new ApiResponse(200, user, "Password changed"));
+});
+export const sendForgetPasswordOTP = asyncHandler(async (req, res) => {
+  const required = ["login"];
+  if (!checkRequiredBody(req, res, required)) return;
+  const { login } = req.body;
+  const user = await UserModel.findOne({
+    $or: [
+      {
+        email: login,
+      },
+      {
+        username: login,
+      },
+    ],
+  });
+  if (!user) {
+    notFound(user, "User", res);
+    return;
+  }
+  const OTP = generateOTP();
+  user.resetOTP = OTP;
+  user.resetOTPExpiry = new Date(Date.now() + 10 * 60 * 1000); //expiry within 10 minutes
+
+  await user.save();
+  forgetPasswordEmail(user.email, user.username, OTP);
+  res
+    .status(200)
+    .json(new ApiResponse(200, { user }, "OTP sent to your email"));
+});
+export const forgetPasswordReset = asyncHandler(async (req, res) => {
+  const required = ["login", "OTP", "newPassword"];
+  if (!checkRequiredBody(req, res, required)) return;
+  const { login, OTP, newPassword } = req.body;
+  const user = await UserModel.findOne({
+    $or: [
+      {
+        email: login,
+      },
+      {
+        username: login,
+      },
+    ],
+  });
+  if (!user) {
+    notFound(user, "User", res);
+    return;
+  }
+  const inputOTP = OTP.toString();
+  if (user.resetOTP !== inputOTP) {
+    res.status(400).json(new ApiResponse(400, {}, "Invalid OTP"));
+    return;
+  }
+  if (user.resetOTPExpiry && user.resetOTPExpiry < new Date()) {
+    res.status(400).json(new ApiResponse(400, {}, "OTP Expired"));
+    return;
+  }
+  const userNewPassword = await bcryptjs.hash(newPassword, 10);
+  user.password = userNewPassword;
+  (user.resetOTP = ""), (user.resetOTPExpiry = undefined);
+  await user.save();
+  res.status(200).json(new ApiResponse(200, {}, "Password Changed"));
 });
 export const deleteUser = async (req: Request, res: Response) => {
   try {

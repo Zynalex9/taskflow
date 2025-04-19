@@ -1,16 +1,18 @@
 import mongoose, { Schema } from "mongoose";
 import jwt from "jsonwebtoken";
 export interface IUser extends Document {
-username: string
-password:string
-email:string
-GenerateAccessToken: () => string
-GenerateRefreshToken: () => string
-profilePicture:string
-workspace?: mongoose.Schema.Types.ObjectId[];
+  username: string;
+  password: string;
+  email: string;
+  GenerateAccessToken: () => string;
+  GenerateRefreshToken: () => string;
+  profilePicture: string;
+  workspace?: mongoose.Schema.Types.ObjectId[];
   teamspace?: mongoose.Schema.Types.ObjectId[];
   accessToken?: string;
   refreshToken?: string;
+  resetOTP?: string;
+  resetOTPExpiry?:Date;
 }
 const userSchema = new Schema(
   {
@@ -44,27 +46,33 @@ const userSchema = new Schema(
     profilePicture: {
       type: String,
     },
-    accessToken:{
+    accessToken: {
       type: String,
     },
-    refreshToken:{
+    refreshToken: {
       type: String,
-    }
+    },
+    resetOTP: {
+      type: String,
+    },
+    resetOTPExpiry: {
+      type: Date,
+    },
   },
+
   { timestamps: true }
 );
 
 userSchema.methods.GenerateAccessToken = function () {
-  return jwt.sign({ id: this._id }, process.env.JWT_TOKEN_SECRET!,{
+  return jwt.sign({ id: this._id }, process.env.JWT_TOKEN_SECRET!, {
     expiresIn: "3d",
   });
 };
 
 userSchema.methods.GenerateRefreshToken = function () {
-  return jwt.sign({ id: this._id }, process.env.JWT_TOKEN_SECRET!,{
+  return jwt.sign({ id: this._id }, process.env.JWT_TOKEN_SECRET!, {
     expiresIn: "15d",
   });
 };
-
 
 export const UserModel = mongoose.model<IUser>("User", userSchema);
