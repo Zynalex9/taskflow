@@ -395,6 +395,14 @@ export const addAdmin = asyncHandler(async (req: Request, res: Response) => {
       );
     return;
   }
+  const boards = await boardModel.find({ workspace: workspaceId });
+  boards.forEach(async (board) => {
+    board.members.push({
+      user: admin._id,
+      role: "admin",
+    });
+    await board.save();
+  });
   workspace.admin.push(admin._id);
   await workspace.save();
   res
@@ -429,6 +437,15 @@ export const removeAdmin = asyncHandler(async (req: Request, res: Response) => {
       .json(new ApiResponse(400, {}, `${admin.username} is not an admin`));
     return;
   }
+  const boards = await boardModel.find({ workspace: workspaceId });
+  boards.forEach(async (board) => {
+    board.members.map((member) => {
+      if (member.user._id.toString === adminId) {
+        member.role = "member";
+      }
+    })
+    await board.save();
+  });
   workspace.admin = workspace.admin.filter(
     (id) => id.toString() !== admin._id.toString()
   );

@@ -61,12 +61,26 @@ export const createBoard = async (req: Request, res: Response) => {
       });
       return;
     }
-
-    const users = await UserModel.find({ _id: { $in: memberId } });
-    const boardMembers: IBoardMember[] = users.map((user) => ({
-      user: user._id,
-      role: "member",
-    }));
+    const allMemberIdsSet = new Set([
+      ...memberId.map((id: any) => id.toString()),
+      workspace.createdBy.toString(),
+      ...workspace.admin.map((adminId) => adminId.toString()),
+    ]);
+    console.log(allMemberIdsSet);
+    const allMemberIds = [...allMemberIdsSet];
+    console.log(allMemberIds);
+    const users = await UserModel.find({ _id: { $in: allMemberIds } });
+    const boardMembers: IBoardMember[] = users.map((user) => {
+      const isAdmin =
+        workspace.admin
+          .map((id) => id.toString())
+          .includes(user._id.toString()) ||
+        workspace.createdBy.toString() === user._id.toString();
+      return {
+        user: user._id,
+        role: isAdmin ? "admin" : "member",
+      };
+    });
 
     const newBoard = await boardModel.create({
       title,

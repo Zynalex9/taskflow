@@ -8,7 +8,15 @@ import { CardLabelModel } from "../../models/card.label.model";
 import { CheckListModel } from "../../models/card.checklist.model";
 import { CardAttachmentModel } from "../../models/card.attachments.model";
 import { CardModel } from "../../models/card.model";
-import { CheckAdmin, deleteIfExists, findData } from "../../utils/helpers";
+import {
+  CheckAdmin,
+  checkRequiredBody,
+  deleteIfExists,
+  findData,
+  notFound,
+} from "../../utils/helpers";
+import { asyncHandler } from "../../utils/asyncHandler";
+import ApiResponse from "../../utils/ApiResponse";
 export const createList = async (req: Request, res: Response) => {
   try {
     const { name, boardId } = req.body;
@@ -45,9 +53,12 @@ export const createList = async (req: Request, res: Response) => {
       });
       return;
     }
-    if (!workspace.admin.includes(userId)) {
+    const isBoardAdmin = board.members.find(
+      (member) => member.user._id.toString() === userId.toString()
+    );
+    if (!isBoardAdmin || isBoardAdmin.role !== "admin") {
       res.status(401).json({
-        message: "You're not authorized to create board in this workspace",
+        message: "You're not authorized to create list in this board",
         success: false,
       });
       return;
@@ -119,63 +130,126 @@ export const getAllLists = async (
   }
 };
 export const deleteList = async (req: Request, res: Response) => {
-    const session = await mongoose.startSession();
-    try {
-      session.startTransaction();
-      const { listId, workspaceId } = req.params;
-      const userId = req.user._id;
-      if (!listId) {
-        await session.abortTransaction();
-        res.status(400).json({ message: "List id missing" });
-        return;
-      }
-      const isAuthorized = await CheckAdmin(userId, workspaceId);
-      if (!isAuthorized) {
-        await session.abortTransaction();
-        res
-          .status(403)
-          .json({ message: "You are not authorized to delete the board" });
-        return;
-      }
-      const list = await ListModel.findById(listId).session(session);
-      if (!list) {
-        await session.abortTransaction();
-        res.status(400).json({ message: "List not found" });
-        return;
-      }
-  
-      const cards = await CardModel.find({ list: listId });
-      if (cards.length == 0) {
-        await ListModel.findByIdAndDelete(listId).session(session);
-        session.commitTransaction();
-        res
-          .status(200)
-          .json({ message: "List deleted. There was no cards in the list" });
-        return;
-      }
-  
-      const cardIds = cards.flatMap((c) => c._id);
-  
-      const allCommentsIds = findData(cards, "comments");
-      const allLabelsIds = findData(cards, "labels");
-      const allAttachmentsId = findData(cards, "attachments");
-      const allChecklistIDs = findData(cards, "checklist");
-  
-      await deleteIfExists(commentsModel, allCommentsIds, session);
-      await deleteIfExists(CardLabelModel, allLabelsIds, session);
-      await deleteIfExists(CardAttachmentModel, allAttachmentsId, session);
-      await deleteIfExists(CheckListModel, allChecklistIDs, session);
-  
-      await CardModel.deleteMany({ _id: { $in: cardIds } }).session(session);
+  const session = await mongoose.startSession();
+  try {
+    session.startTransaction();
+    const { listId, workspaceId } = req.params;
+    const userId = req.user._id;
+    if (!listId) {
+      await session.abortTransaction();
+      res.status(400).json({ message: "List id missing" });
+      return;
+    }
+    const isAuthorized = await CheckAdmin(userId, workspaceId);
+    if (!isAuthorized) {
+      await session.abortTransaction();
+      res
+        .status(403)
+        .json({ message: "You are not authorized to delete the board" });
+      return;
+    }
+    const list = await ListModel.findById(listId).session(session);
+    if (!list) {
+      await session.abortTransaction();
+      res.status(400).json({ message: "List not found" });
+      return;
+    }
+
+    const cards = await CardModel.find({ list: listId });
+    if (cards.length == 0) {
       await ListModel.findByIdAndDelete(listId).session(session);
       session.commitTransaction();
-      res.status(200).json({ message: `List is deleted with related data` });
+      res
+        .status(200)
+        .json({ message: "List deleted. There was no cards in the list" });
       return;
-    } catch (error) {
-      await session.abortTransaction();
-      console.error("Delete List Error:", error);
-      res.status(500).json({ message: "Internal server error", error });
-    } finally {
-      session.endSession();
     }
-  };
+
+    const cardIds = cards.flatMap((c) => c._id);
+
+    const allCommentsIds = findData(cards, "comments");
+    const allLabelsIds = findData(cards, "labels");
+    const allAttachmentsId = findData(cards, "attachments");
+    const allChecklistIDs = findData(cards, "checklist");
+
+    await deleteIfExists(commentsModel, allCommentsIds, session);
+    await deleteIfExists(CardLabelModel, allLabelsIds, session);
+    await deleteIfExists(CardAttachmentModel, allAttachmentsId, session);
+    await deleteIfExists(CheckListModel, allChecklistIDs, session);
+
+    await CardModel.deleteMany({ _id: { $in: cardIds } }).session(session);
+    await ListModel.findByIdAndDelete(listId).session(session);
+    session.commitTransaction();
+    res.status(200).json({ message: `List is deleted with related data` });
+    return;
+  } catch (error) {
+    await session.abortTransaction();
+    console.error("Delete List Error:", error);
+    res.status(500).json({ message: "Internal server error", error });
+  } finally {
+    session.endSession();
+  }
+};
+export const copyList = asyncHandler(async (req, res) => {
+  const required = ["listId", "targetedBoardId"];
+  if (!checkRequiredBody(req, res, required)) return;
+  const { listId, targetedBoardId } = req.body;
+  const list = await ListModel.findById(listId);
+  if (!list) {
+    notFound(list, "List", res);
+    return;
+  }
+  const targetedBoard = await boardModel.findById(targetedBoardId);
+  if (!targetedBoard) {
+    notFound(targetedBoard, "Targeted Board", res);
+    return;
+  }
+  targetedBoard.lists.push(listId);
+  await targetedBoard.save();
+  res
+    .status(200)
+    .json(
+      new ApiResponse(
+        200,
+        targetedBoard,
+        `${list.title} copied to ${targetedBoard.title}`
+      )
+    );
+});
+export const moveList = asyncHandler(async (req, res) => {
+  const required = ["listId", "currentBoardId", "targetedBoardId"];
+  if (!checkRequiredBody(req, res, required)) return;
+  const { listId, currentBoardId, targetedBoardId } = req.body;
+  const list = await ListModel.findById(listId);
+  if (!list) {
+    notFound(list, "List", res);
+    return;
+  }
+  const currentBoard = await boardModel.findById(currentBoardId);
+  if (!currentBoard) {
+    notFound(currentBoard, "Current Board", res);
+    return;
+  }
+  const targetedBoard = await boardModel.findById(targetedBoardId);
+  if (!targetedBoard) {
+    notFound(targetedBoard, "Targeted Board", res);
+    return;
+  }
+  targetedBoard.lists.push(listId);
+  currentBoard.lists = currentBoard.lists.filter(
+    (list) => list._id.toString() !== listId.toString()
+  );
+  list.board = targetedBoard._id;
+  await list.save();
+  await targetedBoard.save();
+  await currentBoard.save();
+  res
+    .status(200)
+    .json(
+      new ApiResponse(
+        200,
+        targetedBoard,
+        `${list.title} moved to ${targetedBoard.title}`
+      )
+    );
+});
