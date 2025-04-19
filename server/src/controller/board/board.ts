@@ -10,8 +10,9 @@ import { CardAttachmentModel } from "../../models/card.attachments.model";
 import { CardModel } from "../../models/card.model";
 import { UserModel } from "../../models/user.model";
 import { asyncHandler } from "../../utils/asyncHandler";
-import { CheckAdmin, checkRequiredBody, notFound } from "../../utils/helpers";
+import { checkRequiredBody, notFound } from "../../utils/helpers";
 import ApiResponse from "../../utils/ApiResponse";
+import { UploadOnCloudinary } from "../../utils/cloudinary";
 export interface IBoardMember {
   user: string | Types.ObjectId;
   role: "member" | "admin";
@@ -248,3 +249,142 @@ export const makeBoardAdmin = asyncHandler(
     res.status(200).json(new ApiResponse(200, {}, "User is promoted to admin"));
   }
 );
+export const demoteAdmin = asyncHandler(async (req, res) => {
+  const required = ["boardId", "targetedId"];
+  if (!checkRequiredBody(req, res, required)) return;
+  const { boardId, targetedId } = req.body;
+  const currentUserId = req.user._id;
+  const board = await boardModel.findById(boardId);
+  if (!board) {
+    notFound(board, "Board", res);
+    return;
+  }
+  const currentUser = board.members.find(
+    (member) => member.user._id === currentUserId
+  );
+  if (
+    board.createdBy.toString() !== currentUserId.toString() ||
+    !currentUser ||
+    currentUser.role !== "admin"
+  ) {
+    res
+      .status(403)
+      .json(
+        new ApiResponse(
+          400,
+          {},
+          "You are not authorized to make changes in this board"
+        )
+      );
+    return;
+  }
+  const targetedUser = board.members.find(
+    (member) => member.user._id === targetedId
+  );
+  if (!targetedUser) {
+    res
+      .status(403)
+      .json(new ApiResponse(4040, {}, "User is not a member of this board"));
+    return;
+  }
+  targetedUser.role = "member";
+  await board.save();
+  res.status(200).json(new ApiResponse(200, {}, "User is demoted to member"));
+});
+
+export const addMember = asyncHandler(async (req, res) => {
+  const required = ["boardId", "targetedId"];
+  if (!checkRequiredBody(req, res, required)) return;
+  const { boardId, targetedId } = req.body;
+  const board = await boardModel.findById(boardId);
+  if (!board) {
+    notFound(board, "Board", res);
+    return;
+  }
+
+  const alreadyMember = board.members.find(
+    (member) => member.user._id.toString() === targetedId.toString()
+  );
+  if (alreadyMember) {
+    res
+      .status(400)
+      .json(new ApiResponse(400, {}, "User is already a member of board"));
+    return;
+  }
+  board.members.push({
+    user: targetedId,
+    role: "member",
+  });
+  await board.save();
+  res.status(200).json(new ApiResponse(200, board, "User added to board"));
+});
+
+export const removeMember = asyncHandler(async (req, res) => {
+  const required = ["boardId", "targetedId"];
+  if (!checkRequiredBody(req, res, required)) return;
+  const { boardId, targetedId } = req.body;
+  const board = await boardModel.findById(boardId);
+  if (!board) {
+    notFound(board, "Board", res);
+    return;
+  }
+
+  const alreadyMember = board.members.find(
+    (member) => member.user._id.toString() === targetedId.toString()
+  );
+  if (!alreadyMember) {
+    res
+      .status(400)
+      .json(new ApiResponse(400, {}, "User is not a member of board"));
+    return;
+  }
+  board.members = board.members.filter(
+    (member) => member.user.toString() !== targetedId.toString()
+  );
+
+  await board.save();
+
+  res
+    .status(200)
+    .json(new ApiResponse(200, {}, "User removed from the board successfully"));
+});
+export const editBoard = asyncHandler(async (req, res) => {
+  const required = ["title", "background", "board"];
+  if (!checkRequiredBody(req, res, required)) return;
+  const { title, boardId, backgroundColor } = req.body;
+  const board = await boardModel.findById(boardId);
+  if (!board) {
+    notFound(board, "Board", res);
+    return;
+  }
+  if (title) {
+    board.title = title;
+  }
+  let backgroundValue = board.background;
+  if (req.file) {
+    const files = req.files as { [fieldname: string]: Express.Multer.File[] };
+    const localPath = files.backgroundImage[0].path;
+
+    if (!localPath) {
+      res
+        .status(400)
+        .json(new ApiResponse(400, {}, "Background picture missing"));
+      return;
+    }
+    const uploadedBg = await UploadOnCloudinary({ localFilePath: localPath });
+
+    if (!uploadedBg) {
+      res
+        .status(400)
+        .json(new ApiResponse(400, {}, "Background picture missing"));
+      return;
+    }
+    backgroundValue = uploadedBg.url;
+  }
+  if (backgroundColor) {
+    backgroundValue = backgroundColor;
+  }
+
+  await board.save();
+  res.status(200).json(new ApiResponse(200, board, "Board edited"));
+});

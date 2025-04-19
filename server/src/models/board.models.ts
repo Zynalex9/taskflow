@@ -5,14 +5,13 @@ interface IBoard extends Document {
   lists: Types.ObjectId[];
   favourite: Boolean;
   background: string;
-  backgroundOptions: string;
   visibility: string;
   createdBy: Types.ObjectId;
   workspace: Types.ObjectId;
-  members: [{
+  members: {
     user: Types.ObjectId;
     role: "member" | "admin";
-  }];
+  }[];
 }
 const boardSchema = new Schema(
   {
@@ -33,10 +32,6 @@ const boardSchema = new Schema(
     background: {
       type: String,
       default: "#ffffff",
-    },
-    backgroundOptions: {
-      type: [String],
-      default: ["#ffffff", "#f4f4f4", "#ffcccc", "#ccffcc", "#ccccff"],
     },
     visibility: {
       type: String,
