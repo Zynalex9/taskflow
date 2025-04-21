@@ -10,7 +10,12 @@ import { CardLabelModel } from "../../models/card.label.model";
 import { CardAttachmentModel } from "../../models/card.attachments.model";
 import { CheckListModel } from "../../models/card.checklist.model";
 import { asyncHandler } from "../../utils/asyncHandler";
-import { CheckAdmin, checkRequiredBody, notFound } from "../../utils/helpers";
+import {
+  CheckAdmin,
+  checkRequiredBody,
+  lPushList,
+  notFound,
+} from "../../utils/helpers";
 import ApiResponse from "../../utils/ApiResponse";
 interface IParams {
   name: string;
@@ -89,6 +94,7 @@ export const createWorkSpace = async (req: Request, res: Response) => {
         },
       }
     );
+    await lPushList(userId, `Created Workspace: ${workSpace.name}`);
     res.status(201).json({
       message: "Workspace Created",
       workSpace,
@@ -351,6 +357,7 @@ export const deleteWorkSpace = async (req: Request, res: Response) => {
       }
     );
     await workSpaceModel.findByIdAndDelete(workspaceId);
+    await lPushList(userId, `Deleted workspace`);
     res.status(200).json({
       message: "Workspace deleted",
     });
@@ -405,6 +412,11 @@ export const addAdmin = asyncHandler(async (req: Request, res: Response) => {
   });
   workspace.admin.push(admin._id);
   await workspace.save();
+  await lPushList(
+    userId,
+    `You added ${admin.username} as an admin of ${workspace.name}`
+  );
+
   res
     .status(200)
     .json(new ApiResponse(200, {}, `${admin.username} now an admin`));
@@ -443,13 +455,17 @@ export const removeAdmin = asyncHandler(async (req: Request, res: Response) => {
       if (member.user._id.toString === adminId) {
         member.role = "member";
       }
-    })
+    });
     await board.save();
   });
   workspace.admin = workspace.admin.filter(
     (id) => id.toString() !== admin._id.toString()
   );
   await workspace.save();
+  await lPushList(
+    userId,
+    `You removed ${admin.username} as an admin of ${workspace.name}`
+  );
   res
     .status(200)
     .json(new ApiResponse(200, {}, `${admin.username} is removed from admins`));

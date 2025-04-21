@@ -404,3 +404,8 @@ export const deleteUser = async (req: Request, res: Response) => {
     session.endSession();
   }
 };
+export const activityLogs = asyncHandler(async(req:Request,res:Response)=>{
+  const userId = req.user._id;
+  const logs = await redisClient.lrange(`user:${userId}`,0,4)
+  res.status(200).json(new ApiResponse(200,logs))
+});

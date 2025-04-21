@@ -10,7 +10,7 @@ import { CardAttachmentModel } from "../../models/card.attachments.model";
 import { CardModel } from "../../models/card.model";
 import { UserModel } from "../../models/user.model";
 import { asyncHandler } from "../../utils/asyncHandler";
-import { checkRequiredBody, notFound } from "../../utils/helpers";
+import { checkRequiredBody, lPushList, notFound } from "../../utils/helpers";
 import ApiResponse from "../../utils/ApiResponse";
 import { UploadOnCloudinary } from "../../utils/cloudinary";
 export interface IBoardMember {
@@ -95,6 +95,7 @@ export const createBoard = async (req: Request, res: Response) => {
       { $push: { boards: newBoard._id } },
       { new: true }
     );
+    await lPushList(userId, `Board created : ${title}`);
     res
       .status(201)
       .json({ message: "New board created", sucess: true, newBoard });
@@ -210,6 +211,8 @@ export const deleteBoard = async (req: Request, res: Response) => {
     await boardModel.deleteOne({ _id: boardId }).session(session);
 
     await session.commitTransaction();
+    await lPushList(req.user._id, `Board Deleted : ${board.title}`);
+
     res.status(200).json({ message: "Board deleted with all related data" });
   } catch (error) {
     await session.abortTransaction();
@@ -260,6 +263,8 @@ export const makeBoardAdmin = asyncHandler(
     }
     targetUser.role = "admin";
     await board.save();
+    await lPushList(req.user._id, `You made added board admin`);
+
     res.status(200).json(new ApiResponse(200, {}, "User is promoted to admin"));
   }
 );
@@ -303,6 +308,7 @@ export const demoteAdmin = asyncHandler(async (req, res) => {
   }
   targetedUser.role = "member";
   await board.save();
+  await lPushList(req.user._id, `You removed added board admin`);
   res.status(200).json(new ApiResponse(200, {}, "User is demoted to member"));
 });
 
@@ -330,6 +336,10 @@ export const addMember = asyncHandler(async (req, res) => {
     role: "member",
   });
   await board.save();
+  await lPushList(
+    req.user._id,
+    `You made added member to ${board.title} board`
+  );
   res.status(200).json(new ApiResponse(200, board, "User added to board"));
 });
 
@@ -357,6 +367,10 @@ export const removeMember = asyncHandler(async (req, res) => {
   );
 
   await board.save();
+  await lPushList(
+    req.user._id,
+    `You made removed member from ${board.title} board`
+  );
 
   res
     .status(200)
@@ -400,5 +414,7 @@ export const editBoard = asyncHandler(async (req, res) => {
   }
 
   await board.save();
+  await lPushList(req.user._id, `You edited ${board.title} board`);
+
   res.status(200).json(new ApiResponse(200, board, "Board edited"));
 });

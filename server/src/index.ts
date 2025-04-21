@@ -1,11 +1,14 @@
 import { configDotenv } from "dotenv";
-import express from "express";
+import express, { Request, Response } from "express";
 import { createServer } from "http";
 import { Server } from "socket.io";
 import { connectDB } from "./database/index";
 import { Redis } from "ioredis";
 import cookieParser from "cookie-parser";
 import { cardRouter, userRouter, workSpaceRouter } from "./routes";
+import { verifyJWT } from "./middleware/auth.middleware";
+import ApiResponse from "./utils/ApiResponse";
+import { asyncHandler } from "./utils/asyncHandler";
 configDotenv();
 connectDB();
 
@@ -44,7 +47,13 @@ redisClient.on("error", (err) => {
 app.use("/api/", userRouter);
 app.use("/api/workspace/", workSpaceRouter);
 app.use("/api/c/card/", cardRouter);
-
+app.use(verifyJWT).get(
+  "/user/activity-log",
+  asyncHandler(async (req: Request, res: Response) => {
+    const logs = await redisClient.lrange(`user:${req.user._id}`, 0, 5);
+    res.status(200).json(new ApiResponse(200, logs));
+  })
+);
 const PORT = process.env.PORT || 3000;
 server.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);

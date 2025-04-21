@@ -3,6 +3,7 @@ import { workSpaceModel } from "../models/workspace.model";
 import { Request, Response } from "express";
 import ApiResponse from "./ApiResponse";
 import { UserModel } from "../models/user.model";
+import { redisClient } from "..";
 
 export const findData = <T>(param: T[], key: keyof T) => {
   const data = param.flatMap((item) => item[key]);
@@ -99,4 +100,11 @@ export const fetchUsersByIdentifiers = async (identifiers: string[]) => {
 };
 export const generateOTP = () => {
   return Math.floor(Math.random() * 900000).toString();
+};
+export const lPushList = async (
+  id: string | Types.ObjectId,
+  message: string
+) => {
+  await redisClient.lpush(`user:${id}`, message);
+  await redisClient.expire(`user:${id}`, 86400);
 };

@@ -1,5 +1,6 @@
 import { Router } from "express";
 import {
+  activityLogs,
   changeDetails,
   changeProfilePicture,
   deleteUser,
@@ -76,6 +77,7 @@ userRouter.route("/delete-user").delete(verifyJWT, deleteUser);
 userRouter.route("/reset-password").patch(verifyJWT, resetPassword);
 userRouter.route("/send-otp").post(sendForgetPasswordOTP);
 userRouter.route("/forget-password").patch(forgetPasswordReset);
+userRouter.route("/activity-log").get(verifyJWT, activityLogs);
 export { userRouter };
 
 workSpaceRouter.route("/create-workspace").post(verifyJWT, createWorkSpace);
