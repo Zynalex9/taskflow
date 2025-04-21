@@ -6,6 +6,7 @@ import { asyncHandler } from "../../utils/asyncHandler";
 import { checkRequiredBody, generateOTP, notFound } from "../../utils/helpers";
 import ApiResponse from "../../utils/ApiResponse";
 import { forgetPasswordEmail, welcomeEmail } from "../../utils/mailer";
+import { redisClient } from "../..";
 
 export const registerUser = async (
   req: Request,
@@ -103,6 +104,9 @@ export const loginUser = async (req: Request, res: Response) => {
       httpOnly: true,
       secure: true,
     };
+    await redisClient.lpush(`user:${user._id}`, "You logged in");
+    await redisClient.expire(`user:${user._id}`, 86400);
+
     res
       .status(201)
       .cookie("accessToken", accessToken, options)
@@ -117,6 +121,8 @@ export const logOutUser = async (req: Request, res: Response) => {
     httpOnly: true,
     secure: true,
   };
+  await redisClient.lpush(`user:${req.user._id}`, "You logged out");
+  await redisClient.expire(`user:${req.user._id}`, 86400);
   res
     .status(201)
     .clearCookie("accessToken", options)
@@ -236,6 +242,9 @@ export const resetPassword = asyncHandler(async (req, res) => {
   const hashedPassword = await bcryptjs.hash(newPassword, 10);
   user.password = hashedPassword;
   await user.save();
+  await redisClient.lpush(`user:${user._id}`, "You reset your password");
+  await redisClient.expire(`user:${req.user._id}`, 86400);
+
   res.status(200).json(new ApiResponse(200, user, "Password changed"));
 });
 export const sendForgetPasswordOTP = asyncHandler(async (req, res) => {
@@ -257,10 +266,7 @@ export const sendForgetPasswordOTP = asyncHandler(async (req, res) => {
     return;
   }
   const OTP = generateOTP();
-  user.resetOTP = OTP;
-  user.resetOTPExpiry = new Date(Date.now() + 10 * 60 * 1000); //expiry within 10 minutes
-
-  await user.save();
+  await redisClient.set(`OTP:${user.email}`, OTP, "EX", 600);
   forgetPasswordEmail(user.email, user.username, OTP);
   res
     .status(200)
@@ -284,19 +290,17 @@ export const forgetPasswordReset = asyncHandler(async (req, res) => {
     notFound(user, "User", res);
     return;
   }
+  const cachedOTP = await redisClient.get(`OTP:${user.email}`);
   const inputOTP = OTP.toString();
-  if (user.resetOTP !== inputOTP) {
-    res.status(400).json(new ApiResponse(400, {}, "Invalid OTP"));
-    return;
-  }
-  if (user.resetOTPExpiry && user.resetOTPExpiry < new Date()) {
-    res.status(400).json(new ApiResponse(400, {}, "OTP Expired"));
+  if (cachedOTP !== inputOTP) {
+    res.status(400).json(new ApiResponse(400, {}, "Invalid/Expired OTP"));
     return;
   }
   const userNewPassword = await bcryptjs.hash(newPassword, 10);
   user.password = userNewPassword;
   (user.resetOTP = ""), (user.resetOTPExpiry = undefined);
   await user.save();
+  await redisClient.del(`OTP:${user.email}`);
   res.status(200).json(new ApiResponse(200, {}, "Password Changed"));
 });
 export const deleteUser = async (req: Request, res: Response) => {

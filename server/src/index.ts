@@ -3,7 +3,7 @@ import express from "express";
 import { createServer } from "http";
 import { Server } from "socket.io";
 import { connectDB } from "./database/index";
-import cors from "cors";
+import { Redis } from "ioredis";
 import cookieParser from "cookie-parser";
 import { cardRouter, userRouter, workSpaceRouter } from "./routes";
 configDotenv();
@@ -29,7 +29,18 @@ app.get("/", (req, res) => {
     message: "Hello World",
   });
 });
-
+export const redisClient = new Redis({
+  username: "default",
+  password: process.env.REDIS_PASSWORD,
+  host: process.env.REDIS_HOST,
+  port: 14029,
+});
+redisClient.on("connect", () => {
+  console.log("Connected to redis");
+});
+redisClient.on("error", (err) => {
+  console.error("Redis connection error:", err);
+});
 app.use("/api/", userRouter);
 app.use("/api/workspace/", workSpaceRouter);
 app.use("/api/c/card/", cardRouter);

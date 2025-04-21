@@ -17,6 +17,7 @@ import {
 } from "../../utils/helpers";
 import { asyncHandler } from "../../utils/asyncHandler";
 import ApiResponse from "../../utils/ApiResponse";
+import { redisClient } from "../..";
 export const createList = async (req: Request, res: Response) => {
   try {
     const { name, boardId } = req.body;
@@ -79,6 +80,7 @@ export const createList = async (req: Request, res: Response) => {
     await boardModel.findByIdAndUpdate(boardId, {
       $push: { lists: newList._id },
     });
+    await redisClient.del(`lists:${boardId}:${userId}`);
     res.status(201).json({
       message: "List created successfully",
       success: true,
@@ -103,7 +105,16 @@ export const getAllLists = async (
       res.status(400).json({ message: "Board ID is required" });
       return;
     }
-
+    const cachedList = await redisClient.get(
+      `lists:${boardId}:userId:${userId}`
+    );
+    if (cachedList) {
+      const parsedList = JSON.parse(cachedList);
+      res
+        .status(200)
+        .json(new ApiResponse(200, parsedList, "List served from cache"));
+      return;
+    }
     const board = await boardModel
       .findOne({ _id: boardId, createdBy: userId })
       .lean();
@@ -118,7 +129,12 @@ export const getAllLists = async (
       res.status(404).json({ message: "No lists found for this board" });
       return;
     }
-
+    await redisClient.set(
+      `lists:${boardId}:userId:${userId}`,
+      JSON.stringify(allLists),
+      "EX",
+      1300
+    );
     res.status(200).json({
       message: "Lists retrieved",
       allLists,
@@ -179,6 +195,7 @@ export const deleteList = async (req: Request, res: Response) => {
 
     await CardModel.deleteMany({ _id: { $in: cardIds } }).session(session);
     await ListModel.findByIdAndDelete(listId).session(session);
+    await redisClient.del(`lists:${list.board}:userId:${userId}`);
     session.commitTransaction();
     res.status(200).json({ message: `List is deleted with related data` });
     return;
@@ -243,6 +260,8 @@ export const moveList = asyncHandler(async (req, res) => {
   await list.save();
   await targetedBoard.save();
   await currentBoard.save();
+  await redisClient.del(`lists:${currentBoardId}:${req.user._id}`);
+  await redisClient.del(`lists:${targetedBoardId}:${req.user._id}`);
   res
     .status(200)
     .json(

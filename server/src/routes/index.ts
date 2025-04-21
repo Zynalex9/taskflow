@@ -23,7 +23,13 @@ import {
   removeAdmin,
 } from "../controller/workspace/workspace.controller";
 import { allBoards, createBoard, deleteBoard } from "../controller/board/board";
-import { createList, deleteList, getAllLists } from "../controller/list/list";
+import {
+  createList,
+  deleteList,
+  getAllLists,
+  copyList,
+  moveList,
+} from "../controller/list/list";
 import {
   copyCard,
   createCard,
@@ -48,6 +54,8 @@ import {
 
 const userRouter = Router();
 const workSpaceRouter = Router();
+const boardRouter = Router();
+const listRouter = Router();
 const cardRouter = Router();
 
 userRouter
@@ -72,6 +80,7 @@ export { userRouter };
 
 workSpaceRouter.route("/create-workspace").post(verifyJWT, createWorkSpace);
 workSpaceRouter.route("/create-board").post(verifyJWT, createBoard);
+
 workSpaceRouter.route("/create-list").post(verifyJWT, createList);
 workSpaceRouter.route("/create-card").post(verifyJWT, createCard);
 workSpaceRouter
@@ -91,7 +100,6 @@ workSpaceRouter
 workSpaceRouter.route("/add-admin").patch(verifyJWT, addAdmin);
 workSpaceRouter.route("/remove-admin").patch(verifyJWT, removeAdmin);
 export { workSpaceRouter };
-
 cardRouter.route("/join-card").post(verifyJWT, joinCard);
 cardRouter.route("/leave-card").post(verifyJWT, leaveCard);
 cardRouter.route("/add-label").post(verifyJWT, addLabel);
