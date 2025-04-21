@@ -3,10 +3,25 @@ import { UserModel } from "../../models/user.model";
 import bcryptjs from "bcryptjs";
 import { UploadOnCloudinary } from "../../utils/cloudinary";
 import { asyncHandler } from "../../utils/asyncHandler";
-import { checkRequiredBody, generateOTP, notFound } from "../../utils/helpers";
+import {
+  checkRequiredBody,
+  deleteIfExists,
+  findData,
+  generateOTP,
+  notFound,
+} from "../../utils/helpers";
 import ApiResponse from "../../utils/ApiResponse";
 import { forgetPasswordEmail, welcomeEmail } from "../../utils/mailer";
 import { redisClient } from "../..";
+import mongoose from "mongoose";
+import { workSpaceModel } from "../../models/workspace.model";
+import { ListModel } from "../../models/list.models";
+import { boardModel } from "../../models/board.models";
+import { CardModel } from "../../models/card.model";
+import { commentsModel } from "../../models/card.comments.models";
+import { CardLabelModel } from "../../models/card.label.model";
+import { CardAttachmentModel } from "../../models/card.attachments.model";
+import { CheckListModel } from "../../models/card.checklist.model";
 
 export const registerUser = async (
   req: Request,
@@ -304,6 +319,7 @@ export const forgetPasswordReset = asyncHandler(async (req, res) => {
   res.status(200).json(new ApiResponse(200, {}, "Password Changed"));
 });
 export const deleteUser = async (req: Request, res: Response) => {
+  const session = await mongoose.startSession();
   try {
     const userId = req.user;
     if (!userId) {
@@ -311,12 +327,64 @@ export const deleteUser = async (req: Request, res: Response) => {
       return;
     }
 
-    const user = await UserModel.findById(userId);
+    session.startTransaction();
+    const user = await UserModel.findById(userId).session(session);
     if (!user) {
-      res.status(404).json({ message: "User not found" });
+      session.abortTransaction();
+      res.status(404).json(new ApiResponse(404, {}, "No user found"));
       return;
     }
-    await UserModel.findByIdAndDelete(userId);
+    const workspaces = await workSpaceModel
+      .find({ admin: user._id })
+      .session(session);
+    for (const workspace of workspaces) {
+      const boards = await boardModel
+        .find({ workspace: workspace._id })
+        .session(session);
+      if (boards.length === 0) {
+        await workSpaceModel.deleteOne({ _id: workspace._id }).session(session);
+        continue;
+      }
+      const boardIds = boards.flatMap((b) => b._id);
+      const lists = await ListModel.find({ board: { $in: boardIds } }).session(
+        session
+      );
+      if (lists.length === 0) {
+        await boardModel
+          .deleteMany({ _id: { $in: boardIds } })
+          .session(session);
+        await workSpaceModel.deleteOne({ _id: workspace._id }).session(session);
+        continue;
+      }
+      const listIds = lists.flatMap((l) => l._id);
+      const cards = await CardModel.find({ list: { $in: listIds } }).session(
+        session
+      );
+      if (cards.length === 0) {
+        await ListModel.deleteMany({ _id: { $in: listIds } }).session(session);
+        await boardModel
+          .deleteMany({ _id: { $in: boardIds } })
+          .session(session);
+        await workSpaceModel.deleteOne({ _id: workspace._id }).session(session);
+        continue;
+      }
+      const cardIds = cards.flatMap((c) => c._id);
+      const allCommentsIds = findData(cards, "comments");
+      const allLabelsIds = findData(cards, "labels");
+      const allAttachmentsId = findData(cards, "attachments");
+      const allChecklistIDs = findData(cards, "checklist");
+      await deleteIfExists(commentsModel, allCommentsIds, session);
+      await deleteIfExists(CardLabelModel, allLabelsIds, session);
+      await deleteIfExists(CardAttachmentModel, allAttachmentsId, session);
+      await deleteIfExists(CheckListModel, allChecklistIDs, session);
+      await CardModel.deleteMany({ _id: { $in: cardIds } }).session(session);
+      await ListModel.deleteMany({ _id: { $in: listIds } }).session(session);
+      await boardModel.deleteMany({ _id: { $in: boardIds } }).session(session);
+      await workSpaceModel.deleteOne({ _id: workspace._id }).session(session);
+    }
+    await UserModel.deleteOne({ _id: user._id }).session(session);
+
+    await session.commitTransaction();
 
     res.status(200).json({
       message: "User deleted successfully",
@@ -324,11 +392,15 @@ export const deleteUser = async (req: Request, res: Response) => {
     });
   } catch (error: unknown) {
     if (error instanceof Error) {
+      await session.abortTransaction();
+
       console.log(error.message);
       res
         .status(500)
         .json({ message: "Internal server error", error: error.message });
     }
     res.status(500).json({ message: "Internal server error" });
+  } finally {
+    session.endSession();
   }
 };
