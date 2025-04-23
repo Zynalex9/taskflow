@@ -1,13 +1,19 @@
-import { useContext } from "react";
+import { useEffect } from "react";
 import "./App.css";
-import { socketContext } from "./context/SocketContext";
-
+import { useSelector } from "react-redux";
+import { RootState } from "./store/store";
+import AllRoutes from "./routes/AllRoutes";
+import NavBar from "./components/Navbar/NavBar";
 
 function App() {
-  const ws = useContext(socketContext);
+  const theme = useSelector((state: RootState) => state.theme.theme);
+  useEffect(() => {
+    document.body.className = theme;
+  }, [theme]);
   return (
     <>
-      <h1 className="text-3xl font-bold underline bg-red-500 ">Hello world!</h1>
+      <NavBar />
+      <AllRoutes />
     </>
   );
 }

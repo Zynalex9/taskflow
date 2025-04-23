@@ -1,1 +1,39 @@
 @import "tailwindcss";
+@custom-variant dark (&:where(.dark, .dark *));
+@theme {
+    --color-primary: #0065FF;
+    --color-secondary: #5BA4CF;
+    --color-background: #F4F5F7;
+    --color-board-bg: #E4E6EB;
+    --color-card-bg: #FFFFFF;
+    --color-text-primary: #172B4D;
+    --color-text-muted: #6B778C;
+    --color-border: #DFE1E6;
+    --color-success: #61BD4F;
+    --color-warning: #F2D600;
+    --color-danger: #EB5A46;
+    --color-input-bg: #FFFFFF;
+    --color-input-border: #CED4DA;
+    --color-input-text: #212529;
+    --color-overlay: rgba(0, 0, 0, 0.3);
+    --color-hover-bg: #EDEFF1;
+    --color-dark-primary: #0065FF;
+    --color-dark-secondary: #A5C8FF;
+    --color-dark-background: #1D2125;
+    --color-dark-board-bg: #2C2F33;
+    --color-dark-card-bg: #2C2F33;
+    --color-dark-text-primary: #FFFFFF;
+    --color-dark-text-muted: #A5ADBA;
+    --color-dark-border: #3A3F45;
+    --color-dark-success: #78C957;
+    --color-dark-warning: #FFDD4A;
+    --color-dark-danger: #FF7B72;
+    --color-dark-input-bg: #2C2F33;
+    --color-dark-input-border: #50575E;
+    --color-dark-input-text: #FFFFFF;
+    --color-dark-overlay: rgba(255, 255, 255, 0.1);
+    --color-dark-hover-bg: #363B41;
+
+    --font-poppins: 'Poppins', 'sans-serif',
+
+}
