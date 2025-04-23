@@ -2,7 +2,13 @@ import { Request, Response } from "express";
 import mongoose from "mongoose";
 import ApiResponse from "../../utils/ApiResponse";
 import { CardModel } from "../../models/card.model";
-import { CheckAdmin, checkRequiredBody, deleteIfExists, findData, notFound } from "../../utils/helpers";
+import {
+  CheckAdmin,
+  checkRequiredBody,
+  deleteIfExists,
+  findData,
+  notFound,
+} from "../../utils/helpers";
 import { commentsModel } from "../../models/card.comments.models";
 import { CardLabelModel } from "../../models/card.label.model";
 import { CardAttachmentModel } from "../../models/card.attachments.model";
@@ -10,6 +16,7 @@ import { CheckListModel } from "../../models/card.checklist.model";
 import { ListModel } from "../../models/list.models";
 import { UserModel } from "../../models/user.model";
 import { asyncHandler } from "../../utils/asyncHandler";
+import { redisClient } from "../..";
 
 export const createCard = async (req: Request, res: Response) => {
   try {
@@ -115,6 +122,7 @@ export const createCard = async (req: Request, res: Response) => {
         $push: { cards: newCard._id },
       }
     );
+    await redisClient.del(`tableData:${userId}`);
     res.status(201).json({
       message: "Card created successfully",
       success: true,
@@ -363,6 +371,8 @@ export const editCardDetails = async (req: Request, res: Response) => {
         );
     }
     await card.save();
+    const userId = req.user._id;
+    await redisClient.del(`tableData:${userId}`);
     res.status(201).json({ card });
   } catch (error: unknown) {
     if (error instanceof Error) {
@@ -412,6 +422,7 @@ export const getCardsByList = async (req: Request, res: Response) => {
       res.status(404).json({ message: "No Cards found in the given list" });
       return;
     }
+    await redisClient.del(`tableData:${userId}`);
     res.status(200).json({ message: "Cards found", cards });
   } catch (error: unknown) {
     if (error instanceof Error) {
@@ -427,50 +438,62 @@ export const getCardsByList = async (req: Request, res: Response) => {
   }
 };
 export const deleteCard = async (req: Request, res: Response) => {
-    const session = await mongoose.startSession();
-    try {
-      session.startTransaction();
-      const { workspaceId, cardId } = req.params;
-      const userId = req.user._id;
-  
-      if (!workspaceId || !cardId) {
-        res.status(400).json(new ApiResponse(400, {}, "Both workspace and card Id are required"));
-        return;
-      }
-  
-      const card = await CardModel.findById(cardId).session(session);
-      if (!card) {
-        res.status(404).json(new ApiResponse(404, {}, "Card not found"));
-        return;
-      }
-  
-      const isAuthorized = await CheckAdmin(userId, workspaceId);
-      if (!isAuthorized) {
-        res.status(403).json(new ApiResponse(403, {}, "You're not authorized to delete a card in this workspace"));
-        return;
-      }
-  
-      const allCommentsIds = findData([card], "comments");
-      const allLabelsIds = findData([card], "labels");
-      const allAttachmentsId = findData([card], "attachments");
-      const allChecklistIDs = findData([card], "checklist");
-  
-      await deleteIfExists(commentsModel, allCommentsIds, session);
-      await deleteIfExists(CardLabelModel, allLabelsIds, session);
-      await deleteIfExists(CardAttachmentModel, allAttachmentsId, session);
-      await deleteIfExists(CheckListModel, allChecklistIDs, session);
-  
-      await CardModel.findByIdAndDelete(cardId).session(session);
-  
-      await session.commitTransaction();
-      res.status(200).json(new ApiResponse(200, {}, "Card deleted successfully"));
-    } catch (error) {
-      await session.abortTransaction();
-      console.error(error);
-      res.status(500).json(new ApiResponse(500, {}, "Internal server error"));
-    } finally {
-      session.endSession();
+  const session = await mongoose.startSession();
+  try {
+    session.startTransaction();
+    const { workspaceId, cardId } = req.params;
+    const userId = req.user._id;
+
+    if (!workspaceId || !cardId) {
+      res
+        .status(400)
+        .json(
+          new ApiResponse(400, {}, "Both workspace and card Id are required")
+        );
+      return;
     }
+
+    const card = await CardModel.findById(cardId).session(session);
+    if (!card) {
+      res.status(404).json(new ApiResponse(404, {}, "Card not found"));
+      return;
+    }
+
+    const isAuthorized = await CheckAdmin(userId, workspaceId);
+    if (!isAuthorized) {
+      res
+        .status(403)
+        .json(
+          new ApiResponse(
+            403,
+            {},
+            "You're not authorized to delete a card in this workspace"
+          )
+        );
+      return;
+    }
+
+    const allCommentsIds = findData([card], "comments");
+    const allLabelsIds = findData([card], "labels");
+    const allAttachmentsId = findData([card], "attachments");
+    const allChecklistIDs = findData([card], "checklist");
+
+    await deleteIfExists(commentsModel, allCommentsIds, session);
+    await deleteIfExists(CardLabelModel, allLabelsIds, session);
+    await deleteIfExists(CardAttachmentModel, allAttachmentsId, session);
+    await deleteIfExists(CheckListModel, allChecklistIDs, session);
+
+    await CardModel.findByIdAndDelete(cardId).session(session);
+
+    await session.commitTransaction();
+    res.status(200).json(new ApiResponse(200, {}, "Card deleted successfully"));
+  } catch (error) {
+    await session.abortTransaction();
+    console.error(error);
+    res.status(500).json(new ApiResponse(500, {}, "Internal server error"));
+  } finally {
+    session.endSession();
+  }
 };
 export const copyCard = asyncHandler(async (req, res) => {
   const required = ["cardId", "ListId"];
@@ -480,9 +503,10 @@ export const copyCard = asyncHandler(async (req, res) => {
   if (notFound(card, "Card", res)) return;
   const list = await ListModel.findById(ListId);
   if (notFound(list, "List", res)) return;
-
   list?.cards.push(cardId);
   await list?.save();
+  const userId = req.user._id
+  await redisClient.del(`tableData:${userId}`)
   res.status(200).json(new ApiResponse(200, list, "Card copied"));
 });
 export const moveCard = asyncHandler(async (req, res) => {
@@ -509,5 +533,7 @@ export const moveCard = asyncHandler(async (req, res) => {
   );
   await list.save();
   await oldList.save();
+  const userId = req.user._id
+  await redisClient.del(`tableData:${userId}`)
   res.status(200).json(new ApiResponse(200, list, "Card moved"));
 });

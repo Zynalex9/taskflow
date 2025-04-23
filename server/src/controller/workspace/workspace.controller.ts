@@ -17,6 +17,7 @@ import {
   notFound,
 } from "../../utils/helpers";
 import ApiResponse from "../../utils/ApiResponse";
+import { redisClient } from "../..";
 interface IParams {
   name: string;
   members?: string[];
@@ -106,12 +107,20 @@ export const createWorkSpace = async (req: Request, res: Response) => {
 export const getWorkspaceTableData = async (req: Request, res: Response) => {
   try {
     const { workspaceId } = req.params;
+    const userId = req.user._id;
     if (!workspaceId) {
       res
         .status(400)
         .json({ message: "Workspace ID is required", success: false });
       return;
     }
+    const cachedData = await redisClient.get(`tableData:${userId}`);
+    if (cachedData) {
+      const parsed = JSON.parse(cachedData);
+      res.status(200).json(new ApiResponse(200, parsed, "Data from cache"));
+      return;
+    }
+
     const tableData = await boardModel.aggregate([
       {
         $match: { workspace: new mongoose.Types.ObjectId(workspaceId) },
@@ -162,6 +171,12 @@ export const getWorkspaceTableData = async (req: Request, res: Response) => {
           cardName: "$cardsDetails.name",
           labels: "$LabelDetails.name",
           members: "$userDetails.username",
+          dueDate: {
+            $dateToString: {
+              format: "%d-%m-%Y",
+              date: "$cardsDetails.endDate",
+            },
+          },
         },
       },
     ]);
@@ -172,6 +187,13 @@ export const getWorkspaceTableData = async (req: Request, res: Response) => {
       });
       return;
     }
+
+    await redisClient.set(
+      `tableData:${userId}`,
+      JSON.stringify(tableData),
+      "EX",
+      1300
+    );
     res.status(200).json({
       message: "Table Found",
       tableData,
@@ -230,7 +252,12 @@ export const getCalendarData = async (req: Request, res: Response) => {
       {
         $project: {
           name: 1,
-          endDate: 1,
+          endDate: {
+            $dateToString: {
+              format: "%d-%m-%Y",
+              date: "$endDate",
+            },
+          },
           labels: {
             $map: {
               input: "$labelDetails",

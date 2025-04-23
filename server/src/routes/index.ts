@@ -23,7 +23,16 @@ import {
   getWorkspaceTableData,
   removeAdmin,
 } from "../controller/workspace/workspace.controller";
-import { allBoards, createBoard, deleteBoard } from "../controller/board/board";
+import {
+  allBoards,
+  createBoard,
+  deleteBoard,
+  demoteAdmin,
+  makeBoardAdmin,
+  addMember,
+  removeMember,
+  editBoard,
+} from "../controller/board/board";
 import {
   createList,
   deleteList,
@@ -81,9 +90,6 @@ userRouter.route("/activity-log").get(verifyJWT, activityLogs);
 export { userRouter };
 
 workSpaceRouter.route("/create-workspace").post(verifyJWT, createWorkSpace);
-workSpaceRouter.route("/create-board").post(verifyJWT, createBoard);
-
-workSpaceRouter.route("/create-list").post(verifyJWT, createList);
 workSpaceRouter.route("/create-card").post(verifyJWT, createCard);
 workSpaceRouter
   .route("/:workspaceId/get-table-data")
@@ -91,17 +97,29 @@ workSpaceRouter
 workSpaceRouter
   .route("/:workspaceId/get-calendar-data")
   .get(verifyJWT, getCalendarData);
-workSpaceRouter.route("/:boardId/get-lists").get(verifyJWT, getAllLists);
 workSpaceRouter.route("/get-workspaces").get(verifyJWT, allWorkspaces);
-workSpaceRouter.route("/:workspaceId/get-boards").get(verifyJWT, allBoards);
 workSpaceRouter.route("/delete-workspace").delete(verifyJWT, deleteWorkSpace);
-workSpaceRouter.route("/:boardId/delete-board").delete(verifyJWT, deleteBoard);
-workSpaceRouter
-  .route("/:workspaceId/:listId/delete-list")
-  .delete(verifyJWT, deleteList);
 workSpaceRouter.route("/add-admin").patch(verifyJWT, addAdmin);
 workSpaceRouter.route("/remove-admin").patch(verifyJWT, removeAdmin);
+
 export { workSpaceRouter };
+boardRouter.route("/create-board").post(verifyJWT, createBoard);
+boardRouter.route("/:workspaceId/get-boards").get(verifyJWT, allBoards);
+boardRouter.route("/:boardId/delete-board").delete(verifyJWT, deleteBoard);
+boardRouter.route("/add-admin").patch(verifyJWT, makeBoardAdmin);
+boardRouter.route("/remove-admin").patch(verifyJWT, demoteAdmin);
+boardRouter.route("/add-member").patch(verifyJWT, addMember);
+boardRouter.route("/remove-member").patch(verifyJWT, removeMember);
+boardRouter.route("/edit-board").patch(verifyJWT, editBoard);
+export { boardRouter };
+listRouter.route("/create-list").post(verifyJWT, createList);
+listRouter.route("/copy-list").patch(verifyJWT, copyList);
+listRouter.route("/move-list").patch(verifyJWT, moveList);
+listRouter
+  .route("/:workspaceId/:listId/delete-list")
+  .delete(verifyJWT, deleteList);
+listRouter.route("/:boardId/get-lists").get(verifyJWT, getAllLists);
+export { listRouter };
 cardRouter.route("/join-card").post(verifyJWT, joinCard);
 cardRouter.route("/leave-card").post(verifyJWT, leaveCard);
 cardRouter.route("/add-label").post(verifyJWT, addLabel);
