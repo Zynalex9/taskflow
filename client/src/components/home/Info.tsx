@@ -2,7 +2,7 @@ import { CalendarDaysIcon, EqualApproximatelyIcon } from "lucide-react";
 
 const Info = () => {
   return (
-    <div className="min-h-screen bg-primary w-full">
+    <div className="min-h-screen bg-primary w-full pb-10 mb-10">
       <div className="text-white w-full text-center pt-12">
         <h1 className="text-3xl font-charlie-display-sm">
           From message to actions
