@@ -47,7 +47,7 @@ const ContentBoxData = [
 ];
 const Solutions = () => {
   return (
-    <div className="p-2 shadow-2xl bg-white w-full flex h-[80%] font-charlie-text-r">
+    <div className="shadow-2xl bg-white w-full flex h-[80%] font-charlie-text-r">
       <div className="left w-[75%]">
         <div className="heading pl-28 pt-4">
           <h2 className="text-xl text-text-primary">

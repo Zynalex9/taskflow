@@ -8,7 +8,6 @@ import Plans from "./dropdowns/Plans";
 const NavBar = () => {
   const [openFeatures, setOpenFeatures] = useState(false);
   const [openSolutions, setOpenSolutions] = useState(false);
-  const [openResources, setOpenResources] = useState(false);
   const [openPlans, setOpenPlans] = useState(false);
   const navRef = useRef<HTMLDivElement | null>(null);
   const featuresRef = useRef<HTMLDivElement | null>(null);
@@ -17,28 +16,18 @@ const NavBar = () => {
 
   const handleFeatures = () => {
     setOpenSolutions(false);
-    setOpenResources(false);
     setOpenPlans(false);
     setOpenFeatures(!openFeatures);
   };
 
   const handleSolutions = () => {
     setOpenSolutions(!openSolutions);
-    setOpenResources(false);
-    setOpenPlans(false);
-    setOpenFeatures(false);
-  };
-
-  const handleResources = () => {
-    setOpenSolutions(false);
-    setOpenResources(!openResources);
     setOpenPlans(false);
     setOpenFeatures(false);
   };
 
   const handlePlans = () => {
     setOpenSolutions(false);
-    setOpenResources(false);
     setOpenPlans(!openPlans);
     setOpenFeatures(false);
   };
@@ -55,9 +44,7 @@ const NavBar = () => {
       if (plansRef.current && !plansRef.current.contains(event.target as Node)) {
         setOpenPlans(false);
       }
-      if (navRef.current && !navRef.current.contains(event.target as Node)) {
-        setOpenResources(false);
-      }
+    
     };
 
     document.addEventListener("mousedown", handleClickOutside);
@@ -70,7 +57,7 @@ const NavBar = () => {
   return (
     <div
       ref={navRef}
-      className="shadow-xl z-10 flex items-center justify-between w-full h-16 p-2 relative font-charlie-text-r"
+      className=" bg-white shadow-xl z-10 flex items-center justify-between w-full h-16 p-2  font-charlie-text-r"
     >
       <div className="logo">
         <Link to={"/"}>

@@ -47,8 +47,8 @@ const ContentBoxData = [
 ];
 const NavBarFeatures = () => {
   return (
-    <div className="bg-white shadow-2xl   w-full h-[70%] px-4 flex transition-transform font-charlie-text-r">
-      <div className="left w-[80%]">
+    <div className="bg-white shadow-2xl w-full h-[70%] px-4 flex transition-transform font-charlie-text-r">
+      <div className="left w-[75%]">
         <div className="top px-24">
           <h3 className="text-2xl pt-6">
             Explore the features that help your team succeed
@@ -61,11 +61,11 @@ const NavBarFeatures = () => {
           ))}
         </div>
       </div>
-      <div className="right w-[25%] px-5">
+      <div className="right w-[25%] ">
         <div className="top">
           <h3 className="text-2xl py-6">Meet Taskflow</h3>
           <div className="border-b border-gray-200 w-full"></div>
-          <p className="py-6 text-sm w-[80%]">
+          <p className="py-6 text-sm w-[80%] leading-slug">
             Taskflow makes it easy for your team to get work done. No matter the
             project, workflow, or type of team, Taskflow can help keep things
             organized. It’s simple – sign-up, create a board, and you’re off!
