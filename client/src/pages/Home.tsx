@@ -1,9 +1,11 @@
-import HeroSection from "../components/hero/HeroSection";
+import HeroSection from "../components/home/HeroSection";
+import Tabs from "../components/home/Tabs";
 
 const Home = () => {
   return (
     <main>
       <HeroSection />
+      <Tabs/>
     </main>
   );
 };
