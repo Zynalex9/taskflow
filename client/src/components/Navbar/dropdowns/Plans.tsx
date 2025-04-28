@@ -1,0 +1,69 @@
+import {
+  Building2,
+  CloudLightningIcon,
+  Lightbulb,
+  Star,
+} from "lucide-react";
+import ContentBox from "../reusables/ContentBox";
+
+const Plans = () => {
+  const contentData = [
+    {
+      Icon: Lightbulb,
+      heading: "Standard",
+      text: "For teams that need to manage more work and scale collaboration.",
+      bg: "#FFFCF2",
+    },
+    {
+      Icon: Star,
+      heading: "Premium",
+      text: "Best for teams up to 100 that need to track multiple projects and visualize work in a variety of ways.",
+      bg: "#EEF5FF",
+    },
+    {
+      Icon: Building2,
+      heading: "Enterprise",
+      text: "Everything your enterprise teams and admins need to manage projects.",
+      bg: "#F2FDFF",
+    },
+  ];
+  return (
+    <div className="bg-white w-full pl-20 shadow-2xl flex gap-4">
+      <div className="left-side w-[75%] py-10">
+        <div className="top-sec flex gap-2 py-4">
+          {contentData.map(({ Icon, text, bg, heading }) => (
+            <ContentBox Icon={Icon} text={text} bg={bg} heading={heading} />
+          ))}
+        </div>
+        <div className="bottom-sec bg-[#FFFDF5] p-8 flex items-center justify-between">
+          <div className="space-y-4">
+            <div className="flex gap-2 ">
+              <CloudLightningIcon color="orange" />
+              <h1 className="text-xl"> Free Plan</h1>
+            </div>
+            <p className="text-xs text-gray-600">
+              {" "}
+              For individuals or small teams looking to keep work organize
+            </p>
+          </div>
+          <button className="py-4 px-4 bg-white border border-amber-600">
+            Take a tour of Taskflow
+          </button>
+        </div>
+      </div>
+      <div className="right-side bg-[#F7F5FF] w-[25%] space-y-8 p-6">
+        <div className="space-y-2">
+          <h1 className="text-xl">Compare plans and Pricing</h1>
+          <div className="border-b border-gray-200"></div>
+        </div>
+        <p className="text-xs text-gray-500">
+          Whether you’re a team of 2 or 2,000, Taskflow’s flexible pricing model
+          means you only pay for what you need.
+        </p>
+        <button className="bg-white px-2 py-4 border rounded">View Taskflow Pricing</button>
+      </div>
+    </div>
+  );
+};
+
+export default Plans;

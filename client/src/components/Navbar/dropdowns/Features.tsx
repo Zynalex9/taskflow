@@ -1,4 +1,3 @@
-import React from "react";
 import ContentBox from "../reusables/ContentBox";
 import {
   BookTemplate,
@@ -48,7 +47,7 @@ const ContentBoxData = [
 ];
 const NavBarFeatures = () => {
   return (
-    <div className="z-[999]  absolute top-16 left-0  w-full h-[70%] px-4 flex transition-transform font-charlie-text-r">
+    <div className="bg-white shadow-2xl   w-full h-[70%] px-4 flex transition-transform font-charlie-text-r">
       <div className="left w-[80%]">
         <div className="top px-24">
           <h3 className="text-2xl pt-6">
@@ -62,7 +61,7 @@ const NavBarFeatures = () => {
           ))}
         </div>
       </div>
-      <div className="right w-[25%] bg-red-500 px-5">
+      <div className="right w-[25%] px-5">
         <div className="top">
           <h3 className="text-2xl py-6">Meet Taskflow</h3>
           <div className="border-b border-gray-200 w-full"></div>
