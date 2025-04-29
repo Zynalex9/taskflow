@@ -1,11 +1,25 @@
-import { ArrowLeftIcon, ArrowRightIcon } from "lucide-react";
+import {
+  ArrowLeftIcon,
+  ArrowRightIcon,
+  IdCard,
+  LucideIcon,
+  Puzzle,
+  SettingsIcon,
+} from "lucide-react";
 import { useState } from "react";
+import Card from "./Card";
 interface IData {
   content: string;
   name: string;
   designation: string;
   sideText: string;
   logo: string;
+}
+interface IProps {
+  Icon: LucideIcon;
+  heading: string;
+  buttonText?: string;
+  description: string;
 }
 const Slider = () => {
   const data: IData[] = [
@@ -37,6 +51,28 @@ const Slider = () => {
     },
   ];
 
+  const cardData: IProps[] = [
+    {
+      Icon: Puzzle,
+      heading: "Intregations",
+      description:
+        "Connect the apps your team already uses into your Trello workflow or add a Power-Up to fine-tune your specific needs.",
+      buttonText: "Browse Intregations",
+    },
+    {
+      Icon: SettingsIcon,
+      heading: "Butler Automation",
+      description:
+        "No-code automation is built into every Trello board. Focus on the work that matters most and let the robots do the rest.",
+      buttonText: "Browse Intregations",
+    },
+    {
+      Icon: IdCard,
+      heading: "Card Monitoring",
+      description:"View your to-dos from different boards in more than one place. Mirror a card to keep track of work wherever you need it!",
+      buttonText:"Try it out"
+    },
+  ];
   const [currentSlideIndex, setCurrentSlideIndex] = useState(0);
   const nextSlide = () => {
     setCurrentSlideIndex((prev) => (prev === data.length - 1 ? 0 : prev + 1));
@@ -49,6 +85,26 @@ const Slider = () => {
   console.log(currentSlideIndex);
   return (
     <div className="my-20 w-[100%] ">
+      <div className="space-y-3 pl-32 my-10">
+        <h2 className="font-charlie-display-sm text-2xl">WORK SMARTER</h2>
+        <h1 className="font-charlie-display-sm text-4xl">
+          Do more with Taskflow
+        </h1>
+        <p className="text-xl w-2xl font-charlie-text-r">
+          Customize the way you organize with easy integrations, automation, and
+          mirroring of your to-dos across multiple locations.
+        </p>
+      </div>
+      <div className="w-full flex gap-5 my-20 px-32">
+        {cardData.map(({ Icon, description, heading, buttonText }) => (
+          <Card
+            Icon={Icon}
+            description={description}
+            heading={heading}
+            buttonText={buttonText}
+          />
+        ))}
+      </div>
       <div className="controls px-6 w-[80%] mx-32 flex justify-end">
         <div>
           <button onClick={prevSlide}>
@@ -61,7 +117,7 @@ const Slider = () => {
       </div>
       {data.map(({ content, name, designation, sideText, logo }, idx) => (
         <div
-          className={`w-[80%] m-auto flex  shadow-2xl rounded-xl opacity-95 transition-opacity duration-200 ease-in ${
+          className={`w-[80%] m-auto flex  shadow-2xl shadow-black rounded-xl opacity-95 transition-opacity duration-200 ease-in ${
             idx === currentSlideIndex ? "block opacity-100" : "hidden opacity-0"
           }`}
         >
@@ -83,7 +139,7 @@ const Slider = () => {
               </button>
             </div>
           </div>
-          <div className="right-side w-[35%] bg-[#0747A6] text-5xl font-charlie-display-sm text-white p-2 rounded-r-xl ">
+          <div className="right-side w-[35%] bg-[#0747A6] text-4xl font-charlie-text-r text-white p-4 rounded-r-xl ">
             <h1 className="w-xs"> {sideText}</h1>{" "}
           </div>
         </div>
