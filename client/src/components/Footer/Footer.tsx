@@ -2,22 +2,22 @@ import { Facebook, Instagram, Linkedin } from "lucide-react";
 
 const Footer = () => {
   return (
-    <div className="w-full bg-[#172B4D] p-8">
-      <div className="before-footer w-full flex items-center justify-between text-white font-charlie-text-r">
+    <div className="w-full bg-[#172B4D] p-4 lg:p-8">
+      <div className="before-footer w-full flex max-lg:flex-col  lg:items-center lg:justify-between text-white font-charlie-text-r max-lg:space-y-4 max-lg:mb-2">
         <h1 className="font-charlie-display-sm text-4xl">Taskflow</h1>
-        <div className="transition-all duration-200 px-4 py-8 hover:bg-gray-400/50">
+        <div className="transition-all duration-200 lg:px-4 lg:py-8 hover:bg-gray-400/50">
           <h1 className="text-2xl pb-2">About Taskflow</h1>
           <p className="text-xs">What’s behind the boards.</p>
         </div>
-        <div className="transition-all duration-200 px-4 py-8 hover:bg-gray-400/50">
+        <div className="transition-all duration-200 lg:px-4 lg:py-8 hover:bg-gray-400/50">
           <h1 className="text-2xl pb-2">Jobs</h1>
           <p className="text-xs">What’s behind the boards.</p>
         </div>
-        <div className="transition-all duration-200 px-4 py-8 hover:bg-gray-400/50">
+        <div className="transition-all duration-200 lg:px-4 lg:py-8 hover:bg-gray-400/50">
           <h1 className="text-2xl pb-2">Apps</h1>
           <p className="text-xs">What’s behind the boards.</p>
         </div>
-        <div className="transition-all duration-200 px-4 py-8 hover:bg-gray-400/50">
+        <div className="transition-all duration-200 lg:px-4 lg:py-8 hover:bg-gray-400/50">
           <h1 className="text-2xl pb-2">Contact us</h1>
           <p className="text-xs">What’s behind the boards.</p>
         </div>

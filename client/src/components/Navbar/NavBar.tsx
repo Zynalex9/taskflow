@@ -1,5 +1,11 @@
 import { Link, NavLink } from "react-router-dom";
-import { ChevronDown, ChevronUp } from "lucide-react";
+import {
+  ArrowRight,
+  ChevronDown,
+  ChevronUp,
+  MenuIcon,
+  XIcon,
+} from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import NavBarFeatures from "./dropdowns/Features";
 import Solutions from "./dropdowns/Solutions";
@@ -9,6 +15,7 @@ const NavBar = () => {
   const [openFeatures, setOpenFeatures] = useState(false);
   const [openSolutions, setOpenSolutions] = useState(false);
   const [openPlans, setOpenPlans] = useState(false);
+  const [isMobileOpen, setIsMobileOpen] = useState(false);
   const navRef = useRef<HTMLDivElement | null>(null);
   const featuresRef = useRef<HTMLDivElement | null>(null);
   const solutionsRef = useRef<HTMLDivElement | null>(null);
@@ -32,19 +39,27 @@ const NavBar = () => {
     setOpenFeatures(false);
   };
 
-  console.log(featuresRef)
+  console.log(featuresRef);
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
-      if (featuresRef.current && !featuresRef.current.contains(event.target as Node)) {
+      if (
+        featuresRef.current &&
+        !featuresRef.current.contains(event.target as Node)
+      ) {
         setOpenFeatures(false);
       }
-      if (solutionsRef.current && !solutionsRef.current.contains(event.target as Node)) {
+      if (
+        solutionsRef.current &&
+        !solutionsRef.current.contains(event.target as Node)
+      ) {
         setOpenSolutions(false);
       }
-      if (plansRef.current && !plansRef.current.contains(event.target as Node)) {
+      if (
+        plansRef.current &&
+        !plansRef.current.contains(event.target as Node)
+      ) {
         setOpenPlans(false);
       }
-    
     };
 
     document.addEventListener("mousedown", handleClickOutside);
@@ -57,11 +72,13 @@ const NavBar = () => {
   return (
     <div
       ref={navRef}
-      className=" bg-white shadow-xl z-10 flex items-center justify-between w-full h-16 p-2  font-charlie-text-r"
+      className=" bg-white shadow-xl text-xl z-10 flex items-center justify-between w-full h-16 py-2 pl-2  font-charlie-text-r"
     >
       <div className="logo">
         <Link to={"/"}>
-          <h1 className="text-primary text-4xl font-poppins">TaskFlow</h1>
+          <h1 className="text-primary text-4xl font-charlie-display-b">
+            TaskFlow
+          </h1>
         </Link>
       </div>
       <div className="links hidden lg:flex lg:gap-4 lg:ml-8">
@@ -168,10 +185,46 @@ const NavBar = () => {
           <ChevronDown size={12} color="#000" />
         </NavLink>
       </div>
-      <div className="buttons ml-auto flex gap-4">
-        <button className="font-poppins cursor-pointer">Login</button>
-        <button className="cursor-pointer bg-primary py-4 px-2 mx-1 text-white">
+      {isMobileOpen && (
+        <div
+          className={`absolute top-16 left-0 w-full bg-white flex flex-col gap-4 py-4 px-6 shadow-lg lg:hidden z-50 
+  transition-all duration-300 ease-in-out transform 
+  ${
+    isMobileOpen
+      ? "translate-y-0 opacity-100"
+      : "-translate-y-6 opacity-0 pointer-events-none"
+  }`}
+        >
+          <div className="flex justify-between border-t border-b border-gray-200 py-4">
+            <h1 className="text-heading font-charlie-text-r">Features</h1>
+            <ArrowRight className="text-black/60 transition-all duration-200 hover:text-black/100" />
+          </div>
+          <div className="flex justify-between border-b border-gray-200 py-4">
+            <h1 className="text-heading font-charlie-text-r">Features</h1>
+            <ArrowRight className="text-black/60 transition-all duration-200 hover:text-black/100" />
+          </div>
+          <div className="flex justify-between border-b border-gray-200 py-4">
+            <h1 className="text-heading font-charlie-text-r">Features</h1>
+          </div>
+          <div className="flex justify-between border-b border-gray-200 py-4">
+            <h1 className="text-heading font-charlie-text-r">Features</h1>
+            <ArrowRight className="text-black/60 transition-all duration-200 hover:text-black/100" />
+          </div>
+       
+        </div>
+      )}
+      <div className="hidden lg:block lg:ml-auto lg:flex lg:gap-4">
+        <button className="cursor-pointer font-charlie-text-r">Login</button>
+        <button className="cursor-pointer bg-primary py-4 px-2 mx-1 font-charlie-text-r text-white">
           Get Taskflow for Free
+        </button>
+      </div>
+      <div className="block lg:hidden px-3">
+        <button
+          onClick={() => setIsMobileOpen((prev) => !prev)}
+          className="lg:hidden"
+        >
+          {isMobileOpen ? <XIcon /> : <MenuIcon />}
         </button>
       </div>
     </div>

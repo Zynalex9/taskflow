@@ -10,7 +10,7 @@ interface IProps {
 
 const Card: React.FC<IProps> = ({ Icon, buttonText, description, heading }) => {
   return (
-    <div className="w-full sm:w-1/3 bg-[#FAFBFC] shadow-xl space-y-3 text-heading p-6 h-[60vh] rounded-lg flex flex-col  justify-between">
+    <div className="w-full lg:w-1/3 bg-[#FAFBFC] shadow-xl space-y-3 text-heading p-6 h-[60vh] rounded-lg flex flex-col  justify-between">
       <Icon size={40} className="mb-4 text-primary" />
       <h1 className="text-2xl font-semibold">{heading}</h1>
       <p className="text-base text-gray-600 mt-2">{description}</p>

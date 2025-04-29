@@ -32,14 +32,7 @@ const Slider = () => {
         "74% of customers say Taskflow has improved communication with their co-workers and teams.",
       logo: "https://images.ctfassets.net/rz1oowkt5gyp/3X64fxSs4ek9A0ex45BUNI/911daed79127cb2f8a021da93fb68b9f/ptc-logo.svg",
     },
-    {
-      content:
-        "Whether someone is in the office, working from home, or working on-site with a client, everyone can share context and information through Taskflow.",
-      name: "Sumeet Moghe",
-      designation: "Product Manager at ThoughtWorks",
-      sideText: "81% of customers chose Taskflow for its ease of use.",
-      logo: "https://images.ctfassets.net/rz1oowkt5gyp/2kIh1cWqsxjtHwWHWJJPsJ/d8436f3979be6cab7931f4d276c2d5ce/thoughtworks.svg",
-    },
+
     {
       content:
         "[Taskflow is] great for simplifying complex processes. As a manager, I can chunk [processes] down into bite-sized pieces for my team and then delegate that out, but still keep a bird's-eye view.",
@@ -69,8 +62,9 @@ const Slider = () => {
     {
       Icon: IdCard,
       heading: "Card Monitoring",
-      description:"View your to-dos from different boards in more than one place. Mirror a card to keep track of work wherever you need it!",
-      buttonText:"Try it out"
+      description:
+        "View your to-dos from different boards in more than one place. Mirror a card to keep track of work wherever you need it!",
+      buttonText: "Try it out",
     },
   ];
   const [currentSlideIndex, setCurrentSlideIndex] = useState(0);
@@ -95,7 +89,7 @@ const Slider = () => {
           mirroring of your to-dos across multiple locations.
         </p>
       </div>
-      <div className="w-full flex gap-5 my-20 px-32">
+      <div className="w-full flex flex-col lg:flex-row gap-5 my-10 px-16 lg:my-20 lg:px-32">
         {cardData.map(({ Icon, description, heading, buttonText }) => (
           <Card
             Icon={Icon}
@@ -105,7 +99,7 @@ const Slider = () => {
           />
         ))}
       </div>
-      <div className="controls px-6 w-[80%] mx-32 flex justify-end">
+      <div className="controls hidden  px-6 w-[80%] mx-32 lg:flex justify-end">
         <div>
           <button onClick={prevSlide}>
             <ArrowLeftIcon />
@@ -117,18 +111,18 @@ const Slider = () => {
       </div>
       {data.map(({ content, name, designation, sideText, logo }, idx) => (
         <div
-          className={`w-[80%] m-auto flex  shadow-2xl shadow-black rounded-xl opacity-95 transition-opacity duration-200 ease-in ${
+          className={`w-[90%] lg:w-[80%] m-auto flex flex-col lg:flex-row shadow-2xl shadow-black rounded-xl opacity-95 transition-opacity duration-200 ease-in ${
             idx === currentSlideIndex ? "block opacity-100" : "hidden opacity-0"
           }`}
         >
-          <div className="left-side w-[65%] p-6">
-            <div className="mb-40">
-              <h3 className="text-2xl text-heading font-charlie-text-r">
+          <div className="left-side w-full lg:w-[65%] p-6">
+            <div className="mb-10 lg:mb-40">
+              <h3 className="text-md lg:text-2xl text-heading font-charlie-text-r">
                 {content}
               </h3>
             </div>
             <div className="border-b-[1.5px] w-[20%]  pb-4"></div>
-            <div className="designation font-charlie-text-r space-y-0.5 mt-4 text-xl">
+            <div className="designation font-charlie-text-r space-y-0.5 mt-4 text-sm lg:text-md lg:text-xl">
               <h3>{name}</h3>
               <p>{designation}</p>
             </div>
@@ -139,11 +133,21 @@ const Slider = () => {
               </button>
             </div>
           </div>
-          <div className="right-side w-[35%] bg-[#0747A6] text-4xl font-charlie-text-r text-white p-4 rounded-r-xl ">
-            <h1 className="w-xs"> {sideText}</h1>{" "}
+          <div className="right-side w-full lg:w-[35%] bg-[#0747A6] text-xl lg:text-4xl font-charlie-text-r text-white p-4 rounded-r-xl ">
+            <h1 className="lg:w-xs"> {sideText}</h1>{" "}
           </div>
         </div>
       ))}
+      <div className="controls  w-[100%]  flex justify-center mt-10 lg:hidden">
+        <div>
+          <button onClick={prevSlide}>
+            <ArrowLeftIcon />
+          </button>
+          <button onClick={nextSlide}>
+            <ArrowRightIcon />
+          </button>
+        </div>
+      </div>
     </div>
   );
 };
