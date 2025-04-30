@@ -27,7 +27,7 @@ const HeroSection = () => {
       <div className="w-full mt-6 lg:mt-0 lg:w-1/2 flex justify-center items-center">
         <video
           src="/n20-hero-cropped2.mov"
-          className="w-full h-full max-h-[400px] object-contain"
+          className="w-full h-full max-lg:h-[400px] object-contain"
           autoPlay
           muted
         />

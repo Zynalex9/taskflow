@@ -109,10 +109,12 @@ const Slider = () => {
           </button>
         </div>
       </div>
+      <div className="relative h-[500px] w-full px-30">
+
       {data.map(({ content, name, designation, sideText, logo }, idx) => (
         <div
-          className={`w-[90%] lg:w-[80%] m-auto flex flex-col lg:flex-row shadow-2xl shadow-black rounded-xl opacity-95 transition-opacity duration-200 ease-in ${
-            idx === currentSlideIndex ? "block opacity-100" : "hidden opacity-0"
+          className={`h-[350px] lg:h-[500px] w-[90%] lg:w-[80%] absolute flex flex-col lg:flex-row shadow-2xl shadow-black rounded-xl transition-opacity duration-400 ease-in ${
+            idx === currentSlideIndex ? "opacity-100" : "opacity-0"
           }`}
         >
           <div className="left-side w-full lg:w-[65%] p-6">
@@ -138,6 +140,8 @@ const Slider = () => {
           </div>
         </div>
       ))}
+      </div>
+
       <div className="controls  w-[100%]  flex justify-center mt-10 lg:hidden">
         <div>
           <button onClick={prevSlide}>
