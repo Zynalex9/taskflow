@@ -12,37 +12,43 @@ const ContentBoxData = [
     Icon: Inbox,
     heading: "Inbox",
     text: "Capture every vital detail from emails, Slack, and more directly into your Taskflow Inbox.",
-    bg:"#F1FDF7"
+    bg:"#F1FDF7",
+    to:"/feature/inbox"
   },
   {
     Icon: CalendarCheck,
     heading: "Planner",
     text: "Sync your calendar and allocate focused time slots to boost productivity.",
-    bg:'#FFF5F2'
+    bg:'#FFF5F2',
+    to:"/feature/planner"
   },
   {
     Icon: Caravan,
     heading: "Automation",
     text: "Automate tasks and workflows with Butler automation.",
-    bg:"#FFF8FD"
+    bg:"#FFF8FD",
+    to:"/feature/automation"
   },
   {
     Icon: PowerSquareIcon,
     heading: "Power-ups",
     text: "Power up your teams by linking their favorite tools with Taskflow plugins.",
-    bg:"#FFFCF2"
+    bg:"#FFFCF2",
+    to:"/feature/power-ups"
   },
   {
     Icon: BookTemplate,
     heading: "Templates",
     text: "Give your team a blueprint for success with easy-to-use templates from industry leaders and the Taskflow community.",
-    bg:"#EEF5FF"
+    bg:"#EEF5FF",
+    to:"/feature/templates"
   },
   {
     Icon: Component,
     heading: "Integration",
     text: "Find the apps your team is already using or discover new ways to get work done in Taskflow.",
-    bg:"#F2FDFF"
+    bg:"#F2FDFF",
+    to:"/feature/intregation"
   },
 ];
 const NavBarFeatures = () => {
@@ -57,7 +63,7 @@ const NavBarFeatures = () => {
         </div>
         <div className="content flex flex-wrap pl-24 w-full">
           {ContentBoxData.map((box) => (
-            <ContentBox Icon={box.Icon} heading={box.heading} text={box.text} bg={box.bg} />
+            <ContentBox Icon={box.Icon} heading={box.heading} text={box.text} bg={box.bg} to={box.to} />
           ))}
         </div>
       </div>

@@ -8,15 +8,19 @@ import Footer from "./components/Footer/Footer";
 
 function App() {
   const theme = useSelector((state: RootState) => state.theme.theme);
+
   useEffect(() => {
     document.body.className = theme;
   }, [theme]);
+
   return (
-    <>
+    <div className="min-h-screen flex flex-col">
       <NavBar />
-      <AllRoutes />
+      <div className="flex-grow">
+        <AllRoutes />
+      </div>
       <Footer />
-    </>
+    </div>
   );
 }
 
