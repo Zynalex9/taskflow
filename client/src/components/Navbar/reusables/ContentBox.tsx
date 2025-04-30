@@ -1,16 +1,19 @@
 import { LucideIcon } from "lucide-react";
 import { useState } from "react";
+import { Link } from "react-router-dom";
 
 interface ContentBoxProps {
   Icon: LucideIcon;
   heading: string;
   text: string;
   bg:string
+  to:string
 }
-const ContentBox: React.FC<ContentBoxProps> = ({ Icon, heading, text,bg }) => {
+const ContentBox: React.FC<ContentBoxProps> = ({ Icon, heading, text,bg,to }) => {
   const [isHovered, setIsHovered] = useState(false);
 
   return (
+    <Link to={to}>
     <div
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
@@ -26,6 +29,7 @@ const ContentBox: React.FC<ContentBoxProps> = ({ Icon, heading, text,bg }) => {
         <p className="text-gray-700 text-sm font-charlie-text-r">{text}</p>
       </div>
     </div>
+    </Link>
   );
 };
 

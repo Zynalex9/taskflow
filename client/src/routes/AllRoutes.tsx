@@ -1,6 +1,7 @@
 import { Route, Routes } from "react-router-dom";
 import Home from "../pages/Home";
 import Index from "../components/Feature-components/Index";
+import AutomationPage from "../pages/AutomationPage";
 
 const AllRoutes = () => {
   const featurePages = [
@@ -93,6 +94,7 @@ const AllRoutes = () => {
           />
         </>
       ))}
+      <Route path="/feature/automation" element={<AutomationPage/>}/>
     </Routes>
   );
 };
