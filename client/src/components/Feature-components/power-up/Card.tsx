@@ -1,33 +1,34 @@
 interface ICARD {
-  bannerImg: string;
+  bannerImg?: string;
   logoImg: string;
   heading: string;
   shortDescription: string;
-
   users: string;
 }
-const Card: React.FC<ICARD> = ({bannerImg,heading,logoImg,shortDescription,users}) => {
+const Card: React.FC<ICARD> = ({
+  bannerImg,
+  heading,
+  logoImg,
+  shortDescription,
+  users,
+}) => {
   return (
     <div className="bg-[#161A1D] text-white p-3 rounded-xl shadow-md w-full max-w-xs space-y-3 hover:scale-[1.02] transition-transform duration-200">
-      <img
-        src={bannerImg}
-        alt="Hero"
-        className="rounded-lg w-full object-cover"
-      />
+      {bannerImg && (
+        <img
+          src={bannerImg}
+          alt="Hero"
+          className="rounded-lg w-full object-cover"
+        />
+      )}
 
       <div className="space-y-2">
         <div className="flex items-center gap-2">
-          <img
-            src={logoImg}
-            alt="Icon"
-            className="w-8 h-8"
-          />
+          <img src={logoImg} alt="Icon" className="w-12 h-12" />
           <h2 className="text-lg font-semibold">{heading}</h2>
         </div>
-<button className="bg-[#579DFF] px-4 py-1 rounded-lg">Add</button>
-        <p className="text-xs text-gray-300 leading-snug">
-         {shortDescription}
-        </p>
+        <button className="bg-[#579DFF] px-4 py-1 rounded-lg">Add</button>
+        <p className="text-xs text-gray-300 leading-snug">{shortDescription}</p>
 
         <div className="flex items-center gap-1 text-gray-400 text-sm">
           <svg

@@ -179,9 +179,9 @@ const Featured = () => {
           Power-ups for Taskflow
         </h1>
         <p className="text-lg">
-          Calendars, Voting, Repeating Cards and so much more with integrations 
-          like Jira, <br/> Slack, Google Drive, InVision - get your Trello superpowers
-          now!
+          Calendars, Voting, Repeating Cards and so much more with integrations
+          like Jira, <br /> Slack, Google Drive, InVision - get your Trello
+          superpowers now!
         </p>
       </div>
       <div
@@ -189,8 +189,9 @@ const Featured = () => {
       flex-wrap"
       >
         {cardData.map(
-          ({ bannerImg, heading, logoImg, shortDescription, users }) => (
+          ({ bannerImg, heading, logoImg, shortDescription, users }, index) => (
             <Card
+              key={index}
               bannerImg={bannerImg}
               heading={heading}
               logoImg={logoImg}
