@@ -2,6 +2,8 @@ import { Route, Routes } from "react-router-dom";
 import Home from "../pages/Home";
 import Index from "../components/Feature-components/Index";
 import AutomationPage from "../pages/AutomationPage";
+import Layout from "../components/Feature-components/power-up/Layout";
+import Featured from "../components/Feature-components/power-up/Featured";
 
 const AllRoutes = () => {
   const featurePages = [
@@ -95,6 +97,13 @@ const AllRoutes = () => {
         </>
       ))}
       <Route path="/feature/automation" element={<AutomationPage/>}/>
+      <Route element={<Layout/>}>
+      <Route path="/feature/power-ups" element={<Featured/>}/>
+      <Route path="/feature/power-ups/automation" element={<h1>second</h1>}/>
+      <Route path="/feature/power-ups/abc" element={<h1>third</h1>}/>
+      <Route path="/feature/power-ups/abc2" element={<h1>fourth</h1>}/>
+
+      </Route>
     </Routes>
   );
 };
