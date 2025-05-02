@@ -1,9 +1,9 @@
-import { automationCardData, projectData } from "../data/data";
+import { projectData } from "../data/data";
 import Card from "./Card";
 
 const ProjectManagement = () => {
     return (
-        <div className="flex w-full gap-2 flex-wrap">
+        <div className="flex items-center justify-center w-full gap-2 flex-wrap">
           {projectData.map(
             ({ heading, logoImg, shortDescription, users }, index) => (
               <Card

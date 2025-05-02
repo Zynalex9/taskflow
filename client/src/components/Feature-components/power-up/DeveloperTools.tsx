@@ -3,7 +3,7 @@ import Card from "./Card"
 
 const DeveloperTools = () => {
   return (
-    <div className="flex w-full gap-2 flex-wrap">
+    <div className="flex items-center justify-center w-full gap-2 flex-wrap">
       {developerCardData.map(({ heading, logoImg, shortDescription, users, bannerImg }, index) => (
         <Card
           key={index}

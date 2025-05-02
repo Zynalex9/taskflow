@@ -17,14 +17,14 @@ const Featured = () => {
           {" "}
           Power-ups for Taskflow
         </h1>
-        <p className="text-lg">
+        <p className="lg:text-lg">
           Calendars, Voting, Repeating Cards and so much more with integrations
-          like Jira, <br /> Slack, Google Drive, InVision - get your Trello
+          like Jira,  Slack, Google Drive, InVision - get your Trello
           superpowers now!
         </p>
       </div>
       <div
-        className="flex w-full gap-2 
+        className="flex items-center justify-center w-full gap-2 
       flex-wrap"
       >
         {featuredCardData.map(
