@@ -13,7 +13,7 @@ const Card: React.FC<ICARD> = ({
   users,
 }) => {
   return (
-    <div className="bg-[#161A1D] text-white p-3 rounded-xl shadow-md w-full max-w-xs space-y-3 hover:scale-[1.02] transition-transform duration-200">
+    <div className="bg-[#333C43] text-white p-3 rounded-xl shadow-md w-full max-w-xs space-y-3 hover:scale-[1.02] transition-transform duration-200">
       {bannerImg && (
         <img
           src={bannerImg}

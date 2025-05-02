@@ -6,6 +6,10 @@ import Layout from "../components/Feature-components/power-up/Layout";
 import Featured from "../components/Feature-components/power-up/Featured";
 import Automation from "../components/Feature-components/power-up/Automation";
 import Analytics from "../components/Feature-components/power-up/Analytics";
+import DeveloperTools from "../components/Feature-components/power-up/DeveloperTools";
+import BoardUtilities from "../components/Feature-components/power-up/BoardUtilities";
+import ProjectManagement from "../components/Feature-components/power-up/ProjectManagement";
+import Operations from "../components/Feature-components/power-up/Operations";
 
 const AllRoutes = () => {
   const featurePages = [
@@ -103,7 +107,10 @@ const AllRoutes = () => {
       <Route path="/feature/power-ups/featured" element={<Featured/>}/>
       <Route path="/feature/power-ups/automation" element={<Automation/>}/>
       <Route path="/feature/power-ups/analytics-reporting" element={<Analytics/>}/>
-      <Route path="/feature/power-ups/abc2" element={<h1>fourth</h1>}/>
+      <Route path="/feature/power-ups/developer-tools" element={<DeveloperTools/>}/>
+      <Route path="/feature/power-ups/board-utilities" element={<BoardUtilities/>}/>
+      <Route path="/feature/power-ups/hr-operations" element={<Operations/>}/>
+      <Route path="/feature/power-ups/project-management" element={<ProjectManagement/>}/>
 
       </Route>
     </Routes>
