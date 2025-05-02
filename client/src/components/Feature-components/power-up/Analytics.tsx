@@ -1,11 +1,10 @@
-import { automationCardData } from "../data/data";
+import { analyticsCardData } from "../data/data";
 import Card from "./Card";
-
-const Automation = () => {
+const Analytics = () => {
 
   return (
     <div className="flex w-full gap-2 flex-wrap">
-      {automationCardData.map(({ heading, logoImg, shortDescription, users, bannerImg }, index) => (
+      {analyticsCardData.map(({ heading, logoImg, shortDescription, users, bannerImg }, index) => (
         <Card
           key={index}
           heading={heading}
@@ -19,4 +18,5 @@ const Automation = () => {
   );
 };
 
-export default Automation;
+
+export default Analytics;

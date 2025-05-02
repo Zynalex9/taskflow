@@ -84,7 +84,7 @@ const NavBar = () => {
       <div className="links hidden lg:flex lg:gap-4 lg:ml-8">
         <div className="flex justify-center items-center" ref={featuresRef}>
           <NavLink
-            to="/features"
+            to="/features/featured"
             className={({ isActive }) =>
               `flex items-center space-x-1 ${
                 isActive ? "underline underline-offset-4 text-blue-600" : ""
