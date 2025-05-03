@@ -11,6 +11,7 @@ import BoardUtilities from "../components/Feature-components/power-up/BoardUtili
 import ProjectManagement from "../components/Feature-components/power-up/ProjectManagement";
 import Operations from "../components/Feature-components/power-up/Operations";
 import SolutionTemplate from "../components/solutions/SolutionTemplate";
+import SignIn from "../components/Authentication/SignIn";
 
 const AllRoutes = () => {
   const featurePages = [
@@ -129,6 +130,9 @@ const AllRoutes = () => {
         />
       </Route>
       <Route path="/solution" element={<SolutionTemplate />} />
+
+      {/* user routes */}
+      <Route path="/user/sign-in" element={<SignIn/>}/>
     </Routes>
   );
 };
