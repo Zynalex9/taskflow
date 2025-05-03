@@ -34,7 +34,7 @@ const ContentBoxData = [
     heading: "Power-ups",
     text: "Power up your teams by linking their favorite tools with Taskflow plugins.",
     bg:"#FFFCF2",
-    to:"/feature/power-ups"
+     to:"/feature/power-ups/featured"
   },
   {
     Icon: BookTemplate,

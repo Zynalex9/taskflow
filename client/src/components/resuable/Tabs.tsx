@@ -43,23 +43,8 @@ const Tabs = () => {
       prev === sectionData.length - 1 ? 0 : prev + 1
     );
   };
-
   return (
     <div>
-      {/* Top Section */}
-      <div className="top-sec font-charlie-text-r text-heading px-10 space-y-4">
-        <h3 className="text-xl font-charlie-display-sm pt-10">TASKFLOW 101</h3>
-        <h1 className="font-charlie-display-sm text-5xl">
-          Your productivity powerhouse
-        </h1>
-        <p className="max-w-3xl text-xl">
-          Stay organized and efficient with Inbox, Boards, and Planner. Every
-          to-do, idea, or responsibility—no matter how small—finds its place,
-          keeping you at the top of your game.
-        </p>
-      </div>
-
-      {/* Desktop View */}
       <div className="slider-div w-full flex gap-10 p-10 max-lg:hidden">
         <div className="left w-1/3 space-y-8">
           {sectionData.map(({ description, heading }, idx) => (
@@ -88,7 +73,7 @@ const Tabs = () => {
         </div>
       </div>
 
-      <div className="my-20  w-full lg:mx-4 lg:hidden relative min-h-[500px]">
+      <div className="my-20 w-full mx-4 lg:hidden relative min-h-[500px]">
         {sectionData.map((data, idx) => (
           <div
             key={idx}
@@ -102,10 +87,10 @@ const Tabs = () => {
               <img
                 src={data.image}
                 alt=""
-                className="size-[90%] mx-auto shadow-xl"
+                className="size-[95%] mx-auto shadow-xl"
               />
             </div>
-            <div className="p-4 space-y-5 font-charlie-text-r bg-white shadow-2xl w-[90%] mx-auto my-2 rounded-2xl min-h-[200px]">
+            <div className="p-4 space-y-5 font-charlie-text-r bg-white shadow-2xl w-[95%] mx-auto my-2 rounded-2xl min-h-[200px]">
               <h1 className="text-3xl">{data.heading}</h1>
               <p className="text-md mb-10">{data.description}</p>
             </div>

@@ -10,12 +10,13 @@ import DeveloperTools from "../components/Feature-components/power-up/DeveloperT
 import BoardUtilities from "../components/Feature-components/power-up/BoardUtilities";
 import ProjectManagement from "../components/Feature-components/power-up/ProjectManagement";
 import Operations from "../components/Feature-components/power-up/Operations";
+import SolutionTemplate from "../components/solutions/SolutionTemplate";
 
 const AllRoutes = () => {
   const featurePages = [
     {
       page: "inbox",
-      itemName:"Inbox",
+      itemName: "Inbox",
 
       hero: {
         heading: "Trello Inbox",
@@ -52,7 +53,7 @@ const AllRoutes = () => {
     },
     {
       page: "planner",
-      itemName:"Planner",
+      itemName: "Planner",
       hero: {
         heading: "Trello Planner",
         secondHeading: "Plan, stay focused, and get more [sh*t] done",
@@ -102,17 +103,32 @@ const AllRoutes = () => {
           />
         </>
       ))}
-      <Route path="/feature/automation" element={<AutomationPage/>}/>
-      <Route element={<Layout/>}>
-      <Route path="/feature/power-ups/featured" element={<Featured/>}/>
-      <Route path="/feature/power-ups/automation" element={<Automation/>}/>
-      <Route path="/feature/power-ups/analytics-reporting" element={<Analytics/>}/>
-      <Route path="/feature/power-ups/developer-tools" element={<DeveloperTools/>}/>
-      <Route path="/feature/power-ups/board-utilities" element={<BoardUtilities/>}/>
-      <Route path="/feature/power-ups/hr-operations" element={<Operations/>}/>
-      <Route path="/feature/power-ups/project-management" element={<ProjectManagement/>}/>
-
+      <Route path="/feature/automation" element={<AutomationPage />} />
+      <Route element={<Layout />}>
+        <Route path="/feature/power-ups/featured" element={<Featured />} />
+        <Route path="/feature/power-ups/automation" element={<Automation />} />
+        <Route
+          path="/feature/power-ups/analytics-reporting"
+          element={<Analytics />}
+        />
+        <Route
+          path="/feature/power-ups/developer-tools"
+          element={<DeveloperTools />}
+        />
+        <Route
+          path="/feature/power-ups/board-utilities"
+          element={<BoardUtilities />}
+        />
+        <Route
+          path="/feature/power-ups/hr-operations"
+          element={<Operations />}
+        />
+        <Route
+          path="/feature/power-ups/project-management"
+          element={<ProjectManagement />}
+        />
       </Route>
+      <Route path="/solution" element={<SolutionTemplate />} />
     </Routes>
   );
 };

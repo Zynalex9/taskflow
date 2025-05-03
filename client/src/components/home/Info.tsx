@@ -12,13 +12,13 @@ const Info = () => {
           keeping all <br /> your discussions and tasks organized in one place.
         </p>
       </div>
-      <div className="bg-white p-8 rounded-xl w-[90%] m-auto flex gap-4 mt-10">
+      <div className="bg-white p-8 rounded-xl w-[90%] m-auto flex flex-col lg:flex-row gap-4 mt-10">
         <img
           src="/slack-to-inbox.webp"
           alt=""
-          className="w-[60%] object-cover"
+          className="lg:w-[60%] object-cover"
         />
-        <div className="text-black font-charlie-text-r w-[40%] space-y-4 pt-10 px-4">
+        <div className="text-black font-charlie-text-r lg:w-[40%] space-y-4 pt-10 px-2 lg:px-4">
           <div className="flex gap-2 items-center ">
             <EqualApproximatelyIcon size={50} color="#8777D9" />
             <h1 className="text-4xl"> Email Magic</h1>
@@ -35,8 +35,8 @@ const Info = () => {
           </div>
         </div>
       </div>
-      <div className="bg-white p-8 rounded-xl w-[90%] m-auto flex gap-4 mt-20">
-        <div className="text-black font-charlie-text-r w-[40%] space-y-4 pt-10 px-4 mt-10">
+      <div className="bg-white p-8 rounded-xl w-[90%] m-auto flex max-lg:flex-col-reverse gap-4 mt-20">
+        <div className="text-black font-charlie-text-r lg:w-[40%] space-y-4 lg:pt-10 px-4 lg:mt-10">
           <div className="flex gap-2 items-center ">
             <CalendarDaysIcon size={50} color="#8777D9" />
             <h1 className="text-3xl"> SLACK SORCERY</h1>
@@ -55,7 +55,7 @@ const Info = () => {
         <img
           src="/slack-to-inbox.webp"
           alt=""
-          className="w-[60%] object-cover"
+          className="lg:w-[60%] object-cover"
         />
       </div>
       <div className="two"></div>
