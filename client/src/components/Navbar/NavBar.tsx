@@ -10,8 +10,13 @@ import { useEffect, useRef, useState } from "react";
 import NavBarFeatures from "./dropdowns/Features";
 import Solutions from "./dropdowns/Solutions";
 import Plans from "./dropdowns/Plans";
+import { useDispatch, useSelector } from "react-redux";
+import { AppDispatch, RootState } from "../../store/store";
+import { logoutUser } from "../../store/AuthSlice";
 
 const NavBar = () => {
+  const dispatch = useDispatch<AppDispatch>();
+  const { user } = useSelector((state: RootState) => state.auth);
   const [openFeatures, setOpenFeatures] = useState(false);
   const [openSolutions, setOpenSolutions] = useState(false);
   const [openPlans, setOpenPlans] = useState(false);
@@ -210,15 +215,35 @@ const NavBar = () => {
             <h1 className="text-heading font-charlie-text-r">Features</h1>
             <ArrowRight className="text-black/60 transition-all duration-200 hover:text-black/100" />
           </div>
-       
         </div>
       )}
-      <div className="hidden lg:block lg:ml-auto lg:flex lg:gap-4">
-        <button className="cursor-pointer font-charlie-text-r">Login</button>
-        <button className="cursor-pointer bg-primary py-4 px-2 mx-1 font-charlie-text-r text-white">
-          Get Taskflow for Free
-        </button>
-      </div>
+      {user ? (
+        <>
+          <div className="hidden lg:block lg:ml-auto lg:flex lg:gap-4">
+            <button
+              className="cursor-pointer font-charlie-text-r"
+              onClick={() => dispatch(logoutUser())}
+            >
+              Logout
+            </button>
+            <button className="cursor-pointer bg-primary py-4 px-2 mx-1 font-charlie-text-r text-white">
+              Dashboard
+            </button>
+          </div>
+        </>
+      ) : (
+        <>
+          <div className="hidden lg:block lg:ml-auto lg:flex lg:gap-4">
+            <button className="cursor-pointer font-charlie-text-r">
+              <Link to={"/user/sign-in"}> Login</Link>
+            </button>
+            <button className="cursor-pointer bg-primary py-4 px-2 mx-1 font-charlie-text-r text-white">
+              <Link to={"/user/sign-up"}> Get Taskflow for Free</Link>
+            </button>
+          </div>
+        </>
+      )}
+
       <div className="block lg:hidden px-3">
         <button
           onClick={() => setIsMobileOpen((prev) => !prev)}

@@ -15,10 +15,11 @@ import SignIn from "../components/Authentication/SignIn";
 import { useSelector } from "react-redux";
 import { RootState } from "../store/store";
 import Dashboard from "../components/Dashboard/Dashboard";
+import SignUp from "../components/Authentication/SignUp";
 
 const AllRoutes = () => {
-  const {user} = useSelector((state:RootState)=>state.auth)
-  console.log(user)
+  const { user } = useSelector((state: RootState) => state.auth);
+  console.log(user);
   const featurePages = [
     {
       page: "inbox",
@@ -101,13 +102,12 @@ const AllRoutes = () => {
   return (
     <Routes>
       <Route path="/" element={<Home />} />
-      {featurePages.map((pageData,idx) => (
-    
-          <Route key={idx}
-            path={`/feature/${pageData.page}`}
-            element={<Index {...pageData} />}
-          />
-       
+      {featurePages.map((pageData, idx) => (
+        <Route
+          key={idx}
+          path={`/feature/${pageData.page}`}
+          element={<Index {...pageData} />}
+        />
       ))}
       <Route path="/feature/automation" element={<AutomationPage />} />
       <Route element={<Layout />}>
@@ -137,8 +137,18 @@ const AllRoutes = () => {
       <Route path="/solution" element={<SolutionTemplate />} />
 
       {/* user routes */}
-      <Route path="/user/sign-in" element={<SignIn/>}/>
-      <Route path="/user/dashboard" element={user? <Dashboard/> :<Navigate to={"/user/sign-in"}/>}/>
+      <Route
+        path="/user/sign-in"
+        element={user ? <Navigate to={"/user/dashboard"} /> : <SignIn />}
+      />
+      <Route
+        path="/user/sign-up"
+        element={user ? <Navigate to={"/user/dashboard"} /> : <SignUp />}
+      />
+      <Route
+        path="/user/dashboard"
+        element={user ? <Dashboard /> : <Navigate to={"/user/sign-in"} />}
+      />
     </Routes>
   );
 };

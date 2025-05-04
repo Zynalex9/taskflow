@@ -72,7 +72,7 @@ userRouter
   .route("/register")
   .post(upload.fields([{ name: "profilePicture", maxCount: 1 }]), registerUser);
 userRouter.route("/login").post(loginUser);
-userRouter.route("/logout").post(verifyJWT, logOutUser);
+userRouter.route("/logout").get(verifyJWT, logOutUser);
 userRouter.route("/change-details").patch(verifyJWT, changeDetails);
 userRouter
   .route("/change-profile-picture")

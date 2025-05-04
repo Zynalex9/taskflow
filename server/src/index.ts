@@ -12,7 +12,7 @@ import {
   userRouter,
   workSpaceRouter,
 } from "./routes";
-import cors from "cors"
+import cors from "cors";
 configDotenv();
 connectDB();
 
@@ -25,11 +25,13 @@ const io = new Server(server, {
     credentials: true,
   },
 });
-app.use(cors({
-  origin:"*",
-  methods:['GET','POST','PUT','PATCH'],
-  credentials:true
-}))
+app.use(
+  cors({
+    origin: "http://localhost:5173",
+    methods: ["GET", "POST", "PUT", "PATCH"],
+    credentials: true,
+  })
+);
 app.use(express.json({ limit: "16kb" }));
 app.use(express.urlencoded({ extended: true, limit: "16kb" }));
 app.use(express.static("public"));
