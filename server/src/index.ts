@@ -1,14 +1,18 @@
 import { configDotenv } from "dotenv";
-import express, { Request, Response } from "express";
+import express from "express";
 import { createServer } from "http";
 import { Server } from "socket.io";
 import { connectDB } from "./database/index";
 import { Redis } from "ioredis";
 import cookieParser from "cookie-parser";
-import { boardRouter, cardRouter, listRouter, userRouter, workSpaceRouter } from "./routes";
-import { verifyJWT } from "./middleware/auth.middleware";
-import ApiResponse from "./utils/ApiResponse";
-import { asyncHandler } from "./utils/asyncHandler";
+import {
+  boardRouter,
+  cardRouter,
+  listRouter,
+  userRouter,
+  workSpaceRouter,
+} from "./routes";
+import cors from "cors"
 configDotenv();
 connectDB();
 
@@ -16,10 +20,16 @@ const app = express();
 const server = createServer(app);
 const io = new Server(server, {
   cors: {
-    origin: "*", // this is for development
-    methods: ["GET", "POST"],
+    origin: "*",
+    methods: ["GET", "POST", "PATCH", "DELETE"],
+    credentials: true,
   },
 });
+app.use(cors({
+  origin:"*",
+  methods:['GET','POST','PUT','PATCH'],
+  credentials:true
+}))
 app.use(express.json({ limit: "16kb" }));
 app.use(express.urlencoded({ extended: true, limit: "16kb" }));
 app.use(express.static("public"));
@@ -46,8 +56,8 @@ redisClient.on("error", (err) => {
 });
 app.use("/api/user/", userRouter);
 app.use("/api/workspace/", workSpaceRouter);
-app.use("/api/board/",boardRouter)
-app.use("/api/list/",listRouter)
+app.use("/api/board/", boardRouter);
+app.use("/api/list/", listRouter);
 app.use("/api/card/", cardRouter);
 const PORT = process.env.PORT || 3000;
 server.listen(PORT, () => {

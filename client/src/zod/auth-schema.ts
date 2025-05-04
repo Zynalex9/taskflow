@@ -1,6 +1,6 @@
 import { z } from "zod";
 export const loginSchema = z.object({
-  loginIdentifier: z
+  login: z
     .string()
     .min(1, "This field cannot be empty")
     .refine(

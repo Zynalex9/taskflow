@@ -93,12 +93,14 @@ export const registerUser = async (
   }
 };
 export const loginUser = async (req: Request, res: Response) => {
+  console.log("req received")
   try {
     const { login, password } = req.body;
     if (!login || !password) {
       res
         .status(404)
         .json({ message: "Please enter all details", success: false });
+        return
     }
     const user = await UserModel.findOne({
       $or: [{ username: login }, { email: login }],
@@ -125,7 +127,7 @@ export const loginUser = async (req: Request, res: Response) => {
     res
       .status(201)
       .cookie("accessToken", accessToken, options)
-      .json({ message: "User logged in", success: true });
+      .json({ message: "User logged in", user, success: true });
   } catch (error) {
     console.error("Login error:", error);
     res.status(500).json({ message: "Internal server error", success: false });
