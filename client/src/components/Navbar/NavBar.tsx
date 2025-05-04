@@ -227,7 +227,7 @@ const NavBar = () => {
               Logout
             </button>
             <button className="cursor-pointer bg-primary py-4 px-2 mx-1 font-charlie-text-r text-white">
-              Dashboard
+              <Link to={"/user/dashboard"}> Dashboard</Link>
             </button>
           </div>
         </>

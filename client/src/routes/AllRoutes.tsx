@@ -16,6 +16,7 @@ import { useSelector } from "react-redux";
 import { RootState } from "../store/store";
 import Dashboard from "../components/Dashboard/Dashboard";
 import SignUp from "../components/Authentication/SignUp";
+import LandingLayout from "../components/LandingLayout";
 
 const AllRoutes = () => {
   const { user } = useSelector((state: RootState) => state.auth);
@@ -101,6 +102,8 @@ const AllRoutes = () => {
 
   return (
     <Routes>
+      
+      <Route element={<LandingLayout/>}>
       <Route path="/" element={<Home />} />
       {featurePages.map((pageData, idx) => (
         <Route
@@ -135,8 +138,6 @@ const AllRoutes = () => {
         />
       </Route>
       <Route path="/solution" element={<SolutionTemplate />} />
-
-      {/* user routes */}
       <Route
         path="/user/sign-in"
         element={user ? <Navigate to={"/user/dashboard"} /> : <SignIn />}
@@ -149,6 +150,8 @@ const AllRoutes = () => {
         path="/user/dashboard"
         element={user ? <Dashboard /> : <Navigate to={"/user/sign-in"} />}
       />
+      </Route>
+   
     </Routes>
   );
 };
