@@ -7,7 +7,10 @@ interface AuthState {
   error: string | null;
   isLoggedIn: boolean;
 }
-
+interface UpdateDetailsPayload {
+  username: string;
+  email: string;
+}
 const initialState: AuthState = {
   user: localStorage.getItem("user")
     ? JSON.parse(localStorage.getItem("user") as string)
@@ -54,6 +57,24 @@ export const logoutUser = createAsyncThunk(
     }
   }
 );
+export const updateDetails = createAsyncThunk(
+  "changeDetails",
+  async (details:UpdateDetailsPayload, { rejectWithValue }) => {
+    try {
+      const response = await axios.patch(
+        "http://localhost:3000/api/user/change-details",
+        details,
+        { withCredentials: true }
+      );
+      if (response.data.success) {
+        return response.data;
+      }
+    } catch (error: any) {
+      return rejectWithValue(error.response?.data.message || error.message);
+
+    }
+  }
+);
 const authSlice = createSlice({
   name: "auth",
   initialState,
@@ -78,7 +99,21 @@ const authSlice = createSlice({
         state.isLoggedIn = false;
         state.loading = false;
         state.error = null;
-      });
+      })
+      .addCase(updateDetails.fulfilled, (state, action) => {
+        state.user = action.payload.user;
+        state.isLoggedIn = false;
+        state.loading = false;
+        state.error = null;
+      })
+      .addCase(updateDetails.rejected,(state,action)=>{
+        state.loading = false;
+        state.error = action.payload as string | null;
+      })
+      .addCase(updateDetails.pending,(state,action)=>{
+        state.loading = true;
+        state.error = null
+      })
   },
 });
 

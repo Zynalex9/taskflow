@@ -19,6 +19,7 @@
 }
 
 @theme {
+    --color-fprimary:#1D2125;
     --color-primary: #0065FF;
     --color-heading: #091E42;
     --color-secondary: #5BA4CF;

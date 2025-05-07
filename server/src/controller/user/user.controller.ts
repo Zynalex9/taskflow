@@ -157,7 +157,7 @@ export const changeDetails = async (req: Request, res: Response) => {
 
     const user = await UserModel.findById(userId);
     if (!user) {
-      res.status(404).json({ message: "User not found" });
+      res.status(400).json({ message: "User not found" });
       return;
     }
     if (username) {

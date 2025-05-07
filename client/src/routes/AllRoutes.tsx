@@ -14,9 +14,11 @@ import SolutionTemplate from "../components/solutions/SolutionTemplate";
 import SignIn from "../components/Authentication/SignIn";
 import { useSelector } from "react-redux";
 import { RootState } from "../store/store";
-import Dashboard from "../components/Dashboard/Dashboard";
+import Dashboard from "../pages/Dashboard";
 import SignUp from "../components/Authentication/SignUp";
 import LandingLayout from "../components/LandingLayout";
+import UserInfoComp from "../components/Dashboard/UserInfoComp";
+import EditComp from "../components/Dashboard/EditComp";
 
 const AllRoutes = () => {
   const { user } = useSelector((state: RootState) => state.auth);
@@ -102,56 +104,61 @@ const AllRoutes = () => {
 
   return (
     <Routes>
-      
-      <Route element={<LandingLayout/>}>
-      <Route path="/" element={<Home />} />
-      {featurePages.map((pageData, idx) => (
+      <Route element={<LandingLayout />}>
+        <Route path="/" element={<Home />} />
+        {featurePages.map((pageData, idx) => (
+          <Route
+            key={idx}
+            path={`/feature/${pageData.page}`}
+            element={<Index {...pageData} />}
+          />
+        ))}
+        <Route path="/feature/automation" element={<AutomationPage />} />
+        <Route element={<Layout />}>
+          <Route path="/feature/power-ups/featured" element={<Featured />} />
+          <Route
+            path="/feature/power-ups/automation"
+            element={<Automation />}
+          />
+          <Route
+            path="/feature/power-ups/analytics-reporting"
+            element={<Analytics />}
+          />
+          <Route
+            path="/feature/power-ups/developer-tools"
+            element={<DeveloperTools />}
+          />
+          <Route
+            path="/feature/power-ups/board-utilities"
+            element={<BoardUtilities />}
+          />
+          <Route
+            path="/feature/power-ups/hr-operations"
+            element={<Operations />}
+          />
+          <Route
+            path="/feature/power-ups/project-management"
+            element={<ProjectManagement />}
+          />
+        </Route>
+        <Route path="/solution" element={<SolutionTemplate />} />
         <Route
-          key={idx}
-          path={`/feature/${pageData.page}`}
-          element={<Index {...pageData} />}
+          path="/user/sign-in"
+          element={user ? <Navigate to={"/user/dashboard"} /> : <SignIn />}
         />
-      ))}
-      <Route path="/feature/automation" element={<AutomationPage />} />
-      <Route element={<Layout />}>
-        <Route path="/feature/power-ups/featured" element={<Featured />} />
-        <Route path="/feature/power-ups/automation" element={<Automation />} />
         <Route
-          path="/feature/power-ups/analytics-reporting"
-          element={<Analytics />}
-        />
-        <Route
-          path="/feature/power-ups/developer-tools"
-          element={<DeveloperTools />}
-        />
-        <Route
-          path="/feature/power-ups/board-utilities"
-          element={<BoardUtilities />}
-        />
-        <Route
-          path="/feature/power-ups/hr-operations"
-          element={<Operations />}
-        />
-        <Route
-          path="/feature/power-ups/project-management"
-          element={<ProjectManagement />}
+          path="/user/sign-up"
+          element={user ? <Navigate to={"/user/dashboard"} /> : <SignUp />}
         />
       </Route>
-      <Route path="/solution" element={<SolutionTemplate />} />
-      <Route
-        path="/user/sign-in"
-        element={user ? <Navigate to={"/user/dashboard"} /> : <SignIn />}
-      />
-      <Route
-        path="/user/sign-up"
-        element={user ? <Navigate to={"/user/dashboard"} /> : <SignUp />}
-      />
       <Route
         path="/user/dashboard"
-        element={user ? <Dashboard /> : <Navigate to={"/user/sign-in"} />}
-      />
+        element={user ? <Dashboard /> : <Navigate to="/user/sign-in" />}
+      >
+        <Route index element={<UserInfoComp />} />
+        <Route path="workspaces" element={<h1>Hola</h1>} />
+        <Route path="edit-info" element={<EditComp/>} />
       </Route>
-   
     </Routes>
   );
 };
