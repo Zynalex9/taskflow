@@ -10,10 +10,7 @@ export interface IData {
   login: string;
   password: string;
 }
-interface Iresult {
-  payload: string;
-  success: boolean;
-}
+
 const SignIn = () => {
   const dispatch = useDispatch<AppDispatch>();
   const navigator = useNavigate();
