@@ -59,7 +59,7 @@ export const logoutUser = createAsyncThunk(
 );
 export const updateDetails = createAsyncThunk(
   "changeDetails",
-  async (details:UpdateDetailsPayload, { rejectWithValue }) => {
+  async (details: UpdateDetailsPayload, { rejectWithValue }) => {
     try {
       const response = await axios.patch(
         "http://localhost:3000/api/user/change-details",
@@ -71,10 +71,40 @@ export const updateDetails = createAsyncThunk(
       }
     } catch (error: any) {
       return rejectWithValue(error.response?.data.message || error.message);
-
     }
   }
 );
+export const changeProfilePicture = createAsyncThunk(
+  "changeProfilePicture",
+  async (file: File, { rejectWithValue }) => {
+    try {
+      const formData = new FormData();
+      formData.append("newPicture", file);
+
+      const response = await axios.patch(
+        "http://localhost:3000/api/user/change-profile-picture",
+        formData,
+        {
+          withCredentials: true,
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+        }
+      );
+
+      if (response.data.success) {
+        return response.data;
+      } else {
+        throw new Error("Upload failed");
+      }
+    } catch (error: any) {
+      return rejectWithValue(
+        error.response?.data?.message || "Failed to change profile picture"
+      );
+    }
+  }
+);
+
 const authSlice = createSlice({
   name: "auth",
   initialState,
@@ -106,13 +136,26 @@ const authSlice = createSlice({
         state.loading = false;
         state.error = null;
       })
-      .addCase(updateDetails.rejected,(state,action)=>{
+      .addCase(updateDetails.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload as string | null;
       })
-      .addCase(updateDetails.pending,(state,action)=>{
+      .addCase(updateDetails.pending, (state) => {
         state.loading = true;
-        state.error = null
+        state.error = null;
+      })
+      .addCase(changeProfilePicture.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(changeProfilePicture.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload as string 
+      })
+      .addCase(changeProfilePicture.fulfilled, (state, action) => {
+        state.loading = false
+        state.error = null 
+        state.user = action.payload.data
       })
   },
 });

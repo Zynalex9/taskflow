@@ -93,14 +93,14 @@ export const registerUser = async (
   }
 };
 export const loginUser = async (req: Request, res: Response) => {
-  console.log("req received")
+  console.log("req received");
   try {
     const { login, password } = req.body;
     if (!login || !password) {
       res
         .status(404)
         .json({ message: "Please enter all details", success: false });
-        return
+      return;
     }
     const user = await UserModel.findOne({
       $or: [{ username: login }, { email: login }],
@@ -214,8 +214,12 @@ export const changeProfilePicture = async (req: Request, res: Response) => {
         new: true,
       }
     );
-    res.status(201).json({ message: "Profile picture changed" });
-  } catch (error) {}
+    res.status(201).json(new ApiResponse(200, user, "Profile Picture Changed"));
+  } catch (error:any) {
+    console.log(error)
+    res.status(500).json(new ApiResponse(500, {}, error.message));
+
+  }
 };
 export const GetUserDetail = async (req: Request, res: Response) => {
   try {
@@ -406,8 +410,10 @@ export const deleteUser = async (req: Request, res: Response) => {
     session.endSession();
   }
 };
-export const activityLogs = asyncHandler(async(req:Request,res:Response)=>{
-  const userId = req.user._id;
-  const logs = await redisClient.lrange(`user:${userId}`,0,4)
-  res.status(200).json(new ApiResponse(200,logs))
-});
+export const activityLogs = asyncHandler(
+  async (req: Request, res: Response) => {
+    const userId = req.user._id;
+    const logs = await redisClient.lrange(`user:${userId}`, 0, 4);
+    res.status(200).json(new ApiResponse(200, logs));
+  }
+);
