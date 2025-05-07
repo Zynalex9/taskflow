@@ -7,21 +7,27 @@ const Dashboard = () => {
   const { user } = useSelector((state: RootState) => state.auth);
 
   return (
-    <div className="w-full  bg-fprimary min-h-screen flex max-lg:flex-col lg:items-start text-white font-charlie-text-r">
-      <div className="w-full h-full lg:w-[20%]  sticky top-[1px] lg:p-4">
+    <div className="w-full min-h-screen bg-fprimary text-white font-charlie-text-r flex flex-col lg:flex-row">
+      <aside className="w-full lg:w-[20%] sticky top-0 p-4 bg-fprimary border-r border-white/10 z-10">
         <Sidebar />
-      </div>
-      <div className="w-full lg:w-[80%] p-4">
-      <div>
-      <div className="flex items-center justify-between  border-b border-gray-400 w-full p-8">
-        <img src={user.profilePicture} alt="profile-picture" className="w-[10%] rounded-full object-center object-cover border" />
-        <h1 className="font-charlie-display-sm text-3xl">{user.username}</h1>
-      </div>
-      <div>
-      </div>
-        <Outlet />
-      </div>
-    </div>
+      </aside>
+
+      <main className="w-full lg:w-[80%] p-6 space-y-6">
+        <div className="flex items-center justify-between border-b border-white/20 pb-4">
+          <img
+            src={user.profilePicture}
+            alt="Profile"
+            className="w-16 h-16 rounded-full object-cover border border-white/20"
+          />
+          <h1 className="font-charlie-display-sm text-2xl lg:text-3xl">
+            {user.username}
+          </h1>
+        </div>
+
+        <div>
+          <Outlet />
+        </div>
+      </main>
     </div>
   );
 };

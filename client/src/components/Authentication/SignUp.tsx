@@ -32,7 +32,7 @@ const SignUp = () => {
           autoClose: 2000,
         });
         setTimeout(() => {
-          navigator("/user/login");
+          navigator("/user/sign-in");
         }, 2000);
       }
     } catch (error: any) {

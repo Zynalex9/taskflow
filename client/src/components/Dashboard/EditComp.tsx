@@ -26,6 +26,10 @@ const EditComp = () => {
         toast.error(error)
         setLoading(false)
       }
+    }else{
+      toast.error("Please enter new detail",{
+        autoClose:1000
+      })
     }
   };
 
