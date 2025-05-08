@@ -290,12 +290,29 @@ export const allWorkspaces = async (
       res.status(404).json({ message: "workspace not found" });
       return;
     }
-    res.status(201).json({ message: "Workspace(s) Found", workspaces });
+    res
+      .status(201)
+      .json(new ApiResponse(201, workspaces, "Workspace(s) Found"));
+    return;
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: "Internal server error" });
   }
 };
+export const getWorkspace = asyncHandler(
+  async (req: Request, res: Response) => {
+    const required = ["workspaceId"];
+    if (!checkRequiredBody(req, res, required)) return;
+    const { workspaceId } = req.body;
+    const workspace = await workSpaceModel.findById(workspaceId);
+    if (!workspace) {
+      res.status(404).json(new ApiResponse(404, {}, "No workspace found"));
+      return;
+    }
+    res.status(201).json(new ApiResponse(201, workspace, "Workspace Found"));
+    return;
+  }
+);
 export const deleteWorkSpace = async (req: Request, res: Response) => {
   try {
     const { workspaceId } = req.body;

@@ -20,6 +20,7 @@ import {
   createWorkSpace,
   deleteWorkSpace,
   getCalendarData,
+  getWorkspace,
   getWorkspaceTableData,
   removeAdmin,
 } from "../controller/workspace/workspace.controller";
@@ -98,6 +99,7 @@ workSpaceRouter
   .route("/:workspaceId/get-calendar-data")
   .get(verifyJWT, getCalendarData);
 workSpaceRouter.route("/get-workspaces").get(verifyJWT, allWorkspaces);
+workSpaceRouter.route("/get-workspace").get(verifyJWT, getWorkspace);
 workSpaceRouter.route("/delete-workspace").delete(verifyJWT, deleteWorkSpace);
 workSpaceRouter.route("/add-admin").patch(verifyJWT, addAdmin);
 workSpaceRouter.route("/remove-admin").patch(verifyJWT, removeAdmin);

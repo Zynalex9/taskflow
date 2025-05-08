@@ -20,6 +20,7 @@ import LandingLayout from "../components/LandingLayout";
 import UserInfoComp from "../components/Dashboard/UserInfoComp";
 import EditComp from "../components/Dashboard/EditComp";
 import LoggedInLayout from "../components/LoggedInLayout";
+import AllWorkspaces from "../components/Dashboard/AllWorkspaces";
 
 const AllRoutes = () => {
   const { user } = useSelector((state: RootState) => state.auth);
@@ -152,18 +153,17 @@ const AllRoutes = () => {
           element={user ? <Navigate to={"/user/dashboard"} /> : <SignUp />}
         />
       </Route>
-      <Route element={<LoggedInLayout/>}>
-        <Route>
-          <Route
-            path="/user/dashboard"
-            element={user ? <Dashboard /> : <Navigate to="/user/sign-in" />}
-          >
-            <Route index element={<UserInfoComp />} />
-            <Route path="workspaces" element={<h1>Hola</h1>} />
-            <Route path="edit-info" element={<EditComp />} />
-          </Route>
-        </Route>
-      </Route>
+      <Route
+  element={user ? <LoggedInLayout /> : <Navigate to="/user/sign-in" />}
+>
+  <Route path="/user/dashboard" element={<Dashboard />}>
+    <Route index element={<UserInfoComp />} />
+    <Route path="workspaces" element={<AllWorkspaces />} />
+    <Route path="edit-info" element={<EditComp />} />
+  </Route>
+</Route>
+
+     
     </Routes>
   );
 };

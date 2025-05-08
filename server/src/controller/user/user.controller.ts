@@ -119,7 +119,8 @@ export const loginUser = async (req: Request, res: Response) => {
     const accessToken = user.GenerateAccessToken();
     const options = {
       httpOnly: true,
-      secure: true,
+      secure: process.env.NODE_ENV === "production",
+      maxAge: 3 * 24 * 60 * 60 * 1000, 
     };
     await redisClient.lpush(`user:${user._id}`, "You logged in");
     await redisClient.expire(`user:${user._id}`, 86400);
@@ -136,7 +137,7 @@ export const loginUser = async (req: Request, res: Response) => {
 export const logOutUser = async (req: Request, res: Response) => {
   const options = {
     httpOnly: true,
-    secure: true,
+    secure: process.env.NODE_ENV === "production",
   };
   await redisClient.lpush(`user:${req.user._id}`, "You logged out");
   await redisClient.expire(`user:${req.user._id}`, 86400);
@@ -245,7 +246,7 @@ export const GetUserDetail = async (req: Request, res: Response) => {
     res.status(500).json({ message: "Internal server error" });
   }
 };
-export const resetPassword = asyncHandler(async (req, res) => {
+export const resetPassword = asyncHandler(async (req:Request, res:Response) => {
   const userId = req.user._id;
   const required = ["oldPassword", "newPassword"];
   if (!checkRequiredBody(req, res, required)) return;
@@ -268,7 +269,7 @@ export const resetPassword = asyncHandler(async (req, res) => {
 
   res.status(200).json(new ApiResponse(200, user, "Password changed"));
 });
-export const sendForgetPasswordOTP = asyncHandler(async (req, res) => {
+export const sendForgetPasswordOTP = asyncHandler(async (req:Request, res:Response) => {
   const required = ["login"];
   if (!checkRequiredBody(req, res, required)) return;
   const { login } = req.body;
@@ -293,7 +294,7 @@ export const sendForgetPasswordOTP = asyncHandler(async (req, res) => {
     .status(200)
     .json(new ApiResponse(200, { user }, "OTP sent to your email"));
 });
-export const forgetPasswordReset = asyncHandler(async (req, res) => {
+export const forgetPasswordReset = asyncHandler(async (req:Request, res:Response) => {
   const required = ["login", "OTP", "newPassword"];
   if (!checkRequiredBody(req, res, required)) return;
   const { login, OTP, newPassword } = req.body;
