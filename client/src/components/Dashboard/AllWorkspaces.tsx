@@ -1,5 +1,6 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
 
 interface Workspace {
   _id: string;
@@ -42,34 +43,34 @@ const AllWorkspaces = () => {
       {workspaces.length > 0 ? (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {workspaces.map((workspace) => (
-            <div
-              key={workspace._id}
-              className="bg-fprimary text-white rounded-2xl shadow-md overflow-hidden transition-transform transform hover:scale-105"
-            >
+            <Link to={`/user/w/workspace/${workspace._id}`}>
               <div
-                className="h-32"
-                style={{ backgroundColor: getRandomColor() }}
-              />
-              <div className="p-4">
-                <h2 className="text-xl font-semibold ">
-                  {workspace.name}
-                </h2>
-                <p className="text-sm text-gray-500 mt-1">
-                  Members: {workspace.members.length}
-                </p>
-                <p className="text-sm text-gray-500">
-                  Boards: {workspace.boards.length}
-                </p>
-                <p className="text-sm text-gray-500">
-                  Created:{" "}
-                  {new Date(workspace.createdAt).toLocaleDateString("en-US", {
-                    year: "numeric",
-                    month: "short",
-                    day: "numeric",
-                  })}
-                </p>
+                key={workspace._id}
+                className="bg-fprimary text-white rounded-2xl shadow-md overflow-hidden transition-transform transform hover:scale-105"
+              >
+                <div
+                  className="h-32"
+                  style={{ backgroundColor: getRandomColor() }}
+                />
+                <div className="p-4">
+                  <h2 className="text-xl font-semibold ">{workspace.name}</h2>
+                  <p className="text-sm text-gray-500 mt-1">
+                    Members: {workspace.members.length}
+                  </p>
+                  <p className="text-sm text-gray-500">
+                    Boards: {workspace.boards.length}
+                  </p>
+                  <p className="text-sm text-gray-500">
+                    Created:{" "}
+                    {new Date(workspace.createdAt).toLocaleDateString("en-US", {
+                      year: "numeric",
+                      month: "short",
+                      day: "numeric",
+                    })}
+                  </p>
+                </div>
               </div>
-            </div>
+            </Link>
           ))}
         </div>
       ) : (

@@ -301,18 +301,23 @@ export const allWorkspaces = async (
 };
 export const getWorkspace = asyncHandler(
   async (req: Request, res: Response) => {
-    const required = ["workspaceId"];
-    if (!checkRequiredBody(req, res, required)) return;
-    const { workspaceId } = req.body;
+    const { workspaceId } = req.query;
+
+    if (!workspaceId || typeof workspaceId !== 'string') {
+      res.status(400).json(new ApiResponse(400, {}, "workspaceId is required"));
+      return 
+    }
+
     const workspace = await workSpaceModel.findById(workspaceId);
     if (!workspace) {
       res.status(404).json(new ApiResponse(404, {}, "No workspace found"));
-      return;
+      return 
     }
-    res.status(201).json(new ApiResponse(201, workspace, "Workspace Found"));
-    return;
+
+    res.status(200).json(new ApiResponse(200, workspace, "Workspace Found"));
   }
 );
+
 export const deleteWorkSpace = async (req: Request, res: Response) => {
   try {
     const { workspaceId } = req.body;

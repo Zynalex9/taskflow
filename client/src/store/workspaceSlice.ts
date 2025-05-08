@@ -3,10 +3,11 @@ import axios from "axios";
 
 export const fetchworkspace = createAsyncThunk(
   "getWorkspace",
-  async (id: string, { rejectWithValue }) => {
+  async (workspaceId: string, { rejectWithValue }) => {
     try {
       const response = await axios.get(
-        "http://localhost:3000/api/workspace/get-workspaces"
+        "http://localhost:3000/api/workspace/get-workspaces",
+        { params: workspaceId }
       );
       return response.data;
     } catch (error: any) {
