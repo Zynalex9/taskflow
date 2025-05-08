@@ -21,6 +21,8 @@ import EditComp from "../components/Dashboard/EditComp";
 import LoggedInLayout from "../components/LoggedInLayout";
 import AllWorkspaces from "../components/Dashboard/AllWorkspaces";
 import WorkspaceLayout from "../components/workspace/WorkspaceLayout";
+import Boards from "../components/workspace/Boards";
+import Members from "../components/workspace/Members";
 
 const AllRoutes = () => {
   const { user } = useSelector((state: RootState) => state.auth);
@@ -165,10 +167,10 @@ const AllRoutes = () => {
         path="/user/w/workspace/:workspaceId"
         element={user ? <WorkspaceLayout /> : <Navigate to={"/user/sign-in"} />}
       >
-        <Route index element={<h1>Ok so I am cool whats next?</h1>} />
+        <Route index element={<Boards/>} />
         <Route
-          path="second"
-          element={<h1>Ok so I not cool whats next?</h1>}
+          path="/user/w/workspace/:workspaceId/members"
+          element={<Members/>}
         />
       </Route>
     </Routes>
