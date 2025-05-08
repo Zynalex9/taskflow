@@ -1,5 +1,6 @@
 import mongoose, { Schema } from "mongoose";
 import { Types } from "mongoose";
+import { getRandomColor } from "../utils/helpers";
 
 export interface IWorkspace {
   _id?: Types.ObjectId;
@@ -13,6 +14,7 @@ export interface IWorkspace {
     role: "admin" | "member";
   }[];
   createdBy: Types.ObjectId;
+  cover: string;
   createdAt?: Date;
   updatedAt?: Date;
 }
@@ -43,6 +45,9 @@ const workspaceSchema = new Schema(
       type: mongoose.Schema.Types.ObjectId,
       ref: "Table",
     },
+    cover: {
+      type: String,
+    },
     members: [
       {
         user: {
@@ -64,4 +69,7 @@ const workspaceSchema = new Schema(
   { timestamps: true }
 );
 
-export const workSpaceModel = mongoose.model<IWorkspace>("Workspace", workspaceSchema);
+export const workSpaceModel = mongoose.model<IWorkspace>(
+  "Workspace",
+  workspaceSchema
+);

@@ -13,6 +13,7 @@ import { asyncHandler } from "../../utils/asyncHandler";
 import {
   CheckAdmin,
   checkRequiredBody,
+  getRandomColor,
   lPushList,
   notFound,
 } from "../../utils/helpers";
@@ -79,11 +80,14 @@ export const createWorkSpace = async (req: Request, res: Response) => {
         });
       }
     }
+    const randomColor = getRandomColor();
+
     const workSpace = await workSpaceModel.create({
       name,
       admin: workspaceAdmins,
       members: workspaceMembers || [],
       createdBy: userId,
+      cover: randomColor,
     });
 
     const allUsers = [...workspaceAdmins, ...workspaceMembers];
@@ -96,6 +100,7 @@ export const createWorkSpace = async (req: Request, res: Response) => {
       }
     );
     await lPushList(userId, `Created Workspace: ${workSpace.name}`);
+    await redisClient.del(`workspace:${workSpace._id}`);
     res.status(201).json({
       message: "Workspace Created",
       workSpace,

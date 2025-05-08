@@ -108,3 +108,8 @@ export const lPushList = async (
   await redisClient.lpush(`user:${id}`, message);
   await redisClient.expire(`user:${id}`, 86400);
 };
+
+export const getRandomColor = (): string => {
+  const hue = Math.floor(Math.random() * 360);
+  return `hsl(${hue}, 70%, 85%)`;
+};
