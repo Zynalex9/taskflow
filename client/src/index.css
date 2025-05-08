@@ -1,64 +1,67 @@
-@import url('https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,300..800;1,300..800&family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
+@import url("https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,300..800;1,300..800&family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap");
 @import "tailwindcss";
 @custom-variant dark (&:where(.dark, .dark *));
 @font-face {
-    font-family: Charlie-text-regular;
-    src: url("/fonts/Charlie_Text-Regular.woff2");
+  font-family: Charlie-text-regular;
+  src: url("/fonts/Charlie_Text-Regular.woff2");
 }
 @font-face {
-    font-family: Charlie-text-semibold;
-    src: url("/fonts/Charlie_Text-Semibold.woff2");
+  font-family: Charlie-text-semibold;
+  src: url("/fonts/Charlie_Text-Semibold.woff2");
 }
 @font-face {
-    font-family: Charlie-display-bold;
-    src: url("/fonts/Charlie_Display-Bold.woff2");
+  font-family: Charlie-display-bold;
+  src: url("/fonts/Charlie_Display-Bold.woff2");
 }
 @font-face {
-    font-family: Charlie-display-semibold;
-    src: url("/fonts/Charlie_Display-Semibold.woff2");
+  font-family: Charlie-display-semibold;
+  src: url("/fonts/Charlie_Display-Semibold.woff2");
+}
+@font-face {
+  font-family: Apple-system;
+  src: url("/fonts/apple-system.ttf");
 }
 
 @theme {
-    --color-fprimary:#1D2125;
-    --color-primary: #0065FF;
-    --color-heading: #091E42;
-    --color-secondary: #5BA4CF;
-    --color-background: #F4F5F7;
-    --color-board-bg: #E4E6EB;
-    --color-card-bg: #FFFFFF;
-    --color-text-primary: #172B4D;
-    --color-text-muted: #6B778C;
-    --color-border: #DFE1E6;
-    --color-success: #61BD4F;
-    --color-warning: #F2D600;
-    --color-danger: #EB5A46;
-    --color-input-bg: #FFFFFF;
-    --color-input-border: #CED4DA;
-    --color-input-text: #212529;
-    --color-overlay: rgba(0, 0, 0, 0.3);
-    --color-hover-bg: #EDEFF1;
-    --color-dark-primary: #0065FF;
-    --color-dark-secondary: #A5C8FF;
-    --color-dark-background: #1D2125;
-    --color-dark-board-bg: #2C2F33;
-    --color-dark-card-bg: #2C2F33;
-    --color-dark-text-primary: #FFFFFF;
-    --color-dark-text-muted: #A5ADBA;
-    --color-dark-border: #3A3F45;
-    --color-dark-success: #78C957;
-    --color-dark-warning: #FFDD4A;
-    --color-dark-danger: #FF7B72;
-    --color-dark-input-bg: #2C2F33;
-    --color-dark-input-border: #50575E;
-    --color-dark-input-text: #FFFFFF;
-    --color-dark-overlay: rgba(255, 255, 255, 0.1);
-    --color-dark-hover-bg: #363B41;
-    
-    --font-poppins: "Poppins", sans-serif;
-    --font-charlie-text-r:Charlie-text-regular, "sans-serif";
-    --font-charlie-text-sb:Charlie-text-semibold, "sans-serif";
-    --font-charlie-display-b:Charlie-display-bold, "sans-serif";
-    --font-charlie-display-sm:Charlie-display-semibold, "sans-serif";
+  --color-fprimary: #1d2125;
+  --color-primary: #0065ff;
+  --color-heading: #091e42;
+  --color-secondary: #5ba4cf;
+  --color-background: #f4f5f7;
+  --color-board-bg: #e4e6eb;
+  --color-card-bg: #ffffff;
+  --color-text-primary: #172b4d;
+  --color-text-muted: #6b778c;
+  --color-border: #dfe1e6;
+  --color-success: #61bd4f;
+  --color-warning: #f2d600;
+  --color-danger: #eb5a46;
+  --color-input-bg: #ffffff;
+  --color-input-border: #ced4da;
+  --color-input-text: #212529;
+  --color-overlay: rgba(0, 0, 0, 0.3);
+  --color-hover-bg: #edeff1;
+  --color-dark-primary: #0065ff;
+  --color-dark-secondary: #a5c8ff;
+  --color-dark-background: #1d2125;
+  --color-dark-board-bg: #2c2f33;
+  --color-dark-card-bg: #2c2f33;
+  --color-dark-text-primary: #ffffff;
+  --color-dark-text-muted: #a5adba;
+  --color-dark-border: #3a3f45;
+  --color-dark-success: #78c957;
+  --color-dark-warning: #ffdd4a;
+  --color-dark-danger: #ff7b72;
+  --color-dark-input-bg: #2c2f33;
+  --color-dark-input-border: #50575e;
+  --color-dark-input-text: #ffffff;
+  --color-dark-overlay: rgba(255, 255, 255, 0.1);
+  --color-dark-hover-bg: #363b41;
 
-
+  --font-poppins: "Poppins", sans-serif;
+  --font-charlie-text-r: Charlie-text-regular, "sans-serif";
+  --font-charlie-text-sb: Charlie-text-semibold, "sans-serif";
+  --font-charlie-display-b: Charlie-display-bold, "sans-serif";
+  --font-charlie-display-sm: Charlie-display-semibold, "sans-serif";
+  --font-apple-system: Apple-system, "sans-serif";
 }

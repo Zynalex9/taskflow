@@ -17,7 +17,6 @@ import { RootState } from "../store/store";
 import Dashboard from "../pages/Dashboard";
 import SignUp from "../components/Authentication/SignUp";
 import LandingLayout from "../components/LandingLayout";
-import UserInfoComp from "../components/Dashboard/UserInfoComp";
 import EditComp from "../components/Dashboard/EditComp";
 import LoggedInLayout from "../components/LoggedInLayout";
 import AllWorkspaces from "../components/Dashboard/AllWorkspaces";
@@ -158,8 +157,7 @@ const AllRoutes = () => {
         element={user ? <LoggedInLayout /> : <Navigate to="/user/sign-in" />}
       >
         <Route path="/user/dashboard" element={<Dashboard />}>
-          <Route index element={<UserInfoComp />} />
-          <Route path="workspaces" element={<AllWorkspaces />} />
+          <Route index element={<AllWorkspaces />} />
           <Route path="edit-info" element={<EditComp />} />
         </Route>
       </Route>

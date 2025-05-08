@@ -9,8 +9,7 @@ const Sidebar = () => {
   return (
     <div className="flex flex-col h-[88vh] justify-between p-6 text-xl">
       <div className="flex flex-col gap-4">
-        <Link to="/user/dashboard">User info</Link>
-        <Link to="/user/dashboard/workspaces">Workspaces</Link>
+        <Link to="/user/dashboard">Workspaces</Link>
         <Link to="/user/dashboard/edit-info">Edit</Link>
       </div>
 

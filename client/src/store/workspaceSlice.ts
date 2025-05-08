@@ -6,8 +6,8 @@ export const fetchworkspace = createAsyncThunk(
   async (workspaceId: string, { rejectWithValue }) => {
     try {
       const response = await axios.get(
-        "http://localhost:3000/api/workspace/get-workspaces",
-        { params: workspaceId }
+        `http://localhost:3000/api/workspace/get-workspaces?workspaceId=${workspaceId}`,
+        { withCredentials: true }
       );
       return response.data;
     } catch (error: any) {
@@ -20,10 +20,28 @@ export const fetchworkspace = createAsyncThunk(
 
 const initialState = {
   workspace: {},
+  loading: false,
+  error: null as string | null,
 };
 const workspaceSlice = createSlice({
   initialState,
   name: "workspace",
   reducers: {},
+  extraReducers: (builder) => {
+    builder
+      .addCase(fetchworkspace.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload as string;
+      })
+      .addCase(fetchworkspace.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(fetchworkspace.fulfilled, (state, action) => {
+        state.error = null;
+        state.loading = false;
+        state.workspace = action.payload.data;
+      });
+  },
 });
 export default workspaceSlice.reducer;
