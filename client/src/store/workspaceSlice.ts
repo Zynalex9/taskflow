@@ -6,7 +6,7 @@ export const fetchworkspace = createAsyncThunk(
   async (workspaceId: string, { rejectWithValue }) => {
     try {
       const response = await axios.get(
-        `http://localhost:3000/api/workspace/get-workspaces?workspaceId=${workspaceId}`,
+        `http://localhost:3000/api/workspace/get-workspace?workspaceId=${workspaceId}`,
         { withCredentials: true }
       );
       return response.data;

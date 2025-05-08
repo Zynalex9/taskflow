@@ -303,17 +303,28 @@ export const getWorkspace = asyncHandler(
   async (req: Request, res: Response) => {
     const { workspaceId } = req.query;
 
-    if (!workspaceId || typeof workspaceId !== 'string') {
+    if (!workspaceId || typeof workspaceId !== "string") {
       res.status(400).json(new ApiResponse(400, {}, "workspaceId is required"));
-      return 
+      return;
     }
 
-    const workspace = await workSpaceModel.findById(workspaceId);
+    const cachedKey = `workspace:${workspaceId}`;
+
+    const cachedWorkSpace = await redisClient.get(cachedKey);
+    if (cachedWorkSpace) {
+      const parsedData = JSON.parse(cachedWorkSpace);
+      res
+        .status(200)
+        .json(new ApiResponse(200, parsedData, "Workspace Found (from cache)"));
+      return;
+    }
+    const workspace = await workSpaceModel.findById(workspaceId).lean();
     if (!workspace) {
       res.status(404).json(new ApiResponse(404, {}, "No workspace found"));
-      return 
+      return;
     }
 
+    await redisClient.set(cachedKey, JSON.stringify(workspace), "EX", 3600);
     res.status(200).json(new ApiResponse(200, workspace, "Workspace Found"));
   }
 );
