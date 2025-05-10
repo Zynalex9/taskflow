@@ -90,7 +90,9 @@ userRouter.route("/forget-password").patch(forgetPasswordReset);
 userRouter.route("/activity-log").get(verifyJWT, activityLogs);
 export { userRouter };
 
-workSpaceRouter.route("/create-workspace").post(verifyJWT, createWorkSpace);
+workSpaceRouter
+  .route("/create-workspace")
+  .post(verifyJWT, upload.single("workspace-cover"), createWorkSpace);
 workSpaceRouter.route("/create-card").post(verifyJWT, createCard);
 workSpaceRouter
   .route("/:workspaceId/get-table-data")
@@ -105,7 +107,9 @@ workSpaceRouter.route("/add-admin").patch(verifyJWT, addAdmin);
 workSpaceRouter.route("/remove-admin").patch(verifyJWT, removeAdmin);
 
 export { workSpaceRouter };
-boardRouter.route("/create-board").post(verifyJWT,upload.single("cover-image"), createBoard);
+boardRouter
+  .route("/create-board")
+  .post(verifyJWT, upload.single("cover-image"), createBoard);
 boardRouter.route("/:workspaceId/get-boards").get(verifyJWT, allBoards);
 boardRouter.route("/:boardId/delete-board").delete(verifyJWT, deleteBoard);
 boardRouter.route("/add-admin").patch(verifyJWT, makeBoardAdmin);

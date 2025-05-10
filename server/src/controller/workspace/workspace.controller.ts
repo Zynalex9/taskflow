@@ -19,6 +19,7 @@ import {
 } from "../../utils/helpers";
 import ApiResponse from "../../utils/ApiResponse";
 import { redisClient } from "../..";
+import { UploadOnCloudinary } from "../../utils/cloudinary";
 interface IParams {
   name: string;
   members?: string[];
@@ -80,14 +81,25 @@ export const createWorkSpace = async (req: Request, res: Response) => {
         });
       }
     }
-    const randomColor = getRandomColor();
-
+    let workspaceCover;
+    if (req.file) {
+      const localFilePath = req.file.path;
+      const response = await UploadOnCloudinary({
+        localFilePath,
+        folderName: "taskflow/workspaceCovers",
+      });
+      if (response && response.url) {
+        workspaceCover = response.url;
+      }
+    } else {
+      workspaceCover = getRandomColor();
+    }
     const workSpace = await workSpaceModel.create({
       name,
       admin: workspaceAdmins,
       members: workspaceMembers || [],
       createdBy: userId,
-      cover: randomColor,
+      cover: workspaceCover,
     });
 
     const allUsers = [...workspaceAdmins, ...workspaceMembers];
