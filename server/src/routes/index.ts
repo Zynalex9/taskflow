@@ -105,7 +105,7 @@ workSpaceRouter.route("/add-admin").patch(verifyJWT, addAdmin);
 workSpaceRouter.route("/remove-admin").patch(verifyJWT, removeAdmin);
 
 export { workSpaceRouter };
-boardRouter.route("/create-board").post(verifyJWT, createBoard);
+boardRouter.route("/create-board").post(verifyJWT,upload.single("cover-image"), createBoard);
 boardRouter.route("/:workspaceId/get-boards").get(verifyJWT, allBoards);
 boardRouter.route("/:boardId/delete-board").delete(verifyJWT, deleteBoard);
 boardRouter.route("/add-admin").patch(verifyJWT, makeBoardAdmin);

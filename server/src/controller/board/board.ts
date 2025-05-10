@@ -10,7 +10,12 @@ import { CardAttachmentModel } from "../../models/card.attachments.model";
 import { CardModel } from "../../models/card.model";
 import { UserModel } from "../../models/user.model";
 import { asyncHandler } from "../../utils/asyncHandler";
-import { checkRequiredBody, lPushList, notFound } from "../../utils/helpers";
+import {
+  checkRequiredBody,
+  getRandomColor,
+  lPushList,
+  notFound,
+} from "../../utils/helpers";
 import ApiResponse from "../../utils/ApiResponse";
 import { UploadOnCloudinary } from "../../utils/cloudinary";
 export interface IBoardMember {
@@ -19,10 +24,18 @@ export interface IBoardMember {
 }
 export const createBoard = async (req: Request, res: Response) => {
   try {
-    const { title, visibility, backgroundOptions, workspaceId, memberId } =
-      req.body;
+    const {
+      title,
+      visibility,
+      coverFromBody,
+      backgroundOptions,
+      workspaceId,
+      memberId,
+      linkFromBody
+    } = req.body;
     const userId = req.user._id;
-    if (!Array.isArray(memberId)) {
+    const parseIds = JSON.parse(memberId) || [];
+    if (!Array.isArray(parseIds)) {
       res.status(400).json({ message: "memberId must be an array" });
       return;
     }
@@ -61,8 +74,9 @@ export const createBoard = async (req: Request, res: Response) => {
       });
       return;
     }
+    console.log(req.file);
     const allMemberIdsSet = new Set([
-      ...memberId.map((id: any) => id.toString()),
+      ...parseIds.map((id: any) => id.toString()),
       workspace.createdBy.toString(),
       ...workspace.admin.map((adminId) => adminId.toString()),
     ]);
@@ -81,7 +95,25 @@ export const createBoard = async (req: Request, res: Response) => {
         role: isAdmin ? "admin" : "member",
       };
     });
-
+    let boardCover;
+    //hex code
+    if (coverFromBody) {
+      boardCover = coverFromBody;
+    } else if (linkFromBody) {
+      boardCover = linkFromBody;
+    } else if (req.file) {
+      const localPath = req.file.path;
+      const response = await UploadOnCloudinary({
+        localFilePath: localPath,
+        folderName: "taskflow/boardCovers",
+      });
+      console.log(response);
+      if (response && response.url) {
+        boardCover = response.url;
+      }
+    } else {
+      boardCover = getRandomColor();
+    }
     const newBoard = await boardModel.create({
       title,
       visibility: visibilityStatus,
@@ -89,6 +121,7 @@ export const createBoard = async (req: Request, res: Response) => {
       createdBy: userId,
       members: boardMembers,
       workspace: workspaceId,
+      cover: boardCover,
     });
     await workSpaceModel.findByIdAndUpdate(
       workspaceId,
@@ -99,7 +132,8 @@ export const createBoard = async (req: Request, res: Response) => {
     res
       .status(201)
       .json({ message: "New board created", sucess: true, newBoard });
-  } catch (error) {
+  } catch (error: any) {
+    console.log(error.message);
     res.status(500).json({
       message: "Internal server error in creating board",
       success: false,
