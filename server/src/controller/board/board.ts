@@ -18,6 +18,7 @@ import {
 } from "../../utils/helpers";
 import ApiResponse from "../../utils/ApiResponse";
 import { UploadOnCloudinary } from "../../utils/cloudinary";
+import { redisClient } from "../..";
 export interface IBoardMember {
   user: string | Types.ObjectId;
   role: "member" | "admin";
@@ -31,7 +32,7 @@ export const createBoard = async (req: Request, res: Response) => {
       backgroundOptions,
       workspaceId,
       memberId,
-      linkFromBody
+      linkFromBody,
     } = req.body;
     const userId = req.user._id;
     const parseIds = JSON.parse(memberId) || [];
@@ -129,6 +130,7 @@ export const createBoard = async (req: Request, res: Response) => {
       { new: true }
     );
     await lPushList(userId, `Board created : ${title}`);
+    await redisClient.del(`boards:${userId}`)
     res
       .status(201)
       .json({ message: "New board created", sucess: true, newBoard });
@@ -142,27 +144,44 @@ export const createBoard = async (req: Request, res: Response) => {
 };
 export const allBoards = async (req: Request, res: Response): Promise<void> => {
   try {
-    const userId = req.user;
+    const userId = req.user._id;
     const { workspaceId } = req.params;
 
     if (!workspaceId) {
       res.status(400).json({ message: "workspace ID is required" });
       return;
     }
-    const allBoards = await boardModel
-      .find({ createdBy: userId, workspace: workspaceId })
-      .lean();
-    if (allBoards.length === 0) {
-      res.status(404).json({ message: "boards not found" });
+
+    const cachedKey = `boards:${userId}`;
+    const cachedBoard = await redisClient.get(cachedKey);
+    if (cachedBoard) {
+      res
+        .status(200)
+        .json(new ApiResponse(200, JSON.parse(cachedBoard), "Boards from cache"));
+      return;
+    }
+    const boards = await boardModel.find({ workspace: workspaceId }).lean();
+
+    if (!boards || boards.length === 0) {
+      res.status(404).json({ message: "No boards found in this workspace" });
       return;
     }
 
-    res.status(201).json({ message: "board(s) Found", allBoards });
+    const yourBoards = boards.filter(
+      (board) => board.createdBy.toString() === userId.toString()
+    );
+    const otherBoards = boards.filter(
+      (board) => board.createdBy.toString() !== userId.toString()
+    );
+    const response = { yourBoards, otherBoards };
+    await redisClient.set(cachedKey, JSON.stringify(response), "EX", 3600);
+    res.status(200).json(new ApiResponse(200,response,"Boards found"));
   } catch (error) {
-    console.error(error);
+    console.error("Error fetching boards:", error);
     res.status(500).json({ message: "Internal server error" });
   }
 };
+
 export const deleteBoard = async (req: Request, res: Response) => {
   const session = await mongoose.startSession();
   try {
@@ -246,6 +265,7 @@ export const deleteBoard = async (req: Request, res: Response) => {
 
     await session.commitTransaction();
     await lPushList(req.user._id, `Board Deleted : ${board.title}`);
+    await redisClient.del(`boards:${req.user._id}`)
 
     res.status(200).json({ message: "Board deleted with all related data" });
   } catch (error) {
@@ -342,6 +362,8 @@ export const demoteAdmin = asyncHandler(async (req, res) => {
   }
   targetedUser.role = "member";
   await board.save();
+  await redisClient.del(`boards:${req.user._id}`)
+
   await lPushList(req.user._id, `You removed added board admin`);
   res.status(200).json(new ApiResponse(200, {}, "User is demoted to member"));
 });

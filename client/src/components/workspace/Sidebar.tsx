@@ -18,7 +18,7 @@ const Sidebar = () => {
     <aside className="w-64 h-screen bg-[#1D2125] text-white border-r border-gray-100/50 p-4 space-y-4">
       <div className="flex items-center">
         <div>
-          {workspace && workspace.cover.startsWith("http") ? (
+          { workspace?.cover?.startsWith("http") ? (
             <div
               style={{
                 backgroundImage: `url(${workspace.cover})`,

@@ -12,9 +12,8 @@ export interface IWorkspace {
   createdAt: string;
   updatedAt: string;
   __v: number;
-  cover: string;
+  cover?: string; // made optional in case backend returns undefined
 }
-
 
 const AllWorkspaces = () => {
   const [workspaces, setWorkspaces] = useState<IWorkspace[]>([]);
@@ -40,13 +39,14 @@ const AllWorkspaces = () => {
       {workspaces.length > 0 ? (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {workspaces.map((workspace) => (
-            <Link to={`/user/w/workspace/${workspace._id}`}>
-              <div
-                key={workspace._id}
-                className="bg-fprimary text-white rounded-2xl shadow-md overflow-hidden transition-transform transform hover:scale-105"
-              >
+            <Link
+              key={workspace._id}
+              to={`/user/w/workspace/${workspace._id}`}
+            >
+              <div className="bg-fprimary text-white rounded-2xl shadow-md overflow-hidden transition-transform transform hover:scale-105">
                 <div className="h-32 w-full">
-                  {workspace.cover.startsWith("http") ? (
+                  {typeof workspace.cover === "string" &&
+                  workspace.cover.startsWith("http") ? (
                     <img
                       src={workspace.cover}
                       alt="Workspace cover"
@@ -55,12 +55,14 @@ const AllWorkspaces = () => {
                   ) : (
                     <div
                       className="w-full h-full"
-                      style={{ backgroundColor: workspace.cover }}
+                      style={{
+                        backgroundColor: workspace.cover || "#ccc",
+                      }}
                     />
                   )}
                 </div>
                 <div className="p-4">
-                  <h2 className="text-xl font-semibold ">{workspace.name}</h2>
+                  <h2 className="text-xl font-semibold">{workspace.name}</h2>
                   <p className="text-sm text-gray-500 mt-1">
                     Members: {workspace.members.length}
                   </p>

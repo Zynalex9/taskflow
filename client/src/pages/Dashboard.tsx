@@ -7,7 +7,7 @@ const Dashboard = () => {
   const { user } = useSelector((state: RootState) => state.auth);
 
   return (
-    <div className="w-full min-h-screen bg-fprimary text-white font-charlie-text-r flex flex-col lg:flex-row">
+    <div className="w-full min-h-screen bg-fprimary text-white font-charlie-text-r flex items-start flex-col lg:flex-row">
       <aside className="w-full lg:w-[20%] sticky top-0 p-4 bg-fprimary border-r border-white/10 z-10">
         <Sidebar />
       </aside>
