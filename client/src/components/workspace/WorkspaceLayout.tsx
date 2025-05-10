@@ -2,23 +2,20 @@ import { Outlet, useParams } from "react-router-dom";
 import Topbar from "../Topbar";
 import Sidebar from "./Sidebar";
 import { useEffect } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import { AppDispatch, RootState } from "../../store/store";
+import { useDispatch } from "react-redux";
+import { AppDispatch } from "../../store/store";
 import { fetchworkspace } from "../../store/workspaceSlice";
-import { toast, ToastContainer } from "react-toastify";
+import { toast } from "react-toastify";
 
 const WorkspaceLayout = () => {
   const { workspaceId } = useParams();
   const dispatch = useDispatch<AppDispatch>();
 
-  const { workspace } = useSelector((state: RootState) => state.workspace);
   useEffect(() => {
     const getWorkspace = async () => {
       if (workspaceId) {
         try {
-          const res = await dispatch(fetchworkspace(workspaceId)).unwrap();
-          console.log("Workspace data:", res);
-          console.log("workspace", workspace);
+           await dispatch(fetchworkspace(workspaceId)).unwrap();
         } catch (error: any) {
           toast.error(error, { theme: "dark" });
         }

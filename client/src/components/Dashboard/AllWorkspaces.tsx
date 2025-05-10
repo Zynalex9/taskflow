@@ -2,7 +2,7 @@ import axios from "axios";
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 
-interface Workspace {
+export interface IWorkspace {
   _id: string;
   name: string;
   admin: string[];
@@ -12,19 +12,16 @@ interface Workspace {
   createdAt: string;
   updatedAt: string;
   __v: number;
+  cover: string;
 }
 
-const getRandomColor = (): string => {
-  const hue = Math.floor(Math.random() * 360);
-  return `hsl(${hue}, 70%, 85%)`;
-};
 
 const AllWorkspaces = () => {
-  const [workspaces, setWorkspaces] = useState<Workspace[]>([]);
+  const [workspaces, setWorkspaces] = useState<IWorkspace[]>([]);
 
   const fetchWorkspaces = async () => {
     try {
-      const response = await axios.get<{ data: Workspace[] }>(
+      const response = await axios.get<{ data: IWorkspace[] }>(
         "http://localhost:3000/api/workspace/get-workspaces",
         { withCredentials: true }
       );
@@ -48,10 +45,20 @@ const AllWorkspaces = () => {
                 key={workspace._id}
                 className="bg-fprimary text-white rounded-2xl shadow-md overflow-hidden transition-transform transform hover:scale-105"
               >
-                <div
-                  className="h-32"
-                  style={{ backgroundColor: getRandomColor() }}
-                />
+                <div className="h-32 w-full">
+                  {workspace.cover.startsWith("http") ? (
+                    <img
+                      src={workspace.cover}
+                      alt="Workspace cover"
+                      className="w-full h-full object-cover"
+                    />
+                  ) : (
+                    <div
+                      className="w-full h-full"
+                      style={{ backgroundColor: workspace.cover }}
+                    />
+                  )}
+                </div>
                 <div className="p-4">
                   <h2 className="text-xl font-semibold ">{workspace.name}</h2>
                   <p className="text-sm text-gray-500 mt-1">

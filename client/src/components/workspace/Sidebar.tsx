@@ -18,9 +18,25 @@ const Sidebar = () => {
     <aside className="w-64 h-screen bg-[#1D2125] text-white border-r border-gray-100/50 p-4 space-y-4">
       <div className="flex items-center">
         <div>
-          <div className="bg-green-600 w-8 h-8 flex items-center justify-center rounded text-[#1D2125] font-bold">
-            {workspaceName?.[0]}
-          </div>
+          {workspace && workspace.cover.startsWith("http") ? (
+            <div
+              style={{
+                backgroundImage: `url(${workspace.cover})`,
+                backgroundSize: "cover",
+                backgroundPosition: "center",
+              }}
+              className="w-8 h-8 flex items-center justify-center rounded text-[#1D2125] font-bold"
+            >
+              {workspaceName?.[0]}
+            </div>
+          ) : (
+            <div
+              style={{ backgroundColor: workspace?.cover }}
+              className="w-8 h-8 flex items-center justify-center rounded text-[#1D2125] font-bold"
+            >
+              {workspaceName?.[0]}
+            </div>
+          )}
         </div>
         <div className="flex flex-col ml-2">
           <span className="font-semibold text-sm">{workspaceName}</span>
@@ -28,9 +44,7 @@ const Sidebar = () => {
       </div>
 
       <nav className="space-y-2 text-[#9FADBC] font-charlie-text-r ">
-        <Link
-          to={`/user/w/workspace/${workspace?._id}`}
-        >
+        <Link to={`/user/w/workspace/${workspace?._id}`}>
           <div className="flex items-center space-x-2 text-sm hover:bg-gray-700 p-2 rounded cursor-pointer">
             <LayoutGrid size={16} />
             <span>Boards</span>

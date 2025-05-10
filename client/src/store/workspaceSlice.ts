@@ -16,6 +16,7 @@ export interface Workspace {
   createdAt: string;
   updatedAt: string;
   __v: number;
+  cover: string;
 }
 
 export interface WorkspaceResponse {
