@@ -77,10 +77,13 @@ const Sidebar = () => {
         <p className="text-xs text-[#9FADBC] font-charlie-text-r px-2 mt-4">
           Workspace views
         </p>
-       <Link to={`/user/w/workspace/${workspace?._id}/table`}> <div className="flex items-center text-[#9FADBC] font-charlie-text-r space-x-2 hover:bg-gray-700 p-2 rounded cursor-pointer mt-1">
-          <Table size={16} />
-          <span>Table</span>
-        </div></Link>
+        <Link to={`/user/w/workspace/${workspace?._id}/table`}>
+          {" "}
+          <div className="flex items-center text-[#9FADBC] font-charlie-text-r space-x-2 hover:bg-gray-700 p-2 rounded cursor-pointer mt-1">
+            <Table size={16} />
+            <span>Table</span>
+          </div>
+        </Link>
         <div className="flex items-center  text-[#9FADBC] font-charlie-text-r space-x-2 hover:bg-gray-700 p-2 rounded cursor-pointer">
           <Calendar size={16} />
           <span>Calendar</span>
@@ -88,29 +91,33 @@ const Sidebar = () => {
       </div>
 
       <div className="text-sm">
-        <p className="text-xl font-charlie-display-sm mb-1 text-gray-400 px-2 mt-4 ">Your boards</p>
+        <p className="text-xl font-charlie-display-sm mb-1 text-gray-400 px-2 mt-4 ">
+          Your boards
+        </p>
         {loading
           ? "Loading boards"
           : boards?.yourBoards.map((board) => (
-              <div className="flex items-center justify-between hover:bg-gray-700 p-2 rounded cursor-pointer ">
-                <div className="flex items-center space-x-2">
-                  <div
-                    className="w-6 h-6 rounded-sm"
-                    style={
-                      isImageUrl(board.cover)
-                        ? {
-                            backgroundImage: `url(${board.cover})`,
-                            backgroundSize: "cover",
-                            backgroundPosition: "center",
-                          }
-                        : { backgroundColor: board.cover }
-                    }
-                  />
-                  <span className="text-[#9FADBC] font-charlie-text-r text-md">
-                    {board.title}
-                  </span>
+              <Link to={`/user/w/workspace/${workspace?._id}/board/${board._id}`}>
+                <div className="flex items-center justify-between hover:bg-gray-700 p-2 rounded cursor-pointer ">
+                  <div className="flex items-center space-x-2">
+                    <div
+                      className="w-6 h-6 rounded-sm"
+                      style={
+                        isImageUrl(board.cover)
+                          ? {
+                              backgroundImage: `url(${board.cover})`,
+                              backgroundSize: "cover",
+                              backgroundPosition: "center",
+                            }
+                          : { backgroundColor: board.cover }
+                      }
+                    />
+                    <span className="text-[#9FADBC] font-charlie-text-r text-md">
+                      {board.title}
+                    </span>
+                  </div>
                 </div>
-              </div>
+              </Link>
             ))}
       </div>
     </aside>
