@@ -1,52 +1,28 @@
-import axios from "axios";
-import { useSelector } from "react-redux";
-import { RootState } from "../../../store/store";
-import { useEffect, useState } from "react";
-import { IBoard, IBoardResponse } from "../../../types/functionalites.types";
+import { useDispatch, useSelector } from "react-redux";
+import { AppDispatch, RootState } from "../../../store/store";
+import { useEffect } from "react";
 import { isImageUrl } from "../../../utils/helper";
 import { Link } from "react-router-dom";
+import { fetchAllBoards } from "../../../store/BoardSlice";
 
 const BoardDisplay = () => {
-  const { workspace } = useSelector((state: RootState) => state.workspace);
-  const [myBoards, setMyBoards] = useState<IBoard[]>([]);
-  const [otherBoards, setOtherBoards] = useState<IBoard[]>([]);
-  const [loading, setLoading] = useState<Boolean>(false);
-  const fetchBoards = async () => {
-    try {
-      setLoading(true);
-      const response = await axios.get<IBoardResponse>(
-        `http://localhost:3000/api/board/${workspace?._id}/get-boards`,
-        { withCredentials: true }
-      );
+  const dispatch  = useDispatch<AppDispatch>()
+  const { workspace } = useSelector((state: RootState) => state.workspace); 
+  const { boards,loading } = useSelector((state: RootState) => state.boards); 
 
-      if (response?.data.success) {
-        setMyBoards(response.data.data.yourBoards);
-        setOtherBoards(response.data.data.otherBoards);
-        setLoading(false);
-      }
-    } catch (error: any) {
-      console.log(error.message);
-      setLoading(false)
-    }
-  };
   useEffect(() => {
     if (workspace?._id) {
-      setMyBoards([]);
-      setOtherBoards([]);
-      fetchBoards();
+      dispatch(fetchAllBoards(workspace._id));
     }
-  }, [workspace]);
-  useEffect(() => {
-    console.log("MY Boards:", myBoards);
-    console.log("yOUR Boards:", otherBoards);
-  }, [myBoards]);
+  }, [workspace, dispatch]);
+
   if(loading) return <h1 className="text-center text-textP text-4xl font-charlie-text-sb">Loading boards...</h1>
   return (
     <div className="py-8 flex flex-wrap items-center justify-center gap-2">
       <div className="bg-[#333C43] text-center font-charlie-text-sb text-textP text-2xl p-12 w-[30%] rounded-xl shadow-2xl transition-colors duration-150 hover:bg-[#333C43]/50">
         <h2>Create new board</h2>
       </div>
-      {myBoards.map((board) => (
+      {boards?.yourBoards.map((board) => (
         <Link
           to=" "
           key={board._id}
