@@ -23,6 +23,7 @@ import AllWorkspaces from "../components/Dashboard/AllWorkspaces";
 import WorkspaceLayout from "../components/workspace/WorkspaceLayout";
 import Boards from "../components/workspace/Boards";
 import Members from "../components/workspace/Members";
+import Table from "../components/workspace/Table";
 
 const AllRoutes = () => {
   const { user } = useSelector((state: RootState) => state.auth);
@@ -171,6 +172,10 @@ const AllRoutes = () => {
         <Route
           path="/user/w/workspace/:workspaceId/members"
           element={<Members/>}
+        />
+        <Route
+          path="/user/w/workspace/:workspaceId/table"
+          element={<Table/>}
         />
       </Route>
     </Routes>
