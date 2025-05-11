@@ -130,7 +130,7 @@ export const createBoard = async (req: Request, res: Response) => {
       { new: true }
     );
     await lPushList(userId, `Board created : ${title}`);
-    await redisClient.del(`boards:${userId}`)
+    await redisClient.del(`boards:${userId}`);
     res
       .status(201)
       .json({ message: "New board created", sucess: true, newBoard });
@@ -152,14 +152,14 @@ export const allBoards = async (req: Request, res: Response): Promise<void> => {
       return;
     }
 
-    const cachedKey = `boards:${userId}`;
-    const cachedBoard = await redisClient.get(cachedKey);
-    if (cachedBoard) {
-      res
-        .status(200)
-        .json(new ApiResponse(200, JSON.parse(cachedBoard), "Boards from cache"));
-      return;
-    }
+    // const cachedKey = `boards:${userId}`;
+    // const cachedBoard = await redisClient.get(cachedKey);
+    // if (cachedBoard) {
+    //   res
+    //     .status(200)
+    //     .json(new ApiResponse(200, JSON.parse(cachedBoard), "Boards from cache"));
+    //   return;
+    // }
     const boards = await boardModel.find({ workspace: workspaceId }).lean();
 
     if (!boards || boards.length === 0) {
@@ -174,8 +174,8 @@ export const allBoards = async (req: Request, res: Response): Promise<void> => {
       (board) => board.createdBy.toString() !== userId.toString()
     );
     const response = { yourBoards, otherBoards };
-    await redisClient.set(cachedKey, JSON.stringify(response), "EX", 3600);
-    res.status(200).json(new ApiResponse(200,response,"Boards found"));
+    // await redisClient.set(cachedKey, JSON.stringify(response), "EX", 3600);
+    res.status(200).json(new ApiResponse(200, response, "Boards found"));
   } catch (error) {
     console.error("Error fetching boards:", error);
     res.status(500).json({ message: "Internal server error" });
@@ -265,7 +265,7 @@ export const deleteBoard = async (req: Request, res: Response) => {
 
     await session.commitTransaction();
     await lPushList(req.user._id, `Board Deleted : ${board.title}`);
-    await redisClient.del(`boards:${req.user._id}`)
+    await redisClient.del(`boards:${req.user._id}`);
 
     res.status(200).json({ message: "Board deleted with all related data" });
   } catch (error) {
@@ -362,7 +362,7 @@ export const demoteAdmin = asyncHandler(async (req, res) => {
   }
   targetedUser.role = "member";
   await board.save();
-  await redisClient.del(`boards:${req.user._id}`)
+  await redisClient.del(`boards:${req.user._id}`);
 
   await lPushList(req.user._id, `You removed added board admin`);
   res.status(200).json(new ApiResponse(200, {}, "User is demoted to member"));
