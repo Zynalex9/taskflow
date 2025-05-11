@@ -10,27 +10,37 @@ const BoardDisplay = () => {
   const { workspace } = useSelector((state: RootState) => state.workspace);
   const [myBoards, setMyBoards] = useState<IBoard[]>([]);
   const [otherBoards, setOtherBoards] = useState<IBoard[]>([]);
+  const [loading, setLoading] = useState<Boolean>(false);
   const fetchBoards = async () => {
     try {
+      setLoading(true);
       const response = await axios.get<IBoardResponse>(
         `http://localhost:3000/api/board/${workspace?._id}/get-boards`,
         { withCredentials: true }
       );
+
       if (response?.data.success) {
         setMyBoards(response.data.data.yourBoards);
         setOtherBoards(response.data.data.otherBoards);
+        setLoading(false);
       }
     } catch (error: any) {
       console.log(error.message);
+      setLoading(false)
     }
   };
   useEffect(() => {
-    fetchBoards();
-  }, []);
+    if (workspace?._id) {
+      setMyBoards([]);
+      setOtherBoards([]);
+      fetchBoards();
+    }
+  }, [workspace]);
   useEffect(() => {
     console.log("MY Boards:", myBoards);
     console.log("yOUR Boards:", otherBoards);
   }, [myBoards]);
+  if(loading) return <h1 className="text-center text-textP text-4xl font-charlie-text-sb">Loading boards...</h1>
   return (
     <div className="py-8 flex flex-wrap items-center justify-center gap-2">
       <div className="bg-[#333C43] text-center font-charlie-text-sb text-textP text-2xl p-12 w-[30%] rounded-xl shadow-2xl transition-colors duration-150 hover:bg-[#333C43]/50">

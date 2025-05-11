@@ -4,7 +4,7 @@ const FilterBar = () => {
   return (
     <div className="mx-4">
       <h1 className="text-5xl mt-4 font-charlie-text-sb text-textP">Boards</h1>
-      <div className="mt-14 w-full flex items-center justify-between">
+      <div className="mt-4 w-full flex items-center justify-between">
         <div>
           <label className="text-textP text-md font-charlie-text-r block mb-1">
             Sort By
