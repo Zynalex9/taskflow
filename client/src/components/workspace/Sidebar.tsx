@@ -10,15 +10,17 @@ import {
 import { useSelector } from "react-redux";
 import { RootState } from "../../store/store";
 import { Link } from "react-router-dom";
+import { isImageUrl } from "../../utils/helper";
 
 const Sidebar = () => {
   const { workspace } = useSelector((state: RootState) => state.workspace);
+  const { boards, loading } = useSelector((state: RootState) => state.boards);
   const workspaceName = workspace?.name;
   return (
     <aside className="w-64 h-screen bg-[#1D2125] text-white border-r border-gray-100/50 p-4 space-y-4">
       <div className="flex items-center">
         <div>
-          { workspace?.cover?.startsWith("http") ? (
+          {workspace?.cover?.startsWith("http") ? (
             <div
               style={{
                 backgroundImage: `url(${workspace.cover})`,
@@ -87,15 +89,30 @@ const Sidebar = () => {
 
       <div className="text-sm">
         <p className="text-xs text-gray-400 px-2 mt-4">Your boards</p>
-        <div className="flex items-center justify-between hover:bg-gray-700 p-2 rounded cursor-pointer mt-1">
-          <div className="flex items-center space-x-2">
-            <div className="w-4 h-4 bg-pink-500  rounded-sm" />
-            <span className="text-[#9FADBC] font-charlie-text-r">
-              My Trello board
-            </span>
-          </div>
-          <Plus size={14} />
-        </div>
+        {loading
+          ? "Loading boards"
+          : boards?.yourBoards.map((board) => (
+              <div className="flex items-center justify-between hover:bg-gray-700 p-2 rounded cursor-pointer ">
+                <div className="flex items-center space-x-2">
+                  <div
+                    className="w-4 h-4 rounded-sm"
+                    style={
+                      isImageUrl(board.cover)
+                        ? {
+                            backgroundImage: `url(${board.cover})`,
+                            backgroundSize: "cover",
+                            backgroundPosition: "center",
+                          }
+                        : { backgroundColor: board.cover }
+                    }
+                  />
+                  <span className="text-[#9FADBC] font-charlie-text-r">
+                    {board.title}
+                  </span>
+                </div>
+                <Plus size={14} />
+              </div>
+            ))}
       </div>
     </aside>
   );
