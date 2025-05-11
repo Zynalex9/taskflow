@@ -184,7 +184,7 @@ export const getWorkspaceTableData = async (req: Request, res: Response) => {
         $project: {
           _id: 1,
           boardName: "$title",
-          listName: "$listDetails.name",
+          listName: "$listsDetails.name",
           cardName: "$cardsDetails.name",
           labels: "$LabelDetails.name",
           members: "$userDetails.username",
@@ -211,11 +211,7 @@ export const getWorkspaceTableData = async (req: Request, res: Response) => {
       "EX",
       1300
     );
-    res.status(200).json({
-      message: "Table Found",
-      tableData,
-      success: false,
-    });
+    res.status(200).json(new ApiResponse(200, tableData, "Table found"));
   } catch (error: unknown) {
     if (error instanceof Error) {
       res

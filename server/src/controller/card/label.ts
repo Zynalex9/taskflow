@@ -4,6 +4,7 @@ import { CardLabelModel } from "../../models/card.label.model";
 import ApiResponse from "../../utils/ApiResponse";
 import { checkRequiredBody, checkRequiredParams } from "../../utils/helpers";
 import mongoose from "mongoose";
+import { redisClient } from "../..";
 export const addLabel = async (req: Request, res: Response) => {
   try {
     const { name, color, cardId } = req.body;
@@ -28,6 +29,7 @@ export const addLabel = async (req: Request, res: Response) => {
     await CardModel.findByIdAndUpdate(cardId, {
       $push: { labels: label._id },
     });
+    await redisClient.del(`tableData:${req.user._id}`)
     res.status(201).json({
       message: "Label added successfully",
       success: true,
