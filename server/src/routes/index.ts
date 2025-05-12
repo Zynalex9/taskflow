@@ -33,6 +33,7 @@ import {
   addMember,
   removeMember,
   editBoard,
+  getSingleBoard,
 } from "../controller/board/board";
 import {
   createList,
@@ -111,6 +112,7 @@ boardRouter
   .route("/create-board")
   .post(verifyJWT, upload.single("cover-image"), createBoard);
 boardRouter.route("/:workspaceId/get-boards").get(verifyJWT, allBoards);
+boardRouter.route("/single/:boardId").get(verifyJWT, getSingleBoard);
 boardRouter.route("/:boardId/delete-board").delete(verifyJWT, deleteBoard);
 boardRouter.route("/add-admin").patch(verifyJWT, makeBoardAdmin);
 boardRouter.route("/remove-admin").patch(verifyJWT, demoteAdmin);

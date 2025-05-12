@@ -181,7 +181,28 @@ export const allBoards = async (req: Request, res: Response): Promise<void> => {
     res.status(500).json({ message: "Internal server error" });
   }
 };
-
+export const getSingleBoard = asyncHandler(
+  async (req: Request, res: Response) => {
+    const { boardId } = req.params;
+    const cachedkey = `singleBoard:${boardId}`;
+    const cachedBoard = await redisClient.get(cachedkey);
+    if (cachedBoard) {
+      res
+        .status(200)
+        .json(
+          new ApiResponse(200, JSON.parse(cachedBoard), "Board from cache")
+        );
+      return;
+    }
+    const board = await boardModel.findById(boardId);
+    if (!board) {
+      notFound(board, "Board", res);
+      return;
+    }
+    await redisClient.set(cachedkey, JSON.stringify(board), "EX", 1300);
+    res.status(200).json(new ApiResponse(200, board, "Board found"));
+  }
+);
 export const deleteBoard = async (req: Request, res: Response) => {
   const session = await mongoose.startSession();
   try {
