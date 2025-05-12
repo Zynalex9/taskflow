@@ -186,14 +186,14 @@ export const getSingleBoard = asyncHandler(
     const { boardId } = req.params;
     const cachedkey = `singleBoard:${boardId}`;
     const cachedBoard = await redisClient.get(cachedkey);
-    if (cachedBoard) {
-      res
-        .status(200)
-        .json(
-          new ApiResponse(200, JSON.parse(cachedBoard), "Board from cache")
-        );
-      return;
-    }
+    // if (cachedBoard) {
+    //   res
+    //     .status(200)
+    //     .json(
+    //       new ApiResponse(200, JSON.parse(cachedBoard), "Board from cache")
+    //     );
+    //   return;
+    // }
     const board = await boardModel.aggregate([
       {
         $match: { _id: new mongoose.Types.ObjectId(boardId) },

@@ -10,7 +10,7 @@ interface initialState {
   error: string | null;
 }
 interface SingleBoardState {
-  board: IBoard | null;
+  board: IBoard[] | null;
   loading: Boolean;
   error: string | null;
 }
