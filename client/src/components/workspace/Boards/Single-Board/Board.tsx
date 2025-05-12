@@ -29,12 +29,12 @@ const Board = () => {
         className="w-full h-[89.8vh] overflow-auto"
         style={
           isImageUrl(board[0].cover)
-            ? { backgroundImage: `url(${board[0].cover})` }
+            ? { backgroundImage: `url(${board[0].cover})`,backgroundSize:"cover",backgroundPosition:"center center" }
             : {backgroundColor:board[0].cover}
         }
       >
         <BoardHeader />
-        <div className="p-8">
+        <div className="p-8 w-full">
           {board?.map((data) => (
             <List key={data._id} list={data.lists} />
           ))}

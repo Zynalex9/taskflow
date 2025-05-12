@@ -13,17 +13,17 @@ const BoardHeader = () => {
 
   if (board)
     return (
-      <div className="p-4 w-full bg-white font-charlie-display-sm backdrop-blur-md shadow-md flex items-center justify-between">
+      <div className="p-4 w-full bg-white/5 font-charlie-display-sm backdrop-blur-3xl shadow-md flex items-center justify-between">
         <div className="flex gap-2 items-center text-[#172B4D]">
           <h1 className="text-lg font-bold ">{board[0].title}</h1>
           <Star size={18} />
-          <AlignVerticalJustifyStartIcon size={18}/>
+          <AlignVerticalJustifyStartIcon size={18} />
         </div>
         <div className="flex gap-2 items-center text-[#172B4D]">
-          <Rocket size={18}/>
-          <CloudLightning size={18}/>
+          <Rocket size={18} />
+          <CloudLightning size={18} />
           <h1 className="flex items-center gap-1">
-            <ListFilter className="inline" size={18}/>
+            <ListFilter className="inline" size={18} />
             Filters
           </h1>
         </div>
