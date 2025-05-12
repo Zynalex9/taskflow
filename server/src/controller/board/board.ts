@@ -194,7 +194,29 @@ export const getSingleBoard = asyncHandler(
         );
       return;
     }
-    const board = await boardModel.findById(boardId);
+    const board = await boardModel.aggregate([
+      {
+        $match: { _id: new mongoose.Types.ObjectId(boardId) },
+      },
+      {
+        $lookup:{
+          from:"lists",
+          localField:"lists",
+          foreignField:"_id",
+          as:"lists",
+          pipeline:[
+            {
+              $lookup:{
+                from:"todos",
+                localField:"cards",
+                foreignField:'_id',
+                as:'cards'
+              }
+            }
+          ]
+        }
+      }
+    ]);
     if (!board) {
       notFound(board, "Board", res);
       return;
