@@ -17,7 +17,7 @@ const Sidebar = () => {
   const { boards, loading } = useSelector((state: RootState) => state.boards);
   const workspaceName = workspace?.name;
   return (
-    <aside className="w-64 overflow-y-auto h-screen bg-[#1D2125] text-white border-r border-gray-100/50 p-4 space-y-4">
+    <aside className="custom-scrollbar w-64 overflow-y-auto h-screen bg-[#1D2125] text-white border-r border-gray-100/50 p-4 pb-20 space-y-4">
       <div className="flex items-center">
         <div>
           {workspace?.cover?.startsWith("http") ? (
@@ -97,7 +97,9 @@ const Sidebar = () => {
         {loading
           ? "Loading boards"
           : boards?.yourBoards.map((board) => (
-              <Link to={`/user/w/workspace/${workspace?._id}/board/${board._id}`}>
+              <Link
+                to={`/user/w/workspace/${workspace?._id}/board/${board._id}`}
+              >
                 <div className="flex items-center justify-between hover:bg-gray-700 p-2 rounded cursor-pointer ">
                   <div className="flex items-center space-x-1">
                     <div

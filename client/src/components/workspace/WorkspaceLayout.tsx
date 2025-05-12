@@ -33,7 +33,7 @@ const WorkspaceLayout = () => {
         <div className="w-1/5 h-full">
           <Sidebar />
         </div>
-        <div className="w-4/5 h-full overflow-y-auto pr-2 scrollbar-thin scrollbar-thumb-gray-500 scrollbar-track-gray-200">
+        <div className="w-4/5 h-full overflow-y-auto pr-2 custom-scrollbar">
           <Outlet />
         </div>
       </div>
