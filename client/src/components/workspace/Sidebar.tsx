@@ -17,7 +17,7 @@ const Sidebar = () => {
   const { boards, loading } = useSelector((state: RootState) => state.boards);
   const workspaceName = workspace?.name;
   return (
-    <aside className="w-64 h-screen bg-[#1D2125] text-white border-r border-gray-100/50 p-4 space-y-4">
+    <aside className="w-64 overflow-y-auto h-screen bg-[#1D2125] text-white border-r border-gray-100/50 p-4 space-y-4">
       <div className="flex items-center">
         <div>
           {workspace?.cover?.startsWith("http") ? (
@@ -99,9 +99,9 @@ const Sidebar = () => {
           : boards?.yourBoards.map((board) => (
               <Link to={`/user/w/workspace/${workspace?._id}/board/${board._id}`}>
                 <div className="flex items-center justify-between hover:bg-gray-700 p-2 rounded cursor-pointer ">
-                  <div className="flex items-center space-x-2">
+                  <div className="flex items-center space-x-1">
                     <div
-                      className="w-6 h-6 rounded-sm"
+                      className="w-6 h-4 rounded-sm"
                       style={
                         isImageUrl(board.cover)
                           ? {

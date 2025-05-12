@@ -4,10 +4,12 @@ import { AppDispatch, RootState } from "../../../../store/store";
 import { useEffect } from "react";
 import { fetchSingleBoard } from "../../../../store/BoardSlice";
 import List from "./List";
+import BoardHeader from "./BoardHeader";
+import { isImageUrl } from "../../../../utils/helper";
 
 const Board = () => {
   const { boardId } = useParams();
-  const { board } = useSelector((state: RootState) => state.board);
+  const { board, loading } = useSelector((state: RootState) => state.board);
   const dispatch = useDispatch<AppDispatch>();
   useEffect(() => {
     if (boardId) {
@@ -15,13 +17,30 @@ const Board = () => {
       console.log(board);
     }
   }, [boardId]);
-  return (
-    <div>
-      {board?.map((data) => (
-        <List key={data._id} list={data.lists} />
-      ))}
-    </div>
-  );
+  if (loading)
+    return (
+      <h1 className="text-center text-textP text-4xl font-charlie-text-sb">
+        Loading
+      </h1>
+    );
+  if (board)
+    return (
+      <div
+        className="w-full h-[89.8vh] overflow-auto"
+        style={
+          isImageUrl(board[0].cover)
+            ? { backgroundImage: `url(${board[0].cover})` }
+            : {backgroundColor:board[0].cover}
+        }
+      >
+        <BoardHeader />
+        <div className="p-8">
+          {board?.map((data) => (
+            <List key={data._id} list={data.lists} />
+          ))}
+        </div>
+      </div>
+    );
 };
 
 export default Board;
