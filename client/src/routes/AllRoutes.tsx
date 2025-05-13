@@ -1,4 +1,4 @@
-import { Navigate, Route, Routes } from "react-router-dom";
+import { Navigate, Route, Routes, useLocation } from "react-router-dom";
 import Home from "../pages/Home";
 import Index from "../components/Feature-components/Index";
 import AutomationPage from "../pages/AutomationPage";
@@ -25,6 +25,7 @@ import Boards from "../components/workspace/Boards";
 import Members from "../components/workspace/Members";
 import Table from "../components/workspace/Table";
 import Board from "../components/workspace/Boards/Single-Board/Board";
+import CardModal from "../components/workspace/Boards/Single-Board/CardModal";
 
 const AllRoutes = () => {
   const { user } = useSelector((state: RootState) => state.auth);
@@ -107,9 +108,13 @@ const AllRoutes = () => {
       },
     },
   ];
+const location = useLocation();
+const background = location?.state?.background;
 
-  return (
-    <Routes>
+return (
+  <>
+    {/* CHANGED: Set location to background || location for modal routing */}
+    <Routes location={background || location}>
       <Route element={<LandingLayout />}>
         <Route path="/" element={<Home />} />
         {featurePages.map((pageData, idx) => (
@@ -122,30 +127,12 @@ const AllRoutes = () => {
         <Route path="/feature/automation" element={<AutomationPage />} />
         <Route element={<Layout />}>
           <Route path="/feature/power-ups/featured" element={<Featured />} />
-          <Route
-            path="/feature/power-ups/automation"
-            element={<Automation />}
-          />
-          <Route
-            path="/feature/power-ups/analytics-reporting"
-            element={<Analytics />}
-          />
-          <Route
-            path="/feature/power-ups/developer-tools"
-            element={<DeveloperTools />}
-          />
-          <Route
-            path="/feature/power-ups/board-utilities"
-            element={<BoardUtilities />}
-          />
-          <Route
-            path="/feature/power-ups/hr-operations"
-            element={<Operations />}
-          />
-          <Route
-            path="/feature/power-ups/project-management"
-            element={<ProjectManagement />}
-          />
+          <Route path="/feature/power-ups/automation" element={<Automation />} />
+          <Route path="/feature/power-ups/analytics-reporting" element={<Analytics />} />
+          <Route path="/feature/power-ups/developer-tools" element={<DeveloperTools />} />
+          <Route path="/feature/power-ups/board-utilities" element={<BoardUtilities />} />
+          <Route path="/feature/power-ups/hr-operations" element={<Operations />} />
+          <Route path="/feature/power-ups/project-management" element={<ProjectManagement />} />
         </Route>
         <Route path="/solution" element={<SolutionTemplate />} />
         <Route
@@ -167,24 +154,29 @@ const AllRoutes = () => {
       </Route>
       <Route
         path="/user/w/workspace/:workspaceId"
-        element={user ? <WorkspaceLayout /> : <Navigate to={"/user/sign-in"} />}
+        element={
+          user ? <WorkspaceLayout /> : <Navigate to={"/user/sign-in"} />
+        }
       >
-        <Route index element={<Boards/>} />
-        <Route
-          path="/user/w/workspace/:workspaceId/members"
-          element={<Members/>}
-        />
-        <Route
-          path="/user/w/workspace/:workspaceId/table"
-          element={<Table/>}
-        />
-        <Route
-          path="/user/w/workspace/:workspaceId/board/:boardId"
-          element={<Board/>}
-        />
+        <Route index element={<Boards />} />
+        <Route path="/user/w/workspace/:workspaceId/members" element={<Members />} />
+        <Route path="/user/w/workspace/:workspaceId/table" element={<Table />} />
+        <Route path="/user/w/workspace/:workspaceId/board/:boardId" element={<Board />} />
       </Route>
     </Routes>
-  );
+    
+    {/* CHANGED: Render modal route only if background exists */}
+    {background && (
+      <Routes>
+        <Route
+          path="/user/w/workspace/:workspaceId/board/:boardId/:cardName"
+          element={<CardModal />}
+        />
+      </Routes>
+    )}
+  </>
+);
+
 };
 
 export default AllRoutes;
