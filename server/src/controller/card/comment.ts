@@ -4,6 +4,7 @@ import { commentsModel } from "../../models/card.comments.models";
 import ApiResponse from "../../utils/ApiResponse";
 import { checkRequiredParams } from "../../utils/helpers";
 import mongoose from "mongoose";
+import { redisClient } from "../..";
 
 export const addComment = async (req: Request, res: Response) => {
   try {
@@ -26,6 +27,8 @@ export const addComment = async (req: Request, res: Response) => {
     });
     card.comments.push(newComment._id);
     await card.save();
+    await redisClient.del(`singleCard:${cardId}`);
+
     res.status(201).json({
       message: `New comment ${comment} has been made`,
       success: true,
@@ -46,6 +49,7 @@ export const deleteComment = async (req: Request, res: Response) => {
     if (!checkRequiredParams(req, res, required)) return;
 
     const { commentId } = req.params;
+    const {cardId} = req.body
     if (!mongoose.Types.ObjectId.isValid(commentId)) {
       res.status(400).json(new ApiResponse(400, {}, "Invalid comment ID"));
       return;
@@ -56,8 +60,10 @@ export const deleteComment = async (req: Request, res: Response) => {
       res.status(404).json(new ApiResponse(404, {}, "Comment not found"));
       return;
     }
-
-    res.status(200).json(new ApiResponse(200, {}, "Comment deleted successfully"));
+    await redisClient.del(`singleCard:${cardId}`);
+    res
+      .status(200)
+      .json(new ApiResponse(200, {}, "Comment deleted successfully"));
   } catch (error) {
     console.error(error);
     res.status(500).json(new ApiResponse(500, {}, "Internal server error"));

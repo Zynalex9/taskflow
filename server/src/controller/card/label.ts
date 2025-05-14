@@ -29,7 +29,8 @@ export const addLabel = async (req: Request, res: Response) => {
     await CardModel.findByIdAndUpdate(cardId, {
       $push: { labels: label._id },
     });
-    await redisClient.del(`tableData:${req.user._id}`)
+    await redisClient.del(`tableData:${req.user._id}`);
+    await redisClient.del(`singleCard:${cardId}`);
     res.status(201).json({
       message: "Label added successfully",
       success: true,
@@ -59,8 +60,10 @@ export const deleteLabel = async (req: Request, res: Response) => {
       res.status(404).json(new ApiResponse(404, {}, "Label not found"));
       return;
     }
-
-    res.status(200).json(new ApiResponse(200, {}, "Label deleted successfully"));
+    await redisClient.del(`tableData:${req.user._id}`);
+    res
+      .status(200)
+      .json(new ApiResponse(200, {}, "Label deleted successfully"));
   } catch (error) {
     console.error("Error in deleteLabel:", error);
     res.status(500).json(new ApiResponse(500, {}, "Internal server error"));

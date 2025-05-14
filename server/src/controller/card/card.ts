@@ -538,18 +538,23 @@ export const moveCard = asyncHandler(async (req, res) => {
   await redisClient.del(`tableData:${userId}`);
   res.status(200).json(new ApiResponse(200, list, "Card moved"));
 });
-export const getSingleCard = asyncHandler(async (req, res) => {  
+export const getSingleCard = asyncHandler(async (req, res) => {
   const { cardId } = req.params;
   const cachedKey = `singleCard:${cardId}`;
   const cachedCard = await redisClient.get(cachedKey);
-  if (cachedCard) {
-    res
-      .status(200)
-      .json(new ApiResponse(200, JSON.parse(cachedCard), "Card from cache"));
-    return;
-  }
+  // if (cachedCard) {
+  //   res
+  //     .status(200)
+  //     .json(new ApiResponse(200, JSON.parse(cachedCard), "Card from cache"));
+  //   return;
+  // }
 
-  const card = await CardModel.findById(cardId);
+  const card = await CardModel.findById(cardId)
+    .populate("labels")
+    .populate("comments")
+    .populate("attachments")
+    .populate("checklist")
+    .populate('list')
   if (!card) {
     res.status(404).json(new ApiResponse(404, {}, "No card found "));
     return;
