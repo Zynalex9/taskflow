@@ -1,43 +1,33 @@
-import axios from "axios";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { ICard } from "../../../../types/functionalites.types";
-import { toast, ToastContainer } from "react-toastify";
 import { ChevronLeftSquareIcon } from "lucide-react";
 import InListMove from "./Single-Card/InListMove";
+import { useDispatch, useSelector } from "react-redux";
+import { AppDispatch, RootState } from "../../../../store/store";
+import { fetchSingleCard } from "../../../../store/CardSlice";
 
 const CardModal = () => {
   const navigate = useNavigate();
-  const [card, setCard] = useState<ICard>();
-  const [loading, setLoading] = useState(false);
+  const dispatch = useDispatch<AppDispatch>();
+  const { card, error, loading } = useSelector(
+    (state: RootState) => state.card
+  );
   const { cardId } = useParams();
-  const fetchCard = async () => {
-    try {
-      setLoading(true);
-      const response = await axios.get(
-        `http://localhost:3000/api/card/single-card/${cardId}`,
-        { withCredentials: true }
-      );
-      if (response.data.success) {
-        setCard(response.data.data);
-        console.log(response.data);
-      }
-    } catch (error) {
-      toast.error("Error fetching cards", {
-        theme: "dark",
-        autoClose: 1000,
-      });
-    } finally {
-      setLoading(false);
-    }
-  };
+
   useEffect(() => {
-    fetchCard();
+    dispatch(fetchSingleCard(cardId!));
   }, []);
+
   if (loading)
     return (
       <div className="absolute inset-0 z-50 bg-black/70 flex items-center justify-center">
         <h1>Loading....</h1>
+      </div>
+    );
+  if (error)
+    return (
+      <div className="absolute inset-0 z-50 bg-black/70 flex items-center justify-center">
+        <h1>Error fetching cards....</h1>
       </div>
     );
   return (
@@ -48,8 +38,9 @@ const CardModal = () => {
             <label className="flex items-center cursor-pointer">
               <input type="checkbox" name="option" className="peer hidden" />
               <div className="w-6 h-6 border border-white rounded-full flex items-center justify-center peer-checked:bg-green-500">
-             <span className="text-white text-lg font-bold hidden peer-checked:block">✓</span>
-
+                <span className="text-white text-lg font-bold hidden peer-checked:block">
+                  ✓
+                </span>
               </div>
             </label>
 
@@ -59,9 +50,8 @@ const CardModal = () => {
           </div>
           <ChevronLeftSquareIcon onClick={() => navigate(-1)} />
         </div>
-        <InListMove/>
+        <InListMove />
       </div>
-      <ToastContainer />
     </div>
   );
 };

@@ -1,28 +1,78 @@
+export interface IComment {
+  _id: string;
+  comment: string;
+  author: string;
+  createdAt: string;
+  updatedAt: string;
+}
+export interface IChecklistItems {
+  _id: string;
+  title: string;
+  createdBy: string;
+  assignedTo: string[];
+}
+export interface IChecklist {
+  _id: string;
+  title: string;
+  card: string;
+  createdBy: string;
+  createdAt: string;
+  updatedAt: string;
+  items: IChecklistItems[];
+}
+export interface ILabel {
+  card: string;
+  color: string;
+  createdAt: string;
+  name: string;
+  updatedAt: string;
+  _id: string;
+}
+
+export interface IAttachment {
+  cardId: string;
+  createdAt: string;
+  fileUrl: string;
+  filename: string;
+  updatedAt: string;
+  uploadedBy: string;
+  _id: string;
+}
+export interface IUser {
+  _id: string;
+  username: string;
+  email: string;
+  workspace: string[];
+  profilePicture: string;
+  createdAt: string;
+  updatedAt: string;
+  __v: number;
+}
+
 export interface ICard {
   _id: string;
   name: string;
   description: string;
-  endDate: string; 
+  endDate: string;
   createdBy: string;
-  members: any[];  
-  list: string;
-  comments: any[]; 
-  labels: string[];
+  members: IUser[];
+  list: IList;
+  comments: IComment[];
+  labels: ILabel[];
   cover: string;
   priority: string;
-  checklist: any[];  
+  checklist: IChecklist[];
   checked: boolean;
-  attachments: any[];  
+  attachments: IAttachment[];
   position: number;
   __v: number;
 }
-
 
 export interface IList {
   _id: string;
   name: string;
   color: string;
-  cards: ICard[]; 
+  cards: ICard[];
   createdBy: string;
   position: number;
   board: string;
@@ -33,7 +83,7 @@ export interface IList {
 export interface IBoard {
   _id: string;
   title: string;
-  lists: IList[];  
+  lists: IList[];
   favourite: boolean;
   background: string;
   visibility: string;
@@ -55,7 +105,7 @@ export interface IMember {
 export interface IBoardResponse {
   statusCode: number;
   data: {
-    yourBoards: IBoard[];  
+    yourBoards: IBoard[];
     otherBoards: IBoard[];
   };
   message: string;
