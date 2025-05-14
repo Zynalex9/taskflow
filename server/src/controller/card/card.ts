@@ -5,6 +5,7 @@ import { CardModel } from "../../models/card.model";
 import {
   CheckAdmin,
   checkRequiredBody,
+  checkRequiredParams,
   deleteIfExists,
   findData,
   notFound,
@@ -505,8 +506,8 @@ export const copyCard = asyncHandler(async (req, res) => {
   if (notFound(list, "List", res)) return;
   list?.cards.push(cardId);
   await list?.save();
-  const userId = req.user._id
-  await redisClient.del(`tableData:${userId}`)
+  const userId = req.user._id;
+  await redisClient.del(`tableData:${userId}`);
   res.status(200).json(new ApiResponse(200, list, "Card copied"));
 });
 export const moveCard = asyncHandler(async (req, res) => {
@@ -533,7 +534,27 @@ export const moveCard = asyncHandler(async (req, res) => {
   );
   await list.save();
   await oldList.save();
-  const userId = req.user._id
-  await redisClient.del(`tableData:${userId}`)
+  const userId = req.user._id;
+  await redisClient.del(`tableData:${userId}`);
   res.status(200).json(new ApiResponse(200, list, "Card moved"));
+});
+export const getSingleCard = asyncHandler(async (req, res) => {  
+  const { cardId } = req.params;
+  const cachedKey = `singleCard:${cardId}`;
+  const cachedCard = await redisClient.get(cachedKey);
+  if (cachedCard) {
+    res
+      .status(200)
+      .json(new ApiResponse(200, JSON.parse(cachedCard), "Card from cache"));
+    return;
+  }
+
+  const card = await CardModel.findById(cardId);
+  if (!card) {
+    res.status(404).json(new ApiResponse(404, {}, "No card found "));
+    return;
+  }
+  await redisClient.set(cachedKey, JSON.stringify(card), "EX", 1300);
+  res.status(200).json(new ApiResponse(200, card, "Card found"));
+  return;
 });

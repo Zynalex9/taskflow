@@ -49,6 +49,7 @@ import {
   editCardDetails,
   getCardsByList,
   getCardsByUser,
+  getSingleCard,
   joinCard,
   leaveCard,
   moveCard,
@@ -164,4 +165,5 @@ cardRouter
 cardRouter.route("/delete-checklist").delete(verifyJWT, deleteCheckList);
 cardRouter.route("/move-card").post(verifyJWT, moveCard);
 cardRouter.route("/copy-card").post(verifyJWT, copyCard);
+cardRouter.route("/single-card/:cardId").get(verifyJWT, getSingleCard);
 export { cardRouter };
