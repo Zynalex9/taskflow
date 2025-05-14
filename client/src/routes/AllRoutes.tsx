@@ -169,7 +169,7 @@ return (
     {background && (
       <Routes>
         <Route
-          path="/user/w/workspace/:workspaceId/board/:boardId/:cardName"
+         path="/user/w/workspace/:workspaceId/board/:boardId/card/:cardId"
           element={<CardModal />}
         />
       </Routes>
