@@ -2,7 +2,7 @@ import { Editor } from "@tinymce/tinymce-react";
 
 const Description: React.FC = () => {
   return (
-    <div className="mt-4">
+    <div className="mt-4 ml-10">
       <Editor
         apiKey="a5eehweab0y5sl2d379firrdrmvqreznvtdyd7utpw97vidl"
         init={{

@@ -8,7 +8,7 @@ const LabelsAndNotification = () => {
   if (!card) return null;
 
   return (
-    <div className="w-full font-charlie-text-sb">
+    <div className="w-full ml-10 font-charlie-text-sb">
       <div className="flex  gap-48 mb-2">
       {card.labels.length > 0 &&<h2 className="text-md text-textP">Labels</h2> }  
         <h2 className="text-md text-textP">Notifications</h2>

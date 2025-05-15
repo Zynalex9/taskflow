@@ -2,7 +2,7 @@ import { usePreventScroll } from "./PreventScroll"; // You'll need to create thi
 
 import { useEffect, useState } from "react";
 import { useNavigate, useParams, useLocation } from "react-router-dom";
-import { ChevronLeftSquareIcon } from "lucide-react";
+import { AlignLeft, ChevronLeftSquareIcon } from "lucide-react";
 import InListMove from "./Single-Card/InListMove";
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "../../../../store/store";
@@ -60,25 +60,22 @@ const CardModal = () => {
           onClick={(e) => e.stopPropagation()}
         >
           <div className="p-6">
-            <div className="w-full flex items-center justify-between">
-              <div className="flex gap-3">
-                <label className="flex items-center cursor-pointer">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center">
+                <label className="cursor-pointer">
                   <input
                     type="checkbox"
                     name="option"
                     className="peer hidden"
                   />
-                  <div className="w-6 h-6 border border-white rounded-full flex items-center justify-center peer-checked:bg-green-500">
-                    <span className="text-white text-lg font-bold hidden peer-checked:block">
-                      ✓
-                    </span>
-                  </div>
+                  <div className="w-6 h-6 border border-white rounded-full flex items-center justify-center peer-checked:bg-green-600"></div>
                 </label>
 
-                <h1 className="text-textP font-charlie-text-sb text-2xl">
+                <h1 className="text-textP font-charlie-text-sb text-2xl pl-4">
                   {card?.name}
                 </h1>
               </div>
+
               <ChevronLeftSquareIcon
                 onClick={handleClose}
                 className="cursor-pointer hover:text-gray-300"
@@ -86,28 +83,51 @@ const CardModal = () => {
               />
             </div>
 
-            <InListMove />
+            <div className="pl-10">
+              <InListMove />
+            </div>
 
             <div className="w-full flex flex-col md:flex-row mt-4">
               <div className="w-full md:w-2/3 md:pr-4">
                 <LabelsAndNotification />
                 {showDescription ? (
                   <>
+                    <div className="flex gap-5 items-center pt-3">
+                      <AlignLeft className="text-textP" />
+                      <h1 className="text-textP font-charlie-text-sb text-md">
+                        Description
+                      </h1>
+                    </div>
                     <Description />
-                    <div >
-                      <button className="m-1 px-3 py-2 bg-fprimary/60 rounded font-charlie-text-r" onClick={() => setShowDescription(false)}>
+                    <div className="ml-10">
+                      <button
+                        className="m-1 px-3 py-2 bg-fprimary/60 rounded font-charlie-text-r"
+                        onClick={() => setShowDescription(false)}
+                      >
                         Close
                       </button>
-                      <button className="m-1 px-3 py-2 bg-primary rounded font-charlie-text-r">Save</button>
+                      <button className="m-1 px-3 py-2 bg-primary rounded font-charlie-text-r">
+                        Save
+                      </button>
                     </div>
                   </>
                 ) : (
-                  <button
-                    className="w-full bg-[#0D0F11] text-start p-4 mt-5 rounded-sm font-charlie-display-sm text-textP cursor-pointer"
-                    onClick={() => setShowDescription(true)}
-                  >
-                    Add a more detailed description…
-                  </button>
+                  <>
+                    <div className="flex gap-5 items-center pt-3">
+                      <AlignLeft className="text-textP" />
+                      <h1 className="text-textP font-charlie-text-sb text-md">
+                        Description
+                      </h1>
+                    </div>
+                    <div className="ml-10">
+                      <button
+                        className="w-full bg-[#0D0F11] text-start p-4 mt-1 rounded-sm font-charlie-display-sm text-textP cursor-pointer"
+                        onClick={() => setShowDescription(true)}
+                      >
+                        Add a more detailed description…
+                      </button>
+                    </div>
+                  </>
                 )}
               </div>
 
