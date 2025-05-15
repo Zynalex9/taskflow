@@ -5,6 +5,7 @@ import InListMove from "./Single-Card/InListMove";
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "../../../../store/store";
 import { fetchSingleCard } from "../../../../store/CardSlice";
+import LabelsAndNotification from "./Single-Card/LabelsAndNotification";
 
 const CardModal = () => {
   const navigate = useNavigate();
@@ -51,6 +52,12 @@ const CardModal = () => {
           <ChevronLeftSquareIcon onClick={() => navigate(-1)} />
         </div>
         <InListMove />
+        <div className="w-full flex">
+          <div className="w-2/3">
+            <LabelsAndNotification/>
+          </div>
+          <div className="siderbar w-1/3 bg-red-500 p-4"></div>
+        </div>
       </div>
     </div>
   );

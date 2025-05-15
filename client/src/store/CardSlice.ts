@@ -20,7 +20,7 @@ export const fetchSingleCard = createAsyncThunk<ICard, string>(
         `http://localhost:3000/api/card/single-card/${cardId}`,
         { withCredentials: true }
       );
-      console.log("WE DID IT", response)
+      console.log("WE DID IT", response.data.data)
       return response.data.data;
     } catch (error:any) {
         console.log('we couldnt',error.message)
