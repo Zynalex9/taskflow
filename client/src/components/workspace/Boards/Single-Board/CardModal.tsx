@@ -1,5 +1,4 @@
-import { usePreventScroll } from "./PreventScroll"; // You'll need to create this hook
-
+import { usePreventScroll } from "./PreventScroll";
 import { useEffect, useState } from "react";
 import { useNavigate, useParams, useLocation } from "react-router-dom";
 import { AlignLeft, ChevronLeftSquareIcon } from "lucide-react";
@@ -82,15 +81,17 @@ const CardModal = () => {
                 size={24}
               />
             </div>
-
             <div className="pl-10">
               <InListMove />
             </div>
-
             <div className="w-full flex flex-col md:flex-row mt-4">
               <div className="w-full md:w-2/3 md:pr-4">
                 <LabelsAndNotification />
-                {showDescription ? (
+                {card?.description ? (
+                  <div className="ml-10 mt-3 text-textP font-charlie-text-r">
+                    {card.description}
+                  </div>
+                ) : showDescription ? (
                   <>
                     <div className="flex gap-5 items-center pt-3">
                       <AlignLeft className="text-textP" />
