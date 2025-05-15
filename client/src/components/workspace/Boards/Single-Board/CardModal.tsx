@@ -8,6 +8,7 @@ import { AppDispatch, RootState } from "../../../../store/store";
 import { fetchSingleCard } from "../../../../store/CardSlice";
 import LabelsAndNotification from "./Single-Card/LabelsAndNotification";
 import Description from "./Single-Card/Description";
+import ModalSidebar from "./Single-Card/ModalSidebar";
 
 const CardModal = () => {
   const [showDescription, setShowDescription] = useState(false);
@@ -85,7 +86,7 @@ const CardModal = () => {
               <InListMove />
             </div>
             <div className="w-full flex flex-col md:flex-row mt-4">
-              <div className="w-full md:w-2/3 md:pr-4">
+              <div className="w-full md:w-4/5 md:pr-4">
                 <LabelsAndNotification />
                 {card?.description ? (
                   <div className="ml-10 mt-3 text-textP font-charlie-text-r">
@@ -132,9 +133,11 @@ const CardModal = () => {
                 )}
               </div>
 
-              <div className="w-full md:w-1/3 mt-4 md:mt-0 bg-[#22272B] p-4 rounded-lg"></div>
+              <div className="w-full md:w-1/5  mt-4 md:mt-0 p-4 rounded-lg">
+              <ModalSidebar/>
+              </div>
             </div>
-          </div>
+          </div> 
         </div>
       </div>
     </>
