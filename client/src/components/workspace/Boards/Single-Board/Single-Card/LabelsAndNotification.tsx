@@ -9,9 +9,14 @@ const LabelsAndNotification = () => {
 
   return (
     <div className="w-full ml-10 font-charlie-text-sb">
-      <div className="flex  gap-48 mb-2">
-      {card.labels.length > 0 &&<h2 className="text-md text-textP">Labels</h2> }  
-        <h2 className="text-md text-textP">Notifications</h2>
+      <div className="flex  mb-2">
+        {card.labels.length > 0 && (
+          <h2 className="text-md text-textP">Labels</h2>
+        )}
+        {card.members.length > 0 && (
+          <h2 className="text-md text-textP pl-48">Members</h2>
+        )}
+        <h2 className="text-md text-textP pl-6">Notifications</h2>
       </div>
 
       <div className="flex gap-4">
@@ -43,14 +48,36 @@ const LabelsAndNotification = () => {
             ))}
 
           {card.labels.length > 0 && (
-            <button className="bg-[#B6C2CF]/80 p-2 rounded cursor-pointer transition-colors duration-150 hover:bg-[#B6C2CF]">
+            <button className="bg-[#B6C2CF]/20 transition-colors duration-150 hover:bg-[#B6C2CF]/10 p-2 rounded cursor-pointer  ">
+              <Plus size={16} className="cursor-pointer" />
+            </button>
+          )}
+        </div>
+        <div className="flex gap-1 flex-wrap">
+          {card.members.length > 0 &&
+            card.members.map((member) => (
+              <div
+                key={member._id}
+                className={`rounded shadow-xl cursor-pointer w-8 h-8`}
+                style={{
+                  backgroundImage: `url(${member.profilePicture})`,
+                  backgroundSize: "cover",
+                  backgroundPosition: "center center",
+                }}
+              >
+            
+              </div>
+            ))}
+
+          {card.members.length > 0 && (
+            <button className="bg-[#B6C2CF]/20 transition-colors duration-150 hover:bg-[#B6C2CF]/10 p-2 rounded cursor-pointer  ">
               <Plus size={16} className="cursor-pointer" />
             </button>
           )}
         </div>
 
         <div>
-          <button className="flex items-center gap-1 bg-[#B6C2CF]/20 transition-colors duration-150 hover:bg-[#B6C2CF] px-3 py-2 rounded cursor-pointer">
+          <button className="flex items-center gap-1 bg-[#B6C2CF]/20 transition-colors duration-150 hover:bg-[#B6C2CF]/10 px-3 py-2 rounded cursor-pointer">
             <Eye size={16} />
             <span className="text-sm text-white">Watch</span>
           </button>
