@@ -159,11 +159,13 @@ export const joinCard = async (req: Request, res: Response) => {
       return;
     }
 
-    const updatedCard = await UserModel.findByIdAndUpdate(
+    const updatedCard = await CardModel.findByIdAndUpdate(
       cardId,
       { $addToSet: { members: userId } },
       { new: true }
     );
+  await redisClient.del(`singleCard:${cardId}`);
+
     res.status(200).json({
       message: "User added to the card successfully",
       success: true,
@@ -496,7 +498,7 @@ export const deleteCard = async (req: Request, res: Response) => {
     session.endSession();
   }
 };
-export const copyCard = asyncHandler(async (req, res) => {
+export const copyCard = asyncHandler(async (req:Request, res:Response) => {
   const required = ["cardId", "ListId"];
   if (!checkRequiredBody(req, res, required)) return;
   const { cardId, ListId } = req.body;
@@ -508,9 +510,11 @@ export const copyCard = asyncHandler(async (req, res) => {
   await list?.save();
   const userId = req.user._id;
   await redisClient.del(`tableData:${userId}`);
+  await redisClient.del(`singleCard:${cardId}`);
+
   res.status(200).json(new ApiResponse(200, list, "Card copied"));
 });
-export const moveCard = asyncHandler(async (req, res) => {
+export const moveCard = asyncHandler(async (req:Request, res:Response) => {
   const required = ["cardId", "ListId"];
   if (!checkRequiredBody(req, res, required)) return;
   const { cardId, ListId } = req.body;
@@ -536,9 +540,10 @@ export const moveCard = asyncHandler(async (req, res) => {
   await oldList.save();
   const userId = req.user._id;
   await redisClient.del(`tableData:${userId}`);
+  await redisClient.del(`singleCard:${cardId}`);
   res.status(200).json(new ApiResponse(200, list, "Card moved"));
 });
-export const getSingleCard = asyncHandler(async (req, res) => {
+export const getSingleCard = asyncHandler(async (req:Request, res:Response) => {
   const { cardId } = req.params;
   const cachedKey = `singleCard:${cardId}`;
   const cachedCard = await redisClient.get(cachedKey);
@@ -555,6 +560,7 @@ export const getSingleCard = asyncHandler(async (req, res) => {
     .populate("attachments")
     .populate("checklist")
     .populate('list')
+    .populate('members')
   if (!card) {
     res.status(404).json(new ApiResponse(404, {}, "No card found "));
     return;
