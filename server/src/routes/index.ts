@@ -47,6 +47,7 @@ import {
   createCard,
   deleteCard,
   editCardDetails,
+  getCardActivities,
   getCardsByList,
   getCardsByUser,
   getSingleCard,
@@ -163,7 +164,8 @@ cardRouter
   .route("/:commentId/delete-checklist")
   .delete(verifyJWT, deleteCheckList);
 cardRouter.route("/delete-checklist").delete(verifyJWT, deleteCheckList);
-cardRouter.route("/move-card").post(verifyJWT, moveCard);
-cardRouter.route("/copy-card").post(verifyJWT, copyCard);
+cardRouter.route("/move-card").patch(verifyJWT, moveCard);
+cardRouter.route("/copy-card").patch(verifyJWT, copyCard);
 cardRouter.route("/single-card/:cardId").get(verifyJWT, getSingleCard);
+cardRouter.route("/card-activities/:cardId").get(verifyJWT, getCardActivities);
 export { cardRouter };

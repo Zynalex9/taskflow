@@ -64,7 +64,7 @@ export const addAttachment = async (req: Request, res: Response) => {
     await card.save();
        cardActivityUpdate(
           cardId,
-          `${req.user.username} added a new attachment ${attachment.filename}`
+          `(${req.user.username}) added a new attachment (${attachment.filename})`
         );
     res.status(201).json({
       message: `${filename} is uploaded`,
