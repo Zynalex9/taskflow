@@ -8,6 +8,7 @@ export interface IComment {
 export interface IChecklistItems {
   _id: string;
   title: string;
+  completed: boolean
   createdBy: string;
   assignedTo: string[];
 }

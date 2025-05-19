@@ -11,6 +11,7 @@ import Description from "./Single-Card/Description";
 import ModalSidebar from "./Single-Card/ModalSidebar";
 import CommentInput from "./Single-Card/CommentInput";
 import Attachments from "./Single-Card/Attachments";
+import Checklist from "./Single-Card/Checklist";
 
 const CardModal = () => {
   const { card, error, loading } = useSelector(
@@ -193,6 +194,9 @@ const CardModal = () => {
                 )}
                 {card?.attachments && card?.attachments.length > 0 && (
                   <Attachments Attachment={card?.attachments || []} />
+                )}
+                {card?.checklist && card?.checklist.length > 0 && (
+                  <Checklist Checklist={card.checklist} />
                 )}
                 <CommentInput />
               </div>
