@@ -8,18 +8,13 @@ import { CardModel } from "../../models/card.model";
 
 export const addAttachment = async (req: Request, res: Response) => {
   try {
-    const { cardId, name, resourceType } = req.body;
+    const { cardId, name } = req.body;
     const userId = req.user._id;
     if (!cardId) {
       res.status(404).json({ message: "No Card Found", success: false });
       return;
     }
-    if (!resourceType) {
-      res
-        .status(404)
-        .json({ message: "No resourceTyped Found", success: false });
-      return;
-    }
+
     const card = await CardModel.findById(cardId);
     if (!card) {
       res

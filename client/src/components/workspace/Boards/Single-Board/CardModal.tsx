@@ -9,15 +9,21 @@ import { fetchSingleCard } from "../../../../store/CardSlice";
 import LabelsAndNotification from "./Single-Card/LabelsAndNotification";
 import Description from "./Single-Card/Description";
 import ModalSidebar from "./Single-Card/ModalSidebar";
+import CommentInput from "./Single-Card/CommentInput";
 
 const CardModal = () => {
-  const [showDescription, setShowDescription] = useState(false);
-  const navigate = useNavigate();
-  const location = useLocation();
-  const dispatch = useDispatch<AppDispatch>();
   const { card, error, loading } = useSelector(
     (state: RootState) => state.card
   );
+  const [showDescription, setShowDescription] = useState(false);
+  const [isEditingDescription, setIsEditingDescription] = useState(false);
+  const [editedDescription, setEditedDescription] = useState(
+    card?.description || ""
+  );
+  const navigate = useNavigate();
+  const location = useLocation();
+  const dispatch = useDispatch<AppDispatch>();
+
   const { cardId } = useParams();
   const background = location.state?.background;
 
@@ -89,9 +95,62 @@ const CardModal = () => {
               <div className="w-full md:w-4/5 md:pr-4">
                 <LabelsAndNotification />
                 {card?.description ? (
-                  <div className="ml-10 mt-3 text-textP font-charlie-text-r">
-                    {card.description}
-                  </div>
+                  isEditingDescription ? (
+                    <>
+                      <div className="flex gap-5 items-center pt-3">
+                        <AlignLeft className="text-textP" />
+                        <h1 className="text-textP font-charlie-text-sb text-xl">
+                          Edit Description
+                        </h1>
+                      </div>
+                      <textarea
+                        className="ml-10 mt-3 w-[90%] p-2 border border-gray-300 rounded font-charlie-text-r text-textP"
+                        value={editedDescription}
+                        onChange={(e) => setEditedDescription(e.target.value)}
+                        rows={4}
+                      />
+                      <div className="ml-10 mt-2">
+                        <button
+                          className="m-1 px-3 py-2 bg-fprimary/60 rounded font-charlie-text-r"
+                          onClick={() => setIsEditingDescription(false)}
+                        >
+                          Cancel
+                        </button>
+                        <button
+                          className="m-1 px-3 py-2 bg-primary rounded font-charlie-text-r"
+                          onClick={() => {
+                            console.log("New Description:", editedDescription);
+                            setIsEditingDescription(false);
+                          }}
+                        >
+                          Save
+                        </button>
+                      </div>
+                    </>
+                  ) : (
+                    <>
+                      <div className="flex justify-between items-center">
+                        <div className="flex gap-5 items-center pt-3">
+                          <AlignLeft className="text-textP" />
+                          <h1 className="text-textP font-charlie-text-sb text-xl">
+                            Description
+                          </h1>
+                        </div>
+                        <button
+                          className="px-2 py-1 rounded cursor-pointer items-center transition-colors duration-150 bg-[#B6C2CF]/20 hover:bg-[#B6C2CF]/10 font-charlie-display-sm shadow-2xl text-[#B3BFCC]"
+                          onClick={() => {
+                            setIsEditingDescription(true);
+                            setEditedDescription(card.description);
+                          }}
+                        >
+                          Edit
+                        </button>
+                      </div>
+                      <div className="ml-10 mt-3 text-textP/80 leading-loose font-charlie-text-r">
+                        {card.description}
+                      </div>
+                    </>
+                  )
                 ) : showDescription ? (
                   <>
                     <div className="flex gap-5 items-center pt-3">
@@ -131,13 +190,14 @@ const CardModal = () => {
                     </div>
                   </>
                 )}
+                <CommentInput />
               </div>
 
               <div className="w-full md:w-1/5  mt-4 md:mt-0 p-4 rounded-lg">
-              <ModalSidebar/>
+                <ModalSidebar />
               </div>
             </div>
-          </div> 
+          </div>
         </div>
       </div>
     </>

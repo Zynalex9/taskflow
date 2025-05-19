@@ -10,12 +10,12 @@ interface ListProps {
 const List: React.FC<ListProps> = ({ list }) => {
   console.log("l", list);
   return (
-    <div className="flex gap-4 w-full">
+    <div className="flex flex-wrap gap-4 w-full">
       {list && list?.length > 0
         ? list?.map((singleList) => (
             <div
               key={singleList._id}
-              className="bg-[#101204] w-1/3 p-4 text-textP rounded-xl shadow-lg shadow-black/80"
+              className="bg-[#101204] w-[300px] p-4 text-textP rounded-xl shadow-lg shadow-black/80"
             >
               <div className="font-bold mb-2 w-full flex items-center justify-between">
                 <h1>{singleList.name}</h1>

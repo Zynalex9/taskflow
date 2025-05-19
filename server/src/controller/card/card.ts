@@ -123,7 +123,10 @@ export const createCard = async (req: Request, res: Response) => {
         $push: { cards: newCard._id },
       }
     );
+    const listBoard = await ListModel.findById(newCard.list);
+    const boardId = listBoard?._id;
     await redisClient.del(`tableData:${userId}`);
+    await redisClient.del(`singleBoard:${boardId}`);
     res.status(201).json({
       message: "Card created successfully",
       success: true,
@@ -164,7 +167,7 @@ export const joinCard = async (req: Request, res: Response) => {
       { $addToSet: { members: userId } },
       { new: true }
     );
-  await redisClient.del(`singleCard:${cardId}`);
+    await redisClient.del(`singleCard:${cardId}`);
 
     res.status(200).json({
       message: "User added to the card successfully",
@@ -489,6 +492,7 @@ export const deleteCard = async (req: Request, res: Response) => {
     await CardModel.findByIdAndDelete(cardId).session(session);
 
     await session.commitTransaction();
+
     res.status(200).json(new ApiResponse(200, {}, "Card deleted successfully"));
   } catch (error) {
     await session.abortTransaction();
@@ -498,7 +502,7 @@ export const deleteCard = async (req: Request, res: Response) => {
     session.endSession();
   }
 };
-export const copyCard = asyncHandler(async (req:Request, res:Response) => {
+export const copyCard = asyncHandler(async (req: Request, res: Response) => {
   const required = ["cardId", "ListId"];
   if (!checkRequiredBody(req, res, required)) return;
   const { cardId, ListId } = req.body;
@@ -514,7 +518,7 @@ export const copyCard = asyncHandler(async (req:Request, res:Response) => {
 
   res.status(200).json(new ApiResponse(200, list, "Card copied"));
 });
-export const moveCard = asyncHandler(async (req:Request, res:Response) => {
+export const moveCard = asyncHandler(async (req: Request, res: Response) => {
   const required = ["cardId", "ListId"];
   if (!checkRequiredBody(req, res, required)) return;
   const { cardId, ListId } = req.body;
@@ -543,29 +547,37 @@ export const moveCard = asyncHandler(async (req:Request, res:Response) => {
   await redisClient.del(`singleCard:${cardId}`);
   res.status(200).json(new ApiResponse(200, list, "Card moved"));
 });
-export const getSingleCard = asyncHandler(async (req:Request, res:Response) => {
-  const { cardId } = req.params;
-  const cachedKey = `singleCard:${cardId}`;
-  const cachedCard = await redisClient.get(cachedKey);
-  // if (cachedCard) {
-  //   res
-  //     .status(200)
-  //     .json(new ApiResponse(200, JSON.parse(cachedCard), "Card from cache"));
-  //   return;
-  // }
+export const getSingleCard = asyncHandler(
+  async (req: Request, res: Response) => {
+    const { cardId } = req.params;
+    const cachedKey = `singleCard:${cardId}`;
+    const cachedCard = await redisClient.get(cachedKey);
+    // if (cachedCard) {
+    //   res
+    //     .status(200)
+    //     .json(new ApiResponse(200, JSON.parse(cachedCard), "Card from cache"));
+    //   return;
+    // }
 
-  const card = await CardModel.findById(cardId)
-    .populate("labels")
-    .populate("comments")
-    .populate("attachments")
-    .populate("checklist")
-    .populate('list')
-    .populate('members')
-  if (!card) {
-    res.status(404).json(new ApiResponse(404, {}, "No card found "));
+    const card = await CardModel.findById(cardId)
+      .populate("labels")
+      .populate({
+        path: "comments",
+        populate: {
+          path: "author",
+          model: "User",
+        },
+      })
+      .populate("attachments")
+      .populate("checklist")
+      .populate("list")
+      .populate("members");
+    if (!card) {
+      res.status(404).json(new ApiResponse(404, {}, "No card found "));
+      return;
+    }
+    await redisClient.set(cachedKey, JSON.stringify(card), "EX", 1300);
+    res.status(200).json(new ApiResponse(200, card, "Card found"));
     return;
   }
-  await redisClient.set(cachedKey, JSON.stringify(card), "EX", 1300);
-  res.status(200).json(new ApiResponse(200, card, "Card found"));
-  return;
-});
+);

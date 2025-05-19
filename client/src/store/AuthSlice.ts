@@ -1,8 +1,9 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import axios from "axios";
 import { IData } from "../components/Authentication/SignIn";
+import { IUser } from "../types/functionalites.types";
 interface AuthState {
-  user: any;
+  user: IUser | null;
   loading: boolean;
   error: string | null;
   isLoggedIn: boolean;

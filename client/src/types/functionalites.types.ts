@@ -1,7 +1,7 @@
 export interface IComment {
   _id: string;
   comment: string;
-  author: string;
+  author: IUser;
   createdAt: string;
   updatedAt: string;
 }
