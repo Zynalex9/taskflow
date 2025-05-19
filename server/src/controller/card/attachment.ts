@@ -2,7 +2,7 @@ import { Request, Response } from "express";
 import mongoose from "mongoose";
 import { CardAttachmentModel } from "../../models/card.attachments.model";
 import ApiResponse from "../../utils/ApiResponse";
-import { checkRequiredBody } from "../../utils/helpers";
+import { cardActivityUpdate, checkRequiredBody } from "../../utils/helpers";
 import { UploadOnCloudinary } from "../../utils/cloudinary";
 import { CardModel } from "../../models/card.model";
 
@@ -62,6 +62,10 @@ export const addAttachment = async (req: Request, res: Response) => {
     });
     card.attachments.push(attachment._id);
     await card.save();
+       cardActivityUpdate(
+          cardId,
+          `${req.user.username} added a new attachment ${attachment.filename}`
+        );
     res.status(201).json({
       message: `${filename} is uploaded`,
       success: true,
@@ -109,7 +113,6 @@ export const deleteAttachment = async (req: Request, res: Response) => {
       res.status(404).json(new ApiResponse(404, {}, "Attachment(s) not found"));
       return;
     }
-
     res
       .status(200)
       .json(

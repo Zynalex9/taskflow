@@ -113,3 +113,10 @@ export const getRandomColor = (): string => {
   const hue = Math.floor(Math.random() * 360);
   return `hsl(${hue}, 70%, 85%)`;
 };
+export const cardActivityUpdate = async (
+  cardId: string | Types.ObjectId,
+  message: string
+) => {
+  await redisClient.lpush(`card:${cardId}`, message);
+  await redisClient.expire(`card:${cardId}`, 86400);
+};

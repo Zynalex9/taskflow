@@ -3,6 +3,7 @@ import mongoose from "mongoose";
 import ApiResponse from "../../utils/ApiResponse";
 import { CardModel } from "../../models/card.model";
 import {
+  cardActivityUpdate,
   CheckAdmin,
   checkRequiredBody,
   checkRequiredParams,
@@ -127,6 +128,10 @@ export const createCard = async (req: Request, res: Response) => {
     const boardId = listBoard?._id;
     await redisClient.del(`tableData:${userId}`);
     await redisClient.del(`singleBoard:${boardId}`);
+    cardActivityUpdate(
+      newCard._id,
+      `${req.user.username} created a ${newCard.name}`
+    );
     res.status(201).json({
       message: "Card created successfully",
       success: true,
@@ -168,7 +173,7 @@ export const joinCard = async (req: Request, res: Response) => {
       { new: true }
     );
     await redisClient.del(`singleCard:${cardId}`);
-
+    cardActivityUpdate(card._id, `${req.user.username} joined ${card.name}`);
     res.status(200).json({
       message: "User added to the card successfully",
       success: true,
@@ -204,6 +209,7 @@ export const leaveCard = async (req: Request, res: Response) => {
       { $pull: { members: userId } },
       { new: true }
     );
+    cardActivityUpdate(card._id, `${req.user.username} left ${card.name}`);
     res.status(200).json({
       message: "User removed from the card successfully",
       success: true,
@@ -515,6 +521,12 @@ export const copyCard = asyncHandler(async (req: Request, res: Response) => {
   const userId = req.user._id;
   await redisClient.del(`tableData:${userId}`);
   await redisClient.del(`singleCard:${cardId}`);
+  if (card && list) {
+    cardActivityUpdate(
+      card._id,
+      `${req.user.username} copied ${card.name} to ${list.name}`
+    );
+  }
 
   res.status(200).json(new ApiResponse(200, list, "Card copied"));
 });
@@ -545,6 +557,12 @@ export const moveCard = asyncHandler(async (req: Request, res: Response) => {
   const userId = req.user._id;
   await redisClient.del(`tableData:${userId}`);
   await redisClient.del(`singleCard:${cardId}`);
+  if (card && list && oldList) {
+    cardActivityUpdate(
+      cardId,
+      `${req.user.username} moved ${card.name} from ${oldList.name} to ${list.name}`
+    );
+  }
   res.status(200).json(new ApiResponse(200, list, "Card moved"));
 });
 export const getSingleCard = asyncHandler(
