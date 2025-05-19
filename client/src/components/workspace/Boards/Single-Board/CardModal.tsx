@@ -10,6 +10,7 @@ import LabelsAndNotification from "./Single-Card/LabelsAndNotification";
 import Description from "./Single-Card/Description";
 import ModalSidebar from "./Single-Card/ModalSidebar";
 import CommentInput from "./Single-Card/CommentInput";
+import Attachments from "./Single-Card/Attachments";
 
 const CardModal = () => {
   const { card, error, loading } = useSelector(
@@ -189,6 +190,9 @@ const CardModal = () => {
                       </button>
                     </div>
                   </>
+                )}
+                {card?.attachments && card?.attachments.length > 0 && (
+                  <Attachments Attachment={card?.attachments || []} />
                 )}
                 <CommentInput />
               </div>
