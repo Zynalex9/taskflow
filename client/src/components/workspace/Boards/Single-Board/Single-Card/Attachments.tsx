@@ -27,12 +27,11 @@ const Attachments: React.FC<AttachmentsProps> = ({ Attachment }) => {
               <img
                 src={a.fileUrl}
                 alt=""
-                className="w-36 h-24 shadow-2xl object-cover border-2 border-fprimary/60 rounded"
+                className="w-30 h-20 shadow-2xl object-cover border-2 border-fprimary/60 rounded"
               />
-              <div className="text-textP text-lg font-charlie-text-r">
-                <h1>{a.filename}</h1>
-                <h3>
-                  {" "}
+              <div>
+                <h1 className="text-textP text-xl font-charlie-display-sm">{a.filename}</h1>
+                <h3 className="text-textP/90 text-sm font-charlie-text-r">
                   {formatDistanceToNow(new Date(a.createdAt), {
                     addSuffix: true,
                   })}

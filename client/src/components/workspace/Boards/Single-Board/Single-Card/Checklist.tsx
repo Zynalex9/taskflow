@@ -14,7 +14,7 @@ const Checklist: React.FC<ChecklistProps> = ({ Checklist }) => {
     return Math.round((completed / items.length) * 100);
   };
   return (
-    <div className="space-y-6 mb-8">
+    <div className="space-y-6 my-12">
       {Checklist.map((c) => (
         <div key={c._id}>
           <div className="flex justify-between items-center">
@@ -39,7 +39,7 @@ const Checklist: React.FC<ChecklistProps> = ({ Checklist }) => {
                   name={i.title}
                   id={i.title}
                   checked={i.completed}
-                  className="size-4 my-2"
+                  className="w-4 h-4"
                 />
                 <h3
                   className={`${
