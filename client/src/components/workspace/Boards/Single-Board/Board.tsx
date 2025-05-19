@@ -26,7 +26,7 @@ const Board = () => {
   if (board)
     return (
       <div
-        className="w-full h-[89.8vh] overflow-auto"
+        className="w-full h-[89.8vh] overflow-auto custom-scrollbar"
         style={
           isImageUrl(board[0].cover)
             ? { backgroundImage: `url(${board[0].cover})`,backgroundSize:"cover",backgroundPosition:"center center" }
