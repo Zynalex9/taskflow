@@ -11,6 +11,8 @@
   },
   "dependencies": {
     "@hookform/resolvers": "^5.0.1",
+    "@radix-ui/react-tabs": "^1.1.11",
+    "@radix-ui/react-tooltip": "^1.2.6",
     "@reduxjs/toolkit": "^2.7.0",
     "@tailwindcss/vite": "^4.1.7",
     "@tinymce/tinymce-react": "^6.1.0",
