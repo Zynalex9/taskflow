@@ -35,11 +35,7 @@ export const createBoard = async (req: Request, res: Response) => {
       linkFromBody,
     } = req.body;
     const userId = req.user._id;
-    const parseIds = JSON.parse(memberId) || [];
-    if (!Array.isArray(parseIds)) {
-      res.status(400).json({ message: "memberId must be an array" });
-      return;
-    }
+  
     if (!title) {
       res
         .status(409)
@@ -77,7 +73,7 @@ export const createBoard = async (req: Request, res: Response) => {
     }
     console.log(req.file);
     const allMemberIdsSet = new Set([
-      ...parseIds.map((id: any) => id.toString()),
+      ...memberId.map((id: any) => id.toString()),
       workspace.createdBy.toString(),
       ...workspace.admin.map((adminId) => adminId.toString()),
     ]);
@@ -97,7 +93,6 @@ export const createBoard = async (req: Request, res: Response) => {
       };
     });
     let boardCover;
-    //hex code
     if (coverFromBody) {
       boardCover = coverFromBody;
     } else if (linkFromBody) {
@@ -113,14 +108,15 @@ export const createBoard = async (req: Request, res: Response) => {
         boardCover = response.url;
       }
     } else {
-      boardCover = getRandomColor();
+      boardCover =
+        "https://trello-backgrounds.s3.amazonaws.com/SharedBackground/2560x1707/c176ec219cc71b83695da82802ab31a7/photo-1742156345582-b857d994c84e.webp";
     }
     const newBoard = await boardModel.create({
       title,
       visibility: visibilityStatus,
       backgroundOptions: backgroundStatus,
       createdBy: userId,
-      members: boardMembers,
+      // members: boardMembers,
       workspace: workspaceId,
       cover: boardCover,
     });
@@ -199,23 +195,23 @@ export const getSingleBoard = asyncHandler(
         $match: { _id: new mongoose.Types.ObjectId(boardId) },
       },
       {
-        $lookup:{
-          from:"lists",
-          localField:"lists",
-          foreignField:"_id",
-          as:"lists",
-          pipeline:[
+        $lookup: {
+          from: "lists",
+          localField: "lists",
+          foreignField: "_id",
+          as: "lists",
+          pipeline: [
             {
-              $lookup:{
-                from:"todos",
-                localField:"cards",
-                foreignField:'_id',
-                as:'cards'
-              }
-            }
-          ]
-        }
-      }
+              $lookup: {
+                from: "todos",
+                localField: "cards",
+                foreignField: "_id",
+                as: "cards",
+              },
+            },
+          ],
+        },
+      },
     ]);
     if (!board) {
       notFound(board, "Board", res);
