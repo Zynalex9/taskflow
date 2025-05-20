@@ -35,7 +35,7 @@ export const createBoard = async (req: Request, res: Response) => {
       linkFromBody,
     } = req.body;
     const userId = req.user._id;
-  
+
     if (!title) {
       res
         .status(409)
@@ -254,6 +254,10 @@ export const deleteBoard = async (req: Request, res: Response) => {
     if (lists.length === 0) {
       await boardModel.findByIdAndDelete(boardId).session(session);
       await session.commitTransaction();
+      workspace.boards = workspace.boards.filter(
+        (b) => b.toString() !== boardId.toString()
+      );
+      await workspace.save();
       res.status(200).json({ message: "Board Deleted.." });
       return;
     }
@@ -267,6 +271,10 @@ export const deleteBoard = async (req: Request, res: Response) => {
       await ListModel.deleteMany({ _id: { $in: listIds } }).session(session);
       await boardModel.findByIdAndDelete(boardId).session(session);
       await session.commitTransaction();
+      workspace.boards = workspace.boards.filter(
+        (b) => b.toString() !== boardId.toString()
+      );
+      await workspace.save();
       res.status(200).json({ message: "Board and list(s) deleted" });
       return;
     }
@@ -301,7 +309,10 @@ export const deleteBoard = async (req: Request, res: Response) => {
     await CardModel.deleteMany({ _id: { $in: cardIds } }).session(session);
     await ListModel.deleteMany({ _id: { $in: listIds } }).session(session);
     await boardModel.deleteOne({ _id: boardId }).session(session);
-
+    workspace.boards = workspace.boards.filter(
+      (b) => b.toString() !== boardId.toString()
+    );
+    await workspace.save();
     await session.commitTransaction();
     await lPushList(req.user._id, `Board Deleted : ${board.title}`);
     await redisClient.del(`boards:${req.user._id}`);
