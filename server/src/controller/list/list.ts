@@ -268,7 +268,7 @@ export const moveList = asyncHandler(async (req, res) => {
       new ApiResponse(
         200,
         targetedBoard,
-        `${list.title} moved to ${targetedBoard.title}`
+        `${list.name} moved to ${targetedBoard.title}`
       )
     );
 });
