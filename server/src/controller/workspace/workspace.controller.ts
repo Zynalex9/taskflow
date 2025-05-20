@@ -265,12 +265,7 @@ export const getCalendarData = async (req: Request, res: Response) => {
       {
         $project: {
           name: 1,
-          endDate: {
-            $dateToString: {
-              format: "%d-%m-%Y",
-              date: "$endDate",
-            },
-          },
+          endDate: 1,
           labels: {
             $map: {
               input: "$labelDetails",

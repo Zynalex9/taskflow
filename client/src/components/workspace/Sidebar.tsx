@@ -84,10 +84,12 @@ const Sidebar = () => {
             <span>Table</span>
           </div>
         </Link>
-        <div className="flex items-center  text-[#9FADBC] font-charlie-text-r space-x-2 hover:bg-gray-700 p-2 rounded cursor-pointer">
-          <Calendar size={16} />
-          <span>Calendar</span>
-        </div>
+        <Link to={`/user/w/workspace/${workspace?._id}/calendar`}>
+          <div className="flex items-center  text-[#9FADBC] font-charlie-text-r space-x-2 hover:bg-gray-700 p-2 rounded cursor-pointer">
+            <Calendar size={16} />
+            <span>Calendar</span>
+          </div>
+        </Link>
       </div>
 
       <div className="text-sm">

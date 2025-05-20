@@ -26,6 +26,7 @@ import Members from "../components/workspace/Members";
 import Table from "../components/workspace/Table";
 import Board from "../components/workspace/Boards/Single-Board/Board";
 import CardModal from "../components/workspace/Boards/Single-Board/CardModal";
+import CalendarPage from "../components/workspace/Calendar";
 
 const AllRoutes = () => {
   const { user } = useSelector((state: RootState) => state.auth);
@@ -161,11 +162,11 @@ return (
         <Route index element={<Boards />} />
         <Route path="/user/w/workspace/:workspaceId/members" element={<Members />} />
         <Route path="/user/w/workspace/:workspaceId/table" element={<Table />} />
+        <Route path="/user/w/workspace/:workspaceId/calendar" element={<CalendarPage />} />
         <Route path="/user/w/workspace/:workspaceId/board/:boardId" element={<Board />} />
       </Route>
     </Routes>
     
-    {/* CHANGED: Render modal route only if background exists */}
     {background && (
       <Routes>
         <Route

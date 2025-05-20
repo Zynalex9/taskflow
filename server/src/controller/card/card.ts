@@ -112,7 +112,7 @@ export const createCard = async (req: Request, res: Response) => {
       createdBy: userId,
       list: listId,
       startDate: startDate ? startDate : undefined,
-      endDate: endDate ? endDate : undefined,
+      endDate: endDate ? endDate : null,
       description: description ? description : "",
       priority: priority ? priority : "",
       position: newPosition,
@@ -172,7 +172,10 @@ export const joinCard = async (req: Request, res: Response) => {
       { new: true }
     );
     await redisClient.del(`singleCard:${cardId}`);
-    cardActivityUpdate(card._id, `(${req.user.username}) joined (${card.name})`);
+    cardActivityUpdate(
+      card._id,
+      `(${req.user.username}) joined (${card.name})`
+    );
     res.status(200).json({
       message: "User added to the card successfully",
       success: true,
