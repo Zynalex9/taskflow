@@ -43,7 +43,7 @@ const Sidebar = () => {
           to="/feature/power-ups/featured"
           className={({ isActive }) =>
             `text-lg ${
-              isActive ? "text-primary underline underline-offset-4" : ""
+              isActive ? "text-blue-primary underline underline-offset-4" : ""
             }`
           }
         >

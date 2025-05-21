@@ -9,11 +9,11 @@ const Home = () => {
   return (
     <main>
       <HeroSection />
-      <Tabs/>
-      <Info/>
-      <Slider/>
-      <Logos/>
-      <InputBox/>
+      <Tabs />
+      <Info />
+        <Slider />
+      <Logos />
+      <InputBox />
     </main>
   );
 };

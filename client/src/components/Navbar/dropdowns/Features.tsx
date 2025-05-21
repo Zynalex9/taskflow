@@ -59,9 +59,9 @@ const NavBarFeatures = () => {
           <h3 className="text-2xl pt-6">
             Explore the features that help your team succeed
           </h3>
-          <div className="border-b border-gray-200 w-full py-2 mb-10"></div>
+          <div className="border-b border-gray-200 w-full mb-10"></div>
         </div>
-        <div className="content flex flex-wrap pl-24 w-full">
+        <div className="content flex flex-wrap pl-24 w-full pb-10">
           {ContentBoxData.map((box) => (
             <ContentBox Icon={box.Icon} heading={box.heading} text={box.text} bg={box.bg} to={box.to} />
           ))}

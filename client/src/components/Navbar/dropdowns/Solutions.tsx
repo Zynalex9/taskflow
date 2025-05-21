@@ -10,55 +10,68 @@ import {
 const ContentBoxData = [
   {
     Icon: Inbox,
-    heading: "Inbox",
+    heading: "Marketing Teams",
     text: "Capture every vital detail from emails, Slack, and more directly into your Taskflow Inbox.",
     bg: "#F1FDF7",
+    to: "/solution/marketing-teams",
   },
   {
     Icon: CalendarCheck,
-    heading: "Planner",
+    heading: "Project Manager",
     text: "Sync your calendar and allocate focused time slots to boost productivity.",
     bg: "#FFF5F2",
+    to: "/solution/project-manager",
   },
   {
     Icon: Caravan,
-    heading: "Automation",
+    heading: "Engineering Teams",
     text: "Automate tasks and workflows with Butler automation.",
     bg: "#FFF8FD",
+    to: "/solution/engineering-teams",
   },
   {
     Icon: PowerSquareIcon,
-    heading: "Power-ups",
+    to: "/solution/startups",
+    heading: "Startups",
     text: "Power up your teams by linking their favorite tools with Taskflow plugins.",
     bg: "#FFFCF2",
   },
   {
     Icon: BookTemplate,
-    heading: "Templates",
+    heading: "Design Teams",
     text: "Give your team a blueprint for success with easy-to-use templates from industry leaders and the Taskflow community.",
     bg: "#EEF5FF",
+    to: "/solution/design-teams",
   },
   {
     Icon: Component,
-    heading: "Integration",
+    heading: "Remote Teams",
+    to: "/solution/remote-teams",
     text: "Find the apps your team is already using or discover new ways to get work done in Taskflow.",
     bg: "#F2FDFF",
   },
 ];
+
 const Solutions = () => {
   return (
     <div className="shadow-2xl bg-white w-full flex h-[80%] font-charlie-text-r">
       <div className="left w-[75%]">
         <div className="heading pl-28 pt-4">
-          <h2 className="text-xl text-text-primary">
+          <h2 className="text-xl text-text-primary leading-tight font-charlie-text-sb">
             Take a page out of these pre-built Taskflow playbooks designed for
             all teams
           </h2>
           <div className="border-b border-gray-200 w-[85%] mb-10 py-2"></div>
           <div className="">
-            <div className="content flex flex-wrap w-full gap-2 my-10">
-              {ContentBoxData.map(({ heading, Icon, bg, text }) => (
-                <ContentBox Icon={Icon} heading={heading} text={text} bg={bg} />
+            <div className="flex flex-wrap w-full gap-4 my-10">
+              {ContentBoxData.map(({ heading, Icon, bg, text, to }) => (
+                <ContentBox
+                  Icon={Icon}
+                  heading={heading}
+                  text={text}
+                  bg={bg}
+                  to={to}
+                />
               ))}
             </div>
           </div>
@@ -66,7 +79,9 @@ const Solutions = () => {
       </div>
       <div className="right bg-[#F7F5FF] w-[25%] p-2">
         <div className="content px-2">
-          <h1 className="font-charlie-text-r text-2xl">Our product in action</h1>
+          <h1 className="font-charlie-text-r text-2xl">
+            Our product in action
+          </h1>
           <div className="border-b border-gray-200 w-full py-2 px-2"></div>
           <div className="text-content py-3 font-charlie-text-r">
             <div className="space-y-3 py-2">

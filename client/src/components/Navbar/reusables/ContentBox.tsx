@@ -7,7 +7,7 @@ interface ContentBoxProps {
   heading: string;
   text: string;
   bg:string
-  to:string
+  to:string 
 }
 const ContentBox: React.FC<ContentBoxProps> = ({ Icon, heading, text,bg,to }) => {
   const [isHovered, setIsHovered] = useState(false);
@@ -21,12 +21,12 @@ const ContentBox: React.FC<ContentBoxProps> = ({ Icon, heading, text,bg,to }) =>
       style={{ backgroundColor: isHovered ? bg : "transparent" }}
     >
 
-      <div className="flex items-center gap-2">
-        <Icon className="text-blue-600 w-4 h-4" />
-        <h2 className="text-lg font-charlie-text-sb font-semibold">{heading}</h2>
+      <div className="flex items-center gap-1">
+        <Icon className="text-blue-600 w-4 h-4" color="#7A869A" />
+        <h2 className="text-lg font-charlie-text-sb">{heading}</h2>
       </div>
-      <div className="max-w-3xs">
-        <p className="text-gray-700 text-sm font-charlie-text-r">{text}</p>
+      <div className="max-w-[205px]">
+        <p className="text-[#798495] text-xs  leading-relaxed font-charlie-text-r">{text}</p>
       </div>
     </div>
     </Link>

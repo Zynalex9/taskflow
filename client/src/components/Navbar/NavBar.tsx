@@ -81,7 +81,7 @@ const NavBar = () => {
     >
       <div className="logo">
         <Link to={"/"}>
-          <h1 className="text-primary text-4xl font-charlie-display-b">
+          <h1 className="text-blue-primary text-4xl font-charlie-display-b">
             TaskFlow
           </h1>
         </Link>
@@ -226,7 +226,7 @@ const NavBar = () => {
             >
               Logout
             </button>
-            <button className="cursor-pointer bg-primary py-4 px-2 mx-1 font-charlie-text-r text-white">
+            <button className="cursor-pointer bg-blue-primary py-4 px-2 mx-1 font-charlie-text-r text-white">
               <Link to={"/user/dashboard"}> Dashboard</Link>
             </button>
           </div>
@@ -237,7 +237,7 @@ const NavBar = () => {
             <button className="cursor-pointer font-charlie-text-r">
               <Link to={"/user/sign-in"}> Login</Link>
             </button>
-            <button className="cursor-pointer bg-primary py-4 px-2 mx-1 font-charlie-text-r text-white">
+            <button className="cursor-pointer bg-blue-primary py-4 px-2 mx-1 font-charlie-text-r text-white">
               <Link to={"/user/sign-up"}> Get Taskflow for Free</Link>
             </button>
           </div>

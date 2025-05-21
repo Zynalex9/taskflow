@@ -10,7 +10,7 @@ const InputBox = () => {
           placeholder="Email"
           className="bg-white hidden not-last:lg:block w-[380px] rounded p-4 font-charlie-text-r focus:outline-none focus:ring-blue-500 focus:ring-2"
         />
-        <button className="bg-primary max-lg:w-full max-lg:mt-10 rounded-lg px-2 py-4 mx-2 text-white transition-all duration-300 hover:bg-blue-700 font-charlie-text-r">
+        <button className="bg-blue-primary max-lg:w-full max-lg:mt-10 rounded-lg px-2 py-4 mx-2 text-white transition-all duration-300 hover:bg-blue-700 font-charlie-text-r">
           Sign up - It's free
         </button>
       </div>

@@ -1,15 +1,21 @@
+import { PageData } from "@/routes/data";
 import Tabs from "../home/Tabs";
 import Button from "../resuable/Button";
 
-const SolutionTemplate = () => {
+const SolutionTemplate: React.FC<PageData> = ({
+  captureHeader,
+  captureSections1,
+  captureSections2,
+  captureSections3,
+  hero,
+}) => {
+  console.log("I WORKED");
   return (
     <div>
       <div className="w-full h-[80vh] bg-gradient-to-br from-[#0070F9] to-[#00B6D9] text-white flex flex-col items-center justify-center px-6 text-center gap-6 font-charlie-text-r">
-        <h3 className="text-white/80  text-sm underline cursor-pointer hover:text-white transition">
-          Go back to team solutions
-        </h3>
+       
         <h1 className="text-4xl lg:text-5xl font-bold max-w-3xl font-charlie-display-sm">
-          Taskflow for Project Management
+          {hero.heading}
         </h1>
         <p className="max-w-2xl text-lg text-white/90">
           Bring high-quality products to market faster with Taskflow. Discover
@@ -17,7 +23,7 @@ const SolutionTemplate = () => {
           roadmaps, simplify sprints, and launch new updates with ease.
         </p>
         <button className="mt-4 px-6 py-3 bg-white text-[#0070F9] font-semibold rounded-full shadow-md hover:bg-white/90 transition">
-          Learn More
+          {hero.buttonText}
         </button>
       </div>
       <div className="flex max-lg:flex-col lg:gap-10 w-full px-12 py-20">
@@ -27,11 +33,7 @@ const SolutionTemplate = () => {
           className="lg:w-[35%] rounded"
         />
         <div className="pt-16 font-charlie-text-r text-2xl">
-          <p>
-            Taskflow's boards, lists, and cards enable teams to go from ideas to
-            action in seconds. Visual and easy-to-use, Taskflow helps teams
-            bring projects to life and keep them moving forward.
-          </p>
+          <p>{captureHeader.text}</p>
           <button className="mt-4 px-6 py-3 bg-white text-[#0070F9] font-semibold rounded-full shadow-md hover:bg-white/90 transition">
             Learn More
           </button>
@@ -71,23 +73,43 @@ const SolutionTemplate = () => {
       <div className="bg-gradient-to-b from-[#fff] to-[#E9FCFF]">
         <Tabs />
       </div>
-      <div className="flex flex-col lg:flex-row-reverse gap-10 w-full px-12 py-20">
+      <div className="flex flex-col lg:flex-row-reverse gap-10 w-full px-12 py-10">
         <img
-          src="https://images.ctfassets.net/rz1oowkt5gyp/6rDtElkTgTtAwHbJgM1tU9/aace7b95a6af2d86078ea89133326862/Timeline_View_Illo_4.png?w=1081&fm=webp"
+          src={captureSections1.image}
           alt="logo"
           className="lg:w-[55%] rounded"
         />
         <div className="pt-16 font-charlie-text-r text-xl space-y-4">
           <h2 className="text-heading font-charlie-display-sm text-4xl">
-            Clear the way for more <br /> seamless product launches.
+            {captureSections1.heading}
           </h2>
-          <p>
-            Empower your Product Management team to move projects across the
-            finish line faster and more easily with Timeline View.
-          </p>
-          <button className="mt-4 px-6 py-3 bg-white text-[#0070F9] font-semibold rounded-full shadow-md hover:bg-white/90 transition">
-            Learn More
-          </button>
+          <p>{captureSections1.text}</p>
+        </div>
+      </div>
+      <div className="flex flex-col lg:flex-row gap-10 w-full px-12 py-5">
+        <img
+          src={captureSections2.image}
+          alt="logo"
+          className="lg:w-[55%] rounded"
+        />
+        <div className="pt-16 font-charlie-text-r text-xl space-y-4">
+          <h2 className="text-heading font-charlie-display-sm text-4xl">
+            {captureSections2.heading}
+          </h2>
+          <p>{captureSections2.text}</p>
+        </div>
+      </div>
+      <div className="flex flex-col lg:flex-row-reverse gap-10 w-full px-12 py-5">
+        <img
+          src={captureSections3.image}
+          alt="logo"
+          className="lg:w-[55%] rounded"
+        />
+        <div className="pt-16 font-charlie-text-r text-xl space-y-4">
+          <h2 className="text-heading font-charlie-display-sm text-4xl">
+            {captureSections3.heading}
+          </h2>
+          <p>{captureSections3.text}</p>
         </div>
       </div>
       <div className="bg-[#EAE6FF] pb-20">
