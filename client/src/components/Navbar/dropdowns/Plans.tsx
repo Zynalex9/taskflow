@@ -28,14 +28,14 @@ const Plans = () => {
     },
   ];
   return (
-    <div className="bg-white w-full pl-20 shadow-2xl flex gap-4">
-      <div className="left-side w-[75%] py-10">
-        <div className="top-sec flex gap-2 py-4">
+    <div className="bg-white w-full px-4 lg:pl-20 shadow-2xl flex flex-col lg:flex-row gap-4 max-lg:pb-16">
+      <div className="left-side lg:w-[75%] lg:py-10">
+        <div className="mb-8 flex flex-col lg:flex-row gap-2 py-4">
           {contentData.map(({ Icon, text, bg, heading }) => (
             <ContentBox Icon={Icon} text={text} bg={bg} heading={heading} />
           ))}
         </div>
-        <div className="bottom-sec bg-[#FFFDF5] p-8 flex items-center justify-between">
+        <div className="bg-[#FFFDF5] p-8 flex items-center justify-between ">
           <div className="space-y-4">
             <div className="flex gap-2 ">
               <CloudLightningIcon color="orange" />
@@ -46,12 +46,12 @@ const Plans = () => {
               For individuals or small teams looking to keep work organize
             </p>
           </div>
-          <button className="py-4 px-4 bg-white border border-amber-600">
+          <button className="px-1.5 py-2 lg:p-4 bg-white border border-amber-600">
             Take a tour of Taskflow
           </button>
         </div>
       </div>
-      <div className="right-side bg-[#F7F5FF] w-[25%] space-y-8 p-6">
+      <div className="right-side bg-[#F7F5FF]  max-lg:mx-auto w-[95%] lg:w-[25%] space-y-8 p-6">
         <div className="space-y-2">
           <h1 className="text-xl">Compare plans and Pricing</h1>
           <div className="border-b border-gray-200"></div>
