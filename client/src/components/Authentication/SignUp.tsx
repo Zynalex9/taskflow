@@ -4,7 +4,7 @@ import { registerSchema } from "../../zod/auth-schema";
 import { z } from "zod";
 import axios from "axios";
 import { toast, ToastContainer } from "react-toastify";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 type RegisterFormData = z.infer<typeof registerSchema>;
 const SignUp = () => {
   const navigator = useNavigate();
@@ -201,6 +201,7 @@ const SignUp = () => {
             </div>
           </form>
         </div>
+        <h2>Already a user? <Link to={"/user/sign-in"} className='text-blue-primary'>Login Now</Link></h2>
       </div>
       <div className="w-1/3 h-1/2">
         <img

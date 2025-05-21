@@ -1,7 +1,11 @@
 import { Search, Star } from "lucide-react";
 import { NavLink } from "react-router-dom";
 
-const Dropdown = () => {
+type DropdownProps = {
+  setIsBarOpened: (open: boolean) => void;
+};
+
+const Dropdown = ({ setIsBarOpened }: DropdownProps) => {
   return (
     <div className="space-y-5">
       <div className="relative">
@@ -15,72 +19,97 @@ const Dropdown = () => {
         </span>
       </div>
       <div className="flex flex-col gap-8 items-center">
-      <NavLink
-        to="/feature/power-ups/featured"
-        className={({ isActive }) =>
-          `text-lg ${
-            isActive ? "text-primary underline underline-offset-4" : ""
-          }`
-        }
-      >
-        <span className="flex items-center gap-1">
-          <Star className="inline mr-1" size={16} />
-          Featured
-        </span>
-      </NavLink>
-      <NavLink
-        to="/feature/power-ups/automation"
-        className={({ isActive }) =>
-          `${isActive ? "text-primary underline underline-offset-4" : ""}`
-        }
-      >
-        <span className="flex items-center gap-1 text-sm">Automation</span>
-      </NavLink>
-      <NavLink
-        to="/feature/power-ups/analytics-reporting"
-        className={({ isActive }) =>
-          `${isActive ? "text-primary underline underline-offset-4" : ""}`
-        }
-      >
-        <span className="flex items-center gap-1 text-sm">
-          Analytics & reporting
-        </span>
-      </NavLink>
-      <NavLink
-        to="/feature/power-ups/developer-tools"
-        className={({ isActive }) =>
-          `${isActive ? "text-primary underline underline-offset-4" : ""}`
-        }
-      >
-        <span className="flex items-center gap-1 text-sm">Developer Tools</span>
-      </NavLink>
-      <NavLink
-        to="/feature/power-ups/board-utilities"
-        className={({ isActive }) =>
-          `${isActive ? "text-primary underline underline-offset-4" : ""}`
-        }
-      >
-        <span className="flex items-center gap-1 text-sm">Board Utilities</span>
-      </NavLink>
-      <NavLink
-        to="/feature/power-ups/hr-operations"
-        className={({ isActive }) =>
-          `${isActive ? "text-primary underline underline-offset-4" : ""}`
-        }
-      >
-        <span className="flex items-center gap-1 text-sm">HR & Operations</span>
-      </NavLink>
-      <NavLink
-        to="/feature/power-ups/project-management"
-        className={({ isActive }) =>
-          `${isActive ? "text-primary underline underline-offset-4" : ""}`
-        }
-      >
-        <span className="flex items-center gap-1 text-sm">
-          IT & project management
-        </span>
-      </NavLink>
-    </div>
+        <NavLink
+          to="/feature/power-ups/featured"
+          onClick={() => setIsBarOpened(false)}
+          className={({ isActive }) =>
+            `text-lg ${
+              isActive ? "text-blue-primary  underline underline-offset-4" : ""
+            }`
+          }
+        >
+          <span className="flex items-center gap-1">
+            <Star className="inline mr-1" size={16} />
+            Featured
+          </span>
+        </NavLink>
+        <NavLink
+          onClick={() => setIsBarOpened(false)}
+          to="/feature/power-ups/automation"
+          className={({ isActive }) =>
+            `${
+              isActive ? "text-blue-primary  underline underline-offset-4" : ""
+            }`
+          }
+        >
+          <span className="flex items-center gap-1 text-sm">Automation</span>
+        </NavLink>
+        <NavLink
+          onClick={() => setIsBarOpened(false)}
+          to="/feature/power-ups/analytics-reporting"
+          className={({ isActive }) =>
+            `${
+              isActive ? "text-blue-primary  underline underline-offset-4" : ""
+            }`
+          }
+        >
+          <span className="flex items-center gap-1 text-sm">
+            Analytics & reporting
+          </span>
+        </NavLink>
+        <NavLink
+          onClick={() => setIsBarOpened(false)}
+          to="/feature/power-ups/developer-tools"
+          className={({ isActive }) =>
+            `${
+              isActive ? "text-blue-primary  underline underline-offset-4" : ""
+            }`
+          }
+        >
+          <span className="flex items-center gap-1 text-sm">
+            Developer Tools
+          </span>
+        </NavLink>
+        <NavLink
+          onClick={() => setIsBarOpened(false)}
+          to="/feature/power-ups/board-utilities"
+          className={({ isActive }) =>
+            `${
+              isActive ? "text-blue-primary  underline underline-offset-4" : ""
+            }`
+          }
+        >
+          <span className="flex items-center gap-1 text-sm">
+            Board Utilities
+          </span>
+        </NavLink>
+        <NavLink
+          onClick={() => setIsBarOpened(false)}
+          to="/feature/power-ups/hr-operations"
+          className={({ isActive }) =>
+            `${
+              isActive ? "text-blue-primary  underline underline-offset-4" : ""
+            }`
+          }
+        >
+          <span className="flex items-center gap-1 text-sm">
+            HR & Operations
+          </span>
+        </NavLink>
+        <NavLink
+          onClick={() => setIsBarOpened(false)}
+          to="/feature/power-ups/project-management"
+          className={({ isActive }) =>
+            `${
+              isActive ? "text-blue-primary  underline underline-offset-4" : ""
+            }`
+          }
+        >
+          <span className="flex items-center gap-1 text-sm">
+            IT & project management
+          </span>
+        </NavLink>
+      </div>
     </div>
   );
 };

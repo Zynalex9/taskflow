@@ -1,10 +1,22 @@
 import { ArrowDown, Search, Star } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { NavLink } from "react-router-dom";
 import Dropdown from "./Dropdown";
 
 const Sidebar = () => {
   const [isBarOpen, setIsBarOpened] = useState(false);
+  useEffect(()=>{
+    if(isBarOpen){
+      document.body.classList.add("overflow-hidden")
+    }else{
+
+      document.body.classList.remove("overflow-hidden")
+    }
+     return () => {
+      document.body.classList.remove("overflow-hidden");
+    };
+  },[isBarOpen])
+
   return (
     <>
    <div className="mob-bar block relative w-full lg:hidden  bg-[#1D2125] " style={{zIndex:10000000}}>
@@ -24,7 +36,7 @@ const Sidebar = () => {
     }`}
     style={{ zIndex: 999324 }}
   >
-    <Dropdown />
+    <Dropdown setIsBarOpened={setIsBarOpened} />
   </div>
 </div>
 
@@ -55,7 +67,7 @@ const Sidebar = () => {
         <NavLink
           to="/feature/power-ups/automation"
           className={({ isActive }) =>
-            `${isActive ? "text-primary underline underline-offset-4" : ""}`
+            `${isActive ? "text-blue-primary underline underline-offset-4" : ""}`
           }
         >
           <span className="flex items-center gap-1 text-sm">Automation</span>
@@ -63,7 +75,7 @@ const Sidebar = () => {
         <NavLink
           to="/feature/power-ups/analytics-reporting"
           className={({ isActive }) =>
-            `${isActive ? "text-primary underline underline-offset-4" : ""}`
+            `${isActive ? "text-blue-primary  underline underline-offset-4" : ""}`
           }
         >
           <span className="flex items-center gap-1 text-sm">
@@ -73,7 +85,7 @@ const Sidebar = () => {
         <NavLink
           to="/feature/power-ups/developer-tools"
           className={({ isActive }) =>
-            `${isActive ? "text-primary underline underline-offset-4" : ""}`
+            `${isActive ? "text-blue-primary  underline underline-offset-4" : ""}`
           }
         >
           <span className="flex items-center gap-1 text-sm">
@@ -83,7 +95,7 @@ const Sidebar = () => {
         <NavLink
           to="/feature/power-ups/board-utilities"
           className={({ isActive }) =>
-            `${isActive ? "text-primary underline underline-offset-4" : ""}`
+            `${isActive ? "text-blue-primary  underline underline-offset-4" : ""}`
           }
         >
           <span className="flex items-center gap-1 text-sm">
@@ -93,7 +105,7 @@ const Sidebar = () => {
         <NavLink
           to="/feature/power-ups/hr-operations"
           className={({ isActive }) =>
-            `${isActive ? "text-primary underline underline-offset-4" : ""}`
+            `${isActive ? "text-blue-primary  underline underline-offset-4" : ""}`
           }
         >
           <span className="flex items-center gap-1 text-sm">
@@ -103,7 +115,7 @@ const Sidebar = () => {
         <NavLink
           to="/feature/power-ups/project-management"
           className={({ isActive }) =>
-            `${isActive ? "text-primary underline underline-offset-4" : ""}`
+            `${isActive ? "text-blue-primary  underline underline-offset-4" : ""}`
           }
         >
           <span className="flex items-center gap-1 text-sm">

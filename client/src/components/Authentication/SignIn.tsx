@@ -3,7 +3,7 @@ import { useForm } from "react-hook-form";
 import { loginSchema } from "../../zod/auth-schema";
 import { loginUser } from "../../store/AuthSlice";
 import { useDispatch } from "react-redux";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { toast, ToastContainer } from "react-toastify";
 import { AppDispatch } from "../../store/store";
 export interface IData {
@@ -122,9 +122,18 @@ const SignIn = () => {
               className="w-full mt-4 flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {isSubmitting ? "Loading..." : "Login"}
-            </button>{" "}
+            </button>
           </form>
         </div>
+        <h1 className="font-charlie-text-r">
+          New to taskflow?
+          <Link to={"/user/sign-up"} className="text-blue-primary">
+            Register now
+          </Link>
+        </h1>
+        <p className="text-blue-primary">
+          <Link to={"/"}> Forgot Password?</Link>
+        </p>
       </div>
       <div className="w-1/3 h-1/2 hidden lg:block">
         <img

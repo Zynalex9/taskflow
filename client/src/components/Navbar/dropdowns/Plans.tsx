@@ -32,7 +32,7 @@ const Plans = () => {
       <div className="left-side lg:w-[75%] lg:py-10">
         <div className="mb-8 flex flex-col lg:flex-row gap-2 py-4">
           {contentData.map(({ Icon, text, bg, heading }) => (
-            <ContentBox Icon={Icon} text={text} bg={bg} heading={heading} />
+            <ContentBox Icon={Icon} text={text} bg={bg} heading={heading} to="/"/>
           ))}
         </div>
         <div className="bg-[#FFFDF5] p-8 flex items-center justify-between ">
