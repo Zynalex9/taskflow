@@ -25,7 +25,7 @@ const ContentBox: React.FC<ContentBoxProps> = ({ Icon, heading, text,bg,to }) =>
         <Icon className="text-blue-600 w-4 h-4" color="#7A869A" />
         <h2 className="text-lg font-charlie-text-sb">{heading}</h2>
       </div>
-      <div className="max-w-[205px]">
+      <div className="lg:max-w-[205px]">
         <p className="text-[#798495] text-xs  leading-relaxed font-charlie-text-r">{text}</p>
       </div>
     </div>

@@ -1,11 +1,5 @@
 import { Link, NavLink } from "react-router-dom";
-import {
-  ArrowRight,
-  ChevronDown,
-  ChevronUp,
-  MenuIcon,
-  XIcon,
-} from "lucide-react";
+import { ChevronDown, ChevronUp, MenuIcon, XIcon } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import NavBarFeatures from "./dropdowns/Features";
 import Solutions from "./dropdowns/Solutions";
@@ -13,6 +7,7 @@ import Plans from "./dropdowns/Plans";
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "../../store/store";
 import { logoutUser } from "../../store/AuthSlice";
+import MobileBar from "./MobileBar";
 
 const NavBar = () => {
   const dispatch = useDispatch<AppDispatch>();
@@ -43,7 +38,18 @@ const NavBar = () => {
     setOpenPlans(!openPlans);
     setOpenFeatures(false);
   };
+  useEffect(() => {
+    if (isMobileOpen) {
+      document.body.classList.add("overflow-hidden");
+    } else {
+      document.body.classList.remove("overflow-hidden");
+    }
 
+    return () => {
+      document.body.classList.remove("overflow-hidden");
+    };
+  }, [isMobileOpen]);
+  const [furtherMenuOpen, setFurtherMenuOpen] = useState<boolean>(false);
   console.log(featuresRef);
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -81,9 +87,13 @@ const NavBar = () => {
     >
       <div className="logo">
         <Link to={"/"}>
-          <h1 className="text-blue-primary text-4xl font-charlie-display-b">
-            TaskFlow
-          </h1>
+          {furtherMenuOpen ? (
+            <button onClick={() => setFurtherMenuOpen(false)}>Back</button>
+          ) : (
+            <h1 className="text-blue-primary text-4xl font-charlie-display-b">
+              TaskFlow
+            </h1>
+          )}
         </Link>
       </div>
       <div className="links hidden lg:flex lg:gap-4 lg:ml-8">
@@ -190,36 +200,25 @@ const NavBar = () => {
           <ChevronDown size={12} color="#000" />
         </NavLink>
       </div>
-      {isMobileOpen && (
-        <div
-          className={`absolute top-16 left-0 w-full bg-white flex flex-col gap-4 py-4 px-6 shadow-lg lg:hidden z-50 
-  transition-all duration-300 ease-in-out transform 
-  ${
-    isMobileOpen
-      ? "translate-y-0 opacity-100"
-      : "-translate-y-6 opacity-0 pointer-events-none"
-  }`}
-        >
-          <div className="flex justify-between border-t border-b border-gray-200 py-4">
-            <h1 className="text-heading font-charlie-text-r">Features</h1>
-            <ArrowRight className="text-black/60 transition-all duration-200 hover:text-black/100" />
-          </div>
-          <div className="flex justify-between border-b border-gray-200 py-4">
-            <h1 className="text-heading font-charlie-text-r">Features</h1>
-            <ArrowRight className="text-black/60 transition-all duration-200 hover:text-black/100" />
-          </div>
-          <div className="flex justify-between border-b border-gray-200 py-4">
-            <h1 className="text-heading font-charlie-text-r">Features</h1>
-          </div>
-          <div className="flex justify-between border-b border-gray-200 py-4">
-            <h1 className="text-heading font-charlie-text-r">Features</h1>
-            <ArrowRight className="text-black/60 transition-all duration-200 hover:text-black/100" />
-          </div>
-        </div>
-      )}
+
+      <div
+        className={`absolute top-16 left-0 w-full bg-white flex flex-col gap-4 py-4 shadow-lg lg:hidden z-50 
+          transition-all duration-300 ease-in-out transform 
+          ${
+            isMobileOpen
+              ? "translate-y-0 opacity-100"
+              : "-translate-y-6 opacity-0 pointer-events-none"
+          }`}
+      >
+        <MobileBar
+          furtherMenuOpen={furtherMenuOpen}
+          setFurtherMenuOpen={setFurtherMenuOpen}
+        />
+      </div>
+
       {user ? (
         <>
-          <div className="hidden lg:block lg:ml-auto lg:flex lg:gap-4">
+          <div className="hidden  lg:ml-auto lg:flex lg:gap-4">
             <button
               className="cursor-pointer font-charlie-text-r"
               onClick={() => dispatch(logoutUser())}
@@ -233,7 +232,7 @@ const NavBar = () => {
         </>
       ) : (
         <>
-          <div className="hidden lg:block lg:ml-auto lg:flex lg:gap-4">
+          <div className="hidden  lg:ml-auto lg:flex lg:gap-4">
             <button className="cursor-pointer font-charlie-text-r">
               <Link to={"/user/sign-in"}> Login</Link>
             </button>
@@ -246,7 +245,10 @@ const NavBar = () => {
 
       <div className="block lg:hidden px-3">
         <button
-          onClick={() => setIsMobileOpen((prev) => !prev)}
+          onClick={() => {
+            setIsMobileOpen((prev) => !prev);
+            setFurtherMenuOpen(false);
+          }}
           className="lg:hidden"
         >
           {isMobileOpen ? <XIcon /> : <MenuIcon />}
