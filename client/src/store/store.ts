@@ -4,6 +4,7 @@ import authReducer from "./AuthSlice";
 import workspaceReducer from "./workspaceSlice";
 import cardReducer from "./CardSlice";
 import navbarReducer from "./NavBarSlice";
+import forgetReducer from "./ForgetSlice";
 import { boardsReducer, boardReducer } from "./BoardSlice";
 const store = configureStore({
   reducer: {
@@ -14,6 +15,7 @@ const store = configureStore({
     board: boardReducer,
     card: cardReducer,
     navControl: navbarReducer,
+    resetPassword: forgetReducer,
   },
 });
 export type RootState = ReturnType<typeof store.getState>;

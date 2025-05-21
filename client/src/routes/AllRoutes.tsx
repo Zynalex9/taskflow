@@ -28,6 +28,9 @@ import Board from "../components/workspace/Boards/Single-Board/Board";
 import CardModal from "../components/workspace/Boards/Single-Board/CardModal";
 import CalendarPage from "../components/workspace/Calendar";
 import { featurePages, solutionPages } from "./data";
+import EnterEmail from "@/components/Authentication/EnterEmail";
+import EnterOTP from "@/components/Authentication/EnterOTP";
+import ResetPasswordWithOTP from "@/components/Authentication/ResetPasswordWithOTP";
 
 const AllRoutes = () => {
   const { user } = useSelector((state: RootState) => state.auth);
@@ -90,6 +93,18 @@ const AllRoutes = () => {
           <Route
             path="/user/sign-up"
             element={user ? <Navigate to={"/user/dashboard"} /> : <SignUp />}
+          />
+          <Route
+            path="/user/forget/enter-email"
+            element={user ? <Navigate to={"/user/dashboard"} /> : <EnterEmail />}
+          />
+          <Route
+            path="/user/forget/enter-otp"
+            element={user ? <Navigate to={"/user/dashboard"} /> : <EnterOTP/>}
+          />
+          <Route
+            path="/user/forget/reset-password"
+            element={user ? <Navigate to={"/user/dashboard"} /> : <ResetPasswordWithOTP/>}
           />
         </Route>
         <Route

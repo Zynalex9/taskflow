@@ -132,7 +132,7 @@ const SignIn = () => {
           </Link>
         </h1>
         <p className="text-blue-primary">
-          <Link to={"/"}> Forgot Password?</Link>
+          <Link to="/user/forget/enter-email"> Forgot Password?</Link>
         </p>
       </div>
       <div className="w-1/3 h-1/2 hidden lg:block">
