@@ -1,26 +1,26 @@
-import { RootState } from "@/store/store";
+import { AppDispatch, RootState } from "@/store/store";
 import { ArrowRight } from "lucide-react";
-import { Dispatch, SetStateAction, useState } from "react";
-import { useSelector } from "react-redux";
+import { Dispatch, SetStateAction} from "react";
+import { useDispatch, useSelector } from "react-redux";
 import NavBarFeatures from "./dropdowns/Features";
+import Solutions from "./dropdowns/Solutions";
+import Plans from "./dropdowns/Plans";
+import { openShowFeatures, openShowPlans, openShowSolutions } from "@/store/NavBarSlice";
 interface MobileBarProps {
   furtherMenuOpen: boolean;
   setFurtherMenuOpen: Dispatch<SetStateAction<boolean>>;
 }
-const MobileBar: React.FC<MobileBarProps> = ({
-  setFurtherMenuOpen,
-  furtherMenuOpen,
-}) => {
+const MobileBar: React.FC<MobileBarProps> = () => {
+ const {showFeature,showFurtherMenu,showPlans,showSolutions} = useSelector((state:RootState)=>state.navControl)
+const dispatch = useDispatch<AppDispatch>()
   const { user } = useSelector((state: RootState) => state.auth);
-  const [showFeatures, setShowFeatures] = useState<boolean>(false);
   return (
     <div className="flex relative flex-col gap-40 overflow-y-scroll h-[85vh] ">
       <div className="px-4 space-y-4">
         <div className="flex justify-between border-b border-gray-200 py-4 relative">
           <button
             onClick={() => {
-              setShowFeatures(true);
-              setFurtherMenuOpen(true);
+              dispatch(openShowFeatures());
             }}
             className="text-heading font-charlie-text-r"
           >
@@ -30,13 +30,26 @@ const MobileBar: React.FC<MobileBarProps> = ({
         </div>
 
         <div className="flex justify-between border-b border-gray-200 py-4">
-          <button className="text-heading font-charlie-text-r">
-            Solutions
+          <button
+            onClick={() => {
+              dispatch(openShowSolutions());
+            }}
+            className="text-heading font-charlie-text-r"
+          >
+            Solution
           </button>
           <ArrowRight className="text-black/60 transition-all duration-200 hover:text-black/100" />
         </div>
         <div className="flex justify-between border-b border-gray-200 py-4">
-          <button className="text-heading font-charlie-text-r">Plans</button>
+          <button
+            onClick={() => {
+              dispatch(openShowPlans())
+            }}
+            className="text-heading font-charlie-text-r"
+          >
+            Plans
+          </button>
+          <ArrowRight className="text-black/60 transition-all duration-200 hover:text-black/100" />
         </div>
         <div className="flex justify-between border-b border-gray-200 py-4">
           <button className="text-heading font-charlie-text-r">Pricing</button>
@@ -45,7 +58,6 @@ const MobileBar: React.FC<MobileBarProps> = ({
           <button className="text-heading font-charlie-text-r">
             Resources
           </button>
-          <ArrowRight className="text-black/60 transition-all duration-200 hover:text-black/100" />
         </div>
       </div>
       <div className="px-4">
@@ -62,12 +74,30 @@ const MobileBar: React.FC<MobileBarProps> = ({
 
       <div
         className={`absolute top-0 left-0 h-[88vh] w-full bg-white transition-all duration-300 ease-in-out z-50 transform ${
-          showFeatures && furtherMenuOpen
-            ? "opacity-100 pointer-events-auto translate-y-0"
-            : "opacity-0 pointer-events-none -translate-y-[40rem]"
+          showFeature && showFurtherMenu
+            ? "opacity-100 pointer-events-auto translate-x-0"
+            : "opacity-0 pointer-events-none -translate-x-[40rem]"
         }`}
       >
         <NavBarFeatures />
+      </div>
+      <div
+        className={`absolute top-0 left-0 h-[88vh] w-full bg-white transition-all duration-300 ease-in-out z-50 transform ${
+          showSolutions && showFurtherMenu
+            ? "opacity-100 pointer-events-auto translate-x-0"
+            : "opacity-0 pointer-events-none -translate-x-[40rem]"
+        }`}
+      >
+        <Solutions />
+      </div>
+      <div
+        className={`absolute top-0 left-0 h-[88vh] w-full bg-white transition-all duration-300 ease-in-out z-50 transform ${
+          showPlans && showFurtherMenu
+            ? "opacity-100 pointer-events-auto translate-x-0"
+            : "opacity-0 pointer-events-none -translate-x-[40rem]"
+        }`}
+      >
+        <Plans />
       </div>
     </div>
   );

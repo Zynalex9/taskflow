@@ -3,6 +3,7 @@ import themeReducer from "./ThemeSlice";
 import authReducer from "./AuthSlice";
 import workspaceReducer from "./workspaceSlice";
 import cardReducer from "./CardSlice";
+import navbarReducer from "./NavBarSlice";
 import { boardsReducer, boardReducer } from "./BoardSlice";
 const store = configureStore({
   reducer: {
@@ -12,6 +13,7 @@ const store = configureStore({
     boards: boardsReducer,
     board: boardReducer,
     card: cardReducer,
+    navControl: navbarReducer,
   },
 });
 export type RootState = ReturnType<typeof store.getState>;

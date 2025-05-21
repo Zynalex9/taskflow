@@ -8,8 +8,10 @@ import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "../../store/store";
 import { logoutUser } from "../../store/AuthSlice";
 import MobileBar from "./MobileBar";
+import { closeAllMenus } from "@/store/NavBarSlice";
 
 const NavBar = () => {
+ const {showFurtherMenu} = useSelector((state:RootState)=>state.navControl)
   const dispatch = useDispatch<AppDispatch>();
   const { user } = useSelector((state: RootState) => state.auth);
   const [openFeatures, setOpenFeatures] = useState(false);
@@ -20,6 +22,7 @@ const NavBar = () => {
   const featuresRef = useRef<HTMLDivElement | null>(null);
   const solutionsRef = useRef<HTMLDivElement | null>(null);
   const plansRef = useRef<HTMLDivElement | null>(null);
+  const [furtherMenuOpen, setFurtherMenuOpen] = useState<boolean>(false);
 
   const handleFeatures = () => {
     setOpenSolutions(false);
@@ -49,7 +52,6 @@ const NavBar = () => {
       document.body.classList.remove("overflow-hidden");
     };
   }, [isMobileOpen]);
-  const [furtherMenuOpen, setFurtherMenuOpen] = useState<boolean>(false);
   console.log(featuresRef);
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -87,8 +89,8 @@ const NavBar = () => {
     >
       <div className="logo">
         <Link to={"/"}>
-          {furtherMenuOpen ? (
-            <button onClick={() => setFurtherMenuOpen(false)}>Back</button>
+          {showFurtherMenu ? (
+            <button onClick={() => dispatch(closeAllMenus())}>Back</button>
           ) : (
             <h1 className="text-blue-primary text-4xl font-charlie-display-b">
               TaskFlow
@@ -247,9 +249,8 @@ const NavBar = () => {
         <button
           onClick={() => {
             setIsMobileOpen((prev) => !prev);
-            setFurtherMenuOpen(false);
+            dispatch(closeAllMenus());
           }}
-          className="lg:hidden"
         >
           {isMobileOpen ? <XIcon /> : <MenuIcon />}
         </button>
