@@ -1,6 +1,6 @@
 const HeroSection = () => {
   return (
-    <div className="w-full min-h-screen flex flex-col lg:flex-row items-center bg-gray-50 px-4 py-12 lg:py-0 lg:pl-10">
+    <div className="w-full min-h-screen flex flex-col lg:flex-row items-center bg-gray-50 px-4 lg:py-0 lg:pl-10">
       
       {/* Left Side (Text) */}
       <div className="w-full lg:w-1/2 flex flex-col justify-center items-start space-y-6 text-center lg:text-left mt-8 lg:mt-0">

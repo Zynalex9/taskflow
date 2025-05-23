@@ -94,7 +94,6 @@ export const registerUser = async (
   }
 };
 export const loginUser = async (req: Request, res: Response) => {
-  console.log("req received");
   try {
     const { login, password } = req.body;
     if (!login || !password) {
@@ -133,6 +132,9 @@ export const loginUser = async (req: Request, res: Response) => {
   } catch (error) {
     console.error("Login error:", error);
     res.status(500).json({ message: "Internal server error", success: false });
+  }finally{
+    console.log("req received for login");
+
   }
 };
 export const logOutUser = async (req: Request, res: Response) => {

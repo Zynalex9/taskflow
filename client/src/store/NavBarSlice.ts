@@ -5,6 +5,7 @@ const initialState = {
   showSolutions: false,
   showPlans: false,
   showFurtherMenu: false,
+  showDropDown: false,
 };
 
 const NavBarSlice = createSlice({
@@ -35,9 +36,30 @@ const NavBarSlice = createSlice({
       state.showPlans = false;
       state.showFurtherMenu = false;
     },
+    closeOverAllMenus: (state) => {
+      state.showFeature = false;
+      state.showSolutions = false;
+      state.showPlans = false;
+      state.showFurtherMenu = false;
+      state.showDropDown = false;
+    },
+    openDropDown: (state) => {
+      state.showDropDown = true;
+    },
+    closeDropDown: (state) => {
+      state.showDropDown = false;
+    },
   },
 });
 
-export const { openShowPlans, openShowSolutions, openShowFeatures, closeAllMenus } = NavBarSlice.actions;
+export const {
+  openShowPlans,
+  openShowSolutions,
+  openShowFeatures,
+  closeAllMenus,
+  closeOverAllMenus,
+  openDropDown,
+  closeDropDown
+} = NavBarSlice.actions;
 
 export default NavBarSlice.reducer;

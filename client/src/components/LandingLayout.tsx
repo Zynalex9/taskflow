@@ -1,4 +1,3 @@
-import React from 'react'
 import NavBar from './Navbar/NavBar'
 import { Outlet } from 'react-router-dom'
 import Footer from './Footer/Footer'
@@ -10,7 +9,7 @@ const LandingLayout = () => {
     <ScrollToTop/>
     <div className="min-h-screen flex flex-col">
       <NavBar />
-      <div className="flex-grow">
+      <div className="flex-grow mt-2 lg:mt-16">
         <Outlet />
       </div>
       <Footer />

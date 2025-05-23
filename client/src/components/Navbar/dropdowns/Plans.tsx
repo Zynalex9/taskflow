@@ -1,9 +1,4 @@
-import {
-  Building2,
-  CloudLightningIcon,
-  Lightbulb,
-  Star,
-} from "lucide-react";
+import { Building2, CloudLightningIcon, Lightbulb, Star } from "lucide-react";
 import ContentBox from "../reusables/ContentBox";
 
 const Plans = () => {
@@ -31,8 +26,15 @@ const Plans = () => {
     <div className="bg-white w-full px-4 lg:pl-20 shadow-2xl flex flex-col lg:flex-row gap-4 max-lg:pb-16">
       <div className="left-side lg:w-[75%] lg:py-10">
         <div className="mb-8 flex flex-col lg:flex-row gap-2 py-4">
-          {contentData.map(({ Icon, text, bg, heading }) => (
-            <ContentBox Icon={Icon} text={text} bg={bg} heading={heading} to="/"/>
+          {contentData.map(({ Icon, text, bg, heading }, i) => (
+            <ContentBox
+              key={i}
+              Icon={Icon}
+              text={text}
+              bg={bg}
+              heading={heading}
+              to="/"
+            />
           ))}
         </div>
         <div className="bg-[#FFFDF5] p-8 flex items-center justify-between ">
@@ -60,7 +62,9 @@ const Plans = () => {
           Whether you’re a team of 2 or 2,000, Taskflow’s flexible pricing model
           means you only pay for what you need.
         </p>
-        <button className="bg-white px-2 py-4 border rounded">View Taskflow Pricing</button>
+        <button className="bg-white px-2 py-4 border rounded">
+          View Taskflow Pricing
+        </button>
       </div>
     </div>
   );

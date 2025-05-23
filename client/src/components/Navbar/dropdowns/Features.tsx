@@ -62,8 +62,8 @@ const NavBarFeatures = () => {
           <div className="border-b border-gray-200 w-full lg:mb-10"></div>
         </div>
         <div className="content flex flex-col lg:flex-row lg:flex-wrap pl-6 lg:pl-24 w-full pb-10 space-y-1 mt-4 lg:mt-0 lg:-space-y-0">
-          {ContentBoxData.map((box) => (
-            <ContentBox Icon={box.Icon} heading={box.heading} text={box.text} bg={box.bg} to={box.to} />
+          {ContentBoxData.map((box,i) => (
+            <ContentBox key={i} Icon={box.Icon} heading={box.heading} text={box.text} bg={box.bg} to={box.to} />
           ))}
         </div>
       </div>

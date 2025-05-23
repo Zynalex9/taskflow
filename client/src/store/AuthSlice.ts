@@ -26,7 +26,7 @@ export const loginUser = createAsyncThunk(
   async (loginData: IData, { rejectWithValue }) => {
     try {
       const response = await axios.post(
-        "http://localhost:3000/api/user/login",
+        "http://192.168.1.15:3000/api/user/login",
         loginData,
         {
           withCredentials: true,

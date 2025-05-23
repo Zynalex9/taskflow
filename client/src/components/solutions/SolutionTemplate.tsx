@@ -40,37 +40,39 @@ const SolutionTemplate: React.FC<PageData> = ({
         </div>
       </div>
       <div className="bg-[#F4F5F7] flex flex-col items-center justify-center py-20 space-y-3">
-        <p className="font-charlie-text-r text-heading text-2xl">
+        <p className="font-charlie-text-r max-lg:text-center text-heading text-2xl">
           Join over 2,000,000 teams worldwide who are using Taskflow to get more
           done.
         </p>
-        <div className="flex">
+        <div className="flex flex-wrap justify-center items-center gap-6 w-full px-2">
           <img
             src="https://images.ctfassets.net/rz1oowkt5gyp/7nR3kQlx8IP5mfCCBTatsy/0b3952a6be3ebb10116d62aa93be7bbb/coinbase.svg"
-            alt=""
+            alt="Coinbase"
+            className="max-w-[120px] w-full h-auto object-contain"
           />
           <img
             src="https://images.ctfassets.net/rz1oowkt5gyp/6VwRn7PI4zrZo84Uoa8rnt/b0ae3da34916a3ff02d26e2120efe9b8/johnDeere.svg"
-            alt=""
+            alt="John Deere"
+            className="max-w-[120px] w-full h-auto object-contain"
           />
           <img
             src="https://images.ctfassets.net/rz1oowkt5gyp/5KdQPApAFJpLMv9AntiNLk/530cef2a4b56ad758c1e91fad5c3e7ac/Grand-Hyatt.svg"
-            alt=""
+            alt="Grand Hyatt"
+            className="max-w-[120px] w-full h-auto object-contain"
           />
-        </div>
-        <div className="flex w-[100%] items-center justify-center">
           <img
             src="https://images.ctfassets.net/rz1oowkt5gyp/1zdBcYqeqkDsLUfggfKFRO/a732e0001ca5153ef7195eea63ff6a3b/Visa.svg"
-            alt=""
+            alt="Visa"
+            className="max-w-[120px] w-full h-auto object-contain"
           />
           <img
             src="https://images.ctfassets.net/rz1oowkt5gyp/2Im844Kon73pvCD2ljoxeL/4073e041eb8eb961a0f9505965dec09b/Zoom.png?w=324&fm=webp"
-            alt=""
-            className="w-[15%]"
+            alt="Zoom"
+            className="max-w-[120px] w-full h-auto object-contain"
           />
         </div>
       </div>
-      <div className="bg-gradient-to-b from-[#fff] to-[#E9FCFF]">
+      <div className="bg-gradient-to-b from-[#fff] to-[#E9FCFF] max-lg:pb-2">
         <Tabs />
       </div>
       <div className="flex flex-col lg:flex-row-reverse gap-10 w-full px-12 py-10">

@@ -8,16 +8,17 @@ import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "../../store/store";
 import { logoutUser } from "../../store/AuthSlice";
 import MobileBar from "./MobileBar";
-import { closeAllMenus } from "@/store/NavBarSlice";
+import { closeAllMenus, closeOverAllMenus, openDropDown } from "@/store/NavBarSlice";
 
 const NavBar = () => {
- const {showFurtherMenu} = useSelector((state:RootState)=>state.navControl)
+  const { showFurtherMenu, showDropDown } = useSelector(
+    (state: RootState) => state.navControl
+  );
   const dispatch = useDispatch<AppDispatch>();
   const { user } = useSelector((state: RootState) => state.auth);
   const [openFeatures, setOpenFeatures] = useState(false);
   const [openSolutions, setOpenSolutions] = useState(false);
   const [openPlans, setOpenPlans] = useState(false);
-  const [isMobileOpen, setIsMobileOpen] = useState(false);
   const navRef = useRef<HTMLDivElement | null>(null);
   const featuresRef = useRef<HTMLDivElement | null>(null);
   const solutionsRef = useRef<HTMLDivElement | null>(null);
@@ -42,7 +43,7 @@ const NavBar = () => {
     setOpenFeatures(false);
   };
   useEffect(() => {
-    if (isMobileOpen) {
+    if (showDropDown) {
       document.body.classList.add("overflow-hidden");
     } else {
       document.body.classList.remove("overflow-hidden");
@@ -51,7 +52,7 @@ const NavBar = () => {
     return () => {
       document.body.classList.remove("overflow-hidden");
     };
-  }, [isMobileOpen]);
+  }, [showDropDown]);
   console.log(featuresRef);
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -85,7 +86,7 @@ const NavBar = () => {
   return (
     <div
       ref={navRef}
-      className=" bg-white shadow-xl text-xl z-10 flex items-center justify-between w-full h-16 py-2 pl-2  font-charlie-text-r"
+      className=" bg-white fixed top-0 shadow-xl text-xl z-[99999] flex items-center justify-between w-full h-16 py-2 pl-2  font-charlie-text-r"
     >
       <div className="logo">
         <Link to={"/"}>
@@ -207,7 +208,7 @@ const NavBar = () => {
         className={`absolute top-16 left-0 w-full bg-white flex flex-col gap-4 py-4 shadow-lg lg:hidden z-50 
           transition-all duration-300 ease-in-out transform 
           ${
-            isMobileOpen
+            showDropDown
               ? "translate-y-0 opacity-100"
               : "-translate-y-6 opacity-0 pointer-events-none"
           }`}
@@ -246,14 +247,23 @@ const NavBar = () => {
       )}
 
       <div className="block lg:hidden px-3">
-        <button
-          onClick={() => {
-            setIsMobileOpen((prev) => !prev);
-            dispatch(closeAllMenus());
-          }}
-        >
-          {isMobileOpen ? <XIcon /> : <MenuIcon />}
-        </button>
+        {showDropDown ? (
+          <button
+            onClick={() => {
+              dispatch(closeOverAllMenus());
+            }}
+          >
+            <XIcon />
+          </button>
+        ) : (
+          <button
+            onClick={() => {
+              dispatch(openDropDown());
+            }}
+          >
+            <MenuIcon />
+          </button>
+        )}
       </div>
     </div>
   );

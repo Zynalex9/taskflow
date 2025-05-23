@@ -64,8 +64,9 @@ const Solutions = () => {
           <div className="border-b border-gray-200 w-[85%] mb-10 py-2"></div>
           <div className="">
             <div className="flex flex-wrap w-full gap-4 my-10">
-              {ContentBoxData.map(({ heading, Icon, bg, text, to }) => (
+              {ContentBoxData.map(({ heading, Icon, bg, text, to }, i) => (
                 <ContentBox
+                  key={i}
                   Icon={Icon}
                   heading={heading}
                   text={text}

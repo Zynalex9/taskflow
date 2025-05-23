@@ -1,5 +1,7 @@
+import { closeOverAllMenus } from "@/store/NavBarSlice";
 import { LucideIcon } from "lucide-react";
 import { useState } from "react";
+import { useDispatch } from "react-redux";
 import { Link } from "react-router-dom";
 
 interface ContentBoxProps {
@@ -11,9 +13,9 @@ interface ContentBoxProps {
 }
 const ContentBox: React.FC<ContentBoxProps> = ({ Icon, heading, text,bg,to }) => {
   const [isHovered, setIsHovered] = useState(false);
-
+const dispatch = useDispatch()
   return (
-    <Link to={to}>
+    <Link onClick={()=>dispatch(closeOverAllMenus())} to={to}>
     <div
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
