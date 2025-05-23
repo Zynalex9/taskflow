@@ -36,7 +36,7 @@ const ChangePassword = () => {
     <div className="w-xl bg-fprimary shadow-md rounded p-6">
       <button
         onClick={() => setChanging(!isChanging)}
-        className="bg-primary px-4 py-2 rounded-md"
+        className="bg-blue-primary px-4 py-2 rounded-md"
       >
         Change Password
       </button>
@@ -74,7 +74,7 @@ const ChangePassword = () => {
 
             <button
               type="submit"
-              className="bg-primary px-4 py-2 rounded-md"
+              className="bg-blue-primary px-4 py-2 rounded-md"
               disabled={isSubmitting}
             >
               {isSubmitting ? "Submitting..." : "Submit"}

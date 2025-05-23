@@ -1,4 +1,3 @@
-import axios from "axios";
 import { useForm } from "react-hook-form";
 import { useDispatch } from "react-redux";
 import { AppDispatch } from "../../../store/store";
@@ -52,8 +51,8 @@ const ChangeProfilePicture = () => {
               className="block w-full text-sm text-white file:mr-4 file:py-2 file:px-4
               file:rounded-md file:border-0
               file:text-sm file:font-semibold
-              file:bg-primary file:text-white
-              hover:file:bg-primary/80
+              file:bg-blue-primary file:text-white
+              hover:file:bg-blue-primary/80
               bg-white/10 rounded-md p-2"
             />
           </label>
@@ -64,7 +63,7 @@ const ChangeProfilePicture = () => {
           <button
             type="submit"
             disabled={isSubmitting}
-            className="bg-primary px-4 py-2 rounded-md text-white hover:bg-primary/90 transition"
+            className="bg-blue-primary px-4 py-2 rounded-md text-white hover:bg-blue-primary/90 transition"
           >
             {isSubmitting ? "Uploading..." : "Upload"}
           </button>

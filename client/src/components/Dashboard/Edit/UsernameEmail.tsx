@@ -7,8 +7,8 @@ import { updateDetails } from "../../../store/AuthSlice";
 
 const UsernameEmail = () => {
   const { user,error } = useSelector((state: RootState) => state.auth);
-  const [username, setUsername] = useState<string>(user.username);
-  const [email, setEmail] = useState<string>(user.email);
+  const [username, setUsername] = useState<string>(user?.username ?? "");
+  const [email, setEmail] = useState<string>(user?.email ?? "");
   const [isChaning, setIsChanging] = useState({
     username: false,
     email: false,
@@ -16,6 +16,12 @@ const UsernameEmail = () => {
   const dispatch = useDispatch<AppDispatch>();
   const [loading, setLoading] = useState(false);
   const handleSubmit = async () => {
+    if (!user) {
+      toast.error("User not found", {
+        autoClose: 1000
+      });
+      return;
+    }
     if (username !== user.username || email !== user.email) {
       setLoading(true)
       const resultAction =await dispatch(updateDetails({ username, email }));
@@ -103,7 +109,7 @@ const UsernameEmail = () => {
           <button
             onClick={handleSubmit}
             disabled={loading}
-            className={`bg-primary cursor-pointer text-white px-6 py-2 rounded-md hover:bg-opacity-90 transition ${
+            className={`bg-blue-primary cursor-pointer text-white px-6 py-2 rounded-md hover:bg-opacity-90 transition ${
               loading ? "opacity-70 cursor-not-allowed" : ""
             }`}
           >
