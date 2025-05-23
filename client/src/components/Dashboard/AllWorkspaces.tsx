@@ -1,6 +1,7 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
+import { Skeleton } from "../ui/skeleton";
 
 export interface IWorkspace {
   _id: string;
@@ -38,9 +39,22 @@ const AllWorkspaces = () => {
   }, []);
   if (loading)
     return (
-      <h1 className="text-center text-textP text-4xl font-charlie-text-sb">
-        Loading workspaces...
-      </h1>
+      <div className="p-8 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        {[...Array(3)].map((_, i) => (
+          <div
+            key={i}
+            className="bg-fprimary text-white rounded-2xl shadow-md overflow-hidden"
+          >
+            <Skeleton className="h-32 w-full" />
+            <div className="p-4 space-y-2">
+              <Skeleton className="h-6 w-3/4" />
+              <Skeleton className="h-4 w-1/2" />
+              <Skeleton className="h-4 w-1/3" />
+              <Skeleton className="h-4 w-2/5" />
+            </div>
+          </div>
+        ))}
+      </div>
     );
 
   return (

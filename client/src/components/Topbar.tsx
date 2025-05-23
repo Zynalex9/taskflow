@@ -72,7 +72,7 @@ const Topbar = () => {
           <DropdownMenuContent>
             <DropdownMenuSeparator />
             {activites && activites.length > 0 ? (
-              activites.map((a) => <DropdownMenuItem>{a}</DropdownMenuItem>)
+              activites.map((a,i) => <DropdownMenuItem key={i}>{a}</DropdownMenuItem>)
             ) : (
               <DropdownMenuItem>No activites found</DropdownMenuItem>
             )}

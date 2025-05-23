@@ -12,6 +12,7 @@ import ModalSidebar from "./Single-Card/ModalSidebar";
 import CommentInput from "./Single-Card/CommentInput";
 import Attachments from "./Single-Card/Attachments";
 import Checklist from "./Single-Card/Checklist";
+import { Skeleton } from "@/components/ui/skeleton";
 
 const CardModal = () => {
   const { card, error, loading } = useSelector(
@@ -40,11 +41,26 @@ const CardModal = () => {
   const handleClose = () => {
     navigate(background?.pathname || -1);
   };
-
   if (loading)
     return (
-      <div className="fixed inset-0 z-[100] bg-black/70 flex items-center justify-center pt-[60px]">
-        <h1>Loading....</h1>
+      <div className="fixed inset-0 z-[100] bg-black/70 pt-[60px] flex items-start justify-center p-4">
+        <div className="bg-[#323940] rounded-lg w-full max-w-4xl flex gap-4 min-h-screen p-6">
+          <div className="flex-1 space-y-3">
+            <Skeleton className="w-2/3 h-4 rounded" />
+            <Skeleton className="w-1/3 h-4 rounded" />
+            <Skeleton className="w-2/3 h-4 rounded" />
+            <Skeleton className="w-1/4 h-4 rounded" />
+            <Skeleton className="w-2/3 h-4 rounded" />
+          </div>
+
+          <div className="hidden md:block md:w-1/5 bg-[#2c333a] rounded-lg p-4 space-y-3">
+            <Skeleton className="w-full h-6 rounded" />
+            <Skeleton className="w-full h-6 rounded" />
+            <Skeleton className="w-full h-6 rounded" />
+            <Skeleton className="w-full h-6 rounded" />
+            <Skeleton className="w-full h-6 rounded" />
+          </div>
+        </div>
       </div>
     );
 

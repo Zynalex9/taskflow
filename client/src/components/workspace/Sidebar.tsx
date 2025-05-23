@@ -11,6 +11,7 @@ import { useSelector } from "react-redux";
 import { RootState } from "../../store/store";
 import { Link } from "react-router-dom";
 import { isImageUrl } from "../../utils/helper";
+import { Skeleton } from "../ui/skeleton";
 
 const Sidebar = () => {
   const { workspace } = useSelector((state: RootState) => state.workspace);
@@ -97,7 +98,17 @@ const Sidebar = () => {
           Your boards
         </p>
         {loading
-          ? "Loading boards"
+          ? [...Array(4)].map((_, i) => (
+              <div
+                key={i}
+                className="flex items-center justify-between p-2 rounded animate-pulse"
+              >
+                <div className="flex items-center space-x-2">
+                  <Skeleton className="w-6 h-4 rounded-sm" />
+                  <Skeleton className="h-4 w-32" />
+                </div>
+              </div>
+            ))
           : boards?.yourBoards.map((board) => (
               <Link
                 to={`/user/w/workspace/${workspace?._id}/board/${board._id}`}

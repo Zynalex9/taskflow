@@ -13,7 +13,7 @@ const BoardHeader = () => {
 
   if (board)
     return (
-      <div className="p-4 w-full bg-white/5 font-charlie-display-sm backdrop-blur-3xl shadow-md flex items-center justify-between">
+      <div className="p-4 min-w-full bg-white/5 font-charlie-display-sm backdrop-blur-3xl shadow-md flex items-center justify-between">
         <div className="flex gap-2 items-center text-[#172B4D]">
           <h1 className="text-lg font-bold ">{board[0].title}</h1>
           <Star size={18} />

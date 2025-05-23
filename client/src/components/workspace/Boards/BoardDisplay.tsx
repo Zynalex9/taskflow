@@ -4,6 +4,7 @@ import { useEffect } from "react";
 import { isImageUrl } from "../../../utils/helper";
 import { Link } from "react-router-dom";
 import { fetchAllBoards } from "../../../store/BoardSlice";
+import { Skeleton } from "@/components/ui/skeleton";
 
 const BoardDisplay = () => {
   const dispatch = useDispatch<AppDispatch>();
@@ -18,9 +19,19 @@ const BoardDisplay = () => {
 
   if (loading)
     return (
-      <h1 className="text-center text-textP text-4xl font-charlie-text-sb">
-        Loading boards...
-      </h1>
+      <div className="py-8 flex flex-wrap items-center justify-center gap-4">
+        {[...Array(3)].map((_, i) => (
+          <div
+            key={i}
+            className="aspect-video w-[30%] rounded-xl shadow-2xl bg-[#333C43]"
+          >
+            <div className="h-full w-full flex flex-col items-center justify-center p-4">
+              <Skeleton className="h-6 w-3/4 mb-2" />
+              <Skeleton className="h-4 w-1/2" />
+            </div>
+          </div>
+        ))}
+      </div>
     );
   return (
     <div className="py-8 flex flex-wrap items-center justify-center gap-4">
