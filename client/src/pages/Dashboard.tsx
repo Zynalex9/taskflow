@@ -15,12 +15,12 @@ const Dashboard = () => {
       <main className="w-full lg:w-[80%] p-6 space-y-6">
         <div className="flex items-center justify-between border-b border-white/20 pb-4">
           <img
-            src={user.profilePicture}
+            src={user?.profilePicture}
             alt="Profile"
             className="w-16 h-16 rounded-full object-cover border border-white/20"
           />
           <h1 className="font-charlie-display-sm text-2xl lg:text-3xl">
-            {user.username}
+            {user?.username}
           </h1>
         </div>
 

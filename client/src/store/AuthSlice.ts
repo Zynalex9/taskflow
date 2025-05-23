@@ -26,7 +26,7 @@ export const loginUser = createAsyncThunk(
   async (loginData: IData, { rejectWithValue }) => {
     try {
       const response = await axios.post(
-        "http://192.168.1.15:3000/api/user/login",
+        `${import.meta.env.VITE_BASE_URL}/api/user/login`,
         loginData,
         {
           withCredentials: true,
@@ -48,7 +48,7 @@ export const logoutUser = createAsyncThunk(
   async (_, { rejectWithValue }) => {
     try {
       console.log("Logging out...");
-      await axios.get("http://localhost:3000/api/user/logout", {
+      await axios.get(`${import.meta.env.VITE_BASE_URL}/api/user/logout`, {
         withCredentials: true,
       });
       localStorage.removeItem("user");
@@ -63,7 +63,7 @@ export const updateDetails = createAsyncThunk(
   async (details: UpdateDetailsPayload, { rejectWithValue }) => {
     try {
       const response = await axios.patch(
-        "http://localhost:3000/api/user/change-details",
+        `${import.meta.env.VITE_BASE_URL}/api/user/change-details`,
         details,
         { withCredentials: true }
       );
@@ -83,7 +83,7 @@ export const changeProfilePicture = createAsyncThunk(
       formData.append("newPicture", file);
 
       const response = await axios.patch(
-        "http://localhost:3000/api/user/change-profile-picture",
+        `${import.meta.env.VITE_BASE_URL}/api/user/change-profile-picture`,
         formData,
         {
           withCredentials: true,
@@ -131,6 +131,9 @@ const authSlice = createSlice({
         state.loading = false;
         state.error = null;
       })
+      .addCase(logoutUser.pending, (state) => {
+        state.loading = true;
+      })
       .addCase(updateDetails.fulfilled, (state, action) => {
         state.user = action.payload.user;
         state.isLoggedIn = false;
@@ -151,13 +154,13 @@ const authSlice = createSlice({
       })
       .addCase(changeProfilePicture.rejected, (state, action) => {
         state.loading = false;
-        state.error = action.payload as string 
+        state.error = action.payload as string;
       })
       .addCase(changeProfilePicture.fulfilled, (state, action) => {
-        state.loading = false
-        state.error = null 
-        state.user = action.payload.data
-      })
+        state.loading = false;
+        state.error = null;
+        state.user = action.payload.data;
+      });
   },
 });
 

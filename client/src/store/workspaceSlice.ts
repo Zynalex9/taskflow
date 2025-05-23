@@ -38,7 +38,7 @@ export const fetchworkspace = createAsyncThunk<
 >("getWorkspace", async (workspaceId: string, { rejectWithValue }) => {
   try {
     const response = await axios.get(
-      `http://localhost:3000/api/workspace/get-workspace?workspaceId=${workspaceId}`,
+      `${import.meta.env.VITE_BASE_URL}/api/workspace/get-workspace?workspaceId=${workspaceId}`,
       { withCredentials: true }
     );
     return response.data;

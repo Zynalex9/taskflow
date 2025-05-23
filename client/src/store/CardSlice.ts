@@ -17,7 +17,7 @@ export const fetchSingleCard = createAsyncThunk<ICard, string>(
   async (cardId: string, { rejectWithValue }) => {
     try {
       const response = await axios.get(
-        `http://localhost:3000/api/card/single-card/${cardId}`,
+        `${import.meta.env.VITE_BASE_URL}/api/card/single-card/${cardId}`,
         { withCredentials: true }
       );
       console.log("WE DID IT", response.data.data)

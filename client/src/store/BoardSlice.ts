@@ -29,7 +29,7 @@ export const fetchAllBoards = createAsyncThunk(
   async (workspaceId: string, { rejectWithValue }) => {
     try {
       const response = await axios.get<IBoardResponse>(
-        `http://localhost:3000/api/board/${workspaceId}/get-boards`,
+        `${import.meta.env.VITE_BASE_URL}/api/board/${workspaceId}/get-boards`,
         { withCredentials: true }
       );
 
@@ -49,7 +49,7 @@ export const fetchSingleBoard = createAsyncThunk(
   async (boardId: string, { rejectWithValue }) => {
     try {
       const response = await axios.get(
-        `http://localhost:3000/api/board/single/${boardId}`,
+        `${import.meta.env.VITE_BASE_URL}/api/board/single/${boardId}`,
         { withCredentials: true }
       );
       return response.data.data;

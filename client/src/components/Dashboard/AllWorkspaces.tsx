@@ -22,7 +22,7 @@ const AllWorkspaces = () => {
     try {
       setLoading(true);
       const response = await axios.get<{ data: IWorkspace[] }>(
-        "http://localhost:3000/api/workspace/get-workspaces",
+        `${import.meta.env.VITE_BASE_URL}/api/workspace/get-workspaces`,
         { withCredentials: true }
       );
       setWorkspaces(response.data.data);
