@@ -1,28 +1,38 @@
-import { RootState } from "@/store/store";
+import { AppDispatch, RootState } from "@/store/store";
 import { useForm, SubmitHandler } from "react-hook-form";
-import { useSelector } from "react-redux";
-import { useNavigate } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+import { useNavigate, useLocation } from "react-router-dom";
 import { toast, ToastContainer } from "react-toastify";
+import { verifyOTP } from "@/store/ForgetSlice";
 
 type OTPFormData = {
   otp: string;
 };
 
 const EnterOTP = () => {
-  const { OTP } = useSelector((state: RootState) => state.resetPassword);
   const navigator = useNavigate();
+  const dispatch = useDispatch<AppDispatch>();
+  const location = useLocation();
+  const login = location.state?.login;
+
   const {
     register,
     handleSubmit,
     formState: { errors },
   } = useForm<OTPFormData>();
 
-  const onSubmit: SubmitHandler<OTPFormData> = (data) => {
-    console.log("Submitted OTP:", data);
-    if (data.otp.toString() == OTP?.toString()) {
-      navigator("/user/forget/reset-password", { state: { data: data.otp } });
-    } else {
-      toast.error("Invalid OTP");
+  const onSubmit: SubmitHandler<OTPFormData> = async (data) => {
+    if (!login) {
+      toast.error("Missing login information. Please restart the process.");
+      navigator("/user/forget/enter-email");
+      return;
+    }
+    try {
+      const result = await dispatch(verifyOTP({ otp: data.otp, login })).unwrap();
+      toast.success("OTP verified! Please reset your password.");
+      navigator("/user/forget/reset-password", { state: { token: result.data, login } });
+    } catch (err: any) {
+      toast.error(err || "Failed to verify OTP");
     }
   };
 

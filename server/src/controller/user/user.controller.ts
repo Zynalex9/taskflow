@@ -22,6 +22,7 @@ import { commentsModel } from "../../models/card.comments.models";
 import { CardLabelModel } from "../../models/card.label.model";
 import { CardAttachmentModel } from "../../models/card.attachments.model";
 import { CheckListModel } from "../../models/card.checklist.model";
+import jwt from "jsonwebtoken";
 
 export const registerUser = async (
   req: Request,
@@ -293,18 +294,65 @@ export const sendForgetPasswordOTP = asyncHandler(
       return;
     }
     const OTP = generateOTP();
-    await redisClient.set(`OTP:${user.email}`, OTP, "EX", 600);
+    await redisClient.set(`OTP:${login}`, OTP, "EX", 600);
     forgetPasswordEmail(user.email, user.username, OTP);
     res
       .status(200)
-      .json(new ApiResponse(200, { user,OTP }, "OTP sent to your email !!"));
+      .json(new ApiResponse(200, { user}, "OTP sent to your email !!"));
   }
 );
+export const verifyOTP = asyncHandler(async (req, res) => {
+  const required = ["login","OTP"];
+  if (!checkRequiredBody(req, res, required)) return;
+  const { login, OTP } = req.body;
+  const cachedOTP = await redisClient.get(`OTP:${login}`);
+  if (OTP !== cachedOTP) {
+    res.status(201).json(new ApiResponse(401, {}, "Inavlid OTP"));
+    return
+  }
+  const user = await UserModel.findOne({
+    $or: [
+      {
+        email: login,
+      },
+      {
+        username: login,
+      },
+    ],
+  });
+  if (!user) {
+    notFound(user, "User", res);
+    return;
+  }
+  const tokenData = { userId: user._id, login };
+  const token = jwt.sign(tokenData, process.env.JWT_TOKEN_SECRET!, {
+    expiresIn: "5m",
+  });
+  await redisClient.set(`TOKEN:${login}`, token, "EX", 300);
+  res
+    .status(200)
+    .json(
+      new ApiResponse(200, token, "OTP is valid you can change your password")
+    );
+});
 export const forgetPasswordReset = asyncHandler(
   async (req: Request, res: Response) => {
-    const required = ["login", "OTP", "newPassword"];
+    const required = ["login", "token", "newPassword"];
     if (!checkRequiredBody(req, res, required)) return;
-    const { login, OTP, newPassword } = req.body;
+    const { login, token, newPassword } = req.body;
+    const decoded = jwt.verify(token, process.env.JWT_TOKEN_SECRET!) as {
+      login: string;
+      userId: string;
+    };
+    console.log("decoded", decoded);
+    console.log("token", token);
+    const savedToken = await redisClient.get(`TOKEN:${decoded.login}`);
+    if (savedToken !== token) {
+      res
+        .status(401)
+        .json(new ApiResponse(401, {}, "Invalid or expired reset token"));
+      return;
+    }
     const user = await UserModel.findOne({
       $or: [
         {
@@ -319,12 +367,6 @@ export const forgetPasswordReset = asyncHandler(
       notFound(user, "User", res);
       return;
     }
-    const cachedOTP = await redisClient.get(`OTP:${user.email}`);
-    const inputOTP = OTP.toString();
-    if (cachedOTP !== inputOTP) {
-      res.status(400).json(new ApiResponse(400, {}, "Invalid/Expired OTP"));
-      return;
-    }
     const userNewPassword = await bcryptjs.hash(newPassword, 10);
     user.password = userNewPassword;
     user.resetOTP = "";
@@ -334,6 +376,7 @@ export const forgetPasswordReset = asyncHandler(
     res.status(200).json(new ApiResponse(200, {}, "Password Changed"));
   }
 );
+
 export const deleteUser = async (req: Request, res: Response) => {
   const session = await mongoose.startSession();
   try {

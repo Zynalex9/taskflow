@@ -28,12 +28,15 @@ import Board from "../components/workspace/Boards/Single-Board/Board";
 import CardModal from "../components/workspace/Boards/Single-Board/CardModal";
 import CalendarPage from "../components/workspace/Calendar";
 import { featurePages, solutionPages } from "./data";
-import EnterEmail from "@/components/Authentication/EnterEmail";
-import EnterOTP from "@/components/Authentication/EnterOTP";
 import ResetPasswordWithOTP from "@/components/Authentication/ResetPasswordWithOTP";
+import EnterOTP from "@/components/Authentication/EnterOTP";
+import EnterEmail from "@/components/Authentication/EnterEmail";
 
 const AllRoutes = () => {
   const { user } = useSelector((state: RootState) => state.auth);
+  const { token, emailEntered } = useSelector(
+    (state: RootState) => state.resetPassword
+  );
   console.log(user);
   [];
   const location = useLocation();
@@ -43,6 +46,50 @@ const AllRoutes = () => {
     <>
       <Routes location={background || location}>
         <Route element={<LandingLayout />}>
+          <Route
+            path="/user/forget/enter-email"
+            element={
+              user ? (
+                <Navigate to="/user/dashboard" />
+              ) : emailEntered ? (
+                token ? (
+                  <Navigate to="/user/forget/reset-password" />
+                ) : (
+                  <Navigate to="/user/forget/enter-otp" />
+                )
+              ) : (
+                <EnterEmail />
+              )
+            }
+          />
+
+          <Route
+            path="/user/forget/enter-otp"
+            element={
+              user ? (
+                <Navigate to="/user/dashboard" />
+              ) : emailEntered ? (
+                token ? (
+                  <Navigate to="/user/forget/reset-password" />
+                ) : (
+                  <EnterOTP />
+                )
+              ) : (
+                <Navigate to="/user/forget/enter-email" />
+              )
+            }
+          />
+
+          <Route
+            path="/user/forget/reset-password"
+            element={
+              user ? (
+                <Navigate to="/user/dashboard" />
+              ) : (
+                <ResetPasswordWithOTP />
+              )
+            }
+          />
           <Route path="/" element={<Home />} />
           {featurePages.map((pageData, idx) => (
             <Route
@@ -93,18 +140,6 @@ const AllRoutes = () => {
           <Route
             path="/user/sign-up"
             element={user ? <Navigate to={"/user/dashboard"} /> : <SignUp />}
-          />
-          <Route
-            path="/user/forget/enter-email"
-            element={user ? <Navigate to={"/user/dashboard"} /> : <EnterEmail />}
-          />
-          <Route
-            path="/user/forget/enter-otp"
-            element={user ? <Navigate to={"/user/dashboard"} /> : <EnterOTP/>}
-          />
-          <Route
-            path="/user/forget/reset-password"
-            element={user ? <Navigate to={"/user/dashboard"} /> : <ResetPasswordWithOTP/>}
           />
         </Route>
         <Route

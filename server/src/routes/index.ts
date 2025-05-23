@@ -11,6 +11,7 @@ import {
   registerUser,
   resetPassword,
   sendForgetPasswordOTP,
+  verifyOTP,
 } from "../controller/user/user.controller";
 import { upload } from "../middleware/multer.middleware";
 import { verifyJWT } from "../middleware/auth.middleware";
@@ -91,6 +92,7 @@ userRouter.route("/reset-password").patch(verifyJWT, resetPassword);
 userRouter.route("/send-otp").post(sendForgetPasswordOTP);
 userRouter.route("/forget-password").patch(forgetPasswordReset);
 userRouter.route("/activity-log").get(verifyJWT, activityLogs);
+userRouter.route("/verify-otp").post(verifyJWT, verifyOTP);
 export { userRouter };
 
 workSpaceRouter

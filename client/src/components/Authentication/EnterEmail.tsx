@@ -23,9 +23,11 @@ const EnterEmail = () => {
     formState: { errors, isSubmitting },
   } = useForm<IData>();
 
+  let identifierValue = "";
+
   useEffect(() => {
     if (success && message) {
-      navigate("/user/forget/enter-otp");
+      navigate("/user/forget/enter-otp", { state: { login: identifierValue } });
     }
 
     if (error) {
@@ -34,6 +36,7 @@ const EnterEmail = () => {
   }, [success, error, message, navigate]);
 
   const onSubmit = async ({ identifier }: IData) => {
+    identifierValue = identifier;
     try {
       await dispatch(sendOTPRequest(identifier)).unwrap();
     } catch (err) {
