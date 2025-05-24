@@ -28,7 +28,7 @@ const MobileBar: React.FC<MobileBarProps> = () => {
     dispatch(closeOverAllMenus());
   };
   return (
-    <div className="flex relative flex-col gap-40 overflow-y-scroll h-[85vh] ">
+    <div className="flex relative flex-col gap-10 overflow-y-scroll h-[85vh] ">
       <div className="px-4 space-y-4">
         <div className="flex justify-between border-b border-gray-200 py-4 relative">
           <button
@@ -39,7 +39,9 @@ const MobileBar: React.FC<MobileBarProps> = () => {
           >
             Features
           </button>
-          <ArrowRight className="text-black/60 transition-all duration-200 hover:text-black/100" />
+          <ArrowRight   onClick={() => {
+              dispatch(openShowFeatures());
+            }}  className="text-black/60 transition-all duration-200 hover:text-black/100" />
         </div>
 
         <div className="flex justify-between border-b border-gray-200 py-4">
@@ -51,7 +53,9 @@ const MobileBar: React.FC<MobileBarProps> = () => {
           >
             Solution
           </button>
-          <ArrowRight className="text-black/60 transition-all duration-200 hover:text-black/100" />
+          <ArrowRight   onClick={() => {
+              dispatch(openShowSolutions());
+            }} className="text-black/60 transition-all duration-200 hover:text-black/100" />
         </div>
         <div className="flex justify-between border-b border-gray-200 py-4">
           <button
@@ -62,7 +66,9 @@ const MobileBar: React.FC<MobileBarProps> = () => {
           >
             Plans
           </button>
-          <ArrowRight className="text-black/60 transition-all duration-200 hover:text-black/100" />
+          <ArrowRight   onClick={() => {
+              dispatch(openShowPlans());
+            }}  className="text-black/60 transition-all duration-200 hover:text-black/100" />
         </div>
         <div className="flex justify-between border-b border-gray-200 py-4">
           <button className="text-heading font-charlie-text-r">Pricing</button>
@@ -75,27 +81,27 @@ const MobileBar: React.FC<MobileBarProps> = () => {
       </div>
       <div className="px-4">
         {user ? (
-          <>
+          <div className="space-y-2">
             <button
               onClick={handleLogout}
-              className="w-full text-white border-0 py-4  rounded bg-blue-primary cursor-pointer text-2xl font-charlie-display-sm"
+              className="w-full text-white border-0 py-2  rounded bg-blue-primary cursor-pointer text-2xl font-charlie-display-sm"
             >
               Logout
             </button>
             <button
               onClick={() => navigator("/user/dashboard")}
-              className="w-full text-white border-0 py-4  rounded bg-blue-primary cursor-pointer text-2xl font-charlie-display-sm"
+              className="w-full text-white border-0 py-2  rounded bg-blue-primary cursor-pointer text-2xl font-charlie-display-sm"
             >
               Dashboard
             </button>
-          </>
+          </div>
         ) : (
           <button
             onClick={() => {
               navigator("/user/sign-in");
               dispatch(closeOverAllMenus());
             }}
-            className="text-white w-full border-0 py-4  rounded bg-blue-primary cursor-pointer text-2xl font-charlie-display-sm"
+            className="text-white w-full border-0 py-2  rounded bg-blue-primary cursor-pointer text-2xl font-charlie-display-sm"
           >
             Login
           </button>

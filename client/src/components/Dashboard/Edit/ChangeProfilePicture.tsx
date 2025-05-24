@@ -31,7 +31,7 @@ const ChangeProfilePicture = () => {
     }
   };
   return (
-    <div className="w-xl bg-fprimary p-6 rounded shadow-md">
+    <div className="lg:w-xl mx-auto bg-fprimary p-6 rounded shadow-md">
       <div>
         <h2 className="text-xl font-semibold mb-4 font-charlie-display-sm">
           Change Profile Picture

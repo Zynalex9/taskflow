@@ -33,7 +33,7 @@ const ChangePassword = () => {
     }
   };
   return (
-    <div className="w-xl bg-fprimary shadow-md rounded p-6">
+    <div className="w-md lg:w-xl mx-auto bg-fprimary shadow-md rounded p-6">
       <button
         onClick={() => setChanging(!isChanging)}
         className="bg-blue-primary px-4 py-2 rounded-md"

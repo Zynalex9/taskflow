@@ -41,7 +41,7 @@ const UsernameEmail = () => {
   };
 
   return (
-    <div className="w-full max-w-xl mx-auto mt-10 p-6 bg-fprimary shadow-md rounded-xl space-y-6">
+    <div className="w-md lg:w-xl mx-auto mt-10 p-6 bg-fprimary shadow-md rounded-xl space-y-6">
       <div className="flex items-center justify-between">
         {isChaning.username ? (
           <div className="flex items-center gap-3 w-full">

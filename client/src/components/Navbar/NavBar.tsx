@@ -8,7 +8,11 @@ import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "../../store/store";
 import { logoutUser } from "../../store/AuthSlice";
 import MobileBar from "./MobileBar";
-import { closeAllMenus, closeOverAllMenus, openDropDown } from "@/store/NavBarSlice";
+import {
+  closeAllMenus,
+  closeOverAllMenus,
+  openDropDown,
+} from "@/store/NavBarSlice";
 
 const NavBar = () => {
   const { showFurtherMenu, showDropDown } = useSelector(
@@ -130,17 +134,10 @@ const NavBar = () => {
           </div>
         </div>
 
-        <div className="flex" ref={solutionsRef}>
-          <NavLink
-            to="/solutions"
-            className={({ isActive }) =>
-              `flex items-center space-x-1 ${
-                isActive ? "underline underline-offset-4 text-blue-600" : ""
-              }`
-            }
-          >
-            <span>Solutions</span>
-          </NavLink>
+        <div
+          className={`flex items-center space-x-1`} ref={solutionsRef}
+        >
+          <span>Solutions</span>
           <button className="cursor-pointer" onClick={handleSolutions}>
             <ChevronDown size={12} color="#000" />
           </button>
