@@ -264,8 +264,11 @@ export const getCalendarData = async (req: Request, res: Response) => {
       },
       {
         $project: {
+          _id: 1,
           name: 1,
           endDate: 1,
+          listId: "$listDetails._id",  // Include listId
+          boardId: "$boardDetails._id", // Include boardId
           labels: {
             $map: {
               input: "$labelDetails",
