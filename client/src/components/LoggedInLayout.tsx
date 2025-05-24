@@ -3,7 +3,7 @@ import Topbar from './Topbar'
 
 const LoggedInLayout = () => {
   return (
-    <div>
+    <div className=''>
       <Topbar/>
       <Outlet/>
     </div>

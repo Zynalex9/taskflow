@@ -9,7 +9,8 @@ const Dashboard = () => {
   return (
     <div className="w-full min-h-screen bg-fprimary text-white font-charlie-text-r flex items-start flex-col lg:flex-row">
       <aside className="w-full lg:w-[20%] sticky top-0 p-4 bg-fprimary border-r border-white/10 z-10">
-        <Sidebar />
+       <div className="hidden lg:block"> <Sidebar />
+      </div>
       </aside>
 
       <main className="w-full lg:w-[80%] p-6 space-y-6">
