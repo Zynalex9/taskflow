@@ -1,21 +1,12 @@
-import { useDispatch, useSelector } from "react-redux";
-import { AppDispatch, RootState } from "../../../store/store";
-import { useEffect } from "react";
+import {  useSelector } from "react-redux";
+import { RootState } from "../../../store/store";
 import { isImageUrl } from "../../../utils/helper";
 import { Link } from "react-router-dom";
-import { fetchAllBoards } from "../../../store/BoardSlice";
 import { Skeleton } from "@/components/ui/skeleton";
 
 const BoardDisplay = () => {
-  const dispatch = useDispatch<AppDispatch>();
   const { workspace } = useSelector((state: RootState) => state.workspace);
   const { boards, loading } = useSelector((state: RootState) => state.boards);
-
-  useEffect(() => {
-    if (workspace?._id) {
-      dispatch(fetchAllBoards(workspace._id));
-    }
-  }, [workspace, dispatch]);
 
   if (loading)
     return (

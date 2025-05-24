@@ -7,16 +7,24 @@ import {
   Plus,
   ChevronDown,
 } from "lucide-react";
-import { useSelector } from "react-redux";
-import { RootState } from "../../store/store";
+import { useDispatch, useSelector } from "react-redux";
+import { AppDispatch, RootState } from "../../store/store";
 import { Link } from "react-router-dom";
 import { isImageUrl } from "../../utils/helper";
 import { Skeleton } from "../ui/skeleton";
+import { useEffect } from "react";
+import { fetchAllBoards } from "@/store/BoardSlice";
 
 const Sidebar = () => {
   const { workspace } = useSelector((state: RootState) => state.workspace);
   const { boards, loading } = useSelector((state: RootState) => state.boards);
   const workspaceName = workspace?.name;
+  const dispatch = useDispatch<AppDispatch>();
+  useEffect(() => {
+    if (workspace?._id) {
+      dispatch(fetchAllBoards(workspace._id));
+    }
+  }, [workspace, dispatch]);
   return (
     <aside className="custom-scrollbar w-64 overflow-y-auto h-screen bg-[#1D2125] text-white border-r border-gray-100/50 p-4 pb-20 space-y-4">
       <div className="flex items-center">
