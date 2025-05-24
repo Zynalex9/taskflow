@@ -7,7 +7,7 @@ const BoardTop = () => {
   const { workspace } = useSelector((state: RootState) => state.workspace);
 
   return (
-      <div className="mx-4 max-lg:w-xl flex items-center justify-between p-6 border-b border-gray-200/50  shadow-sm">
+      <div className="mx-4 max-lg:w-3xl flex items-center justify-between p-6 border-b border-gray-200/50  shadow-sm">
         <div className="flex items-center space-x-4">
           <img
             src={workspace?.cover}

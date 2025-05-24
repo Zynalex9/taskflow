@@ -119,10 +119,17 @@ const CalendarPage = () => {
   const handleEventClick = (event: CalendarEvent) => {
     navigator(`/user/w/workspace/${workspaceId}/board/${event.boardId}`);
   };
-  if (loading) return <div>Loading calendar...</div>;
+  if (loading)
+    return (
+      <div className="lg:p-4 h-[calc(100vh-100px)] pb-10 flex flex-col gap-4 animate-pulse">
+        <div className="h-8 w-1/3 bg-gray-700 rounded mb-4" />
+        <div className="h-6 w-1/4 bg-gray-700 rounded mb-2" />
+        <div className="h-96 w-full bg-gray-700 rounded" />
+      </div>
+    );
 
   return (
-    <div className="p-4 h-[calc(100vh-100px)] pb-10 ">
+    <div className="lg:p-4 h-[calc(100vh-100px)] pb-10 ">
       <div className="text-2xl text-white font-bold mb-4">Calendar View</div>
       <div style={{ height: "500px" }} className="pb-10">
         <Calendar

@@ -31,11 +31,11 @@ const Sidebar = () => {
   return (
     <>
       <aside
-        className={`custom-scrollbar lg:w-64 overflow-y-auto h-screen bg-[#1D2125] text-white border-r border-gray-100/50 p-4 pb-20 space-y-4 transform transition-all duration-200 ease-in-out ${
-          barOpen
-            ? "translate-x-0 w-52"
-            : "-translate-x-36 w-0 lg:translate-x-0"
-        }`}
+        className={`custom-scrollbar h-screen bg-[#1D2125] text-white border-r border-gray-100/50 p-4 pb-20 space-y-4 transition-all duration-200 ease-in-out
+          ${barOpen ? 'w-40 lg:w-64 translate-x-0' : 'w-0 -translate-x-36'}
+          overflow-y-auto
+        `}
+        style={{ minWidth: barOpen ? (window.innerWidth >= 1024 ? '256px' : '208px') : '0' }}
       >
         <div className="flex justify-between items-center">
           <div className="flex items-center">
@@ -64,14 +64,10 @@ const Sidebar = () => {
               <span className="font-semibold text-sm">{workspaceName}</span>
             </div>
           </div>
-          <div className="lg:hidden">
-            {barOpen ? (
-              <button onClick={() => setBarOpen(false)}>
-                <ArrowLeftIcon size={16} className="text-textP" />{" "}
-              </button>
-            ) : (
-              ""
-            )}
+          <div>
+            <button onClick={() => setBarOpen(false)} className="lg:block">
+              <ArrowLeftIcon size={16} className="text-textP" />
+            </button>
           </div>
         </div>
 
@@ -165,7 +161,7 @@ const Sidebar = () => {
               ))}
         </div>
       </aside>
-      <div className={`p-1.5 absolute top-32 left-3 bg-black rounded-full text-center z-[100] text-gray-300 ${barOpen? "hidden":"block"}`}>
+      <div className={`p-1.5 absolute top-32 left-3 bg-black rounded-full text-center z-[100] text-gray-300 ${barOpen ? "hidden" : "block"}`}>
         <button onClick={() => setBarOpen(true)}>
           <MenuIcon />
         </button>
