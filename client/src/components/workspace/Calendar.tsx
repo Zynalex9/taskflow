@@ -6,7 +6,6 @@ import { useNavigate, useParams } from "react-router-dom";
 import axios from "axios";
 import "./CalendarStyles.css";
 
-
 const localizer = momentLocalizer(moment);
 
 interface CalendarEvent {
@@ -16,8 +15,8 @@ interface CalendarEvent {
   end: Date;
   labels?: string[];
   allDay?: boolean;
-  boardId:string
-  listId:string
+  boardId: string;
+  listId: string;
 }
 
 const CustomToolbar = (toolbar: any) => {
@@ -90,7 +89,9 @@ const CalendarPage = () => {
     const fetchCalendarData = async () => {
       try {
         const response = await axios.get(
-          `http://localhost:3000/api/workspace/${workspaceId}/get-calendar-data`,
+          `http://${
+            import.meta.env.VITE_BASE_URL
+          }/api/workspace/${workspaceId}/get-calendar-data`,
           { withCredentials: true }
         );
 
@@ -100,8 +101,8 @@ const CalendarPage = () => {
           start: new Date(card.endDate),
           end: new Date(card.endDate),
           labels: card.labels || [],
-          boardId: card.boardId, 
-          listId: card.listId, 
+          boardId: card.boardId,
+          listId: card.listId,
           allDay: true,
         }));
 
@@ -116,9 +117,7 @@ const CalendarPage = () => {
     fetchCalendarData();
   }, [workspaceId]);
   const handleEventClick = (event: CalendarEvent) => {
-    navigator(
-      `/user/w/workspace/${workspaceId}/board/${event.boardId}`
-    );
+    navigator(`/user/w/workspace/${workspaceId}/board/${event.boardId}`);
   };
   if (loading) return <div>Loading calendar...</div>;
 
