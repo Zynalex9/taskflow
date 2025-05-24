@@ -30,10 +30,10 @@ const WorkspaceLayout = () => {
         <Topbar />
       </div>
       <div className="flex flex-1 overflow-hidden">
-        <div className="w-1/5 h-full">
+        <div className="lg:w-1/5 h-full">
           <Sidebar />
         </div>
-        <div className="w-4/5 h-full overflow-y-auto pr-2 custom-scrollbar">
+        <div className="lg:w-4/5 h-full overflow-y-auto pr-2 custom-scrollbar">
           <Outlet />
         </div>
       </div>

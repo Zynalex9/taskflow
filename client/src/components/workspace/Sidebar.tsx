@@ -26,7 +26,7 @@ const Sidebar = () => {
     }
   }, [workspace, dispatch]);
   return (
-    <aside className="custom-scrollbar w-64 overflow-y-auto h-screen bg-[#1D2125] text-white border-r border-gray-100/50 p-4 pb-20 space-y-4">
+    <aside className="custom-scrollbar w-40 lg:w-64 overflow-y-auto h-screen bg-[#1D2125] text-white border-r border-gray-100/50 p-4 pb-20 space-y-4">
       <div className="flex items-center">
         <div>
           {workspace?.cover?.startsWith("http") ? (

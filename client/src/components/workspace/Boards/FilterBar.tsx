@@ -2,7 +2,7 @@ import BoardDisplay from "./BoardDisplay";
 
 const FilterBar = () => {
   return (
-    <div className="mx-4">
+    <div className="mx-4 max-lg:w-xl">
       <h1 className="text-5xl mt-4 font-charlie-text-sb text-textP">Boards</h1>
       <div className="mt-4 w-full flex items-center justify-between">
         <div>
