@@ -20,19 +20,19 @@ const Board = () => {
   }, [boardId]);
   if (loading)
    return (
-    <div className="flex gap-4 w-max min-w-full">
+    <div className="flex gap-4 w-max min-w-full mt-4">
       {[...Array(3)].map((_, i) => (
         <div
           key={i}
           className="bg-[#101204] w-[300px] p-4 text-textP rounded-xl shadow-lg shadow-black/80 flex-shrink-0"
         >
-          <Skeleton className="h-6 w-3/4 mb-4" /> {/* List name */}
+          <Skeleton className="h-6 w-3/4 mb-4" /> 
 
           {[...Array(2)].map((__, j) => (
             <Skeleton key={j} className="h-10 w-full rounded-lg mb-2" />
           ))}
 
-          <Skeleton className="h-10 w-full mt-4" /> {/* Add Card button */}
+          <Skeleton className="h-10 w-full mt-4" /> 
         </div>
       ))}
     </div>
@@ -40,7 +40,7 @@ const Board = () => {
   if (board)
     return (
       <div
-        className="w-full h-[89.8vh] overflow-auto custom-scrollbar"
+        className="w-full h-[89.8vh] "
         style={
           isImageUrl(board[0].cover)
             ? { backgroundImage: `url(${board[0].cover})`,backgroundSize:"cover",backgroundPosition:"center center" }
@@ -48,7 +48,7 @@ const Board = () => {
         }
       >
         <BoardHeader />
-        <div className="p-8 w-full">
+        <div className="p-8 w-full overflow-auto custom-scrollbar min-h-[79vh] ">
           {board?.map((data) => (
             <List key={data._id} list={data.lists} />
           ))}
