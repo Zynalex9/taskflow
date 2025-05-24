@@ -9,7 +9,7 @@ const LandingLayout = () => {
     <ScrollToTop/>
     <div className="min-h-screen flex flex-col">
       <NavBar />
-      <div className="flex-grow mt-2 lg:mt-16">
+      <div className="flex-grow mt-10 lg:mt-16">
         <Outlet />
       </div>
       <Footer />

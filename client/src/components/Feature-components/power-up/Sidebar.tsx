@@ -1,4 +1,4 @@
-import { ArrowDown, Search, Star } from "lucide-react";
+import { ArrowDown, ArrowUp, Search, Star } from "lucide-react";
 import { useEffect, useState } from "react";
 import { NavLink } from "react-router-dom";
 import Dropdown from "./Dropdown";
@@ -19,20 +19,22 @@ const Sidebar = () => {
 
   return (
     <>
-   <div className="mob-bar block relative w-full lg:hidden  bg-[#1D2125] " style={{zIndex:10000000}}>
+   <div className="block mt-5 fixed top-11 w-full lg:hidden  bg-[#1D2125] " style={{zIndex:10000000}}>
   <button
     onClick={() => setIsBarOpened(!isBarOpen)}
     className="w-full flex items-center justify-between text-xl font-charlie-display-sm border-b-2 border-black py-2 px-4 cursor-pointer text-gray-200"
   >
     View all links
     <span>
+      {isBarOpen ? <ArrowUp/> : 
       <ArrowDown />
+      }
     </span>
   </button>
 
   <div
     className={`absolute left-0 top-full w-full bg-[#1D2125] text-gray-200 shadow-2xl overflow-hidden transition-all duration-300 ease-in-out ${
-      isBarOpen ? "min-h-[500px] opacity-100" : "max-h-0 opacity-0"
+      isBarOpen ? "min-h-[500px] opacity-100" : " opacity-0"
     }`}
     style={{ zIndex: 999324 }}
   >

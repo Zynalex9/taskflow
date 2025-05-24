@@ -23,7 +23,11 @@ const CommentInput = () => {
           onFocus={() => setIsInputFocused(true)}
           onBlur={() => setIsInputFocused(false)}
         />
-        {isInputFocused && <button className="text-white cursor-pointer transition-all duration-150 hover:bg-primary/60 font-charlie-display-sm bg-primary rounded px-2 py-3">Submit</button>}
+        {isInputFocused && (
+          <button className="text-white cursor-pointer transition-all duration-150 hover:bg-blue-primary/60 font-charlie-display-sm bg-blue-primary rounded px-2 py-3">
+            Submit
+          </button>
+        )}
       </div>
       {card &&
         card.comments.length > 0 &&

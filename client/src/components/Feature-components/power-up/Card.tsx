@@ -13,24 +13,23 @@ const Card: React.FC<ICARD> = ({
   users,
 }) => {
   return (
-    <div className="bg-[#333C43] text-white p-3 rounded-xl shadow-md w-full max-w-xs space-y-3 hover:bg-[#333C43]/50 transition-transform duration-200">
+    <div className="bg-[#333C43] text-white p-3 rounded-xl shadow-md w-full max-w-xs min-h-[200px] flex flex-col justify-between hover:bg-[#333C43]/50 transition-transform duration-200">
       {bannerImg && (
         <img
           src={bannerImg}
           alt="Hero"
-          className="rounded-lg w-full object-cover"
+          className="rounded-lg w-full object-cover h-28 mb-2"
         />
       )}
 
-      <div className="space-y-2">
+      <div className="flex-1 flex flex-col space-y-2">
         <div className="flex items-center gap-2">
           <img src={logoImg} alt="Icon" className="w-12 h-12" />
-          <h2 className="text-lg font-semibold">{heading}</h2>
+          <h2 className="text-lg font-semibold truncate">{heading}</h2>
         </div>
-        <button className="bg-[#579DFF] px-4 py-1 rounded-lg">Add</button>
-        <p className="text-xs text-gray-300 leading-snug">{shortDescription}</p>
-
-        <div className="flex items-center gap-1 text-gray-400 text-sm">
+        <button className="bg-[#579DFF] px-4 py-1 rounded-lg w-fit">Add</button>
+        <p className="text-xs text-gray-300 leading-snug line-clamp-3">{shortDescription}</p>
+        <div className="flex items-center gap-1 text-gray-400 text-sm mt-auto">
           <svg
             width="18"
             height="18"

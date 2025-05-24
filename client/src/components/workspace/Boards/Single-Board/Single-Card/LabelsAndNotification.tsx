@@ -9,14 +9,14 @@ const LabelsAndNotification = () => {
 
   return (
     <div className="w-full ml-10 font-charlie-text-sb">
-      <div className="flex  mb-2">
-        {card.labels.length > 0 && (
-          <h2 className="text-md text-textP">Labels</h2>
-        )}
-        {card.members.length > 0 && (
-          <h2 className="text-md text-textP pl-48">Members</h2>
-        )}
-        <h2 className="text-md text-textP pl-6">Notifications</h2>
+      <div className="grid grid-cols-3 gap-2 mb-2 w-full">
+        <h2 className="text-md text-textP text-center">
+          {card.labels.length > 0 ? "Labels" : ""}
+        </h2>
+        <h2 className="text-md text-textP text-center">
+          {card.members.length > 0 ? "Members" : ""}
+        </h2>
+        <h2 className="text-md text-textP text-center">Notifications</h2>
       </div>
 
       <div className="flex gap-4">
@@ -64,9 +64,7 @@ const LabelsAndNotification = () => {
                   backgroundSize: "cover",
                   backgroundPosition: "center center",
                 }}
-              >
-            
-              </div>
+              ></div>
             ))}
 
           {card.members.length > 0 && (

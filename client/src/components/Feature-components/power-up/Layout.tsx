@@ -7,7 +7,7 @@ const Layout = () => {
       <div className="w-full lg:w-[20%]  sticky top-[1px] lg:p-4">
         <Sidebar />
       </div>
-      <div className="w-full lg:w-[80%] p-4">
+      <div className="w-full max-lg:mt-20 lg:w-[80%] p-4">
         <Outlet />
       </div>
     </div>
