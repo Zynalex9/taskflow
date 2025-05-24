@@ -10,7 +10,6 @@ const SignUp = () => {
   const navigator = useNavigate();
   const {
     register,
-    reset,
     handleSubmit,
     formState: { isSubmitting, errors },
   } = useForm({
@@ -209,7 +208,7 @@ const SignUp = () => {
           alt=""
         />
       </div>
-      <ToastContainer />
+      <ToastContainer style={{marginTop:'80px'}} />
     </div>
   );
 };

@@ -2,10 +2,10 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { loginSchema } from "../../zod/auth-schema";
 import { loginUser } from "../../store/AuthSlice";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch} from "react-redux";
 import { Link, useNavigate } from "react-router-dom";
 import { toast, ToastContainer } from "react-toastify";
-import { AppDispatch, RootState } from "../../store/store";
+import { AppDispatch} from "../../store/store";
 export interface IData {
   login: string;
   password: string;
@@ -13,7 +13,7 @@ export interface IData {
 
 const SignIn = () => {
   const dispatch = useDispatch<AppDispatch>();
-  const {error} = useSelector((state:RootState)=>state.auth)
+
   const navigator = useNavigate();
   const {
     register,
@@ -142,7 +142,7 @@ const SignIn = () => {
           alt=""
         />
       </div>
-      <ToastContainer />
+      <ToastContainer style={{marginTop:'80px'}} />
     </div>
   );
 };

@@ -1,13 +1,10 @@
 import { useForm } from "react-hook-form";
 import { useLocation, useNavigate } from "react-router-dom";
-import { useDispatch } from "react-redux";
-import { AppDispatch } from "@/store/store";
 import axios from "axios";
 import { toast, ToastContainer } from "react-toastify";
 
 const ResetPasswordWithOTP = () => {
   const location = useLocation();
-  const dispatch = useDispatch<AppDispatch>();
   const navigate = useNavigate();
   const token = location.state?.token;
   const login = location.state?.login;
@@ -120,7 +117,7 @@ const ResetPasswordWithOTP = () => {
             {isSubmitting ? "Processing..." : "Reset Password"}
           </button>
         </form>
-        <ToastContainer />
+        <ToastContainer style={{marginTop:'80px'}}/>
       </div>
     </div>
   );

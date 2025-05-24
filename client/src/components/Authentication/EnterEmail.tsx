@@ -93,7 +93,7 @@ const EnterEmail = () => {
           By continuing, you agree to our Terms of Service
         </p>
       </div>
-      <ToastContainer />
+      <ToastContainer style={{marginTop:'80px'}}/>
     </div>
   );
 };

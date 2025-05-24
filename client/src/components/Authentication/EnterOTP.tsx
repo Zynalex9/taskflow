@@ -1,6 +1,6 @@
-import { AppDispatch, RootState } from "@/store/store";
+import { AppDispatch } from "@/store/store";
 import { useForm, SubmitHandler } from "react-hook-form";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 import { useNavigate, useLocation } from "react-router-dom";
 import { toast, ToastContainer } from "react-toastify";
 import { verifyOTP } from "@/store/ForgetSlice";
@@ -80,7 +80,7 @@ const EnterOTP = () => {
           </button>
         </form>
       </div>
-      <ToastContainer />
+      <ToastContainer style={{marginTop:'80px'}} />
     </div>
   );
 };
