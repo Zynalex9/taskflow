@@ -1,7 +1,7 @@
 import { Outlet, useParams } from "react-router-dom";
 import Topbar from "../Topbar";
 import Sidebar from "./Sidebar";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
 import { AppDispatch } from "../../store/store";
 import { fetchworkspace } from "../../store/workspaceSlice";
@@ -24,14 +24,16 @@ const WorkspaceLayout = () => {
 
     getWorkspace();
   }, [workspaceId, dispatch]);
+    const [barOpen, setBarOpen] = useState(true);
+  
   return (
     <div className="w-full h-screen flex flex-col bg-fprimary">
       <div className="sticky top-0 z-[999]">
         <Topbar />
       </div>
-      <div className="flex flex-1 overflow-hidden">
-        <div className="h-full">
-          <Sidebar />
+      <div className="flex flex-1 overflow-hidden  ">
+        <div className={`h-full ${barOpen? "bg-fprimary":"bg-[#535659]"}`}>
+          <Sidebar barOpen={barOpen} setBarOpen={setBarOpen}/>
         </div>
         <div className="w-full h-full overflow-y-auto pr-2 custom-scrollbar">
           <Outlet />

@@ -9,6 +9,7 @@ const BoardTop = () => {
 
   if (workspace)
     return (
+  <div>
       <div className="mx-4 max-lg:w-3xl flex items-center justify-between p-6 border-b border-gray-200/50  shadow-sm">
         <div className="flex items-center space-x-4">
           {isImageUrl(workspace.cover) ? (
@@ -40,6 +41,7 @@ const BoardTop = () => {
         <div>
           <Button buttonText="Invite members to workspace" />
         </div>
+      </div>
       </div>
     );
 };
