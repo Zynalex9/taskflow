@@ -9,6 +9,11 @@ import {
   ArrowLeftIcon,
   ArrowRight,
 } from "lucide-react";
+import {
+  HoverCard,
+  HoverCardContent,
+  HoverCardTrigger,
+} from "@/components/ui/hover-card";
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "../../store/store";
 import { Link } from "react-router-dom";
@@ -28,14 +33,31 @@ const Sidebar = () => {
       dispatch(fetchAllBoards(workspace._id));
     }
   }, [workspace, dispatch]);
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.code === "BracketLeft") {
+        setBarOpen((prev) => !prev);
+      }
+    };
+    window.addEventListener("keydown", handleKeyDown);
+    return () => {
+      window.removeEventListener("keydown", handleKeyDown);
+    };
+  }, []);
   return (
     <>
       <aside
         className={`custom-scrollbar h-screen bg-[#1D2125] text-white border-r border-gray-100/50 p-4 pb-20 space-y-4 transition-all duration-200 ease-in-out
-          ${barOpen ? 'w-40 lg:w-64 translate-x-0' : 'w-0 -translate-x-36'}
+          ${barOpen ? "w-40 lg:w-64 translate-x-0" : "w-0 -translate-x-36"}
           overflow-y-auto
         `}
-        style={{ minWidth: barOpen ? (window.innerWidth >= 1024 ? '256px' : '208px') : '0' }}
+        style={{
+          minWidth: barOpen
+            ? window.innerWidth >= 1024
+              ? "256px"
+              : "208px"
+            : "0",
+        }}
       >
         <div className="flex justify-between items-center">
           <div className="flex items-center">
@@ -66,7 +88,22 @@ const Sidebar = () => {
           </div>
           <div>
             <button onClick={() => setBarOpen(false)} className="lg:block">
-              <ArrowLeftIcon size={16} className="text-textP" />
+                  <HoverCard>
+            <HoverCardTrigger asChild>
+              <ArrowLeftIcon
+                size={16}
+                className="text-textP hover:text-white cursor-pointer transition-colors"
+              />
+            </HoverCardTrigger>
+            <HoverCardContent className="w-[200px] p-3 bg-[#22272B] border border-[#3C4043] shadow-lg rounded-md">
+              <div className="flex justify-between items-center">
+                <span className="text-textP text-sm">Collapse section</span>
+                <span className="text-white bg-[#3C4043] px-2 py-1 rounded text-xs font-mono">
+                  [
+                </span>
+              </div>
+            </HoverCardContent>
+          </HoverCard>
             </button>
           </div>
         </div>
@@ -161,9 +198,28 @@ const Sidebar = () => {
               ))}
         </div>
       </aside>
-      <div className={`p-1.5 flex items-center justify-center  absolute top-32 left-3 bg-fprimary rounded-full text-center z-[100] text-gray-300 ${barOpen ? "hidden" : "block"}`}>
+      <div
+        className={`p-1.5 flex items-center justify-center  absolute top-32 left-3 bg-fprimary rounded-full text-center z-[100] text-gray-300 ${
+          barOpen ? "hidden" : "block"
+        }`}
+      >
         <button onClick={() => setBarOpen(true)}>
-          <ArrowRight />
+          <HoverCard>
+            <HoverCardTrigger asChild>
+              <ArrowRight
+                size={16}
+                className="text-textP hover:text-white cursor-pointer transition-colors"
+              />
+            </HoverCardTrigger>
+            <HoverCardContent className="w-[200px] p-3 bg-[#22272B] border border-[#3C4043] shadow-lg rounded-md">
+              <div className="flex justify-between items-center">
+                <span className="text-textP text-sm">Expand section</span>
+                <span className="text-white bg-[#3C4043] px-2 py-1 rounded text-xs font-mono">
+                  [
+                </span>
+              </div>
+            </HoverCardContent>
+          </HoverCard>
         </button>
       </div>
     </>
