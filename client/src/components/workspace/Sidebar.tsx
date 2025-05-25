@@ -19,17 +19,20 @@ import { AppDispatch, RootState } from "../../store/store";
 import { Link } from "react-router-dom";
 import { isImageUrl } from "../../utils/helper";
 import { Skeleton } from "../ui/skeleton";
-import { useEffect, useState } from "react";
+import { useEffect} from "react";
 import { fetchAllBoards } from "@/store/BoardSlice";
 import AddBoardModal from "./Boards/Single-Board/Add Board Modal/AddBoardModal";
+import { closeModal, openModal } from "@/store/BoardBGSlice";
 interface Props {
   barOpen: boolean;
   setBarOpen: React.Dispatch<React.SetStateAction<boolean>>;
 }
 const Sidebar = ({ barOpen, setBarOpen }: Props) => {
-  const [showAddBoards, setShowAddBoards] = useState(false);
   const { workspace } = useSelector((state: RootState) => state.workspace);
   const { boards, loading } = useSelector((state: RootState) => state.boards);
+  const { showBoardModal } = useSelector(
+    (state: RootState) => state.boardModalControll
+  );
   const workspaceName = workspace?.name;
   const dispatch = useDispatch<AppDispatch>();
   useEffect(() => {
@@ -87,7 +90,7 @@ const Sidebar = ({ barOpen, setBarOpen }: Props) => {
             <button
               onClick={() => {
                 setBarOpen(false);
-                setShowAddBoards(false);
+                dispatch(closeModal());
               }}
               className="lg:block"
             >
@@ -163,12 +166,21 @@ const Sidebar = ({ barOpen, setBarOpen }: Props) => {
             <p className="text-xl font-charlie-display-sm mb-1 text-gray-400 px-2 mt-4 ">
               Your boards
             </p>
-            <button
-              onClick={() => setShowAddBoards(!showAddBoards)}
-              className="cursor-pointer"
-            >
-              <Plus size={14} />
-            </button>
+            {showBoardModal ? (
+              <button
+                onClick={() => dispatch(closeModal())}
+                className="cursor-pointer"
+              >
+                <Plus size={14} />
+              </button>
+            ) : (
+              <button
+                onClick={() => dispatch(openModal())}
+                className="cursor-pointer"
+              >
+                <Plus size={14} />
+              </button>
+            )}
           </div>
           {loading
             ? [...Array(4)].map((_, i) => (
@@ -233,7 +245,7 @@ const Sidebar = ({ barOpen, setBarOpen }: Props) => {
           </HoverCard>
         </button>
       </div>
-      {showAddBoards ? <AddBoardModal /> : ""}
+      {showBoardModal ? <AddBoardModal /> : ""}
     </>
   );
 };

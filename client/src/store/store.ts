@@ -5,6 +5,7 @@ import workspaceReducer from "./workspaceSlice";
 import cardReducer from "./CardSlice";
 import navbarReducer from "./NavBarSlice";
 import forgetReducer from "./ForgetSlice";
+import BoardBackgroundReducer from "./BoardBGSlice";
 import { boardsReducer, boardReducer } from "./BoardSlice";
 const store = configureStore({
   reducer: {
@@ -16,6 +17,7 @@ const store = configureStore({
     card: cardReducer,
     navControl: navbarReducer,
     resetPassword: forgetReducer,
+    boardModalControll: BoardBackgroundReducer,
   },
 });
 export type RootState = ReturnType<typeof store.getState>;
