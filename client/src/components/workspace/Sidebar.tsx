@@ -19,13 +19,15 @@ import { AppDispatch, RootState } from "../../store/store";
 import { Link } from "react-router-dom";
 import { isImageUrl } from "../../utils/helper";
 import { Skeleton } from "../ui/skeleton";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { fetchAllBoards } from "@/store/BoardSlice";
+import AddBoardModal from "./Boards/Single-Board/Add Board Modal/AddBoardModal";
 interface Props {
   barOpen: boolean;
   setBarOpen: React.Dispatch<React.SetStateAction<boolean>>;
 }
-const Sidebar = ({barOpen,setBarOpen}:Props) => {
+const Sidebar = ({ barOpen, setBarOpen }: Props) => {
+  const [showAddBoards, setShowAddBoards] = useState(false);
   const { workspace } = useSelector((state: RootState) => state.workspace);
   const { boards, loading } = useSelector((state: RootState) => state.boards);
   const workspaceName = workspace?.name;
@@ -82,7 +84,13 @@ const Sidebar = ({barOpen,setBarOpen}:Props) => {
             </div>
           </div>
           <div>
-            <button onClick={() => setBarOpen(false)} className="lg:block">
+            <button
+              onClick={() => {
+                setBarOpen(false);
+                setShowAddBoards(false);
+              }}
+              className="lg:block"
+            >
               <HoverCard>
                 <HoverCardTrigger asChild>
                   <ArrowLeftIcon
@@ -151,9 +159,17 @@ const Sidebar = ({barOpen,setBarOpen}:Props) => {
         </div>
 
         <div className="text-sm">
-          <p className="text-xl font-charlie-display-sm mb-1 text-gray-400 px-2 mt-4 ">
-            Your boards
-          </p>
+          <div className="flex justify-between items-center text-gray-400">
+            <p className="text-xl font-charlie-display-sm mb-1 text-gray-400 px-2 mt-4 ">
+              Your boards
+            </p>
+            <button
+              onClick={() => setShowAddBoards(!showAddBoards)}
+              className="cursor-pointer"
+            >
+              <Plus size={14} />
+            </button>
+          </div>
           {loading
             ? [...Array(4)].map((_, i) => (
                 <div
@@ -217,6 +233,7 @@ const Sidebar = ({barOpen,setBarOpen}:Props) => {
           </HoverCard>
         </button>
       </div>
+      {showAddBoards ? <AddBoardModal /> : ""}
     </>
   );
 };
