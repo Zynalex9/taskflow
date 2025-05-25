@@ -1,5 +1,5 @@
 import { useSelector } from "react-redux";
-import AddImages from "./AddImages";
+import AddBackground from "./AddBackground";
 import { RootState } from "@/store/store";
 
 const AddBoardModal = () => {
@@ -7,7 +7,7 @@ const AddBoardModal = () => {
   
   const getBackgroundStyle = () => {
     if (selectedColor) {
-      return { backgroundColor: selectedColor };
+      return { background: selectedColor };
     }
     return {
       backgroundImage: `url(${selectedImg})`,
@@ -34,7 +34,7 @@ const AddBoardModal = () => {
       
       <div className="mt-2 px-1.5 space-y-2">
         <h1>Backgrounds</h1>
-        <AddImages />
+        <AddBackground />
       </div>
     </div>
   );
