@@ -57,7 +57,11 @@ export const createList = async (req: Request, res: Response) => {
     const isBoardAdmin = board.members.find(
       (member) => member.user._id.toString() === userId.toString()
     );
-    if (!isBoardAdmin || isBoardAdmin.role !== "admin") {
+    const isUserBoardCreator = board.createdBy.toString() === userId.toString();
+    const isUserWorkspaceCreator = workspace.createdBy.toString() === userId.toString();
+    const isAdminMember = isBoardAdmin && isBoardAdmin.role === "admin";
+
+    if (!isAdminMember && !isUserBoardCreator && !isUserWorkspaceCreator) {
       res.status(401).json({
         message: "You're not authorized to create list in this board",
         success: false,

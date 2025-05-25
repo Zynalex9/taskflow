@@ -7,7 +7,7 @@ import {
   Plus,
   ChevronDown,
   ArrowLeftIcon,
-  MenuIcon,
+  ArrowRight,
 } from "lucide-react";
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "../../store/store";
@@ -161,9 +161,9 @@ const Sidebar = () => {
               ))}
         </div>
       </aside>
-      <div className={`p-1.5 absolute top-32 left-3 bg-black rounded-full text-center z-[100] text-gray-300 ${barOpen ? "hidden" : "block"}`}>
+      <div className={`p-1.5 flex items-center justify-center  absolute top-32 left-3 bg-fprimary rounded-full text-center z-[100] text-gray-300 ${barOpen ? "hidden" : "block"}`}>
         <button onClick={() => setBarOpen(true)}>
-          <MenuIcon />
+          <ArrowRight />
         </button>
       </div>
     </>

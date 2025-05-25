@@ -6,6 +6,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import axios from "axios";
 import "./CalendarStyles.css";
 
+
 const localizer = momentLocalizer(moment);
 
 interface CalendarEvent {
@@ -15,8 +16,8 @@ interface CalendarEvent {
   end: Date;
   labels?: string[];
   allDay?: boolean;
-  boardId: string;
-  listId: string;
+  boardId:string
+  listId:string
 }
 
 const CustomToolbar = (toolbar: any) => {
@@ -89,9 +90,7 @@ const CalendarPage = () => {
     const fetchCalendarData = async () => {
       try {
         const response = await axios.get(
-          `http://${
-            import.meta.env.VITE_BASE_URL
-          }/api/workspace/${workspaceId}/get-calendar-data`,
+          `http://localhost:3000/api/workspace/${workspaceId}/get-calendar-data`,
           { withCredentials: true }
         );
 
@@ -101,8 +100,8 @@ const CalendarPage = () => {
           start: new Date(card.endDate),
           end: new Date(card.endDate),
           labels: card.labels || [],
-          boardId: card.boardId,
-          listId: card.listId,
+          boardId: card.boardId, 
+          listId: card.listId, 
           allDay: true,
         }));
 
@@ -117,19 +116,14 @@ const CalendarPage = () => {
     fetchCalendarData();
   }, [workspaceId]);
   const handleEventClick = (event: CalendarEvent) => {
-    navigator(`/user/w/workspace/${workspaceId}/board/${event.boardId}`);
-  };
-  if (loading)
-    return (
-      <div className="lg:p-4 h-[calc(100vh-100px)] pb-10 flex flex-col gap-4 animate-pulse">
-        <div className="h-8 w-1/3 bg-gray-700 rounded mb-4" />
-        <div className="h-6 w-1/4 bg-gray-700 rounded mb-2" />
-        <div className="h-96 w-full bg-gray-700 rounded" />
-      </div>
+    navigator(
+      `/user/w/workspace/${workspaceId}/board/${event.boardId}`
     );
+  };
+  if (loading) return <div>Loading calendar...</div>;
 
   return (
-    <div className="lg:p-4 h-[calc(100vh-100px)] pb-10 ">
+    <div className="p-4 h-[calc(100vh-100px)] pb-10 ">
       <div className="text-2xl text-white font-bold mb-4">Calendar View</div>
       <div style={{ height: "500px" }} className="pb-10">
         <Calendar
