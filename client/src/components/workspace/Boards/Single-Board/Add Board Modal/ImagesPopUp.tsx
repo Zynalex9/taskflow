@@ -1,9 +1,86 @@
-const ImagesPopUp = () => {
-  return (
-   <div className="z-[99900999] shadow-2xl h-[32rem] rounded-xl bg-[#282E33] absolute top-18 left-138 border-gray-700 border-2 w-[22.5rem] overflow-y-scroll custom-scrollbar text-textP font-charlie-text-r">
-      Lorem ipsum dolor sit amet, consectetur adipisicing elit. Ullam, quae consectetur reiciendis accusamus architecto quibusdam dignissimos porro voluptas necessitatibus delectus asperiores mollitia totam tempora, adipisci, sequi ipsum dicta! Omnis repudiandae sunt ratione harum, illo pariatur eaque itaque voluptate consequuntur fuga quasi architecto corporis perferendis maxime modi consequatur rerum repellendus praesentium adipisci non sed explicabo nisi. Totam pariatur, vel asperiores harum praesentium eligendi molestias impedit iste iusto, facere libero corporis aut natus! Velit, ducimus, sunt ab sit voluptate perferendis mollitia deleniti magnam doloremque libero molestias! Laudantium earum magni ab velit minus voluptates eveniet natus asperiores reiciendis. Ducimus animi dolorem quibusdam architecto, ullam amet nulla, nihil minus quia quam nobis, earum numquam nesciunt deserunt hic doloribus alias. Dolore debitis, blanditiis aliquam similique est cupiditate id obcaecati adipisci eaque iste eligendi, quae cum animi! Provident eligendi minus minima nihil quam iusto esse ipsum aliquam sunt magni corporis tempore excepturi eveniet dolorem quia expedita illum accusantium ullam omnis iste odio, corrupti voluptatum nulla! Earum provident alias placeat consequatur est rerum fugiat numquam. Qui minima nostrum dolor perferendis ratione illo. Provident sint incidunt rem aliquid deserunt perferendis natus ducimus. Quis repudiandae reiciendis harum vitae, molestias fugit aspernatur dolorum? Fuga dicta explicabo atque tenetur ipsa. Placeat!
-    </div> 
-  )
-}
+import axios from "axios";
+import { useEffect, useState } from "react";
+import Images from "./Images";
+import ImageSkeleton from "@/components/Skeletons/ImageSkeleton";
 
-export default ImagesPopUp
+const ImagesPopUp = () => {
+  const [images, setImages] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState("");
+  const [searchTerm, setSearchTerm] = useState("nature");
+  const fetchImages = async (query: string) => {
+    try {
+      setIsLoading(true);
+      const response = await axios.get(
+        "https://api.unsplash.com/search/photos",
+        {
+          params: {
+            query: query,
+            per_page: 20,
+          },
+          headers: {
+            Authorization:
+              "Client-ID _uof60J_1T_CUCL2xBa9Wmr0_cCd4wuqMDOUJGXPrA0",
+          },
+        }
+      );
+      setImages(response.data.results);
+    } catch (err) {
+      setError("Failed to fetch images");
+      console.error(err);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+  useEffect(() => {
+    const delayDebounce = setTimeout(() => {
+      if (searchTerm.trim() !== "") {
+        fetchImages(searchTerm);
+      }
+    }, 500);
+
+    return () => clearTimeout(delayDebounce);
+  }, [searchTerm]);
+  useEffect(() => {
+    fetchImages(searchTerm);
+  }, []);
+  useEffect(() => {
+    console.log(images);
+  }, [images]);
+  if (error) {
+    <div className="px-2 z-[99900999] shadow-2xl h-[32rem] rounded-xl bg-[#282E33] absolute top-18 left-138 border-gray-700 border-2 w-[22.5rem] overflow-y-scroll custom-scrollbar text-textP font-charlie-text-r">
+      Sorry couldn't fetch images
+    </div>;
+  }
+  return (
+    <div className="px-2 z-[99900999] shadow-2xl h-[32rem] rounded-xl bg-[#282E33] absolute top-18 left-138 border-gray-700 border-2 w-[22.5rem] overflow-y-scroll custom-scrollbar text-textP font-charlie-text-r">
+      <h1 className="text-center my-4">
+        Images from
+        <a
+          href={"https://unsplash.com/"}
+          target="_blank"
+          className="text-blue-500"
+        >
+          Unsplash
+        </a>
+      </h1>
+      <input
+        type="text"
+        placeholder="Search"
+        onChange={(e) => setSearchTerm(e.target.value)}
+        className="block p-2 bg-[#22272B] text-textP/60 w-full border-1 border-[#22272B]/50 focus:outline-1"
+      />
+      <div>
+        {isLoading ? (
+          <div>
+            <ImageSkeleton />
+          </div>
+        ) : (
+          <Images ImgArray={images} />
+        )}
+      </div>
+    </div>
+  );
+};
+
+export default ImagesPopUp;
