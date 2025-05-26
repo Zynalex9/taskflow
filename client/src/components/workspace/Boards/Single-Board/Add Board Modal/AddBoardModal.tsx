@@ -1,6 +1,7 @@
 import { useSelector } from "react-redux";
 import AddBackground from "./AddBackground";
 import { RootState } from "@/store/store";
+import Form from "./Form";
 
 const AddBoardModal = () => {
   const { selectedImg, selectedColor } = useSelector((state: RootState) => state.boardModalControll);
@@ -35,6 +36,7 @@ const AddBoardModal = () => {
       <div className="mt-2 px-1.5 space-y-2">
         <h1>Backgrounds</h1>
         <AddBackground />
+        <Form/>
       </div>
     </div>
   );
