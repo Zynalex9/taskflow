@@ -57,8 +57,8 @@ const ImagesPopUp = () => {
     </div>;
   }
   return (
-    <div className="px-2 z-[99900999] shadow-2xl h-[32rem] rounded bg-[#282E33] absolute top-18 left-138 border-gray-700 border-2 w-[22.5rem] overflow-y-scroll custom-scrollbar text-textP font-charlie-text-r">
-      <div className="flex items-center justify-between  pt-2">
+    <div className="px-2 z-[99900999] shadow-2xl h-[24rem] lg:h-[32rem] rounded bg-[#282E33] absolute top-44 lg:top-18 left-24 lg:left-138 border-gray-700 border-2 w-[22.5rem] overflow-y-scroll custom-scrollbar text-textP font-charlie-text-r">
+      <div className="flex items-center justify-between  p-2">
         <ArrowLeft onClick={()=>dispatch(closeMoreImgs())} />
         <X onClick={()=>dispatch(closeMore())} />
       </div>

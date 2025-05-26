@@ -1,7 +1,7 @@
 import {
   changeSelectedColor,
   closeMore,
-  closeMoreImgs,
+  closeMoreColors,
 } from "@/store/BoardBGSlice";
 import { AppDispatch, RootState } from "@/store/store";
 import { ArrowLeft, Check, X } from "lucide-react";
@@ -65,9 +65,9 @@ const ColorsPopUp = () => {
     (state: RootState) => state.boardModalControll
   );
   return (
-    <div className="z-[99900999]  h-[32rem] rounded-xl bg-[#282E33] absolute top-18 left-138 border-gray-700 border-2 w-[22.5rem] overflow-y-scroll custom-scrollbar text-textP font-charlie-text-r">
-      <div className="flex items-center justify-between  pt-2">
-        <ArrowLeft onClick={() => dispatch(closeMoreImgs())} />
+    <div className="z-[99900999] top-44 lg:top-18 left-24 lg:left-138 h-[24rem] lg:h-[32rem] custom-scrollbar rounded-xl bg-[#282E33] absolute  border-gray-700 border-2 w-[22.5rem] overflow-y-scroll custom-scrollbar text-textP font-charlie-text-r">
+      <div className="flex items-center justify-between p-2">
+        <ArrowLeft onClick={() => dispatch(closeMoreColors())} />
         <X onClick={() => dispatch(closeMore())} />
       </div>
       <div className="w-[95%] mx-auto">
