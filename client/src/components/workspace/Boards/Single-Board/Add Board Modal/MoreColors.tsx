@@ -45,7 +45,7 @@ const MoreColors = () => {
             <div
               onClick={() => dispatch(changeSelectedColor(color.hex))}
               style={{ background: color.hex }}
-              className={`h-9 w-21 p-4 rounded-sm object-cover`}
+              className={`h-14 w-21 p-4 rounded-sm object-cover`}
             ></div>
           ))}
         </div>

@@ -49,7 +49,7 @@ const dispatch = useDispatch<AppDispatch>()
             src={img.src}
             alt={img.title}
             onClick={() => dispatch(changeSelectedImg(img.src))}
-            className="h-12 w-21 rounded-sm object-cover"
+            className="h-14 w-21 rounded-sm object-cover"
           />
         ))}
       </div>

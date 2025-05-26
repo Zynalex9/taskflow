@@ -3,7 +3,7 @@ import MoreImages from "./MoreImages";
 
 const ShowMore = () => {
   return (
-    <div className="absolute top-30 left-138 border-gray-700 border-2 rounded-md p-4 h-[25rem] bg-[#282E33] w-[19.5rem] z-[50000] space-y-4 ">
+    <div className="absolute top-30 left-138 border-gray-700 border-2 rounded-md p-4 h-[26rem] bg-[#282E33] w-[19.5rem] z-[50000] space-y-4 ">
       <MoreImages />
       <MoreColors/>
     </div>
