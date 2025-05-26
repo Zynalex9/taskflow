@@ -1,6 +1,10 @@
-import { changeSelectedColor } from "@/store/BoardBGSlice";
+import {
+  changeSelectedColor,
+  closeMore,
+  closeMoreImgs,
+} from "@/store/BoardBGSlice";
 import { AppDispatch, RootState } from "@/store/store";
-import { Check } from "lucide-react";
+import { ArrowLeft, Check, X } from "lucide-react";
 import { useDispatch, useSelector } from "react-redux";
 
 const ColorsPopUp = () => {
@@ -61,12 +65,17 @@ const ColorsPopUp = () => {
     (state: RootState) => state.boardModalControll
   );
   return (
-    <div className="z-[99900999] shadow-2xl h-[32rem] rounded-xl bg-[#282E33] absolute top-18 left-138 border-gray-700 border-2 w-[22.5rem] overflow-y-scroll custom-scrollbar text-textP font-charlie-text-r">
+    <div className="z-[99900999]  h-[32rem] rounded-xl bg-[#282E33] absolute top-18 left-138 border-gray-700 border-2 w-[22.5rem] overflow-y-scroll custom-scrollbar text-textP font-charlie-text-r">
+      <div className="flex items-center justify-between  pt-2">
+        <ArrowLeft onClick={() => dispatch(closeMoreImgs())} />
+        <X onClick={() => dispatch(closeMore())} />
+      </div>
       <div className="w-[95%] mx-auto">
         <div className="flex items-center justify-center mt-4">
           <div className="flex flex-wrap gap-2">
             {firstColors.map((color) => (
               <div
+                key={color.title}
                 onClick={() => dispatch(changeSelectedColor(color.hex))}
                 style={{ background: color.hex }}
                 className={`h-24 w-26 p-4 rounded-sm object-cover flex items-center justify-center text-black`}
@@ -85,6 +94,7 @@ const ColorsPopUp = () => {
           <div className="flex flex-wrap gap-2">
             {secondColors.map((color) => (
               <div
+                key={color.title}
                 onClick={() => dispatch(changeSelectedColor(color.hex))}
                 style={{ background: color.hex }}
                 className={`h-24 w-26 p-4 rounded-sm object-cover cursor-pointer flex items-center justify-center text-black`}

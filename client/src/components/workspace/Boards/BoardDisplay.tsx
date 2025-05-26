@@ -40,7 +40,7 @@ const BoardDisplay = () => {
                   backgroundSize: "cover",
                   backgroundPosition: "center",
                 }
-              : { backgroundColor: board.cover }
+              : { background: board.cover }
           }
           className="aspect-video flex items-center justify-center w-[30%] rounded-xl shadow-2xl transition-transform duration-200 hover:scale-95"
         >

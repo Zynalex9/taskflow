@@ -32,7 +32,6 @@ export const createBoard = async (req: Request, res: Response) => {
       backgroundOptions,
       workspaceId,
       memberId,
-      linkFromBody,
     } = req.body;
     const userId = req.user._id;
 
@@ -95,15 +94,12 @@ export const createBoard = async (req: Request, res: Response) => {
     let boardCover;
     if (coverFromBody) {
       boardCover = coverFromBody;
-    } else if (linkFromBody) {
-      boardCover = linkFromBody;
     } else if (req.file) {
       const localPath = req.file.path;
       const response = await UploadOnCloudinary({
         localFilePath: localPath,
         folderName: "taskflow/boardCovers",
       });
-      console.log(response);
       if (response && response.url) {
         boardCover = response.url;
       }
@@ -116,7 +112,7 @@ export const createBoard = async (req: Request, res: Response) => {
       visibility: visibilityStatus,
       backgroundOptions: backgroundStatus,
       createdBy: userId,
-      // members: boardMembers,
+      members: boardMembers,
       workspace: workspaceId,
       cover: boardCover,
     });

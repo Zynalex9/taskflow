@@ -13,7 +13,6 @@ const SolutionTemplate: React.FC<PageData> = ({
   return (
     <div>
       <div className="w-full h-[80vh] bg-gradient-to-br from-[#0070F9] to-[#00B6D9] text-white flex flex-col items-center justify-center px-6 text-center gap-6 font-charlie-text-r">
-       
         <h1 className="text-4xl lg:text-5xl font-bold max-w-3xl font-charlie-display-sm">
           {hero.heading}
         </h1>

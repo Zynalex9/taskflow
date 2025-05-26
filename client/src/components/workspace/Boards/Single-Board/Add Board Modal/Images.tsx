@@ -24,7 +24,7 @@ const Images = ({ ImgArray }: Data) => {
       {ImgArray.map((i) => (
         <div key={i.id} className="aspect-square overflow-hidden rounded">
           <img
-            onClick={() => dispatch(changeSelectedImg(i.urls.small))}
+            onClick={() => dispatch(changeSelectedImg(i.urls.full))}
             src={i.urls.small}
             alt={i.alt_description || "Unsplash image"}
             className="h-full w-full object-cover"

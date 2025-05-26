@@ -2,6 +2,10 @@ import axios from "axios";
 import { useEffect, useState } from "react";
 import Images from "./Images";
 import ImageSkeleton from "@/components/Skeletons/ImageSkeleton";
+import { ArrowLeft, X } from "lucide-react";
+import { useDispatch } from "react-redux";
+import { AppDispatch } from "@/store/store";
+import { closeMore, closeMoreImgs } from "@/store/BoardBGSlice";
 
 const ImagesPopUp = () => {
   const [images, setImages] = useState([]);
@@ -19,8 +23,7 @@ const ImagesPopUp = () => {
             per_page: 20,
           },
           headers: {
-            Authorization:
-              "Client-ID _uof60J_1T_CUCL2xBa9Wmr0_cCd4wuqMDOUJGXPrA0",
+            Authorization: `Client-ID ${import.meta.env.VITE_CLIENT_ID}`,
           },
         }
       );
@@ -47,19 +50,24 @@ const ImagesPopUp = () => {
   useEffect(() => {
     console.log(images);
   }, [images]);
+  const dispatch = useDispatch<AppDispatch>();
   if (error) {
-    <div className="px-2 z-[99900999] shadow-2xl h-[32rem] rounded-xl bg-[#282E33] absolute top-18 left-138 border-gray-700 border-2 w-[22.5rem] overflow-y-scroll custom-scrollbar text-textP font-charlie-text-r">
+    <div className="px-2 z-[99900999] shadow-2xl h-[32rem] bg-[#282E33] absolute top-18 left-138 border-gray-700 border-2 w-[22.5rem] overflow-y-scroll custom-scrollbar text-textP font-charlie-text-r">
       Sorry couldn't fetch images
     </div>;
   }
   return (
-    <div className="px-2 z-[99900999] shadow-2xl h-[32rem] rounded-xl bg-[#282E33] absolute top-18 left-138 border-gray-700 border-2 w-[22.5rem] overflow-y-scroll custom-scrollbar text-textP font-charlie-text-r">
+    <div className="px-2 z-[99900999] shadow-2xl h-[32rem] rounded bg-[#282E33] absolute top-18 left-138 border-gray-700 border-2 w-[22.5rem] overflow-y-scroll custom-scrollbar text-textP font-charlie-text-r">
+      <div className="flex items-center justify-between  pt-2">
+        <ArrowLeft onClick={()=>dispatch(closeMoreImgs())} />
+        <X onClick={()=>dispatch(closeMore())} />
+      </div>
       <h1 className="text-center my-4">
         Images from
         <a
           href={"https://unsplash.com/"}
           target="_blank"
-          className="text-blue-500"
+          className="text-blue-500 pl-0.5"
         >
           Unsplash
         </a>
@@ -76,7 +84,15 @@ const ImagesPopUp = () => {
             <ImageSkeleton />
           </div>
         ) : (
-          <Images ImgArray={images} />
+          <>
+            {images && images.length > 0 ? (
+              <Images ImgArray={images} />
+            ) : (
+              <h1 className="text-center mt-10 text-3xl font-charlie-display-sm">
+                Sorry No Images found
+              </h1>
+            )}
+          </>
         )}
       </div>
     </div>

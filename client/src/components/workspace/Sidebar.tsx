@@ -212,7 +212,7 @@ const Sidebar = ({ barOpen, setBarOpen }: Props) => {
                                 backgroundSize: "cover",
                                 backgroundPosition: "center",
                               }
-                            : { backgroundColor: board.cover }
+                            : { background: board.cover }
                         }
                       />
                       <span className="text-[#9FADBC] font-charlie-text-r text-md">

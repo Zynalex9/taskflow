@@ -44,7 +44,7 @@ const Board = () => {
         style={
           isImageUrl(board[0].cover)
             ? { backgroundImage: `url(${board[0].cover})`,backgroundSize:"cover",backgroundPosition:"center center" }
-            : {backgroundColor:board[0].cover}
+            : {background:board[0].cover}
         }
       >
         <BoardHeader />
