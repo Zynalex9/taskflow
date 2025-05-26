@@ -1,6 +1,7 @@
-import { changeSelectedImg } from "@/store/BoardBGSlice";
-import { AppDispatch } from "@/store/store";
-import { useDispatch } from "react-redux";
+import { changeSelectedImg, openMoreImgs } from "@/store/BoardBGSlice";
+import { AppDispatch, RootState } from "@/store/store";
+import { Check } from "lucide-react";
+import { useDispatch, useSelector } from "react-redux";
 
 const firstImages = [
   {
@@ -30,29 +31,40 @@ const firstImages = [
 ];
 
 const MoreImages = () => {
-const dispatch = useDispatch<AppDispatch>()
-    return (
+  const dispatch = useDispatch<AppDispatch>();
+  const {selectedImg} = useSelector((state:RootState)=>state.boardModalControll)
+  return (
     <div>
       <h1 className="text-sm text-center mb-2 font-charlie-display-sm text-textP">
         Board Backgrounds
       </h1>
       <div className="flex items-center justify-between text-textP font-charlie-text-r">
         <h1 className="text-md text-center mb-2">Photos</h1>
-        <button className=" px-2 py-1 rounded cursor-pointer items-center transition-colors duration-150 bg-[#B6C2CF]/20 hover:bg-[#B6C2CF]/10 shadow-2xl text-[#B3BFCC]">
+        <button
+          onClick={() => dispatch(openMoreImgs())}
+          className=" px-2 py-1 rounded cursor-pointer items-center transition-colors duration-150 bg-[#B6C2CF]/20 hover:bg-[#B6C2CF]/10 shadow-2xl text-[#B3BFCC]"
+        >
           See more
         </button>
       </div>
       <div className="flex items-center justify-center mt-4">
-      <div className="flex flex-wrap gap-2">
-        {firstImages.map((img) => (
-          <img
-            src={img.src}
-            alt={img.title}
-            onClick={() => dispatch(changeSelectedImg(img.src))}
-            className="h-14 w-21 rounded-sm object-cover"
-          />
-        ))}
-      </div>
+        <div className="flex flex-wrap gap-2">
+          {firstImages.map((img) => (
+            <div
+              onClick={() => dispatch(changeSelectedImg(img.src))}
+              style={{
+                backgroundImage: `url(${img.src})`,
+                backgroundPosition: "center center",
+                backgroundSize: "cover",
+              }}
+              className="h-14 w-21 rounded-sm object-cover flex items-center justify-center text-black"
+            >
+              <Check
+                className={`${img.src == selectedImg ? "block" : "hidden"}`}
+              />
+            </div>
+          ))}
+        </div>
       </div>
     </div>
   );

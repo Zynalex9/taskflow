@@ -24,6 +24,8 @@ import { fetchAllBoards } from "@/store/BoardSlice";
 import AddBoardModal from "./Boards/Single-Board/Add Board Modal/AddBoardModal";
 import { closeModal, openModal } from "@/store/BoardBGSlice";
 import ShowMore from "./Boards/Single-Board/Add Board Modal/ShowMore";
+import ColorsPopUp from "./Boards/Single-Board/Add Board Modal/ColorsPopUp";
+import ImagesPopUp from "./Boards/Single-Board/Add Board Modal/ImagesPopUp";
 interface Props {
   barOpen: boolean;
   setBarOpen: React.Dispatch<React.SetStateAction<boolean>>;
@@ -31,7 +33,7 @@ interface Props {
 const Sidebar = ({ barOpen, setBarOpen }: Props) => {
   const { workspace } = useSelector((state: RootState) => state.workspace);
   const { boards, loading } = useSelector((state: RootState) => state.boards);
-  const { showBoardModal,showMore } = useSelector(
+  const { showBoardModal,showMore,showMoreImgs,showMoreColors } = useSelector(
     (state: RootState) => state.boardModalControll
   );
   const workspaceName = workspace?.name;
@@ -248,6 +250,8 @@ const Sidebar = ({ barOpen, setBarOpen }: Props) => {
       </div>
       {showBoardModal ? <AddBoardModal /> : ""}
       {showMore && <ShowMore />}
+      {showMoreColors && <ColorsPopUp />}
+      {showMoreImgs && <ImagesPopUp />}
 
     </>
   );

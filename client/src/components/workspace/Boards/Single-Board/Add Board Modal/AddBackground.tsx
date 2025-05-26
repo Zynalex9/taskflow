@@ -5,9 +5,8 @@ import {
   openMore,
 } from "@/store/BoardBGSlice";
 import { AppDispatch, RootState } from "@/store/store";
-import { Ellipsis, X } from "lucide-react";
+import { Check, Ellipsis, X } from "lucide-react";
 import { useDispatch, useSelector } from "react-redux";
-
 
 const AddBackground = () => {
   const firstImages = [
@@ -47,19 +46,26 @@ const AddBackground = () => {
     },
   ];
   const dispatch = useDispatch<AppDispatch>();
-  const { showMore } = useSelector(
+  const { showMore, selectedImg, selectedColor } = useSelector(
     (state: RootState) => state.boardModalControll
   );
   return (
     <div className="space-y-4">
       <div className="flex gap-2">
         {firstImages.map((img) => (
-          <img
-            src={img.src}
-            alt={img.title}
+          <div
             onClick={() => dispatch(changeSelectedImg(img.src))}
-            className="h-9 w-18 rounded-sm object-cover"
-          />
+            style={{
+              backgroundImage: `url(${img.src})`,
+              backgroundPosition: "center center",
+              backgroundSize: "cover",
+            }}
+            className="h-9 w-19 rounded-sm object-cover flex items-center justify-center text-black"
+          >
+            <Check
+              className={`${img.src == selectedImg ? "block" : "hidden"}`}
+            />
+          </div>
         ))}
       </div>
       <div className="flex gap-2">
@@ -67,8 +73,12 @@ const AddBackground = () => {
           <div
             onClick={() => dispatch(changeSelectedColor(color.hex))}
             style={{ background: color.hex }}
-            className={`h-9 w-18 p-4 rounded-sm object-cover`}
-          ></div>
+            className={`h-9 w-18 p-4 rounded-sm object-cover cursor-pointer flex items-center justify-center text-black`}
+          >
+            <Check
+              className={`${color.hex == selectedColor ? "block" : "hidden"}`}
+            />
+          </div>
         ))}
         {showMore ? (
           <button

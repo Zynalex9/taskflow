@@ -1,0 +1,9 @@
+const ImagesPopUp = () => {
+  return (
+   <div className="z-[99900999] shadow-2xl h-[32rem] rounded-xl bg-[#282E33] absolute top-18 left-138 border-gray-700 border-2 w-[22.5rem] overflow-y-scroll custom-scrollbar text-textP font-charlie-text-r">
+      Lorem ipsum dolor sit amet, consectetur adipisicing elit. Ullam, quae consectetur reiciendis accusamus architecto quibusdam dignissimos porro voluptas necessitatibus delectus asperiores mollitia totam tempora, adipisci, sequi ipsum dicta! Omnis repudiandae sunt ratione harum, illo pariatur eaque itaque voluptate consequuntur fuga quasi architecto corporis perferendis maxime modi consequatur rerum repellendus praesentium adipisci non sed explicabo nisi. Totam pariatur, vel asperiores harum praesentium eligendi molestias impedit iste iusto, facere libero corporis aut natus! Velit, ducimus, sunt ab sit voluptate perferendis mollitia deleniti magnam doloremque libero molestias! Laudantium earum magni ab velit minus voluptates eveniet natus asperiores reiciendis. Ducimus animi dolorem quibusdam architecto, ullam amet nulla, nihil minus quia quam nobis, earum numquam nesciunt deserunt hic doloribus alias. Dolore debitis, blanditiis aliquam similique est cupiditate id obcaecati adipisci eaque iste eligendi, quae cum animi! Provident eligendi minus minima nihil quam iusto esse ipsum aliquam sunt magni corporis tempore excepturi eveniet dolorem quia expedita illum accusantium ullam omnis iste odio, corrupti voluptatum nulla! Earum provident alias placeat consequatur est rerum fugiat numquam. Qui minima nostrum dolor perferendis ratione illo. Provident sint incidunt rem aliquid deserunt perferendis natus ducimus. Quis repudiandae reiciendis harum vitae, molestias fugit aspernatur dolorum? Fuga dicta explicabo atque tenetur ipsa. Placeat!
+    </div> 
+  )
+}
+
+export default ImagesPopUp

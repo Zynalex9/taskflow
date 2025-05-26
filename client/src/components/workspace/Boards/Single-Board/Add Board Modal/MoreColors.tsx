@@ -1,6 +1,7 @@
-import { changeSelectedColor } from "@/store/BoardBGSlice";
-import { AppDispatch } from "@/store/store";
-import { useDispatch } from "react-redux";
+import { changeSelectedColor, openMoreColors } from "@/store/BoardBGSlice";
+import { AppDispatch, RootState } from "@/store/store";
+import { Check } from "lucide-react";
+import { useDispatch, useSelector } from "react-redux";
 
 const firstColors = [
   {
@@ -30,12 +31,17 @@ const firstColors = [
 ];
 const MoreColors = () => {
   const dispatch = useDispatch<AppDispatch>();
-
+  const { selectedColor } = useSelector(
+    (state: RootState) => state.boardModalControll
+  );
   return (
     <div>
       <div className="flex items-center justify-between text-textP font-charlie-text-r">
         <h1 className="text-md text-center mb-2">Colors</h1>
-        <button className=" px-2 py-1 rounded cursor-pointer items-center transition-colors duration-150 bg-[#B6C2CF]/20 hover:bg-[#B6C2CF]/10 shadow-2xl text-[#B3BFCC]">
+        <button
+          onClick={() => dispatch(openMoreColors())}
+          className=" px-2 py-1 rounded cursor-pointer items-center transition-colors duration-150 bg-[#B6C2CF]/20 hover:bg-[#B6C2CF]/10 shadow-2xl text-[#B3BFCC]"
+        >
           See more
         </button>
       </div>
@@ -45,8 +51,12 @@ const MoreColors = () => {
             <div
               onClick={() => dispatch(changeSelectedColor(color.hex))}
               style={{ background: color.hex }}
-              className={`h-14 w-21 p-4 rounded-sm object-cover`}
-            ></div>
+              className={`h-14 w-21 p-4 rounded-sm object-cover flex items-center justify-center text-black`}
+            >
+              <Check
+                className={`${color.hex == selectedColor ? "block" : "hidden"}`}
+              />
+            </div>
           ))}
         </div>
       </div>
