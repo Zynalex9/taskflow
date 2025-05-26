@@ -23,6 +23,7 @@ import { useEffect} from "react";
 import { fetchAllBoards } from "@/store/BoardSlice";
 import AddBoardModal from "./Boards/Single-Board/Add Board Modal/AddBoardModal";
 import { closeModal, openModal } from "@/store/BoardBGSlice";
+import ShowMore from "./Boards/Single-Board/Add Board Modal/ShowMore";
 interface Props {
   barOpen: boolean;
   setBarOpen: React.Dispatch<React.SetStateAction<boolean>>;
@@ -30,7 +31,7 @@ interface Props {
 const Sidebar = ({ barOpen, setBarOpen }: Props) => {
   const { workspace } = useSelector((state: RootState) => state.workspace);
   const { boards, loading } = useSelector((state: RootState) => state.boards);
-  const { showBoardModal } = useSelector(
+  const { showBoardModal,showMore } = useSelector(
     (state: RootState) => state.boardModalControll
   );
   const workspaceName = workspace?.name;
@@ -246,6 +247,8 @@ const Sidebar = ({ barOpen, setBarOpen }: Props) => {
         </button>
       </div>
       {showBoardModal ? <AddBoardModal /> : ""}
+      {showMore && <ShowMore />}
+
     </>
   );
 };

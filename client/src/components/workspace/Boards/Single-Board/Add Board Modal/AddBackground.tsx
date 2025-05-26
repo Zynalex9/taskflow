@@ -8,6 +8,7 @@ import { AppDispatch, RootState } from "@/store/store";
 import { Ellipsis, X } from "lucide-react";
 import { useDispatch, useSelector } from "react-redux";
 
+
 const AddBackground = () => {
   const firstImages = [
     {
@@ -74,14 +75,14 @@ const AddBackground = () => {
             className="bg-gray-500/60 rounded cursor-pointer hover:bg-gray-500 px-1 py-0.5"
             onClick={() => dispatch(closeMore())}
           >
-            <X size={16}/>
+            <X size={16} />
           </button>
         ) : (
           <button
             className="bg-gray-500/60 rounded cursor-pointer hover:bg-gray-500 px-1 py-0.5"
             onClick={() => dispatch(openMore())}
           >
-            <Ellipsis size={16}/>
+            <Ellipsis size={16} />
           </button>
         )}
       </div>
