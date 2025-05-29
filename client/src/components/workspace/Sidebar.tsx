@@ -19,13 +19,14 @@ import { AppDispatch, RootState } from "../../store/store";
 import { Link } from "react-router-dom";
 import { isImageUrl } from "../../utils/helper";
 import { Skeleton } from "../ui/skeleton";
-import { useEffect} from "react";
+import { useEffect } from "react";
 import { fetchAllBoards } from "@/store/BoardSlice";
 import AddBoardModal from "./Boards/Single-Board/Add Board Modal/AddBoardModal";
 import { closeModal, openModal } from "@/store/BoardBGSlice";
 import ShowMore from "./Boards/Single-Board/Add Board Modal/ShowMore";
 import ColorsPopUp from "./Boards/Single-Board/Add Board Modal/ColorsPopUp";
 import ImagesPopUp from "./Boards/Single-Board/Add Board Modal/ImagesPopUp";
+import { useGetAllBoardsQuery } from "@/store/myApi";
 interface Props {
   barOpen: boolean;
   setBarOpen: React.Dispatch<React.SetStateAction<boolean>>;
@@ -33,9 +34,10 @@ interface Props {
 const Sidebar = ({ barOpen, setBarOpen }: Props) => {
   const { workspace } = useSelector((state: RootState) => state.workspace);
   const { boards, loading } = useSelector((state: RootState) => state.boards);
-  const { showBoardModal,showMore,showMoreImgs,showMoreColors } = useSelector(
-    (state: RootState) => state.boardModalControll
-  );
+  const { showBoardModal, showMore, showMoreImgs, showMoreColors } =
+    useSelector((state: RootState) => state.boardModalControll);
+  const { data } = useGetAllBoardsQuery(workspace._id);
+  console.log("DATATATATAAT", data?.data);
   const workspaceName = workspace?.name;
   const dispatch = useDispatch<AppDispatch>();
   useEffect(() => {
@@ -199,7 +201,7 @@ const Sidebar = ({ barOpen, setBarOpen }: Props) => {
               ))
             : boards?.yourBoards.map((board) => (
                 <Link
-                key={board._id}
+                  key={board._id}
                   to={`/user/w/workspace/${workspace?._id}/board/${board._id}`}
                 >
                   <div className="flex items-center justify-between hover:bg-gray-700 p-2 rounded cursor-pointer ">
@@ -253,7 +255,6 @@ const Sidebar = ({ barOpen, setBarOpen }: Props) => {
       {showMore && <ShowMore />}
       {showMoreColors && <ColorsPopUp />}
       {showMoreImgs && <ImagesPopUp />}
-
     </>
   );
 };

@@ -7,6 +7,7 @@ import navbarReducer from "./NavBarSlice";
 import forgetReducer from "./ForgetSlice";
 import BoardBackgroundReducer from "./BoardBGSlice";
 import { boardsReducer, boardReducer } from "./BoardSlice";
+import { myApi } from "./myApi";
 const store = configureStore({
   reducer: {
     theme: themeReducer,
@@ -18,7 +19,10 @@ const store = configureStore({
     navControl: navbarReducer,
     resetPassword: forgetReducer,
     boardModalControll: BoardBackgroundReducer,
+    [myApi.reducerPath]: myApi.reducer,
   },
+  middleware: (getDefaultMiddleware) =>
+    getDefaultMiddleware().concat(myApi.middleware),
 });
 export type RootState = ReturnType<typeof store.getState>;
 export type AppDispatch = typeof store.dispatch;

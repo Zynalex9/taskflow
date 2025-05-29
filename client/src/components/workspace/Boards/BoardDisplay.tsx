@@ -1,13 +1,17 @@
-import {  useSelector } from "react-redux";
+import { useSelector } from "react-redux";
 import { RootState } from "../../../store/store";
 import { isImageUrl } from "../../../utils/helper";
 import { Link } from "react-router-dom";
 import { Skeleton } from "@/components/ui/skeleton";
+import { myApi } from "../../../store/myApi";
 
 const BoardDisplay = () => {
   const { workspace } = useSelector((state: RootState) => state.workspace);
   const { boards, loading } = useSelector((state: RootState) => state.boards);
-
+  const bboards = useSelector((state: RootState) =>
+    myApi.endpoints.getAllBoards.select(workspace._id)(state)
+  )
+  console.log("bobobob", bboards.data.data);
   if (loading)
     return (
       <div className="py-8 flex flex-wrap items-center justify-center gap-4">
