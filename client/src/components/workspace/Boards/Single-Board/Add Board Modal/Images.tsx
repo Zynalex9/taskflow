@@ -1,7 +1,8 @@
+import { forwardRef } from 'react';
 import { changeSelectedImg } from "@/store/BoardBGSlice";
 import { useDispatch } from "react-redux";
 
-interface IProps {
+export interface ImageProps {
   id: string;
   urls: {
     full: string;
@@ -14,25 +15,28 @@ interface IProps {
 }
 
 interface Data {
-  ImgArray: IProps[];
+  image: ImageProps;
 }
 
-const Images = ({ ImgArray }: Data) => {
+const Images = forwardRef<HTMLDivElement, Data>(({ image }, ref) => {
   const dispatch = useDispatch();
+  
   return (
-    <div className="grid grid-cols-2 gap-2 p-1 my-4">
-      {ImgArray.map((i) => (
-        <div key={i.id} className="aspect-square overflow-hidden rounded">
-          <img
-            onClick={() => dispatch(changeSelectedImg(i.urls.full))}
-            src={i.urls.small}
-            alt={i.alt_description || "Unsplash image"}
-            className="h-full w-full object-cover"
-          />
-        </div>
-      ))}
+    <div 
+      ref={ref}
+      key={image.id} 
+      className="aspect-square overflow-hidden rounded"
+    >
+      <img
+        onClick={() => dispatch(changeSelectedImg(image.urls.full))}
+        src={image.urls.small}
+        alt={image.alt_description || "Unsplash image"}
+        className="h-full w-full object-cover"
+      />
     </div>
   );
-};
+});
+
+Images.displayName = 'Images';
 
 export default Images;

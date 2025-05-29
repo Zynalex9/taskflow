@@ -21,15 +21,15 @@ const Table = () => {
     try {
       setLoading(true)
       const response = await axios.get(
-        `http://localhost:3000/api/workspace/${workspace?._id}/get-table-data`,
+        `${import.meta.env.VITE_BASE_URL}/api/workspace/${workspace?._id}/get-table-data`,
         { withCredentials: true }
       );
       if (response.data.success) {
         console.log(response.data);
         setTableData(response.data.data);
       }
-    } catch (error) {
-      toast.error("Error displaying table", { theme: "dark" });
+    } catch (error:any) {
+      toast.error(error?.response.data.message, { theme: "dark" });
     }finally{
       setLoading(false)
     }
@@ -111,7 +111,7 @@ const Table = () => {
   ) : (
     <tr>
       <td colSpan={6} className="p-3 text-center text-gray-500 italic">
-        No Data Found
+        No Table Found
       </td>
     </tr>
   )}

@@ -35,7 +35,7 @@ const WorkspaceLayout = () => {
         <div className={`h-full ${barOpen? "bg-fprimary":"bg-[#535659]"}`}>
           <Sidebar barOpen={barOpen} setBarOpen={setBarOpen}/>
         </div>
-        <div className="w-full h-full overflow-y-auto pr-2 custom-scrollbar">
+        <div className="w-full h-full overflow-y-auto custom-scrollbar">
           <Outlet />
         </div>
       </div>

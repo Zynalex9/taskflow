@@ -48,7 +48,7 @@ const Board = () => {
         }
       >
         <BoardHeader />
-        <div className="p-8 w-full overflow-auto custom-scrollbar min-h-[79vh] ">
+        <div className="p-8 w-full min-h-[79vh] ">
           {board?.map((data) => (
             <List key={data._id} list={data.lists} />
           ))}
