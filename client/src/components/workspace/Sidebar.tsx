@@ -199,6 +199,7 @@ const Sidebar = ({ barOpen, setBarOpen }: Props) => {
               ))
             : boards?.yourBoards.map((board) => (
                 <Link
+                key={board._id}
                   to={`/user/w/workspace/${workspace?._id}/board/${board._id}`}
                 >
                   <div className="flex items-center justify-between hover:bg-gray-700 p-2 rounded cursor-pointer ">
