@@ -33,11 +33,11 @@ interface Props {
 }
 const Sidebar = ({ barOpen, setBarOpen }: Props) => {
   const { workspace } = useSelector((state: RootState) => state.workspace);
-  const { boards, loading } = useSelector((state: RootState) => state.boards);
   const { showBoardModal, showMore, showMoreImgs, showMoreColors } =
     useSelector((state: RootState) => state.boardModalControll);
-  const { data } = useGetAllBoardsQuery(workspace._id);
-  console.log("DATATATATAAT", data?.data);
+  const { data, isLoading } = useGetAllBoardsQuery(workspace?._id ?? "", {
+    skip: !workspace?._id,
+  });
   const workspaceName = workspace?.name;
   const dispatch = useDispatch<AppDispatch>();
   useEffect(() => {
@@ -187,7 +187,7 @@ const Sidebar = ({ barOpen, setBarOpen }: Props) => {
               </button>
             )}
           </div>
-          {loading
+          {isLoading
             ? [...Array(4)].map((_, i) => (
                 <div
                   key={i}
@@ -199,7 +199,7 @@ const Sidebar = ({ barOpen, setBarOpen }: Props) => {
                   </div>
                 </div>
               ))
-            : boards?.yourBoards.map((board) => (
+            : data?.data.yourBoards.map((board) => (
                 <Link
                   key={board._id}
                   to={`/user/w/workspace/${workspace?._id}/board/${board._id}`}

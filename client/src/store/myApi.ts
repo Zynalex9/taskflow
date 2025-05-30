@@ -1,4 +1,4 @@
-import { IBoard, IBoardResponse } from "@/types/functionalites.types";
+import {  IBoardResponse, ISingleBoardResponse } from "@/types/functionalites.types";
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 export const myApi = createApi({
   reducerPath: "boardApis",
@@ -10,7 +10,7 @@ export const myApi = createApi({
     getAllBoards: builder.query<IBoardResponse, string>({
       query: (workspaceId) => `/api/board/${workspaceId}/get-boards`,
     }),
-    getSingleBoard: builder.query<IBoard, string>({
+    getSingleBoard: builder.query<ISingleBoardResponse, string>({
       query: (boardId) => `/api/board/single/${boardId}`,
     }),
   }),

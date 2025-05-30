@@ -112,3 +112,9 @@ export interface IBoardResponse {
   message: string;
   success: boolean;
 }
+export interface ISingleBoardResponse {
+  statusCode: number;
+  data:IBoard[]
+  message: string;
+  success: boolean;
+}

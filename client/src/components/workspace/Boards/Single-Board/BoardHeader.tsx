@@ -1,5 +1,3 @@
-import { useSelector } from "react-redux";
-import { RootState } from "../../../../store/store";
 import {
   AlignVerticalJustifyStartIcon,
   CloudLightning,
@@ -12,14 +10,13 @@ import {
 import { useState } from "react";
 import RightSideBar from "./RightSideBar";
 
-const BoardHeader = () => {
-  const { board } = useSelector((state: RootState) => state.board);
+const BoardHeader = ({ title }: { title?: string }) => {
+  
   const [openSidebar, setOpenSideBar] = useState(false);
-  if (board)
     return (
       <div className="p-4 min-w-full bg-white/5 font-charlie-display-sm backdrop-blur-3xl shadow-md flex items-center justify-between">
         <div className="flex gap-2 items-center text-[#172B4D]">
-          <h1 className="text-lg font-bold ">{board[0].title}</h1>
+          <h1 className="text-lg font-bold ">{title}</h1>
           <Star size={18} />
           <AlignVerticalJustifyStartIcon size={18} />
         </div>
@@ -31,7 +28,10 @@ const BoardHeader = () => {
             Filters
           </h1>
           <Tally1 />
-          <Ellipsis className="cursor-pointer" onClick={()=>setOpenSideBar(true)}/>
+          <Ellipsis
+            className="cursor-pointer"
+            onClick={() => setOpenSideBar(true)}
+          />
         </div>
         <RightSideBar
           setOpenSideBar={setOpenSideBar}
