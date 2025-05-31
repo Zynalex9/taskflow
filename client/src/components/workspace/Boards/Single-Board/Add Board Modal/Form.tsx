@@ -61,6 +61,7 @@ const Form = () => {
             type="text"
             className="block p-2 bg-gray-900/50 text-textP w-full border-1 border-gray-700 focus:outline-1"
             placeholder="Enter board title"
+            autoFocus
             {...register("title", {
               required: "Please enter a title",
             })}

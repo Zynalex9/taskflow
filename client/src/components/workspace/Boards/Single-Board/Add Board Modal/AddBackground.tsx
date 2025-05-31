@@ -52,8 +52,9 @@ const AddBackground = () => {
   return (
     <div className="space-y-4">
       <div className="flex gap-2">
-        {firstImages.map((img) => (
+        {firstImages.map((img,idx) => (
           <div
+          key={idx}
             onClick={() => dispatch(changeSelectedImg(img.src))}
             style={{
               backgroundImage: `url(${img.src})`,
@@ -69,8 +70,9 @@ const AddBackground = () => {
         ))}
       </div>
       <div className="flex gap-2">
-        {firstColors.map((color) => (
+        {firstColors.map((color, idx) => (
           <div
+            key={idx}
             onClick={() => dispatch(changeSelectedColor(color.hex))}
             style={{ background: color.hex }}
             className={`h-9 w-18 p-4 rounded-sm object-cover cursor-pointer flex items-center justify-center text-black`}
