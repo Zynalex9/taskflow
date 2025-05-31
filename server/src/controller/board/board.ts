@@ -28,7 +28,7 @@ export const createBoard = async (req: Request, res: Response) => {
     const {
       title,
       visibility,
-      coverFromBody,
+      cover,
       backgroundOptions,
       workspaceId,
       memberId,
@@ -92,8 +92,8 @@ export const createBoard = async (req: Request, res: Response) => {
       };
     });
     let boardCover;
-    if (coverFromBody) {
-      boardCover = coverFromBody;
+    if (cover) {
+      boardCover = cover;
     } else if (req.file) {
       const localPath = req.file.path;
       const response = await UploadOnCloudinary({

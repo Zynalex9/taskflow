@@ -1,12 +1,14 @@
-import { useSelector } from "react-redux";
-import { RootState } from "../../../store/store";
+import { useDispatch, useSelector } from "react-redux";
+import { AppDispatch, RootState } from "../../../store/store";
 import { isImageUrl } from "../../../utils/helper";
 import { Link } from "react-router-dom";
 import { Skeleton } from "@/components/ui/skeleton";
 import { myApi } from "../../../store/myApi";
+import { openModal } from "@/store/BoardBGSlice";
 const BoardDisplay = () => {
   const { workspace } = useSelector((state: RootState) => state.workspace);
   const { loading } = useSelector((state: RootState) => state.boards);
+  const dispatch = useDispatch<AppDispatch>()
   const bboards = useSelector((state: RootState) =>
     myApi.endpoints.getAllBoards.select(workspace?._id ?? "")(state)
   );
@@ -35,7 +37,9 @@ const BoardDisplay = () => {
   return (
     <div className="py-8 flex flex-wrap items-center justify-center gap-4">
       <div className="bg-[#333C43] aspect-video flex items-center justify-center text-center font-charlie-text-sb text-textP text-2xl w-[30%] rounded-xl shadow-2xl transition-colors duration-150 hover:bg-[#333C43]/50">
-        <h2>Create new board</h2>
+        <button onClick={()=>dispatch(openModal())}>
+          <h2>Create new board</h2>
+        </button>
       </div>
       {bboards?.data?.data?.yourBoards?.map((board) => (
         <Link

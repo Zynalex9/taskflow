@@ -1,3 +1,4 @@
-export const isImageUrl = (cover: string): boolean => {
-    return cover.startsWith("http");
-  };
+export const isImageUrl = (cover: string | undefined): boolean => {
+  if (!cover) return false;
+  return cover.startsWith("http");
+};

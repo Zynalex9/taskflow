@@ -1,16 +1,15 @@
 import { closeModal } from "@/store/BoardBGSlice";
-import { fetchAllBoards } from "@/store/BoardSlice";
+import { useAddBoardMutation } from "@/store/myApi";
 import { AppDispatch, RootState } from "@/store/store";
-import axios from "axios";
 import { Asterisk } from "lucide-react";
 import { useForm } from "react-hook-form";
 import { useDispatch, useSelector } from "react-redux";
-import { useNavigate } from "react-router-dom";
 import { toast, ToastContainer } from "react-toastify";
 interface IData {
   title: string;
 }
 const Form = () => {
+  const [addBoard] = useAddBoardMutation()
   const { workspace } = useSelector((state: RootState) => state.workspace);
   const { selectedColor, selectedImg } = useSelector(
     (state: RootState) => state.boardModalControll
@@ -22,9 +21,9 @@ const Form = () => {
     formState: { isSubmitting, errors },
     watch,
   } = useForm<IData>();
-  const navigator = useNavigate()
   const dispatch = useDispatch<AppDispatch>();
   const onSubmit = async (data: IData) => {
+    console.log(data)
     const newData = {
       ...data,
       coverFromBody: selectedColor ? selectedColor : selectedImg,
@@ -33,17 +32,8 @@ const Form = () => {
       visibility: "workspace",
     };
     try {
-      const response = await axios.post(
-        `${import.meta.env.VITE_BASE_URL}/api/board/create-board`,
-        newData,
-        { withCredentials: true }
-      );
-      toast.success(response.data.message, { theme: "dark" });
-      if (workspace) {
-        dispatch(fetchAllBoards(workspace._id));
-        dispatch(closeModal())
-        navigator(`/user/w/workspace/${workspace._id}/board/${response.data.newBoard._id}`)
-      }
+      await addBoard(newData);
+      dispatch(closeModal());
     } catch (error: any) {
       toast.error(error.response.data.message, { theme: "dark" });
     }
@@ -61,6 +51,7 @@ const Form = () => {
             type="text"
             className="block p-2 bg-gray-900/50 text-textP w-full border-1 border-gray-700 focus:outline-1"
             placeholder="Enter board title"
+            autoFocus
             {...register("title", {
               required: "Please enter a title",
             })}
