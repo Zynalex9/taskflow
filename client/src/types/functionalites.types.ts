@@ -8,7 +8,7 @@ export interface IComment {
 export interface IChecklistItems {
   _id: string;
   title: string;
-  completed: boolean
+  completed: boolean;
   createdBy: string;
   assignedTo: string[];
 }
@@ -73,10 +73,12 @@ export interface IList {
   _id: string;
   name: string;
   color: string;
-  cards: ICard[];
+  cards: ICard[] | [];
   createdBy: string;
   position: number;
   board: string;
+  createdAt: string;
+  updatedAt: string;
   isArchived: boolean;
   __v: number;
 }
@@ -114,7 +116,12 @@ export interface IBoardResponse {
 }
 export interface ISingleBoardResponse {
   statusCode: number;
-  data:IBoard[]
+  data: IBoard[];
   message: string;
   success: boolean;
+}
+export interface IListResponse {
+  message: string;
+  success: boolean;
+  newList: IList;
 }

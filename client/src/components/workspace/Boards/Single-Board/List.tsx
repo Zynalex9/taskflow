@@ -7,12 +7,12 @@ import AddList from "./AddList";
 interface ListProps {
   list: IList[] | undefined;
 }
+
 const List: React.FC<ListProps> = ({ list }) => {
-  console.log("l", list);
   return (
-    <div className="flex gap-4 w-max min-w-full"> 
-      {list && list?.length > 0
-        ? list?.map((singleList) => (
+    <div className="flex gap-4 w-full items-stretch">
+      {list?.length
+        ? list.map((singleList) => (
             <div
               key={singleList._id}
               className="bg-[#101204] w-[300px] p-4 text-textP rounded-xl shadow-lg shadow-black/80 flex-shrink-0"
@@ -30,7 +30,9 @@ const List: React.FC<ListProps> = ({ list }) => {
               </button>
             </div>
           ))
-        : <AddList/>}
+        : null}
+
+      <AddList />
     </div>
   );
 };

@@ -4,7 +4,6 @@ import BoardHeader from "./BoardHeader";
 import { isImageUrl } from "../../../../utils/helper";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useGetSingleBoardQuery } from "@/store/myApi";
-import { IBoard } from "@/types/functionalites.types";
 
 const Board = () => {
   const { boardId } = useParams();
@@ -25,10 +24,10 @@ const Board = () => {
     : {};
 
   return (
-    <div className="w-full h-[89.8vh]" style={cover ? backgroundStyle : {}}>
+    <div className="w-full h-[89.8vh] " style={cover ? backgroundStyle : {}}>
       <BoardHeader title={data?.data[0].title} />
 
-      <div className="p-8 w-full min-h-[79vh]">
+      <div className="p-8 w-full min-h-[79vh] overflow-x-auto custom-scrollbar">
         {isLoading ? (
           <div className="flex gap-4 w-max min-w-full mt-4">
             {[...Array(3)].map((_, i) => (
@@ -45,9 +44,7 @@ const Board = () => {
             ))}
           </div>
         ) : (
-          data?.data.map((data: IBoard) => (
-            <List key={data._id} list={data?.lists} />
-          ))
+              <List list={data?.data[0].lists} />
         )}
       </div>
     </div>
