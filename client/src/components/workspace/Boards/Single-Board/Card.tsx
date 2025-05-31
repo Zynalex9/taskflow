@@ -18,7 +18,7 @@ const Card: React.FC<IProps> = ({ card }) => {
   const background = location.state?.background;
   console.log(background);
   return (
-    <HoverCard>
+    <HoverCard>  
       <HoverCardTrigger>
         <div
           onClick={() => {

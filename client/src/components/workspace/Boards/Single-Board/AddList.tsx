@@ -18,9 +18,8 @@ const AddList = () => {
         boardId,
       };
       try {
-        await addList(body).unwrap();
         reset();
-        setIsAddList(false);
+        await addList(body).unwrap();
       } catch (error: any) {
         console.log();
         toast.error(error.data.message, { theme: "dark" });
@@ -32,7 +31,7 @@ const AddList = () => {
     <div
       className={`${
         isAddList ? "h-24" : "h-10"
-      } font-charlie-display-sm backdrop-blur-3xl shadow-xl shadow-gray-400 hover:bg-gray-50/30 bg-gray-50/50 w-56 rounded p-1.5`}
+      } font-charlie-display-sm backdrop-blur-3xl shadow-xl shadow-gray-400 hover:bg-gray-50/30 bg-transparent w-56 rounded-lg p-1.5`}
     >
       {isAddList ? (
         <form

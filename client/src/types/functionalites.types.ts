@@ -57,7 +57,7 @@ export interface ICard {
   endDate: string;
   createdBy: string;
   members: IUser[];
-  list: IList;
+  list: IList | string;
   comments: IComment[];
   labels: ILabel[];
   cover: string;
@@ -124,4 +124,9 @@ export interface IListResponse {
   message: string;
   success: boolean;
   newList: IList;
+}
+export interface ICardResponse {
+  message: string;
+  success: boolean;
+  newCard: ICard;
 }

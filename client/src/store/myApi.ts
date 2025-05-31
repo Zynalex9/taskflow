@@ -1,6 +1,8 @@
 import {
   IBoard,
   IBoardResponse,
+  ICard,
+  ICardResponse,
   IListResponse,
   ISingleBoardResponse,
 } from "@/types/functionalites.types";
@@ -90,62 +92,136 @@ export const myApi = createApi({
         }
       },
     }),
-    addList: builder.mutation<
-      IListResponse,
-      { boardId: string; name: string }
-    >({
-      query: (newList) => ({
-        url: "/api/list/create-list",
-        method: "POST",
-        body: newList,
-      }),
-      async onQueryStarted(newList, { dispatch, queryFulfilled }) {
-        const patchResult = dispatch(
-          myApi.util.updateQueryData(
-            "getSingleBoard",
-            newList.boardId,
-            (draft) => {
-              if (draft.data[0]) {
-                draft.data[0].lists.push({
-                  _id: "temp-list-id",
-                  name: newList.name,
-                  board: newList.boardId,
-                  color: "",
-                  cards: [],
-                  createdAt: new Date().toISOString(),
-                  updatedAt: new Date().toISOString(),
-                  __v: 0,
-                  position: 0,
-                  createdBy: "temp-id",
-                  isArchived: false,
-                });
-              }
-            }
-          )
-        );
-        try {
-          const { data } = await queryFulfilled;
-          myApi.util.updateQueryData(
-            "getSingleBoard",
-            newList.boardId,
-            (draft) => {
-              if (draft.data[0].lists) {
-                const tempIndex = draft.data[0].lists.findIndex(
-                  (l) => l._id === "temp-list-id"
-                );
-                if (tempIndex !== -1) {
-                  draft.data[0].lists[tempIndex] = data.newList;
-                } else {
-                  draft.data[0].lists.push(data.newList);
+    addList: builder.mutation<IListResponse, { boardId: string; name: string }>(
+      {
+        query: (newList) => ({
+          url: "/api/list/create-list",
+          method: "POST",
+          body: newList,
+        }),
+        async onQueryStarted(newList, { dispatch, queryFulfilled }) {
+          const patchResult = dispatch(
+            myApi.util.updateQueryData(
+              "getSingleBoard",
+              newList.boardId,
+              (draft) => {
+                if (draft.data[0]) {
+                  draft.data[0].lists.push({
+                    _id: "temp-list-id",
+                    name: newList.name,
+                    board: newList.boardId,
+                    color: "",
+                    cards: [] as ICard[],
+                    createdAt: new Date().toISOString(),
+                    updatedAt: new Date().toISOString(),
+                    __v: 0,
+                    position: 0,
+                    createdBy: "temp-id",
+                    isArchived: false,
+                  });
                 }
               }
-            }
+            )
           );
-        } catch (error) {
-          patchResult.undo();
+          try {
+            const { data } = await queryFulfilled;
+            dispatch(
+            myApi.util.updateQueryData(
+              "getSingleBoard",
+              newList.boardId,
+              (draft) => {
+                if (draft.data[0].lists) {
+                  const tempIndex = draft.data[0].lists.findIndex(
+                    (l) => l._id === "temp-list-id"
+                  );
+                  if (tempIndex !== -1) {
+                    draft.data[0].lists[tempIndex] = data.newList;
+                  } else {
+                    draft.data[0].lists.push(data.newList);
+                  }
+                }
+              }
+            ));
+          } catch (error) {
+            patchResult.undo();
+          }
+        },
+      }
+    ),
+addCard: builder.mutation<
+  ICardResponse,
+  { boardId: string; listId: string; name: string }
+>({
+  query: (newCardParams) => ({
+    url: "/api/workspace/create-card",
+    method: "POST",
+    body: newCardParams,
+  }),
+
+  async onQueryStarted(newCardParams, { dispatch, queryFulfilled }) {
+    const patchResult = dispatch(
+      myApi.util.updateQueryData(
+        "getSingleBoard",
+        newCardParams.boardId,
+        (draft) => {
+          const list = draft.data[0].lists.find(
+            (l) => l._id === newCardParams.listId
+          );
+          if (list) {
+            (list.cards as ICard[]).push({
+              _id: "temp-card-id",
+              name: newCardParams.name,
+              description: "",
+              endDate: new Date().toISOString(),
+              createdBy: "6831e098d6f0ccbee9895831", 
+              members: [],
+              list: newCardParams.listId,
+              comments: [],
+              labels: [],
+              cover: "#000000",
+              priority: "",
+              checklist: [],
+              checked: false,
+              attachments: [],
+              position: list.cards.length, 
+              __v: 0,
+            });
+          }
         }
-      },
-    }),
+      )
+    );
+
+    try {
+      const { data } = await queryFulfilled;
+      const newCard = data.newCard;
+
+      dispatch(
+        myApi.util.updateQueryData(
+          "getSingleBoard",
+          newCardParams.boardId,
+          (draft) => {
+            const list = draft.data[0].lists.find(
+              (l) => l._id === (typeof newCard.list === "string" ? newCard.list : newCard.list._id)
+            );
+            if (list) {
+              const tempIndex = (list.cards as ICard[]).findIndex(
+                (c) => c._id === "temp-card-id"
+              );
+              if (tempIndex !== -1) {
+                (list.cards as ICard[])[tempIndex] = newCard;
+              } else {
+                (list.cards as ICard[]).push(newCard);
+              }
+            }
+          }
+        )
+      );
+    } catch (error) {
+      patchResult.undo();
+    }
+  },
+}),
+
   }),
 });
 
@@ -153,5 +229,6 @@ export const {
   useGetAllBoardsQuery,
   useGetSingleBoardQuery,
   useAddBoardMutation,
-  useAddListMutation
+  useAddListMutation,
+  useAddCardMutation
 } = myApi;
