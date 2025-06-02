@@ -18,6 +18,7 @@ import {
 import { asyncHandler } from "../../utils/asyncHandler";
 import ApiResponse from "../../utils/ApiResponse";
 import { redisClient } from "../..";
+import { getIO } from "../../socket";
 export const createList = async (req: Request, res: Response) => {
   try {
     const { name, boardId } = req.body;
@@ -58,7 +59,8 @@ export const createList = async (req: Request, res: Response) => {
       (member) => member.user._id.toString() === userId.toString()
     );
     const isUserBoardCreator = board.createdBy.toString() === userId.toString();
-    const isUserWorkspaceCreator = workspace.createdBy.toString() === userId.toString();
+    const isUserWorkspaceCreator =
+      workspace.createdBy.toString() === userId.toString();
     const isAdminMember = isBoardAdmin && isBoardAdmin.role === "admin";
 
     if (!isAdminMember && !isUserBoardCreator && !isUserWorkspaceCreator) {
@@ -85,6 +87,8 @@ export const createList = async (req: Request, res: Response) => {
       $push: { lists: newList._id },
     });
     await redisClient.del(`lists:${boardId}:${userId}`);
+    const io = getIO();
+    io.to(board.workspace.toString()).emit("listCreated", newList);
     res.status(201).json({
       message: "List created successfully",
       success: true,

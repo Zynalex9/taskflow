@@ -26,67 +26,63 @@ export const myApi = createApi({
       query: (boardId) => `/api/board/single/${boardId}`,
     }),
     addBoard: builder.mutation({
-  query: (newBoard) => ({
-    url: `/api/board/create-board`,
-    method: "POST",
-    body: newBoard,
-  }),
-  async onQueryStarted(newBoard, { dispatch, queryFulfilled }) {
-    const tempId = `temp-${Date.now()}`;
-    
-    // Optimistic update
-    const patchResult = dispatch(
-      myApi.util.updateQueryData(
-        "getAllBoards",
-        newBoard.workspaceId,
-        (draft) => {
-          draft.data.yourBoards.push({
-            ...newBoard,
-            _id: tempId,
-            lists: [],
-            favourite: false,
-            createdAt: new Date().toISOString(),
-            updatedAt: new Date().toISOString(),
-            __v: 0,
-          } as IBoard);
+      query: (newBoard) => ({
+        url: `/api/board/create-board`,
+        method: "POST",
+        body: newBoard,
+      }),
+      async onQueryStarted(newBoard, { dispatch, queryFulfilled }) {
+        const tempId = `temp-${Date.now()}`;
+
+        const patchResult = dispatch(
+          myApi.util.updateQueryData(
+            "getAllBoards",
+            newBoard.workspaceId,
+            (draft) => {
+              draft.data.yourBoards.push({
+                ...newBoard,
+                _id: tempId,
+                lists: [],
+                favourite: false,
+                createdAt: new Date().toISOString(),
+                updatedAt: new Date().toISOString(),
+                __v: 0,
+              } as IBoard);
+            }
+          )
+        );
+
+        try {
+          const { data } = await queryFulfilled;
+          const createdBoard = data.newBoard;
+
+          dispatch(
+            myApi.util.updateQueryData(
+              "getAllBoards",
+              newBoard.workspaceId,
+              (draft) => {
+                const tempIndex = draft.data.yourBoards.findIndex(
+                  (b) => b._id === tempId
+                );
+                if (tempIndex !== -1) {
+                  draft.data.yourBoards.splice(tempIndex, 1);
+                }
+
+                const exists = draft.data.yourBoards.some(
+                  (b) => b._id === createdBoard._id
+                );
+
+                if (!exists) {
+                  draft.data.yourBoards.push(createdBoard);
+                }
+              }
+            )
+          );
+        } catch (error) {
+          patchResult.undo();
         }
-      )
-    );
-
-    try {
-      const { data } = await queryFulfilled;
-      const createdBoard = data.newBoard;
-
-      // Update cache with real board
-      dispatch(
-        myApi.util.updateQueryData(
-          "getAllBoards",
-          newBoard.workspaceId,
-          (draft) => {
-            // Find and remove the temp board
-            const tempIndex = draft.data.yourBoards.findIndex(
-              b => b._id === tempId
-            );
-            if (tempIndex !== -1) {
-              draft.data.yourBoards.splice(tempIndex, 1);
-            }
-            
-            // Check if board already exists (from websocket)
-            const exists = draft.data.yourBoards.some(
-              b => b._id === createdBoard._id
-            );
-            
-            if (!exists) {
-              draft.data.yourBoards.push(createdBoard);
-            }
-          }
-        )
-      );
-    } catch (error) {
-      patchResult.undo();
-    }
-  },
-}),
+      },
+    }),
     addList: builder.mutation<IListResponse, { boardId: string; name: string }>(
       {
         query: (newList) => ({
@@ -95,6 +91,7 @@ export const myApi = createApi({
           body: newList,
         }),
         async onQueryStarted(newList, { dispatch, queryFulfilled }) {
+          let tempId = `list-id-${Date.now()}`;
           const patchResult = dispatch(
             myApi.util.updateQueryData(
               "getSingleBoard",
@@ -102,7 +99,7 @@ export const myApi = createApi({
               (draft) => {
                 if (draft.data[0]) {
                   draft.data[0].lists.push({
-                    _id: "temp-list-id",
+                    _id: tempId,
                     name: newList.name,
                     board: newList.boardId,
                     color: "",
@@ -111,7 +108,7 @@ export const myApi = createApi({
                     updatedAt: new Date().toISOString(),
                     __v: 0,
                     position: 0,
-                    createdBy: "temp-id",
+                    createdBy: tempId,
                     isArchived: false,
                   });
                 }
@@ -125,15 +122,17 @@ export const myApi = createApi({
                 "getSingleBoard",
                 newList.boardId,
                 (draft) => {
-                  if (draft.data[0].lists) {
-                    const tempIndex = draft.data[0].lists.findIndex(
-                      (l) => l._id === "temp-list-id"
-                    );
-                    if (tempIndex !== -1) {
-                      draft.data[0].lists[tempIndex] = data.newList;
-                    } else {
-                      draft.data[0].lists.push(data.newList);
-                    }
+                  const tempIndex = draft.data[0].lists.findIndex(
+                    (l) => l._id === tempId
+                  );
+                  if (tempIndex !== -1) {
+                    draft.data[0].lists.splice(tempIndex, 1);
+                  }
+                  const exists = draft.data[0].lists.some(
+                    (l) => l._id === data.newList._id
+                  );
+                  if (!exists) {
+                    draft.data[0].lists.push(data.newList);
                   }
                 }
               )
