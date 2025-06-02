@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { useForm } from "react-hook-form";
 import { IList } from "../../../../types/functionalites.types";
 import Card from "./Card";
-import { Ellipsis, Plus, SquareArrowOutUpLeftIcon } from "lucide-react";
+import { Ellipsis, Plus } from "lucide-react";
 import AddList from "./AddList";
 import { useParams } from "react-router-dom";
 import { useAddCardMutation } from "@/store/myApi";

@@ -12,10 +12,14 @@ interface UpdateDetailsPayload {
   username: string;
   email: string;
 }
+const expiry = localStorage.getItem("expiry");
+
+const isExpired = Date.now() > parseInt(expiry ?? "0");
 const initialState: AuthState = {
-  user: localStorage.getItem("user")
-    ? JSON.parse(localStorage.getItem("user") as string)
-    : null,
+  user:
+    localStorage.getItem("user") && isExpired
+      ? JSON.parse(localStorage.getItem("user") as string)
+      : null,
   loading: false,
   error: null,
   isLoggedIn: false,
@@ -33,6 +37,8 @@ export const loginUser = createAsyncThunk(
         }
       );
       if (response.data.success) {
+        const expiryDate = Date.now() + 3 * 24 * 60 * 60 * 1000;
+        localStorage.setItem("expiry", expiryDate.toString());
         localStorage.setItem("user", JSON.stringify(response.data.user));
         return response.data;
       } else {
