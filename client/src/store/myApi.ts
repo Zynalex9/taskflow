@@ -25,73 +25,68 @@ export const myApi = createApi({
     getSingleBoard: builder.query<ISingleBoardResponse, string>({
       query: (boardId) => `/api/board/single/${boardId}`,
     }),
-    addBoard: builder.mutation<
-      {
-        statusCode: number;
-        newBoard: IBoard;
-        message: string;
-        success: boolean;
-      },
-      Partial<IBoard> & { workspaceId: string }
-    >({
-      query: (newBoard) => ({
-        url: `/api/board/create-board`,
-        method: "POST",
-        body: newBoard,
-      }),
-      async onQueryStarted(newBoard, { dispatch, queryFulfilled }) {
-        const patchResult = dispatch(
-          myApi.util.updateQueryData(
-            "getAllBoards",
-            newBoard.workspaceId,
-            (draft) => {
-              if (draft.data.yourBoards) {
-                draft.data.yourBoards.push({
-                  ...newBoard,
-                  _id: "temp-id",
-                  lists: [],
-                  cover: newBoard.cover,
-                  favourite: false,
-                  createdAt: new Date().toISOString(),
-                  updatedAt: new Date().toISOString(),
-                  visibility: "private",
-                  __v: 0,
-                  members: [],
-                } as IBoard);
-              }
-            }
-          )
-        );
-
-        try {
-          const response = await queryFulfilled;
-
-          const createdBoard = response.data?.newBoard;
-
-          dispatch(
-            myApi.util.updateQueryData(
-              "getAllBoards",
-              newBoard.workspaceId,
-              (draft) => {
-                if (draft.data.yourBoards) {
-                  const tempIndex = draft.data.yourBoards.findIndex(
-                    (board) => board._id === "temp-id"
-                  );
-
-                  if (tempIndex !== -1) {
-                    draft.data.yourBoards[tempIndex] = createdBoard;
-                  } else {
-                    draft.data.yourBoards.push(createdBoard);
-                  }
-                }
-              }
-            )
-          );
-        } catch (error) {
-          patchResult.undo();
+    addBoard: builder.mutation({
+  query: (newBoard) => ({
+    url: `/api/board/create-board`,
+    method: "POST",
+    body: newBoard,
+  }),
+  async onQueryStarted(newBoard, { dispatch, queryFulfilled }) {
+    const tempId = `temp-${Date.now()}`;
+    
+    // Optimistic update
+    const patchResult = dispatch(
+      myApi.util.updateQueryData(
+        "getAllBoards",
+        newBoard.workspaceId,
+        (draft) => {
+          draft.data.yourBoards.push({
+            ...newBoard,
+            _id: tempId,
+            lists: [],
+            favourite: false,
+            createdAt: new Date().toISOString(),
+            updatedAt: new Date().toISOString(),
+            __v: 0,
+          } as IBoard);
         }
-      },
-    }),
+      )
+    );
+
+    try {
+      const { data } = await queryFulfilled;
+      const createdBoard = data.newBoard;
+
+      // Update cache with real board
+      dispatch(
+        myApi.util.updateQueryData(
+          "getAllBoards",
+          newBoard.workspaceId,
+          (draft) => {
+            // Find and remove the temp board
+            const tempIndex = draft.data.yourBoards.findIndex(
+              b => b._id === tempId
+            );
+            if (tempIndex !== -1) {
+              draft.data.yourBoards.splice(tempIndex, 1);
+            }
+            
+            // Check if board already exists (from websocket)
+            const exists = draft.data.yourBoards.some(
+              b => b._id === createdBoard._id
+            );
+            
+            if (!exists) {
+              draft.data.yourBoards.push(createdBoard);
+            }
+          }
+        )
+      );
+    } catch (error) {
+      patchResult.undo();
+    }
+  },
+}),
     addList: builder.mutation<IListResponse, { boardId: string; name: string }>(
       {
         query: (newList) => ({
@@ -226,27 +221,26 @@ export const myApi = createApi({
         }
       },
     }),
- toggleFavourite: builder.mutation({
-  query: (boardId) => ({
-    url: "/api/board/toggle-favourite",
-    method: "PATCH",
-    body: { boardId }, 
-  }),
-  async onQueryStarted(boardId, { dispatch, queryFulfilled }) {
-    const patchResult = dispatch(
-      myApi.util.updateQueryData("getSingleBoard", boardId, (draft) => {
-        draft.data[0].favourite = !draft.data[0].favourite; 
-      })
-    );
+    toggleFavourite: builder.mutation({
+      query: (boardId) => ({
+        url: "/api/board/toggle-favourite",
+        method: "PATCH",
+        body: { boardId },
+      }),
+      async onQueryStarted(boardId, { dispatch, queryFulfilled }) {
+        const patchResult = dispatch(
+          myApi.util.updateQueryData("getSingleBoard", boardId, (draft) => {
+            draft.data[0].favourite = !draft.data[0].favourite;
+          })
+        );
 
-    try {
-      await queryFulfilled;
-    } catch {
-      patchResult.undo();
-    }
-  },
-}),
-
+        try {
+          await queryFulfilled;
+        } catch {
+          patchResult.undo();
+        }
+      },
+    }),
   }),
 });
 
@@ -256,5 +250,5 @@ export const {
   useAddBoardMutation,
   useAddListMutation,
   useAddCardMutation,
-  useToggleFavouriteMutation
+  useToggleFavouriteMutation,
 } = myApi;

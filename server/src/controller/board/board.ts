@@ -19,6 +19,7 @@ import {
 import ApiResponse from "../../utils/ApiResponse";
 import { UploadOnCloudinary } from "../../utils/cloudinary";
 import { redisClient } from "../..";
+import { getIO } from "../../socket";
 export interface IBoardMember {
   user: string | Types.ObjectId;
   role: "member" | "admin";
@@ -123,6 +124,8 @@ export const createBoard = async (req: Request, res: Response) => {
     );
     await lPushList(userId, `Board created : ${title}`);
     await redisClient.del(`boards:${userId}`);
+    const io = getIO();
+    io.to(workspaceId).emit("boardCreated", newBoard);
     res
       .status(201)
       .json({ message: "New board created", sucess: true, newBoard });

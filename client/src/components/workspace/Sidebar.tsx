@@ -25,8 +25,9 @@ import { closeModal, openModal } from "@/store/BoardBGSlice";
 import ShowMore from "./Boards/Single-Board/Add Board Modal/ShowMore";
 import ColorsPopUp from "./Boards/Single-Board/Add Board Modal/ColorsPopUp";
 import ImagesPopUp from "./Boards/Single-Board/Add Board Modal/ImagesPopUp";
-import { useGetAllBoardsQuery } from "@/store/myApi";
+import { myApi, useGetAllBoardsQuery } from "@/store/myApi";
 import { socket } from "@/socket/socket";
+import { IBoard } from "@/types/functionalites.types";
 interface Props {
   barOpen: boolean;
   setBarOpen: React.Dispatch<React.SetStateAction<boolean>>;
@@ -40,12 +41,34 @@ const Sidebar = ({ barOpen, setBarOpen }: Props) => {
   });
   const workspaceName = workspace?.name;
   const dispatch = useDispatch<AppDispatch>();
-  useEffect(() => {
-    if (workspace?._id) {
-      socket.emit("joinedWorkspace", workspace._id);
-      console.log("Emitted workspace ID:", workspace._id);
-    }
-  }, [workspace?._id]);
+useEffect(() => {
+  if (!workspace?._id) return;
+
+  const handleBoardCreated = (board: IBoard) => {
+    dispatch(
+      myApi.util.updateQueryData(
+        "getAllBoards", 
+        workspace._id,
+        (draft) => {
+          draft.data.yourBoards = draft.data.yourBoards.filter(
+            b => !b._id.startsWith('temp-') || b.title !== board.title
+          );
+          
+          if (!draft.data.yourBoards.some(b => b._id === board._id)) {
+            draft.data.yourBoards.push(board);
+          }
+        }
+      )
+    );
+  };
+
+  socket.emit("joinedWorkspace", workspace._id);
+  socket.on("boardCreated", handleBoardCreated);
+
+  return () => {
+    socket.off("boardCreated", handleBoardCreated);
+  };
+}, [workspace?._id, dispatch]);
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -202,7 +225,7 @@ const Sidebar = ({ barOpen, setBarOpen }: Props) => {
                 </div>
               ))
             : data?.data.yourBoards.map((board) =>
-                board._id === "temp-id" ? (
+                board._id.startsWith('temp')  ? (
                   <div className="flex items-center justify-between hover:bg-gray-700 p-2 rounded cursor-pointer ">
                     <div className="flex items-center space-x-1">
                       <div
