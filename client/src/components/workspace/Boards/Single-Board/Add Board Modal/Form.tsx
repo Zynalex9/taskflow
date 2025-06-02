@@ -26,7 +26,7 @@ const Form = () => {
     console.log(data)
     const newData = {
       ...data,
-      coverFromBody: selectedColor ? selectedColor : selectedImg,
+      cover: selectedColor ? selectedColor : selectedImg,
       workspaceId: workspace?._id,
       memberId: [user?._id],
       visibility: "workspace",

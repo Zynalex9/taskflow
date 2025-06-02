@@ -199,11 +199,8 @@ const Sidebar = ({ barOpen, setBarOpen }: Props) => {
                   </div>
                 </div>
               ))
-            : data?.data.yourBoards.map((board) => (
-                <Link
-                  key={board._id}
-                  to={`/user/w/workspace/${workspace?._id}/board/${board._id}`}
-                >
+            : data?.data.yourBoards.map((board) =>
+                board._id === "temp-id" ? (
                   <div className="flex items-center justify-between hover:bg-gray-700 p-2 rounded cursor-pointer ">
                     <div className="flex items-center space-x-1">
                       <div
@@ -223,8 +220,33 @@ const Sidebar = ({ barOpen, setBarOpen }: Props) => {
                       </span>
                     </div>
                   </div>
-                </Link>
-              ))}
+                ) : (
+                  <Link
+                    key={board._id}
+                    to={`/user/w/workspace/${workspace?._id}/board/${board._id}`}
+                  >
+                    <div className="flex items-center justify-between hover:bg-gray-700 p-2 rounded cursor-pointer ">
+                      <div className="flex items-center space-x-1">
+                        <div
+                          className="w-6 h-4 rounded-sm"
+                          style={
+                            isImageUrl(board.cover)
+                              ? {
+                                  backgroundImage: `url(${board.cover})`,
+                                  backgroundSize: "cover",
+                                  backgroundPosition: "center",
+                                }
+                              : { background: board.cover }
+                          }
+                        />
+                        <span className="text-[#9FADBC] font-charlie-text-r text-md">
+                          {board.title}
+                        </span>
+                      </div>
+                    </div>
+                  </Link>
+                )
+              )}
         </div>
       </aside>
       <div

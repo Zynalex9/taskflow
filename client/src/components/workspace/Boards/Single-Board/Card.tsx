@@ -18,14 +18,16 @@ const Card: React.FC<IProps> = ({ card }) => {
   const background = location.state?.background;
   console.log(background);
   return (
-    <HoverCard>  
+    <HoverCard>
       <HoverCardTrigger>
         <div
           onClick={() => {
-            navigate(
-              `/user/w/workspace/${workspaceId}/board/${boardId}/card/${card?._id}`,
-              { state: { background: location } }
-            );
+            card?._id !== "temp-card-id"
+              ? navigate(
+                  `/user/w/workspace/${workspaceId}/board/${boardId}/card/${card?._id}`,
+                  { state: { background: location } }
+                )
+              : "";
           }}
           className="bg-[#22272B] rounded-xl py-2 px-1 my-2 max-w-full transition-all duration-100 hover:border-white hover:border"
         >
@@ -44,7 +46,7 @@ const Card: React.FC<IProps> = ({ card }) => {
             </p>
           )}
 
-          {card?.labels.length> 0 && (
+          {card?.labels.length > 0 && (
             <div className="flex flex-wrap gap-2">
               {card.labels.map((label) => (
                 <span
@@ -59,7 +61,8 @@ const Card: React.FC<IProps> = ({ card }) => {
           )}
           {card?.attachments.length > 0 && (
             <div className=" text-textP">
-              <Paperclip className="inline" size={16} /> {card.attachments.length} attachment
+              <Paperclip className="inline" size={16} />{" "}
+              {card.attachments.length} attachment
               {card.attachments.length > 1 ? "s" : ""}
             </div>
           )}

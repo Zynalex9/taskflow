@@ -17,7 +17,7 @@ const expiry = localStorage.getItem("expiry");
 const isExpired = Date.now() > parseInt(expiry ?? "0");
 const initialState: AuthState = {
   user:
-    localStorage.getItem("user") && isExpired
+    localStorage.getItem("user") && !isExpired
       ? JSON.parse(localStorage.getItem("user") as string)
       : null,
   loading: false,
