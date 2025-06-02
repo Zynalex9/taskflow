@@ -1,11 +1,8 @@
 import { usePreventScroll } from "./PreventScroll";
-import { useEffect, useState } from "react";
+import {useState } from "react";
 import { useNavigate, useParams, useLocation } from "react-router-dom";
 import { AlignLeft, ChevronLeftSquareIcon } from "lucide-react";
 import InListMove from "./Single-Card/InListMove";
-import { useDispatch, useSelector } from "react-redux";
-import { AppDispatch, RootState } from "../../../../store/store";
-import { fetchSingleCard } from "../../../../store/CardSlice";
 import LabelsAndNotification from "./Single-Card/LabelsAndNotification";
 import Description from "./Single-Card/Description";
 import ModalSidebar from "./Single-Card/ModalSidebar";
@@ -13,11 +10,12 @@ import CommentInput from "./Single-Card/CommentInput";
 import Attachments from "./Single-Card/Attachments";
 import Checklist from "./Single-Card/Checklist";
 import { Skeleton } from "@/components/ui/skeleton";
+import { useGetSingleCardQuery } from "@/store/cardApi";
 
 const CardModal = () => {
-  const { card, error, loading } = useSelector(
-    (state: RootState) => state.card
-  );
+  const { cardId } = useParams();
+  const { data, isLoading, error } = useGetSingleCardQuery({ cardId });
+  const card = data?.data;
   const [showDescription, setShowDescription] = useState(false);
   const [isEditingDescription, setIsEditingDescription] = useState(false);
   const [editedDescription, setEditedDescription] = useState(
@@ -25,23 +23,13 @@ const CardModal = () => {
   );
   const navigate = useNavigate();
   const location = useLocation();
-  const dispatch = useDispatch<AppDispatch>();
-
-  const { cardId } = useParams();
   const background = location.state?.background;
-
   usePreventScroll(true);
-
-  useEffect(() => {
-    if (cardId) {
-      dispatch(fetchSingleCard(cardId));
-    }
-  }, [cardId, dispatch]);
-
   const handleClose = () => {
     navigate(background?.pathname || -1);
   };
-  if (loading)
+
+  if (isLoading)
     return (
       <div className="fixed inset-0 z-[100] bg-black/70 pt-[60px] flex items-start justify-center p-4">
         <div className="bg-[#323940] rounded-lg w-full max-w-4xl flex gap-4 min-h-screen p-6">
