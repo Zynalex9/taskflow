@@ -13,21 +13,16 @@ import {
   workSpaceRouter,
 } from "./routes";
 import cors from "cors";
+import { initSocket } from "./socket";
 configDotenv();
 connectDB();
 
 const app = express();
 const server = createServer(app);
-const io = new Server(server, {
-  cors: {
-    origin: "*",
-    methods: ["GET", "POST", "PATCH", "DELETE"],
-    credentials: true,
-  },
-});
+const io = initSocket(server);
 app.use(
   cors({
-   origin: ["http://localhost:5173", "http://192.168.1.3:5173"],
+    origin: ["http://localhost:5173", "http://192.168.1.3:5173"],
     methods: ["GET", "POST", "PUT", "PATCH"],
     credentials: true,
   })
@@ -36,14 +31,6 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static("public"));
 app.use(cookieParser());
-io.on("connection", (socket) => {
-  console.log("User connected", socket.id);
-});
-app.get("/", (req, res) => {
-  res.json({
-    message: "Hello World",
-  });
-});
 export const redisClient = new Redis({
   username: "default",
   password: process.env.REDIS_PASSWORD,

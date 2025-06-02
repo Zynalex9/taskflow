@@ -3,6 +3,7 @@ import "./App.css";
 import { useSelector } from "react-redux";
 import { RootState } from "./store/store";
 import AllRoutes from "./routes/AllRoutes";
+import { socket } from "./socket/socket";
 
 function App() {
   const theme = useSelector((state: RootState) => state.theme.theme);
@@ -10,7 +11,9 @@ function App() {
   useEffect(() => {
     document.body.className = theme;
   }, [theme]);
-
+  socket.on("connect", () => {
+    console.log("Connected to socket:", socket.id);
+  });
   return (
     <>
       <AllRoutes />

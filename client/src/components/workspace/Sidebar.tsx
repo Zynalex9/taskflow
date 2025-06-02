@@ -20,13 +20,13 @@ import { Link } from "react-router-dom";
 import { isImageUrl } from "../../utils/helper";
 import { Skeleton } from "../ui/skeleton";
 import { useEffect } from "react";
-import { fetchAllBoards } from "@/store/BoardSlice";
 import AddBoardModal from "./Boards/Single-Board/Add Board Modal/AddBoardModal";
 import { closeModal, openModal } from "@/store/BoardBGSlice";
 import ShowMore from "./Boards/Single-Board/Add Board Modal/ShowMore";
 import ColorsPopUp from "./Boards/Single-Board/Add Board Modal/ColorsPopUp";
 import ImagesPopUp from "./Boards/Single-Board/Add Board Modal/ImagesPopUp";
 import { useGetAllBoardsQuery } from "@/store/myApi";
+import { socket } from "@/socket/socket";
 interface Props {
   barOpen: boolean;
   setBarOpen: React.Dispatch<React.SetStateAction<boolean>>;
@@ -42,9 +42,11 @@ const Sidebar = ({ barOpen, setBarOpen }: Props) => {
   const dispatch = useDispatch<AppDispatch>();
   useEffect(() => {
     if (workspace?._id) {
-      dispatch(fetchAllBoards(workspace._id));
+      socket.emit("joinedWorkspace", workspace._id);
+      console.log("Emitted workspace ID:", workspace._id);
     }
-  }, [workspace, dispatch]);
+  }, [workspace?._id]);
+
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.code === "BracketLeft") {
