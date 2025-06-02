@@ -11,13 +11,10 @@ interface IProps {
   card: ICard | undefined;
 }
 const Card: React.FC<IProps> = ({ card }) => {
-  console.log("c", card);
   const location = useLocation();
   const navigate = useNavigate();
   const { workspaceId, boardId } = useParams();
-  const background = location.state?.background;
-  console.log(background);
-  return (
+ return (
     <HoverCard>
       <HoverCardTrigger>
         <div

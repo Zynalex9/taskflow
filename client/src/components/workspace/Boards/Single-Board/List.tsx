@@ -8,8 +8,8 @@ import { useParams } from "react-router-dom";
 import { myApi, useAddCardMutation } from "@/store/myApi";
 import { toast, ToastContainer } from "react-toastify";
 import { socket } from "@/socket/socket";
-import { useDispatch } from "react-redux";
-import { AppDispatch  } from "@/store/store";
+import { useDispatch, useSelector } from "react-redux";
+import { AppDispatch, RootState } from "@/store/store";
 
 interface ListProps {
   list: IList[] | undefined;
@@ -20,12 +20,14 @@ const List: React.FC<ListProps> = ({ list }) => {
   const { register, handleSubmit, reset } = useForm<{ cardName: string }>();
   const [addCard] = useAddCardMutation();
   const { boardId } = useParams();
+  const { workspace } = useSelector((state: RootState) => state.workspace);
   const onSubmit = async (data: { cardName: string }) => {
-    if (activeListId && boardId) {
+    if (activeListId && boardId && workspace) {
       const body = {
         name: data.cardName,
         listId: activeListId,
         boardId,
+        workspaceId: workspace._id,
       };
       try {
         reset();
@@ -38,33 +40,32 @@ const List: React.FC<ListProps> = ({ list }) => {
     }
   };
   const dispatch = useDispatch<AppDispatch>();
- useEffect(() => {
-  if (!boardId) return;
+  useEffect(() => {
+    if (!boardId) return;
 
-  const handleListCreated = (newList: IList) => {
-    console.log("New list received:", newList);
-    dispatch(
-      myApi.util.updateQueryData(
-        "getSingleBoard",
-        boardId, 
-        (draft) => {
+    const handleListCreated = (newList: IList) => {
+      console.log("New list received:", newList);
+      dispatch(
+        myApi.util.updateQueryData("getSingleBoard", boardId, (draft) => {
           const exists = draft.data[0].lists.some(
             (list) => list._id === newList._id
           );
           if (!exists) {
             draft.data[0].lists.push(newList);
           }
-        }
-      )
-    );
-  };
+        })
+      );
+    };
 
-  socket.on("listCreated", handleListCreated);
+    socket.on("listCreated", handleListCreated);
+    socket.on("cardCreated", (e)=>{
+      console.log('csadsadsadsadasdsadsadadasdsdasdsa')
+    });
 
-  return () => {
-    socket.off("listCreated", handleListCreated);
-  };
-}, [dispatch, boardId]); 
+    return () => {
+      socket.off("listCreated", handleListCreated);
+    };
+  }, [dispatch, boardId]);
 
   return (
     <div className="flex gap-4 w-full items-stretch">

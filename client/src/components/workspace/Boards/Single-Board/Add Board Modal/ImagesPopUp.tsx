@@ -15,13 +15,15 @@ const ImagesPopUp = () => {
   const [error, setError] = useState("");
   const [searchTerm, setSearchTerm] = useState("nature");
   const observer = useRef<IntersectionObserver | null>(null);
-  const isMounted = useRef(true);
+  const abortControllerRef = useRef<AbortController | null>(null);
   const dispatch = useDispatch<AppDispatch>();
 
+  // Reset state when search term changes
   useEffect(() => {
     setPageNumber(1);
     setImages([]);
     setHasMore(true);
+    setIsLoading(true);
   }, [searchTerm]);
 
   const lastElemRef = useCallback<(node: HTMLDivElement | null) => void>(
@@ -44,12 +46,16 @@ const ImagesPopUp = () => {
   );
 
   useEffect(() => {
-    const controller = new AbortController();
-    const signal = controller.signal;
-
     const fetchData = async () => {
       if (!searchTerm.trim()) return;
       
+      if (abortControllerRef.current) {
+        abortControllerRef.current.abort();
+      }
+      
+      const controller = new AbortController();
+      abortControllerRef.current = controller;
+
       try {
         setIsLoading(true);
         const response = await axios.get(
@@ -63,11 +69,13 @@ const ImagesPopUp = () => {
             headers: {
               Authorization: `Client-ID ${import.meta.env.VITE_CLIENT_ID}`,
             },
-            signal,
+            signal: controller.signal,
           }
         );
 
-        if (!isMounted.current) return;
+        if (response.status !== 200) {
+          throw new Error("Failed to fetch images");
+        }
 
         setImages(prev => 
           pageNumber === 1
@@ -76,15 +84,16 @@ const ImagesPopUp = () => {
         );
 
         setHasMore(response.data.results.length > 0);
+        setError("");
       } catch (err) {
-        if (!axios.isCancel(err)){
+        if (axios.isCancel(err)) {
+          console.log("Request canceled:", err.message);
+        } else {
           setError("Failed to fetch images");
-          console.error(err);
+          console.error("Error fetching images:", err);
         }
       } finally {
-        if (isMounted.current) {
-          setIsLoading(false);
-        }
+        setIsLoading(false);
       }
     };
 
@@ -93,16 +102,21 @@ const ImagesPopUp = () => {
     }, 500);
 
     return () => {
-      controller.abort();
       clearTimeout(delayDebounce);
+      if (abortControllerRef.current) {
+        abortControllerRef.current.abort();
+      }
     };
   }, [searchTerm, pageNumber]);
 
   useEffect(() => {
     return () => {
-      isMounted.current = false;
+      // Cleanup observer and any pending requests
       if (observer.current) {
         observer.current.disconnect();
+      }
+      if (abortControllerRef.current) {
+        abortControllerRef.current.abort();
       }
     };
   }, []);

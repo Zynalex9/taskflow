@@ -18,11 +18,19 @@ import { ListModel } from "../../models/list.models";
 import { UserModel } from "../../models/user.model";
 import { asyncHandler } from "../../utils/asyncHandler";
 import { redisClient } from "../..";
+import { getIO } from "../../socket";
 
 export const createCard = async (req: Request, res: Response) => {
   try {
-    const { name, listId, startDate, endDate, description, priority } =
-      req.body;
+    const {
+      name,
+      listId,
+      startDate,
+      endDate,
+      description,
+      priority,
+      workspaceId,
+    } = req.body;
     if (!name) {
       res.status(409).json({
         message: "Please choose a title for your card",
@@ -131,6 +139,9 @@ export const createCard = async (req: Request, res: Response) => {
       newCard._id,
       `(${req.user.username}) created a (${newCard.name})`
     );
+    const io = getIO();
+    console.log(workspaceId)
+    io.to(workspaceId).emit("cardCreated", newCard);
     res.status(201).json({
       message: "Card created successfully",
       success: true,
