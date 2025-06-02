@@ -35,6 +35,7 @@ import {
   removeMember,
   editBoard,
   getSingleBoard,
+  toggleFavourite,
 } from "../controller/board/board";
 import {
   createList,
@@ -123,6 +124,7 @@ boardRouter.route("/remove-admin").patch(verifyJWT, demoteAdmin);
 boardRouter.route("/add-member").patch(verifyJWT, addMember);
 boardRouter.route("/remove-member").patch(verifyJWT, removeMember);
 boardRouter.route("/edit-board").patch(verifyJWT, editBoard);
+boardRouter.route("/toggle-favourite").patch(verifyJWT, toggleFavourite);
 export { boardRouter };
 listRouter.route("/create-list").post(verifyJWT, createList);
 listRouter.route("/copy-list").patch(verifyJWT, copyList);

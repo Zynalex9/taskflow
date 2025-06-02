@@ -520,3 +520,14 @@ export const editBoard = asyncHandler(async (req, res) => {
 
   res.status(200).json(new ApiResponse(200, board, "Board edited"));
 });
+export const toggleFavourite = asyncHandler(async (req, res) => {
+  const { boardId } = req.body;
+  if (!boardId) {
+    res.status(401).json(new ApiResponse(401, {}, "No Board Id provided"));
+  }
+  const board = await boardModel.findById(boardId);
+  if (!board) return;
+  board.favourite = !board.favourite;
+  await board.save();
+  res.status(200).json(new ApiResponse(200, {}, "Updated"));
+});

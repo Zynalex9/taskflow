@@ -126,97 +126,122 @@ export const myApi = createApi({
           try {
             const { data } = await queryFulfilled;
             dispatch(
-            myApi.util.updateQueryData(
-              "getSingleBoard",
-              newList.boardId,
-              (draft) => {
-                if (draft.data[0].lists) {
-                  const tempIndex = draft.data[0].lists.findIndex(
-                    (l) => l._id === "temp-list-id"
-                  );
-                  if (tempIndex !== -1) {
-                    draft.data[0].lists[tempIndex] = data.newList;
-                  } else {
-                    draft.data[0].lists.push(data.newList);
+              myApi.util.updateQueryData(
+                "getSingleBoard",
+                newList.boardId,
+                (draft) => {
+                  if (draft.data[0].lists) {
+                    const tempIndex = draft.data[0].lists.findIndex(
+                      (l) => l._id === "temp-list-id"
+                    );
+                    if (tempIndex !== -1) {
+                      draft.data[0].lists[tempIndex] = data.newList;
+                    } else {
+                      draft.data[0].lists.push(data.newList);
+                    }
                   }
                 }
-              }
-            ));
+              )
+            );
           } catch (error) {
             patchResult.undo();
           }
         },
       }
     ),
-addCard: builder.mutation<
-  ICardResponse,
-  { boardId: string; listId: string; name: string }
->({
-  query: (newCardParams) => ({
-    url: "/api/workspace/create-card",
-    method: "POST",
-    body: newCardParams,
-  }),
+    addCard: builder.mutation<
+      ICardResponse,
+      { boardId: string; listId: string; name: string }
+    >({
+      query: (newCardParams) => ({
+        url: "/api/workspace/create-card",
+        method: "POST",
+        body: newCardParams,
+      }),
 
-  async onQueryStarted(newCardParams, { dispatch, queryFulfilled }) {
-    const patchResult = dispatch(
-      myApi.util.updateQueryData(
-        "getSingleBoard",
-        newCardParams.boardId,
-        (draft) => {
-          const list = draft.data[0].lists.find(
-            (l) => l._id === newCardParams.listId
+      async onQueryStarted(newCardParams, { dispatch, queryFulfilled }) {
+        const patchResult = dispatch(
+          myApi.util.updateQueryData(
+            "getSingleBoard",
+            newCardParams.boardId,
+            (draft) => {
+              const list = draft.data[0].lists.find(
+                (l) => l._id === newCardParams.listId
+              );
+              if (list) {
+                (list.cards as ICard[]).push({
+                  _id: "temp-card-id",
+                  name: newCardParams.name,
+                  description: "",
+                  endDate: new Date().toISOString(),
+                  createdBy: "6831e098d6f0ccbee9895831",
+                  members: [],
+                  list: newCardParams.listId,
+                  comments: [],
+                  labels: [],
+                  cover: "#000000",
+                  priority: "",
+                  checklist: [],
+                  checked: false,
+                  attachments: [],
+                  position: list.cards.length,
+                  __v: 0,
+                });
+              }
+            }
+          )
+        );
+
+        try {
+          const { data } = await queryFulfilled;
+          const newCard = data.newCard;
+
+          dispatch(
+            myApi.util.updateQueryData(
+              "getSingleBoard",
+              newCardParams.boardId,
+              (draft) => {
+                const list = draft.data[0].lists.find(
+                  (l) =>
+                    l._id ===
+                    (typeof newCard.list === "string"
+                      ? newCard.list
+                      : newCard.list._id)
+                );
+                if (list) {
+                  const tempIndex = (list.cards as ICard[]).findIndex(
+                    (c) => c._id === "temp-card-id"
+                  );
+                  if (tempIndex !== -1) {
+                    (list.cards as ICard[])[tempIndex] = newCard;
+                  } else {
+                    (list.cards as ICard[]).push(newCard);
+                  }
+                }
+              }
+            )
           );
-          if (list) {
-            (list.cards as ICard[]).push({
-              _id: "temp-card-id",
-              name: newCardParams.name,
-              description: "",
-              endDate: new Date().toISOString(),
-              createdBy: "6831e098d6f0ccbee9895831", 
-              members: [],
-              list: newCardParams.listId,
-              comments: [],
-              labels: [],
-              cover: "#000000",
-              priority: "",
-              checklist: [],
-              checked: false,
-              attachments: [],
-              position: list.cards.length, 
-              __v: 0,
-            });
-          }
+        } catch (error) {
+          patchResult.undo();
         }
-      )
+      },
+    }),
+ toggleFavourite: builder.mutation({
+  query: (boardId) => ({
+    url: "/api/board/toggle-favourite",
+    method: "PATCH",
+    body: { boardId }, 
+  }),
+  async onQueryStarted(boardId, { dispatch, queryFulfilled }) {
+    const patchResult = dispatch(
+      myApi.util.updateQueryData("getSingleBoard", boardId, (draft) => {
+        draft.data[0].favourite = !draft.data[0].favourite; 
+      })
     );
 
     try {
-      const { data } = await queryFulfilled;
-      const newCard = data.newCard;
-
-      dispatch(
-        myApi.util.updateQueryData(
-          "getSingleBoard",
-          newCardParams.boardId,
-          (draft) => {
-            const list = draft.data[0].lists.find(
-              (l) => l._id === (typeof newCard.list === "string" ? newCard.list : newCard.list._id)
-            );
-            if (list) {
-              const tempIndex = (list.cards as ICard[]).findIndex(
-                (c) => c._id === "temp-card-id"
-              );
-              if (tempIndex !== -1) {
-                (list.cards as ICard[])[tempIndex] = newCard;
-              } else {
-                (list.cards as ICard[]).push(newCard);
-              }
-            }
-          }
-        )
-      );
-    } catch (error) {
+      await queryFulfilled;
+    } catch {
       patchResult.undo();
     }
   },
@@ -230,5 +255,6 @@ export const {
   useGetSingleBoardQuery,
   useAddBoardMutation,
   useAddListMutation,
-  useAddCardMutation
+  useAddCardMutation,
+  useToggleFavouriteMutation
 } = myApi;
