@@ -136,12 +136,17 @@ export interface ISingleCardResponse {
   data: ICard;
 }
 export interface ICommentResponse {
-  status: boolean;
+  success: boolean;
   newComment: IComment;
   message: string;
 }
-export interface IChecklistResponse{
-    status: boolean;
+export interface IChecklistResponse {
+  success: boolean;
   newChecklist: IChecklist;
+  message: string;
+}
+export interface IChecklistItemResponse {
+  success: boolean;
+  checkList: IChecklist;
   message: string;
 }

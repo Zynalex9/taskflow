@@ -50,10 +50,9 @@ export const addChecklist = async (req: Request, res: Response) => {
 };
 export const addItemToCheckList = async (req: Request, res: Response) => {
   try {
-    const { title, assignedTo, dueDate } = req.body;
-    const { checkListId } = req.params;
+    const { title, assignedTo, dueDate, checkListId } = req.body;
     const userId = req.user._id;
-
+    console.log(req.body);
     if (!title || !checkListId) {
       res
         .status(404)

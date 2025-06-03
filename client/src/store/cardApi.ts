@@ -1,5 +1,7 @@
 import {
   IChecklist,
+  IChecklistItemResponse,
+  IChecklistItems,
   IChecklistResponse,
   IComment,
   ICommentResponse,
@@ -138,10 +140,74 @@ export const cardApi = createApi({
         }
       },
     }),
+    addItemToCheckList: builder.mutation<
+      IChecklistItemResponse,
+      { title: string; checkListId: string; cardId: string }
+    >({
+      query: (item) => ({
+        url: `/api/card/checklist/${item.checkListId}/add-items`,
+        method: "POST",
+        body: item,
+      }),
+      async onQueryStarted(item, { dispatch, queryFulfilled, getState }) {
+        const tempId = `temp-item-id-${Date.now()}`;
+        const state = getState() as RootState;
+        const user = state.auth.user;
+        if (!user) return;
+        const tempItem: IChecklistItems = {
+          _id: tempId,
+          assignedTo: [],
+          completed: false,
+          createdBy: user._id,
+          title: item.title,
+        };
+        const patchResult = dispatch(
+          cardApi.util.updateQueryData(
+            "getSingleCard",
+            { cardId: item.cardId },
+            (draft) => {
+              const checklist = draft.data.checklist.find(
+                (c) => c._id === item.checkListId
+              );
+              if (checklist) {
+                checklist.items.push(tempItem);
+              }
+            }
+          )
+        );
+        try {
+          const { data } = await queryFulfilled;
+          const newItem = data.checkList.items[data.checkList.items.length - 1];
+          dispatch(
+            cardApi.util.updateQueryData(
+              "getSingleCard",
+              { cardId: item.cardId },
+              (draft) => {
+                const checklist = draft.data.checklist.find(
+                  (c) => c._id === item.checkListId
+                );
+                if (checklist) {
+                  const tempIdx = checklist.items.findIndex(
+                    (i) => i._id === tempId
+                  );
+                  if (tempIdx !== -1) {
+                    checklist.items[tempIdx] = newItem;
+                  }
+                }
+              }
+            )
+          );
+        } catch (error) {
+          console.log(error)
+          patchResult.undo();
+        }
+      },
+    }),
   }),
 });
 export const {
   useGetSingleCardQuery,
   useAddCommentMutation,
   useAddChecklistMutation,
+  useAddItemToCheckListMutation,
 } = cardApi;

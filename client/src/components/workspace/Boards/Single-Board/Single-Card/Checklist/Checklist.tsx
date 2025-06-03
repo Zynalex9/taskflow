@@ -3,15 +3,32 @@ import {
   IChecklist,
   IChecklistItems,
 } from "../../../../../../types/functionalites.types";
+import { useState } from "react";
+import { useAddItemToCheckListMutation } from "@/store/cardApi";
 interface ChecklistProps {
   Checklist: IChecklist[];
 }
 const Checklist: React.FC<ChecklistProps> = ({ Checklist }) => {
-
   const calculateCompletion = (items: IChecklistItems[]) => {
     if (!items.length) return 0;
     const completed = items.filter((item) => item.completed).length;
     return Math.round((completed / items.length) * 100);
+  };
+  const [addNewItem, showAddNewItem] = useState(false);
+  const [itemTitle, setItemTitle] = useState("");
+  const [addItemToChecklist] = useAddItemToCheckListMutation();
+  const HandleSubmit = async (cardId: string, checkListId: string) => {
+    if (addNewItem) {
+      const body = {
+        cardId,
+        title: itemTitle,
+        checkListId,
+      };
+      console.log("body", body);
+      await addItemToChecklist(body);
+    } else {
+      showAddNewItem(true);
+    }
   };
   return (
     <div className="space-y-6 my-12">
@@ -50,6 +67,37 @@ const Checklist: React.FC<ChecklistProps> = ({ Checklist }) => {
                 </h3>
               </div>
             ))}
+            {addNewItem && (
+              <input
+                placeholder="Add item"
+                className="block w-full border-1 my-2 px-2 py-1.5 focus:outline-0 focus:ring-1 focus:ring-purple-400"
+                value={itemTitle}
+                onChange={(e) => setItemTitle(e.target.value)}
+              />
+            )}
+            {addNewItem ? (
+              <div>
+                <button
+                  onClick={() => HandleSubmit(c.card, c._id)}
+                  className="px-2 py-1 rounded cursor-pointer items-center transition-colors duration-150 bg-[#B6C2CF]/20 hover:bg-[#B6C2CF]/10 font-charlie-display-sm shadow-2xl text-[#B3BFCC]"
+                >
+                  Add Item
+                </button>{" "}
+                <button
+                  onClick={() => showAddNewItem(false)}
+                  className="px-2 py-1 rounded cursor-pointer items-center transition-colors duration-150 bg-[#B6C2CF]/20 hover:bg-[#B6C2CF]/10 font-charlie-display-sm shadow-2xl text-[#B3BFCC]"
+                >
+                  Close
+                </button>
+              </div>
+            ) : (
+              <button
+                onClick={() => HandleSubmit(c.card, c._id)}
+                className="px-2 py-1 rounded cursor-pointer items-center transition-colors duration-150 bg-[#B6C2CF]/20 hover:bg-[#B6C2CF]/10 font-charlie-display-sm shadow-2xl text-[#B3BFCC]"
+              >
+                Add Item
+              </button>
+            )}
           </div>
         </div>
       ))}
