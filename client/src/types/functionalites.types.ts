@@ -140,3 +140,8 @@ export interface ICommentResponse {
   newComment: IComment;
   message: string;
 }
+export interface IChecklistResponse{
+    status: boolean;
+  newChecklist: IChecklist;
+  message: string;
+}

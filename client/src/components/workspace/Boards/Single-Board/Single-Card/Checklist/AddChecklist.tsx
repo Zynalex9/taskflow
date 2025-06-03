@@ -3,17 +3,24 @@ import DropdownHeader from "../DropdownHeader";
 import { useDispatch } from "react-redux";
 import { AppDispatch } from "@/store/store";
 import { useState } from "react";
+import { useAddChecklistMutation } from "@/store/cardApi";
 
 const AddChecklist = ({ cardId }: { cardId: string }) => {
   const dispatch = useDispatch<AppDispatch>();
   const [title, setTitle] = useState("");
+  const [addChecklist] = useAddChecklistMutation();
   const onSubmit = async () => {
     const body = {
       title,
       cardId,
     };
-    setTitle("");
-    console.log(body);
+    try {
+      await addChecklist(body);
+      setTitle("");
+      console.log(body);
+    } catch (error) {
+      console.log(error);
+    }
   };
   return (
     <div className="absolute top-2 left-2 w-72 rounded bg-[#282E33] p-4 shadow-2xl text-white z-30">

@@ -40,8 +40,7 @@ export const addChecklist = async (req: Request, res: Response) => {
 
     res.status(200).json({
       message: `Checklist (${checkList.title}) added to ${card.name}`,
-      card,
-      checkList,
+      newChecklist: checkList,
       success: true,
     });
   } catch (error) {

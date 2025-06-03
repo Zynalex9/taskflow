@@ -1,4 +1,6 @@
 import {
+  IChecklist,
+  IChecklistResponse,
   IComment,
   ICommentResponse,
   ISingleCardResponse,
@@ -77,6 +79,69 @@ export const cardApi = createApi({
         }
       },
     }),
+    addChecklist: builder.mutation<
+      IChecklistResponse,
+      { title: string; cardId: string }
+    >({
+      query: (checklistData) => ({
+        url: "/api/card/add-checklist",
+        method: "POST",
+        body: checklistData,
+      }),
+      async onQueryStarted(
+        checklistData,
+        { dispatch, queryFulfilled, getState }
+      ) {
+        const tempId = `temp-checklist-id-${Date.now()}`;
+        const state = getState() as RootState;
+        const user = state.auth.user;
+        if (!user) return;
+        const tempCheckList: IChecklist = {
+          _id: tempId,
+          card: checklistData.cardId,
+          createdAt: new Date().toISOString(),
+          updatedAt: new Date().toISOString(),
+          items: [],
+          createdBy: user._id || "",
+          title: checklistData.title,
+        };
+        const patchResult = dispatch(
+          cardApi.util.updateQueryData(
+            "getSingleCard",
+            { cardId: checklistData.cardId },
+            (draft) => {
+              draft.data.checklist.push(tempCheckList);
+            }
+          )
+        );
+        try {
+          const { data } = await queryFulfilled;
+          const newChecklist = data.newChecklist;
+          dispatch(
+            cardApi.util.updateQueryData(
+              "getSingleCard",
+              {
+                cardId: newChecklist.card,
+              },
+              (draft) => {
+                const tempIdx = draft.data.checklist.findIndex(
+                  (c) => c._id === tempId
+                );
+                if (tempIdx !== -1) {
+                  draft.data.checklist[tempIdx] = newChecklist;
+                }
+              }
+            )
+          );
+        } catch (error) {
+          patchResult.undo();
+        }
+      },
+    }),
   }),
 });
-export const { useGetSingleCardQuery, useAddCommentMutation } = cardApi;
+export const {
+  useGetSingleCardQuery,
+  useAddCommentMutation,
+  useAddChecklistMutation,
+} = cardApi;
