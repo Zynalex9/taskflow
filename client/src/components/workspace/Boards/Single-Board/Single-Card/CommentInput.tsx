@@ -2,12 +2,31 @@ import { useState } from "react";
 import { useSelector } from "react-redux";
 import { RootState } from "../../../../../store/store";
 import { formatDistanceToNow } from "date-fns";
-
-const CommentInput = () => {
+import { IComment } from "@/types/functionalites.types";
+import { useAddCommentMutation } from "@/store/cardApi";
+interface IProps {
+  comments: IComment[];
+  cardId: string;
+}
+const CommentInput = ({ comments, cardId }: IProps) => {
+  const [newComment, setNewComment] = useState("");
   const { user } = useSelector((state: RootState) => state.auth);
-  const { card } = useSelector((state: RootState) => state.card);
   const [isInputFocused, setIsInputFocused] = useState(false);
-
+  const [addComment] = useAddCommentMutation();
+  const handleSubmit = async () => {
+    console.log("I worked");
+    try {
+      const newCommentData = {
+        cardId,
+        comment: newComment,
+      };
+      await addComment(newCommentData).unwrap();
+      setNewComment("");
+      setIsInputFocused(false);
+    } catch (error) {
+      console.log(error);
+    }
+  };
   return (
     <div>
       <div className="flex items-center justify-center my-2 gap-2">
@@ -21,17 +40,21 @@ const CommentInput = () => {
           placeholder="Write a comment..."
           className="bg-[#22272B] text-textP transition-all duration-150 hover:text-white hover:bg-[#22272B]/80 cursor-pointer rounded w-full px-3 py-2 peer"
           onFocus={() => setIsInputFocused(true)}
-          onBlur={() => setIsInputFocused(false)}
+          value={newComment}
+          onChange={(e) => setNewComment(e.target.value)}
         />
         {isInputFocused && (
-          <button className="text-white cursor-pointer transition-all duration-150 hover:bg-blue-primary/60 font-charlie-display-sm bg-blue-primary rounded px-2 py-3">
+          <button
+            onClick={handleSubmit}
+            className="text-white cursor-pointer transition-all duration-150 hover:bg-blue-primary/60 font-charlie-display-sm bg-blue-primary rounded px-2 py-3"
+          >
             Submit
           </button>
         )}
       </div>
-      {card &&
-        card.comments.length > 0 &&
-        card.comments.map((c) => (
+      {comments &&
+        comments.length > 0 &&
+        comments.map((c) => (
           <>
             <div className="flex items-center gap-3">
               <img

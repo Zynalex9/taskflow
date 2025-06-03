@@ -28,11 +28,10 @@ export const addComment = async (req: Request, res: Response) => {
     card.comments.push(newComment._id);
     await card.save();
     await redisClient.del(`singleCard:${cardId}`);
-
     res.status(201).json({
       message: `New comment ${comment} has been made`,
       success: true,
-      card,
+      newComment
     });
   } catch (error) {
     console.error(error);
@@ -40,6 +39,8 @@ export const addComment = async (req: Request, res: Response) => {
       message: "Internal server error",
       success: false,
     });
+  }finally{
+    console.log("I Worked")
   }
 };
 
@@ -49,7 +50,7 @@ export const deleteComment = async (req: Request, res: Response) => {
     if (!checkRequiredParams(req, res, required)) return;
 
     const { commentId } = req.params;
-    const {cardId} = req.body
+    const { cardId } = req.body;
     if (!mongoose.Types.ObjectId.isValid(commentId)) {
       res.status(400).json(new ApiResponse(400, {}, "Invalid comment ID"));
       return;

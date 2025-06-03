@@ -130,8 +130,13 @@ export interface ICardResponse {
   success: boolean;
   newCard: ICard;
 }
-export interface ISingleCardResponse{
-  statusCode:number
-  status:boolean
-  data:ICard
+export interface ISingleCardResponse {
+  statusCode: number;
+  status: boolean;
+  data: ICard;
+}
+export interface ICommentResponse {
+  status: boolean;
+  newComment: IComment;
+  message: string;
 }
