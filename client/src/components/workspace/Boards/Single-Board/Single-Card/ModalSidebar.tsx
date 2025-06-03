@@ -14,12 +14,14 @@ import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "@/store/store";
 import {
   closeAllDropDown,
+  openAttachmentsDropDown,
   openChecklistDropDown,
 } from "@/store/CardModalStatesSlice";
-import AddChecklist from "./Checklist/AddChecklist";
+import AddChecklist from "./dropdowns/Checklist/AddChecklist";
+import AddAttachment from "./dropdowns/attachment/AddAttachment";
 
 export function ModalSidebar({ cardId }: { cardId: string }) {
-  const { openChecklist } = useSelector(
+  const { openChecklist, openAttachments } = useSelector(
     (state: RootState) => state.cardModalState
   );
   const dispatch = useDispatch<AppDispatch>();
@@ -31,7 +33,7 @@ export function ModalSidebar({ cardId }: { cardId: string }) {
     {
       icon: openChecklist ? X : CheckSquare,
       label: "Checklist",
-      tooltip: "Add checklist",
+      tooltip: "Add checklist -",
       onClick: openChecklist
         ? () => dispatch(closeAllDropDown())
         : () => dispatch(openChecklistDropDown()),
@@ -39,7 +41,16 @@ export function ModalSidebar({ cardId }: { cardId: string }) {
       dropdown: <AddChecklist cardId={cardId} />,
     },
     { icon: Calendar, label: "Dates", tooltip: "Set dates" },
-    { icon: Paperclip, label: "Attachment", tooltip: "Add attachment" },
+    {
+      icon: openAttachments ? X : Paperclip,
+      label: "Attachment",
+      tooltip: "Add attachment",
+      onClick: openAttachments
+        ? () => dispatch(closeAllDropDown())
+        : () => dispatch(openAttachmentsDropDown()),
+      dropdown: <AddAttachment />,
+      isOpen: openAttachments,
+    },
     { icon: ImageIcon, label: "Cover", tooltip: "Add cover" },
     { icon: Settings, label: "Custom field", tooltip: "Add custom field" },
   ];
@@ -60,7 +71,7 @@ export function ModalSidebar({ cardId }: { cardId: string }) {
 
           <div
             className={`absolute transition-all duration-75 top-5 mt-2 -left-20 z-20 bg-white shadow-lg  ${
-              item.isOpen ? "opacity-100" : "opacity-0 pointer-none:"
+              item.isOpen ? "block" : "hidden"
             }`}
           >
             {item.dropdown}

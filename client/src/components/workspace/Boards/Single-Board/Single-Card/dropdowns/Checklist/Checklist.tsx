@@ -2,7 +2,7 @@ import { ListChecks } from "lucide-react";
 import {
   IChecklist,
   IChecklistItems,
-} from "../../../../../../types/functionalites.types";
+} from "../../../../../../../types/functionalites.types";
 import { useState } from "react";
 import { useAddItemToCheckListMutation } from "@/store/cardApi";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -15,23 +15,26 @@ const Checklist: React.FC<ChecklistProps> = ({ Checklist }) => {
     const completed = items.filter((item) => item.completed).length;
     return Math.round((completed / items.length) * 100);
   };
-  const [addNewItem, showAddNewItem] = useState(false);
+  const [activeChecklistId, setActiveChecklistId] = useState<string | null>(
+    null
+  );
   const [itemTitle, setItemTitle] = useState("");
   const [addItemToChecklist] = useAddItemToCheckListMutation();
   const HandleSubmit = async (cardId: string, checkListId: string) => {
-    if (addNewItem) {
+    if (activeChecklistId === checkListId) {
       const body = {
         cardId,
         title: itemTitle,
         checkListId,
       };
       setItemTitle("");
-      showAddNewItem(false);
+      setActiveChecklistId(null);
       await addItemToChecklist(body);
     } else {
-      showAddNewItem(true);
+      setActiveChecklistId(checkListId);
     }
   };
+
   return (
     <div className="space-y-6 my-12">
       {Checklist.map((c) => (
@@ -63,15 +66,15 @@ const Checklist: React.FC<ChecklistProps> = ({ Checklist }) => {
                 </h3>
               </div>
             ))}
-            {addNewItem && (
+            {activeChecklistId === c._id && (
               <input
                 placeholder="Add item"
-                className="block w-full border-1 my-2 px-2 py-1.5  focus:border-0 focus:outline-0 focus:ring-2 focus:ring-[#85B8FF]"
+                className="block w-full rounded-xl border-1 my-2 px-2 py-1.5  focus:border-0 focus:outline-0 focus:ring-2 focus:ring-[#85B8FF]"
                 value={itemTitle}
                 onChange={(e) => setItemTitle(e.target.value)}
               />
             )}
-            {addNewItem ? (
+            {activeChecklistId === c._id   ? (
               <div>
                 <button
                   onClick={() => HandleSubmit(c.card, c._id)}
@@ -80,7 +83,7 @@ const Checklist: React.FC<ChecklistProps> = ({ Checklist }) => {
                   Add Item
                 </button>{" "}
                 <button
-                  onClick={() => showAddNewItem(false)}
+                  onClick={() => setActiveChecklistId(null)}
                   className="px-2 py-1 rounded cursor-pointer items-center transition-colors duration-150 bg-[#B6C2CF]/20 hover:bg-[#B6C2CF]/10 font-charlie-display-sm shadow-2xl text-[#B3BFCC]"
                 >
                   Close

@@ -1,5 +1,5 @@
 import { closeAllDropDown } from "@/store/CardModalStatesSlice";
-import DropdownHeader from "../DropdownHeader";
+import DropdownHeader from "../../DropdownHeader";
 import { useDispatch } from "react-redux";
 import { AppDispatch } from "@/store/store";
 import { useState } from "react";
@@ -15,8 +15,9 @@ const AddChecklist = ({ cardId }: { cardId: string }) => {
       cardId,
     };
     try {
-      await addChecklist(body);
       setTitle("");
+      dispatch(closeAllDropDown());
+      await addChecklist(body);
       console.log(body);
     } catch (error) {
       console.log(error);

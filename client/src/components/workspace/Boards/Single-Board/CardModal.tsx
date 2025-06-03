@@ -1,14 +1,14 @@
 import { usePreventScroll } from "./PreventScroll";
 import { useState } from "react";
 import { useNavigate, useParams, useLocation } from "react-router-dom";
-import { AlignLeft, ChevronLeftSquareIcon } from "lucide-react";
+import { AlignLeft, X } from "lucide-react";
 import InListMove from "./Single-Card/InListMove";
 import LabelsAndNotification from "./Single-Card/LabelsAndNotification";
 import Description from "./Single-Card/Description";
 import ModalSidebar from "./Single-Card/ModalSidebar";
 import CommentInput from "./Single-Card/CommentInput";
 import Attachments from "./Single-Card/Attachments";
-import Checklist from "./Single-Card/Checklist/Checklist";
+import Checklist from "./Single-Card/dropdowns/Checklist/Checklist";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useGetSingleCardQuery } from "@/store/cardApi";
 const CardModal = () => {
@@ -81,7 +81,7 @@ const CardModal = () => {
                       name="option"
                       className="peer hidden"
                     />
-                    <div className="w-6 h-6 border border-white rounded-full flex items-center justify-center peer-checked:bg-green-600"></div>
+                    <div className="w-6 h-6 border border-white rounded-full flex items-center justify-center peer-checked:bg-[#29AD77] peer-checked:border-0"></div>
                   </label>
 
                   <h1 className="text-textP font-charlie-text-sb text-2xl pl-4">
@@ -89,7 +89,7 @@ const CardModal = () => {
                   </h1>
                 </div>
 
-                <ChevronLeftSquareIcon
+                <X
                   onClick={handleClose}
                   className="cursor-pointer hover:text-gray-300"
                   size={24}
