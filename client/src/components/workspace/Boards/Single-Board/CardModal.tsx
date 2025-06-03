@@ -11,7 +11,6 @@ import Attachments from "./Single-Card/Attachments";
 import Checklist from "./Single-Card/Checklist/Checklist";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useGetSingleCardQuery } from "@/store/cardApi";
-
 const CardModal = () => {
   const { cardId } = useParams();
   const { data, isLoading, error } = useGetSingleCardQuery({ cardId });

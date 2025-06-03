@@ -5,6 +5,7 @@ import {
 } from "../../../../../../types/functionalites.types";
 import { useState } from "react";
 import { useAddItemToCheckListMutation } from "@/store/cardApi";
+import { Checkbox } from "@/components/ui/checkbox";
 interface ChecklistProps {
   Checklist: IChecklist[];
 }
@@ -24,7 +25,8 @@ const Checklist: React.FC<ChecklistProps> = ({ Checklist }) => {
         title: itemTitle,
         checkListId,
       };
-      console.log("body", body);
+      setItemTitle("");
+      showAddNewItem(false);
       await addItemToChecklist(body);
     } else {
       showAddNewItem(true);
@@ -51,13 +53,7 @@ const Checklist: React.FC<ChecklistProps> = ({ Checklist }) => {
           <div className="pl-10">
             {c.items.map((i) => (
               <div key={i._id} className="flex items-center gap-4">
-                <input
-                  type="checkbox"
-                  name={i.title}
-                  id={i.title}
-                  checked={i.completed}
-                  className="w-4 h-4"
-                />
+                <Checkbox />
                 <h3
                   className={`${
                     i.completed ? "line-through text-[#B6C2CF]" : ""
@@ -70,7 +66,7 @@ const Checklist: React.FC<ChecklistProps> = ({ Checklist }) => {
             {addNewItem && (
               <input
                 placeholder="Add item"
-                className="block w-full border-1 my-2 px-2 py-1.5 focus:outline-0 focus:ring-1 focus:ring-purple-400"
+                className="block w-full border-1 my-2 px-2 py-1.5  focus:border-0 focus:outline-0 focus:ring-2 focus:ring-[#85B8FF]"
                 value={itemTitle}
                 onChange={(e) => setItemTitle(e.target.value)}
               />
@@ -79,7 +75,7 @@ const Checklist: React.FC<ChecklistProps> = ({ Checklist }) => {
               <div>
                 <button
                   onClick={() => HandleSubmit(c.card, c._id)}
-                  className="px-2 py-1 rounded cursor-pointer items-center transition-colors duration-150 bg-[#B6C2CF]/20 hover:bg-[#B6C2CF]/10 font-charlie-display-sm shadow-2xl text-[#B3BFCC]"
+                  className="px-2 py-1 mt-2  rounded cursor-pointer items-center transition-colors duration-150 bg-[#B6C2CF]/20 hover:bg-[#B6C2CF]/10 font-charlie-display-sm shadow-2xl text-[#B3BFCC]"
                 >
                   Add Item
                 </button>{" "}
@@ -93,7 +89,7 @@ const Checklist: React.FC<ChecklistProps> = ({ Checklist }) => {
             ) : (
               <button
                 onClick={() => HandleSubmit(c.card, c._id)}
-                className="px-2 py-1 rounded cursor-pointer items-center transition-colors duration-150 bg-[#B6C2CF]/20 hover:bg-[#B6C2CF]/10 font-charlie-display-sm shadow-2xl text-[#B3BFCC]"
+                className="px-2 mt-4 py-1 rounded cursor-pointer items-center transition-colors duration-150 bg-[#B6C2CF]/20 hover:bg-[#B6C2CF]/10 font-charlie-display-sm shadow-2xl text-[#B3BFCC]"
               >
                 Add Item
               </button>
