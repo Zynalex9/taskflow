@@ -198,10 +198,32 @@ export const cardApi = createApi({
             )
           );
         } catch (error) {
-          console.log(error)
+          console.log(error);
           patchResult.undo();
         }
       },
+    }),
+    addAttachment: builder.mutation({
+      query: ({
+        uploadedFile,
+        cardId,
+      }: {
+        uploadedFile: File;
+        cardId: string;
+      }) => {
+        const formData = new FormData();
+        formData.append("uploadedFile", uploadedFile);
+        formData.append("cardId", cardId);
+
+        return {
+          url: "/api/card/add-attachment",
+          method: "POST",
+          body: formData,
+        };
+      },
+      invalidatesTags: (_, __, { cardId }) => [
+        { type: "singleCard", id: cardId },
+      ],
     }),
   }),
 });
@@ -210,4 +232,5 @@ export const {
   useAddCommentMutation,
   useAddChecklistMutation,
   useAddItemToCheckListMutation,
+  useAddAttachmentMutation 
 } = cardApi;

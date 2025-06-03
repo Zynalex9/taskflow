@@ -8,6 +8,7 @@ import { CardModel } from "../../models/card.model";
 
 export const addAttachment = async (req: Request, res: Response) => {
   try {
+    console.log(req.body);
     const { cardId, name } = req.body;
     const userId = req.user._id;
     if (!cardId) {
@@ -62,10 +63,10 @@ export const addAttachment = async (req: Request, res: Response) => {
     });
     card.attachments.push(attachment._id);
     await card.save();
-       cardActivityUpdate(
-          cardId,
-          `(${req.user.username}) added a new attachment (${attachment.filename})`
-        );
+    cardActivityUpdate(
+      cardId,
+      `(${req.user.username}) added a new attachment (${attachment.filename})`
+    );
     res.status(201).json({
       message: `${filename} is uploaded`,
       success: true,

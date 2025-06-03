@@ -48,7 +48,7 @@ export function ModalSidebar({ cardId }: { cardId: string }) {
       onClick: openAttachments
         ? () => dispatch(closeAllDropDown())
         : () => dispatch(openAttachmentsDropDown()),
-      dropdown: <AddAttachment />,
+      dropdown: <AddAttachment cardId={cardId}  />,
       isOpen: openAttachments,
     },
     { icon: ImageIcon, label: "Cover", tooltip: "Add cover" },
