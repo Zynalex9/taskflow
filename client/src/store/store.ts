@@ -6,11 +6,14 @@ import cardReducer from "./CardSlice";
 import navbarReducer from "./NavBarSlice";
 import forgetReducer from "./ForgetSlice";
 import BoardBackgroundReducer from "./BoardBGSlice";
+import CardModalReducer from "./CardModalStatesSlice";
 import { boardsReducer, boardReducer } from "./BoardSlice";
 import { myApi } from "./myApi";
 import { cardApi } from "./cardApi";
+
 const store = configureStore({
   reducer: {
+    cardModalState: CardModalReducer,
     theme: themeReducer,
     auth: authReducer,
     workspace: workspaceReducer,

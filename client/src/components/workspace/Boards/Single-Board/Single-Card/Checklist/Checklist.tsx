@@ -2,12 +2,12 @@ import { ListChecks } from "lucide-react";
 import {
   IChecklist,
   IChecklistItems,
-} from "../../../../../types/functionalites.types";
-
+} from "../../../../../../types/functionalites.types";
 interface ChecklistProps {
   Checklist: IChecklist[];
 }
 const Checklist: React.FC<ChecklistProps> = ({ Checklist }) => {
+
   const calculateCompletion = (items: IChecklistItems[]) => {
     if (!items.length) return 0;
     const completed = items.filter((item) => item.completed).length;

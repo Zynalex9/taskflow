@@ -1,30 +1,74 @@
-import { Calendar, CheckSquare, ImageIcon, Paperclip, Settings, Tag, User, UserPlus } from "lucide-react"
-import { CustomTooltip } from "./CustomTooltip"
+import {
+  Calendar,
+  CheckSquare,
+  ImageIcon,
+  Paperclip,
+  Settings,
+  Tag,
+  User,
+  UserPlus,
+  X,
+} from "lucide-react";
+import { CustomTooltip } from "./CustomTooltip";
+import { useDispatch, useSelector } from "react-redux";
+import { AppDispatch, RootState } from "@/store/store";
+import {
+  closeAllDropDown,
+  openChecklistDropDown,
+} from "@/store/CardModalStatesSlice";
+import AddChecklist from "./Checklist/AddChecklist";
 
-export function ModalSidebar() {
+export function ModalSidebar({ cardId }: { cardId: string }) {
+  const { openChecklist } = useSelector(
+    (state: RootState) => state.cardModalState
+  );
+  const dispatch = useDispatch<AppDispatch>();
+
   const sidebarItems = [
     { icon: UserPlus, label: "Join", tooltip: "Join Card" },
     { icon: User, label: "Members", tooltip: "Manage members" },
     { icon: Tag, label: "Labels", tooltip: "Manage labels" },
-    { icon: CheckSquare, label: "Checklist", tooltip: "Add checklist" },
+    {
+      icon: openChecklist ? X : CheckSquare,
+      label: "Checklist",
+      tooltip: "Add checklist",
+      onClick: openChecklist
+        ? () => dispatch(closeAllDropDown())
+        : () => dispatch(openChecklistDropDown()),
+      isOpen: openChecklist,
+      dropdown: <AddChecklist cardId={cardId} />,
+    },
     { icon: Calendar, label: "Dates", tooltip: "Set dates" },
     { icon: Paperclip, label: "Attachment", tooltip: "Add attachment" },
     { icon: ImageIcon, label: "Cover", tooltip: "Add cover" },
     { icon: Settings, label: "Custom field", tooltip: "Add custom field" },
-  ]
+  ];
 
   return (
     <div className="space-y-2.5">
       {sidebarItems.map((item, index) => (
-        <CustomTooltip key={index} content={item.tooltip} side="right" sideOffset={10}>
-          <button className="flex w-full gap-2 px-2 py-1 rounded cursor-pointer items-center transition-colors duration-150 bg-[#B6C2CF]/20 hover:bg-[#B6C2CF]/10 font-charlie-display-sm shadow-2xl text-[#B3BFCC]">
-            <item.icon size={18} />
-            <span>{item.label}</span>
-          </button>
-        </CustomTooltip>
+        <div key={index} className="relative">
+          <CustomTooltip content={item.tooltip} side="right" sideOffset={10}>
+            <button
+              onClick={item.onClick}
+              className="flex w-full gap-2 px-2 py-1 rounded cursor-pointer items-center transition-colors duration-150 bg-[#B6C2CF]/20 hover:bg-[#B6C2CF]/10 font-charlie-display-sm shadow-2xl text-[#B3BFCC]"
+            >
+              <item.icon size={18} />
+              <span>{item.label}</span>
+            </button>
+          </CustomTooltip>
+
+          <div
+            className={`absolute transition-all duration-75 top-5 mt-2 -left-20 z-20 bg-white shadow-lg  ${
+              item.isOpen ? "opacity-100" : "opacity-0 pointer-none:"
+            }`}
+          >
+            {item.dropdown}
+          </div>
+        </div>
       ))}
     </div>
-  )
+  );
 }
 
-export default ModalSidebar
+export default ModalSidebar;

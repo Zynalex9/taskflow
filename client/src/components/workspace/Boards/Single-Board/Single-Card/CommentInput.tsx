@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useSelector } from "react-redux";
-import { RootState } from "../../../../../store/store";
+import {  RootState } from "../../../../../store/store";
 import { formatDistanceToNow } from "date-fns";
 import { IComment } from "@/types/functionalites.types";
 import { useAddCommentMutation } from "@/store/cardApi";
@@ -14,7 +14,6 @@ const CommentInput = ({ comments, cardId }: IProps) => {
   const [isInputFocused, setIsInputFocused] = useState(false);
   const [addComment] = useAddCommentMutation();
   const handleSubmit = async () => {
-    console.log("I worked");
     try {
       const newCommentData = {
         cardId,
@@ -54,7 +53,7 @@ const CommentInput = ({ comments, cardId }: IProps) => {
       </div>
       {comments &&
         comments.length > 0 &&
-        comments.map((c) => (
+        [...comments].reverse().map((c) => (
           <>
             <div className="flex items-center gap-3">
               <img

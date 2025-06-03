@@ -8,7 +8,7 @@ import Description from "./Single-Card/Description";
 import ModalSidebar from "./Single-Card/ModalSidebar";
 import CommentInput from "./Single-Card/CommentInput";
 import Attachments from "./Single-Card/Attachments";
-import Checklist from "./Single-Card/Checklist";
+import Checklist from "./Single-Card/Checklist/Checklist";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useGetSingleCardQuery } from "@/store/cardApi";
 
@@ -16,7 +16,7 @@ const CardModal = () => {
   const { cardId } = useParams();
   const { data, isLoading, error } = useGetSingleCardQuery({ cardId });
   const card = data?.data;
-  console.log(card)
+  console.log(card);
   const [showDescription, setShowDescription] = useState(false);
   const [isEditingDescription, setIsEditingDescription] = useState(false);
   const [editedDescription, setEditedDescription] = useState(
@@ -29,7 +29,7 @@ const CardModal = () => {
   const handleClose = () => {
     navigate(background?.pathname || -1);
   };
-  console.log(card);
+
   if (isLoading)
     return (
       <div className="fixed inset-0 z-[100] bg-black/70 pt-[60px] flex items-start justify-center p-4">
@@ -207,11 +207,11 @@ const CardModal = () => {
                   {card?.checklist && card?.checklist.length > 0 && (
                     <Checklist Checklist={card.checklist} />
                   )}
-                  <CommentInput comments={card?.comments} cardId={card._id}/>
+                  <CommentInput comments={card?.comments} cardId={card._id} />
                 </div>
 
                 <div className="w-full md:w-1/5  mt-4 md:mt-0 p-4 rounded-lg">
-                  <ModalSidebar />
+                  <ModalSidebar cardId={card._id} />
                 </div>
               </div>
             </div>

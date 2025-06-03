@@ -31,7 +31,7 @@ export const addComment = async (req: Request, res: Response) => {
     res.status(201).json({
       message: `New comment ${comment} has been made`,
       success: true,
-      newComment
+      newComment,
     });
   } catch (error) {
     console.error(error);
@@ -39,8 +39,8 @@ export const addComment = async (req: Request, res: Response) => {
       message: "Internal server error",
       success: false,
     });
-  }finally{
-    console.log("I Worked")
+  } finally {
+    console.log("I Worked");
   }
 };
 

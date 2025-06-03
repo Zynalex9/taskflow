@@ -152,7 +152,6 @@ export const myApi = createApi({
         method: "POST",
         body: newCardParams,
       }),
-
       async onQueryStarted(newCardParams, { dispatch, queryFulfilled }) {
         const patchResult = dispatch(
           myApi.util.updateQueryData(
