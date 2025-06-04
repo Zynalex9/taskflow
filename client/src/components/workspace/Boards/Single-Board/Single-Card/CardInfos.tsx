@@ -1,3 +1,4 @@
+import ModalButton from "@/components/resuable/ModalButton";
 import { ICard } from "@/types/functionalites.types";
 import {
   format,
@@ -13,6 +14,9 @@ const CardInfos = ({ card }: { card: ICard }) => {
 
   const hasStartDate = !!card.startDate;
   const hasEndDate = !!card.endDate;
+
+  const hasLabels = card.labels?.length > 0;
+  const hasMembers = card.members.length > 0;
 
   const getDeadlineLabel = () => {
     if (!card.endDate) return null;
@@ -37,7 +41,7 @@ const CardInfos = ({ card }: { card: ICard }) => {
 
   return (
     <div className="ml-12">
-      <div>
+      <div className="flex flex-wrap items-center gap-4">
         {(hasStartDate || hasEndDate) && (
           <div>
             <h1 className="text-textP font-charlie-text-sb">Date</h1>
@@ -64,6 +68,41 @@ const CardInfos = ({ card }: { card: ICard }) => {
                   </>
                 )}
               </button>
+            </div>
+          </div>
+        )}
+        {hasLabels && (
+          <div className="max-w-[300px]">
+            <h1 className="text-textP font-charlie-text-sb">Labels</h1>
+            <div className="flex flex-wrap gap-2">
+              {card.labels.map((label) => (
+                <div
+                  key={label._id}
+                  className="px-6 py-2 rounded-xs shadow-sm text-white text-xs truncate max-w-[120px]"
+                  style={{ backgroundColor: label.color }}
+                >
+                  {label.name}
+                </div>
+              ))}
+              <ModalButton btnText="+" />
+            </div>
+          </div>
+        )}
+
+        {hasMembers && (
+          <div>
+            <h1 className="text-textP font-charlie-text-sb">Members</h1>
+            <div className="flex flex-wrap gap-2">
+              {card.members.map((member) => (
+                <div className="flex flex-wrap gap-2" key={member._id}>
+                  <img
+                    src={member.profilePicture}
+                    alt={member.username}
+                    className="size-9 shadow-lg rounded"
+                  />
+                </div>
+              ))}
+              <ModalButton btnText="+" />
             </div>
           </div>
         )}
