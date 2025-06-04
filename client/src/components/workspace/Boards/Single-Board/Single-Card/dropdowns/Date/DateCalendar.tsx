@@ -1,4 +1,5 @@
 import { zodResolver } from "@hookform/resolvers/zod";
+import { startOfDay } from "date-fns";
 import { format } from "date-fns";
 import { CalendarIcon } from "lucide-react";
 import { z } from "zod";
@@ -97,7 +98,7 @@ export function DateCalendar({ cardId }: { cardId: string }) {
                       mode="single"
                       selected={field.value}
                       onSelect={field.onChange}
-                      disabled={(date) => date < new Date()}
+                      disabled={(date) => date < startOfDay(new Date())}
                       className="bg-[#F5F8FA] rounded-lg p-2 shadow-lg"
                       initialFocus
                     />
@@ -143,7 +144,7 @@ export function DateCalendar({ cardId }: { cardId: string }) {
                       mode="single"
                       selected={field.value}
                       onSelect={field.onChange}
-                      disabled={(date) => date < new Date()}
+                      disabled={(date) => date < startOfDay(new Date())}
                       className="bg-[#F5F8FA] rounded-lg p-2 shadow-lg"
                       initialFocus
                     />

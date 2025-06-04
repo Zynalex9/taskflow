@@ -3,7 +3,7 @@ import { useState } from "react";
 import { useNavigate, useParams, useLocation } from "react-router-dom";
 import { AlignLeft, X } from "lucide-react";
 import InListMove from "./Single-Card/InListMove";
-import LabelsAndNotification from "./Single-Card/LabelsAndNotification";
+import CardInfos from "./Single-Card/CardInfos";
 import Description from "./Single-Card/Description";
 import ModalSidebar from "./Single-Card/ModalSidebar";
 import CommentInput from "./Single-Card/CommentInput";
@@ -100,7 +100,7 @@ const CardModal = () => {
               </div>
               <div className="w-full flex flex-col md:flex-row mt-4">
                 <div className="w-full md:w-4/5 md:pr-4">
-                  <LabelsAndNotification />
+                  <CardInfos card={card} />
                   {card?.description ? (
                     isEditingDescription ? (
                       <>
