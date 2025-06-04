@@ -16,12 +16,14 @@ import {
   closeAllDropDown,
   openAttachmentsDropDown,
   openChecklistDropDown,
+  openDatesDropDown,
 } from "@/store/CardModalStatesSlice";
 import AddChecklist from "./dropdowns/Checklist/AddChecklist";
 import AddAttachment from "./dropdowns/attachment/AddAttachment";
+import DateCalendar from "./dropdowns/Date/DateCalendar";
 
 export function ModalSidebar({ cardId }: { cardId: string }) {
-  const { openChecklist, openAttachments } = useSelector(
+  const { openChecklist, openAttachments, openDates } = useSelector(
     (state: RootState) => state.cardModalState
   );
   const dispatch = useDispatch<AppDispatch>();
@@ -40,7 +42,6 @@ export function ModalSidebar({ cardId }: { cardId: string }) {
       isOpen: openChecklist,
       dropdown: <AddChecklist cardId={cardId} />,
     },
-    { icon: Calendar, label: "Dates", tooltip: "Set dates" },
     {
       icon: openAttachments ? X : Paperclip,
       label: "Attachment",
@@ -48,10 +49,20 @@ export function ModalSidebar({ cardId }: { cardId: string }) {
       onClick: openAttachments
         ? () => dispatch(closeAllDropDown())
         : () => dispatch(openAttachmentsDropDown()),
-      dropdown: <AddAttachment cardId={cardId}  />,
+      dropdown: <AddAttachment cardId={cardId} />,
       isOpen: openAttachments,
     },
     { icon: ImageIcon, label: "Cover", tooltip: "Add cover" },
+    {
+      icon: Calendar,
+      label: "Date",
+      tooltip: "Add Date",
+      dropdown: <DateCalendar cardId={cardId} />,
+      isOpen: openDates,
+      onClick: openDates
+        ? () => dispatch(closeAllDropDown())
+        : () => dispatch(openDatesDropDown()),
+    },
     { icon: Settings, label: "Custom field", tooltip: "Add custom field" },
   ];
 
@@ -70,7 +81,7 @@ export function ModalSidebar({ cardId }: { cardId: string }) {
           </CustomTooltip>
 
           <div
-            className={`absolute transition-all duration-75 top-5 mt-2 -left-20 z-20 bg-white shadow-lg  ${
+            className={`absolute transition-all duration-75 top-5 mt-2 -left-0 z-20 bg-[#282E33] shadow-lg  ${
               item.isOpen ? "block" : "hidden"
             }`}
           >

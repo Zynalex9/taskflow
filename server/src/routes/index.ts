@@ -45,6 +45,10 @@ import {
   moveList,
 } from "../controller/list/list";
 import {
+  addDate,
+  addDescription,
+  addEndDate,
+  addStartDate,
   copyCard,
   createCard,
   deleteCard,
@@ -172,4 +176,8 @@ cardRouter.route("/move-card").patch(verifyJWT, moveCard);
 cardRouter.route("/copy-card").patch(verifyJWT, copyCard);
 cardRouter.route("/single-card/:cardId").get(verifyJWT, getSingleCard);
 cardRouter.route("/card-activities/:cardId").get(verifyJWT, getCardActivities);
+cardRouter.route("/add-description").post(verifyJWT, addDescription);
+cardRouter.route("/add-start-date").post(verifyJWT, addEndDate);
+cardRouter.route("/add-end-date").post(verifyJWT, addStartDate);
+cardRouter.route("/add-date").patch(verifyJWT, addDate);
 export { cardRouter };

@@ -140,7 +140,7 @@ export const createCard = async (req: Request, res: Response) => {
       `(${req.user.username}) created a (${newCard.name})`
     );
     const io = getIO();
-    console.log(workspaceId)
+    console.log(workspaceId);
     io.to(workspaceId).emit("cardCreated", newCard);
     res.status(201).json({
       message: "Card created successfully",
@@ -412,6 +412,81 @@ export const editCardDetails = async (req: Request, res: Response) => {
     }
   }
 };
+export const addDescription = asyncHandler(async (req, res) => {
+  const { descripton, cardId } = req.body;
+  if (!descripton || !cardId) {
+    res
+      .status(401)
+      .json(new ApiResponse(401, {}, "No Description/cardId provided"));
+    return;
+  }
+  const card = await CardModel.findById(cardId);
+  if (!card) {
+    res.status(404).json(new ApiResponse(404, {}, "No card found"));
+    return;
+  }
+  card.description = descripton;
+  await card.save();
+  res.status(200).json(new ApiResponse(200, card, "Description updated"));
+});
+export const addEndDate = asyncHandler(async (req, res) => {
+  const { endDate, cardId } = req.body;
+  if (!endDate || !cardId) {
+    res
+      .status(401)
+      .json(new ApiResponse(401, {}, "No due date/cardId provided"));
+    return;
+  }
+  const card = await CardModel.findById(cardId);
+  if (!card) {
+    res.status(404).json(new ApiResponse(404, {}, "No card found"));
+    return;
+  }
+  card.endDate = endDate;
+  await card.save();
+  res.status(200).json(new ApiResponse(200, card, "End date addded"));
+});
+export const addDate = asyncHandler(async (req, res) => {
+  const { startDate, endDate, cardId } = req.body;
+  if (!startDate && !endDate) {
+    res.status(401).json(new ApiResponse(401, {}, "No date provided"));
+    return;
+  }
+  if (!cardId) {
+    res.status(401).json(new ApiResponse(401, {}, "No card id provided"));
+    return;
+  }
+  const card = await CardModel.findById(cardId);
+  if (!card) {
+    res.status(404).json(new ApiResponse(404, {}, "No card found"));
+    return;
+  }
+  if (startDate) {
+    card.startDate = startDate;
+  }
+  if (endDate) {
+    card.endDate = endDate;
+  }
+  await card.save();
+  res.status(200).json(new ApiResponse(200, card, "Description updated"));
+});
+export const addStartDate = asyncHandler(async (req, res) => {
+  const { startDate, cardId } = req.body;
+  if (!startDate || !cardId) {
+    res
+      .status(401)
+      .json(new ApiResponse(401, {}, "No start date/cardId provided"));
+    return;
+  }
+  const card = await CardModel.findById(cardId);
+  if (!card) {
+    res.status(404).json(new ApiResponse(404, {}, "No card found"));
+    return;
+  }
+  card.startDate = startDate;
+  await card.save();
+  res.status(200).json(new ApiResponse(200, card, "Start date addded"));
+});
 export const getCardsByUser = async (req: Request, res: Response) => {
   try {
     const userId = req.user;

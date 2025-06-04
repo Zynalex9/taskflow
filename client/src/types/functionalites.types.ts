@@ -55,6 +55,7 @@ export interface ICard {
   name: string;
   description: string;
   endDate: string;
+  startDate: string;
   createdBy: string;
   members: IUser[];
   list: IList | string;
@@ -148,5 +149,10 @@ export interface IChecklistResponse {
 export interface IChecklistItemResponse {
   success: boolean;
   checkList: IChecklist;
+  message: string;
+}
+export interface IAddDateResponse {
+  success: boolean;
+  card: ICard;
   message: string;
 }
