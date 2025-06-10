@@ -6,6 +6,7 @@ import {
   IChecklistResponse,
   IComment,
   ICommentResponse,
+  ILabelsResponse,
   ISingleCardResponse,
 } from "@/types/functionalites.types";
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
@@ -294,11 +295,14 @@ export const cardApi = createApi({
         }
       },
     }),
-    addLabels: builder.mutation({
-      query: (body: {
+    addLabels: builder.mutation<
+      ILabelsResponse,
+      {
         cardId: string;
         labels: { name?: string; color: string }[];
-      }) => ({
+      }
+    >({
+      query: (body) => ({
         url: "/api/card/add-label",
         method: "POST",
         body,
@@ -306,6 +310,47 @@ export const cardApi = createApi({
       invalidatesTags: (_, __, { cardId }) => [
         { type: "singleCard", id: cardId },
       ],
+      async onQueryStarted(body, { dispatch, queryFulfilled }) {
+        const tempLabels = body.labels.map((label, index) => ({
+          _id: `temp-id-${Date.now()}-${index}`,
+          card: body.cardId,
+          color: label.color,
+          name: label.name || "",
+          createdAt: new Date().toISOString(),
+          updatedAt: new Date().toISOString(),
+        }));
+
+        const patchResult = dispatch(
+          cardApi.util.updateQueryData(
+            "getSingleCard",
+            { cardId: body.cardId },
+            (draft) => {
+              draft.data.labels.push(...tempLabels);
+            }
+          )
+        );
+
+        try {
+          const { data } = await queryFulfilled;
+          const realLabels = data.labels;
+
+          dispatch(
+            cardApi.util.updateQueryData(
+              "getSingleCard",
+              { cardId: body.cardId },
+              (draft) => {
+                draft.data.labels = draft.data.labels.filter(
+                  (label) => !label._id.startsWith("temp-id")
+                );
+
+                draft.data.labels.push(...realLabels);
+              }
+            )
+          );
+        } catch {
+          patchResult.undo();
+        }
+      },
     }),
   }),
 });
@@ -317,5 +362,5 @@ export const {
   useAddAttachmentMutation,
   useAddCardDateMutation,
   useAddDescriptionMutation,
-  useAddLabelsMutation
+  useAddLabelsMutation,
 } = cardApi;

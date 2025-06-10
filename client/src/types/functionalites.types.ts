@@ -156,3 +156,8 @@ export interface IAddDateResponse {
   card: ICard;
   message: string;
 }
+export interface ILabelsResponse {
+  success: boolean;
+  labels: ILabel[];
+  message: string;
+}
