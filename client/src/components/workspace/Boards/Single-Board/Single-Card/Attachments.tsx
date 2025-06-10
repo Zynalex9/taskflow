@@ -21,7 +21,7 @@ const Attachments: React.FC<AttachmentsProps> = ({ Attachment }) => {
       </div>
       <div className="pl-10">
         <h3 className="text-textP text-md my-3">Files</h3>
-        {Attachment.map((a) => (
+        {[...Attachment].reverse().map((a) => (
           <div className="flex justify-between items-center my-4">
             <div className="flex gap-2 items-center">
               <img
@@ -30,7 +30,7 @@ const Attachments: React.FC<AttachmentsProps> = ({ Attachment }) => {
                 className="w-30 h-20 shadow-2xl object-cover border-2 border-fprimary/60 rounded"
               />
               <div>
-                <h1 className="text-textP text-xl font-charlie-display-sm">{a.filename}</h1>
+                <h1 className="text-textP text-xl font-charlie-display-sm truncate w-2xs">{a.filename}</h1>
                 <h3 className="text-textP/90 text-sm font-charlie-text-r">
                   {formatDistanceToNow(new Date(a.createdAt), {
                     addSuffix: true,

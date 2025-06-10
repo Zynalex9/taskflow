@@ -1,12 +1,16 @@
 import DropdownHeader from "../../DropdownHeader";
 import { useState } from "react";
-import { Skeleton } from "@/components/ui/skeleton";
 import { toast, ToastContainer } from "react-toastify";
 import { useAddAttachmentMutation } from "@/store/cardApi";
+import { Skeleton } from "@/components/ui/skeleton";
+import { useDispatch } from "react-redux";
+import { AppDispatch } from "@/store/store";
+import { closeAllDropDown } from "@/store/CardModalStatesSlice";
 
 const AddAttachment = ({ cardId }: { cardId: string }) => {
   const [loading, setLoading] = useState(false);
   const [AddAttachment] = useAddAttachmentMutation();
+  const dispatch = useDispatch<AppDispatch>();
   const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
@@ -19,14 +23,16 @@ const AddAttachment = ({ cardId }: { cardId: string }) => {
       toast.error("Upload failed");
     } finally {
       setLoading(false);
+      dispatch(closeAllDropDown());
     }
   };
   if (loading)
     return (
-      <div>
-        <Skeleton className="w-72 h-52 bg-[#282E33]" />
+      <div className="relative w-72 h-52 bg-[#282E33]/60 rounded overflow-hidden">
+        <Skeleton className="absolute inset-0 skeleton-shimmer  bg-[#282E33]/60" />
       </div>
     );
+
   return (
     <div className="absolute top-2 left-2 w-72 rounded bg-[#282E33] p-4 shadow-2xl text-white z-30">
       <DropdownHeader headerText="Add an attachment" />
