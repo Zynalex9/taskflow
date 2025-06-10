@@ -4,6 +4,7 @@ import { useDispatch } from "react-redux";
 import { AppDispatch } from "@/store/store";
 import { useState } from "react";
 import { useAddChecklistMutation } from "@/store/cardApi";
+import ModalButton from "@/components/resuable/ModalButton";
 
 const AddChecklist = ({ cardId }: { cardId: string }) => {
   const dispatch = useDispatch<AppDispatch>();
@@ -42,12 +43,7 @@ const AddChecklist = ({ cardId }: { cardId: string }) => {
       </div>
 
       <div className="mt-4 flex justify-end gap-2">
-        <button
-          onClick={onSubmit}
-          className="px-3 py-1 text-sm rounded bg-[#4C9AFF] hover:bg-[#388BFF] text-white"
-        >
-          Add
-        </button>
+        <ModalButton onClickFn={onSubmit} btnText="Add"></ModalButton>
         <button
           onClick={() => dispatch(closeAllDropDown())}
           className="px-3 py-1 text-sm rounded bg-[#555B61] hover:bg-[#444A50] text-white"
