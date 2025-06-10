@@ -206,6 +206,16 @@ export const getSingleBoard = asyncHandler(
                 localField: "cards",
                 foreignField: "_id",
                 as: "cards",
+                pipeline: [
+                  {
+                    $lookup: {
+                      from: "labels",
+                      localField: "labels",
+                      foreignField: "_id",
+                      as: "labels",
+                    },
+                  },
+                ],
               },
             },
           ],

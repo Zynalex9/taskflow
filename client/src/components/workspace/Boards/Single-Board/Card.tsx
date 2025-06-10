@@ -14,7 +14,8 @@ const Card: React.FC<IProps> = ({ card }) => {
   const location = useLocation();
   const navigate = useNavigate();
   const { workspaceId, boardId } = useParams();
- return (
+  console.log("c", card);
+  return (
     <HoverCard>
       <HoverCardTrigger>
         <div
@@ -28,7 +29,21 @@ const Card: React.FC<IProps> = ({ card }) => {
           }}
           className="bg-[#22272B] rounded-xl py-2 px-1 my-2 max-w-full transition-all duration-100 hover:border-white hover:border"
         >
-          {card?.name}
+          {card && card.labels && card.labels.length > 0 && (
+            <div className="flex flex-wrap gap-1">
+              {card.labels.map((label) => (
+                <div
+                  style={{ backgroundColor: label.color }}
+                  className="px-1 min-w-14 h-4 truncate rounded flex items-center justify-center"
+                >
+                 <h1 className="text-xs text-white drop-shadow-md">
+                    {label.name}
+                  </h1>
+                </div>
+              ))}
+            </div>
+          )}
+          <h1> {card?.name}</h1>
         </div>
       </HoverCardTrigger>
       {card && (
