@@ -17,13 +17,15 @@ import {
   openAttachmentsDropDown,
   openChecklistDropDown,
   openDatesDropDown,
+  openLabelsDropDown,
 } from "@/store/CardModalStatesSlice";
 import AddChecklist from "./dropdowns/Checklist/AddChecklist";
 import AddAttachment from "./dropdowns/attachment/AddAttachment";
 import DateCalendar from "./dropdowns/Date/DateCalendar";
+import AddLabelDropDown from "./dropdowns/Label/AddLabelDropDown";
 
 export function ModalSidebar({ cardId }: { cardId: string }) {
-  const { openChecklist, openAttachments, openDates } = useSelector(
+  const { openChecklist, openAttachments, openDates,openLabels } = useSelector(
     (state: RootState) => state.cardModalState
   );
   const dispatch = useDispatch<AppDispatch>();
@@ -31,7 +33,16 @@ export function ModalSidebar({ cardId }: { cardId: string }) {
   const sidebarItems = [
     { icon: UserPlus, label: "Join", tooltip: "Join Card" },
     { icon: User, label: "Members", tooltip: "Manage members" },
-    { icon: Tag, label: "Labels", tooltip: "Manage labels" },
+    {
+      icon: Tag,
+      label: "Labels",
+      tooltip: "Manage labels",
+      onClick: openLabels
+        ? () => dispatch(closeAllDropDown())
+        : () => dispatch(openLabelsDropDown()),
+      dropdown: <AddLabelDropDown cardId={cardId} />,
+      isOpen: openLabels,
+    },
     {
       icon: openChecklist ? X : CheckSquare,
       label: "Checklist",

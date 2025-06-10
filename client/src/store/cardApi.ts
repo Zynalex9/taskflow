@@ -294,6 +294,19 @@ export const cardApi = createApi({
         }
       },
     }),
+    addLabels: builder.mutation({
+      query: (body: {
+        cardId: string;
+        labels: { name?: string; color: string }[];
+      }) => ({
+        url: "/api/card/add-label",
+        method: "POST",
+        body,
+      }),
+      invalidatesTags: (_, __, { cardId }) => [
+        { type: "singleCard", id: cardId },
+      ],
+    }),
   }),
 });
 export const {
@@ -304,4 +317,5 @@ export const {
   useAddAttachmentMutation,
   useAddCardDateMutation,
   useAddDescriptionMutation,
+  useAddLabelsMutation
 } = cardApi;

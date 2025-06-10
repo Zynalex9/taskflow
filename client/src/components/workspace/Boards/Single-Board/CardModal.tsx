@@ -1,5 +1,5 @@
 import { usePreventScroll } from "./PreventScroll";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate, useParams, useLocation } from "react-router-dom";
 import { AlignLeft, X } from "lucide-react";
 import InListMove from "./Single-Card/InListMove";
@@ -42,6 +42,9 @@ const CardModal = () => {
       await addDescription(body);
     }
   };
+  useEffect(()=>{
+
+  },[])
   if (isLoading)
     return (
       <div className="fixed inset-0 z-[100] bg-black/70 pt-[60px] flex items-start justify-center p-4">

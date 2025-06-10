@@ -72,7 +72,7 @@ const CardInfos = ({ card }: { card: ICard }) => {
           </div>
         )}
         {hasLabels && (
-          <div className="max-w-[300px]">
+          <div className="">
             <h1 className="text-textP font-charlie-text-sb">Labels</h1>
             <div className="flex flex-wrap gap-2">
               {card.labels.map((label) => (
