@@ -264,6 +264,36 @@ export const cardApi = createApi({
         }
       },
     }),
+    addDescription: builder.mutation({
+      query: (body: { description: string; cardId: string }) => ({
+        url: "/api/card/add-description",
+        method: "PATCH",
+        body,
+      }),
+      invalidatesTags: (_, __, { cardId }) => [
+        { type: "singleCard", id: cardId },
+      ],
+      async onQueryStarted(body, { dispatch, queryFulfilled }) {
+        const patchResult = dispatch(
+          cardApi.util.updateQueryData(
+            "getSingleCard",
+            { cardId: body.cardId },
+            (draft) => {
+              draft.data = {
+                ...draft.data,
+                description: body.description,
+              };
+            }
+          )
+        );
+        try {
+          await queryFulfilled;
+        } catch (error) {
+          console.log(error);
+          patchResult.undo();
+        }
+      },
+    }),
   }),
 });
 export const {
@@ -273,4 +303,5 @@ export const {
   useAddItemToCheckListMutation,
   useAddAttachmentMutation,
   useAddCardDateMutation,
+  useAddDescriptionMutation,
 } = cardApi;

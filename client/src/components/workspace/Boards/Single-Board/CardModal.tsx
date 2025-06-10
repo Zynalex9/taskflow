@@ -10,7 +10,10 @@ import CommentInput from "./Single-Card/CommentInput";
 import Attachments from "./Single-Card/Attachments";
 import Checklist from "./Single-Card/dropdowns/Checklist/Checklist";
 import { Skeleton } from "@/components/ui/skeleton";
-import { useGetSingleCardQuery } from "@/store/cardApi";
+import {
+  useAddDescriptionMutation,
+  useGetSingleCardQuery,
+} from "@/store/cardApi";
 const CardModal = () => {
   const { cardId } = useParams();
   const { data, isLoading, error } = useGetSingleCardQuery({ cardId });
@@ -28,7 +31,17 @@ const CardModal = () => {
   const handleClose = () => {
     navigate(background?.pathname || -1);
   };
+  const [addDescription] = useAddDescriptionMutation();
 
+  const handleEditDescription = async () => {
+    if (editedDescription && cardId) {
+      const body = {
+        description: editedDescription,
+        cardId,
+      };
+      await addDescription(body);
+    }
+  };
   if (isLoading)
     return (
       <div className="fixed inset-0 z-[100] bg-black/70 pt-[60px] flex items-start justify-center p-4">
@@ -63,7 +76,7 @@ const CardModal = () => {
     return (
       <>
         <div
-          className="fixed inset-0 z-[90] bg-black/70 top-[60px]"
+          className="fixed inset-0 z-[90] bg-black/70 top-[20px]"
           onClick={handleClose}
         />
 
@@ -126,11 +139,8 @@ const CardModal = () => {
                           <button
                             className="m-1 px-3 py-2 bg-primary rounded font-charlie-text-r"
                             onClick={() => {
-                              console.log(
-                                "New Description:",
-                                editedDescription
-                              );
                               setIsEditingDescription(false);
+                              handleEditDescription();
                             }}
                           >
                             Save
@@ -169,18 +179,10 @@ const CardModal = () => {
                           Description
                         </h1>
                       </div>
-                      <Description />
-                      <div className="ml-10">
-                        <button
-                          className="m-1 px-3 py-2 bg-fprimary/60 rounded font-charlie-text-r"
-                          onClick={() => setShowDescription(false)}
-                        >
-                          Close
-                        </button>
-                        <button className="m-1 px-3 py-2 bg-primary rounded font-charlie-text-r">
-                          Save
-                        </button>
-                      </div>
+                      <Description
+                        setShowDescription={setShowDescription}
+                        cardId={card._id}
+                      />
                     </>
                   ) : (
                     <>

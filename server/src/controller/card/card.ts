@@ -413,8 +413,8 @@ export const editCardDetails = async (req: Request, res: Response) => {
   }
 };
 export const addDescription = asyncHandler(async (req, res) => {
-  const { descripton, cardId } = req.body;
-  if (!descripton || !cardId) {
+  const { description, cardId } = req.body;
+  if (!description || !cardId) {
     res
       .status(401)
       .json(new ApiResponse(401, {}, "No Description/cardId provided"));
@@ -425,7 +425,7 @@ export const addDescription = asyncHandler(async (req, res) => {
     res.status(404).json(new ApiResponse(404, {}, "No card found"));
     return;
   }
-  card.description = descripton;
+  card.description = description;
   await card.save();
   res.status(200).json(new ApiResponse(200, card, "Description updated"));
 });
