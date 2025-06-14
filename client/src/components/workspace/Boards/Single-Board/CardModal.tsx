@@ -15,6 +15,7 @@ import {
   useGetSingleCardQuery,
   useToggleCompleteMutation,
 } from "@/store/cardApi";
+import { isImageUrl } from "@/utils/helper";
 const CardModal = () => {
   const { cardId } = useParams();
   if (!cardId) return;
@@ -88,6 +89,13 @@ const CardModal = () => {
   if (card)
     return (
       <>
+        {isImageUrl(card.cover) ? (
+          <div className="w-full h-44">
+            <img src={card.cover} alt="" className="object-cover w-4/5 mx-auto" />
+          </div>
+        ) : (
+          ""
+        )}
         <div
           className="fixed inset-0 z-[90] bg-black/70 top-[20px]"
           onClick={handleClose}

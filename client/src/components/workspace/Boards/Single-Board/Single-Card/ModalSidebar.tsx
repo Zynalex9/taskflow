@@ -3,7 +3,6 @@ import {
   CheckSquare,
   ImageIcon,
   Paperclip,
-  Settings,
   Tag,
   User,
   UserPlus,
@@ -15,6 +14,7 @@ import {
   closeAllDropDown,
   openAttachmentsDropDown,
   openChecklistDropDown,
+  openCoverDropDown,
   openDatesDropDown,
   openLabelsDropDown,
   openMembersDropDown,
@@ -26,12 +26,19 @@ import AddLabelDropDown from "./dropdowns/Label/AddLabelDropDown";
 import AddMembers from "./dropdowns/members/AddMembers";
 import { CustomTooltip } from "./CustomTooltip";
 import { ICard } from "@/types/functionalites.types";
+import AddCover from "./dropdowns/cover/addCover";
 interface Props {
   card: ICard;
 }
 export function ModalSidebar({ card }: Props) {
-  const { openChecklist, openAttachments, openDates, openLabels, openMembers } =
-    useSelector((state: RootState) => state.cardModalState);
+  const {
+    openChecklist,
+    openAttachments,
+    openDates,
+    openLabels,
+    openMembers,
+    openCover,
+  } = useSelector((state: RootState) => state.cardModalState);
   const dispatch = useDispatch<AppDispatch>();
   const cardId = card._id;
   const sidebarItems = [
@@ -40,7 +47,7 @@ export function ModalSidebar({ card }: Props) {
       icon: User,
       label: "Members",
       tooltip: "Manage members",
-      dropdown: <AddMembers card={card}/>,
+      dropdown: <AddMembers card={card} />,
       isOpen: openMembers,
       onClick: openMembers
         ? () => dispatch(closeAllDropDown())
@@ -76,7 +83,16 @@ export function ModalSidebar({ card }: Props) {
       dropdown: <AddAttachment cardId={cardId} />,
       isOpen: openAttachments,
     },
-    { icon: ImageIcon, label: "Cover", tooltip: "Add cover" },
+    {
+      icon: ImageIcon,
+      label: "Cover",
+      tooltip: "Add cover",
+      dropdown: <AddCover cardId={card._id} />,
+      isOpen: openCover,
+      onClick: openCover
+        ? () => dispatch(closeAllDropDown())
+        : () => dispatch(openCoverDropDown()),
+    },
     {
       icon: Calendar,
       label: "Date",
@@ -87,7 +103,6 @@ export function ModalSidebar({ card }: Props) {
         ? () => dispatch(closeAllDropDown())
         : () => dispatch(openDatesDropDown()),
     },
-    { icon: Settings, label: "Custom field", tooltip: "Add custom field" },
   ];
 
   return (

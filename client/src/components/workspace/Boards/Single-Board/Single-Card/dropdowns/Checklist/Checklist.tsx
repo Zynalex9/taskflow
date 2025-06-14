@@ -89,9 +89,16 @@ const Checklist: React.FC<ChecklistProps> = ({ Checklist, cardId }) => {
             {activeChecklistId === c._id && (
               <input
                 placeholder="Add item"
-                className="block w-full rounded-xl border-1 my-2 px-2 py-1.5  focus:border-0 focus:outline-0 focus:ring-2 focus:ring-[#85B8FF]"
+                className="block w-full rounded-xl border-1 my-2 px-2 py-1.5 focus:border-0 focus:outline-0 focus:ring-2 focus:ring-[#85B8FF]"
                 value={itemTitle}
+                autoFocus
                 onChange={(e) => setItemTitle(e.target.value)}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter") {
+                    e.preventDefault(); 
+                    HandleSubmit(cardId, c._id);
+                  }
+                }}
               />
             )}
             {activeChecklistId === c._id ? (

@@ -45,6 +45,7 @@ import {
   moveList,
 } from "../controller/list/list";
 import {
+  addCover,
   addDate,
   addDescription,
   addEndDate,
@@ -182,4 +183,7 @@ cardRouter.route("/add-start-date").post(verifyJWT, addEndDate);
 cardRouter.route("/add-end-date").post(verifyJWT, addStartDate);
 cardRouter.route("/add-date").patch(verifyJWT, addDate);
 cardRouter.route("/toggle-complete").patch(verifyJWT, toggleComplete);
+cardRouter
+  .route("/add-cover")
+  .patch(verifyJWT, upload.single("card-cover"), addCover);
 export { cardRouter };

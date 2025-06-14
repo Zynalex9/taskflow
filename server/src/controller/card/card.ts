@@ -19,6 +19,8 @@ import { UserModel } from "../../models/user.model";
 import { asyncHandler } from "../../utils/asyncHandler";
 import { redisClient } from "../..";
 import { getIO } from "../../socket";
+import { UploadOnCloudinary } from "../../utils/cloudinary";
+const cloudinary = require("cloudinary").v2;
 
 export const createCard = async (req: Request, res: Response) => {
   try {
@@ -718,3 +720,29 @@ export const toggleComplete = asyncHandler(
     res.status(200).json(new ApiResponse(200, {}, "Updateds"));
   }
 );
+export const addCover = asyncHandler(async (req: Request, res: Response) => {
+  const { cardId } = req.body;
+  const card = await CardModel.findById(cardId);
+  if (!card) {
+    res.status(404).json(new ApiResponse(404, {}, "No card found"));
+    return;
+  }
+  if (!req.file) {
+    res.status(400).json(new ApiResponse(400, {}, "No file uploaded"));
+    return;
+  }
+  console.log(req.file)
+  const path = req.file.path;
+  const uploadResult = await UploadOnCloudinary({ localFilePath: path });
+  const coverUrl = uploadResult?.url;
+  if (!cardId || !coverUrl) {
+    res
+      .status(400)
+      .json(new ApiResponse(400, {}, "cardId and coverUrl are required"));
+    return;
+  }
+
+  card.cover = coverUrl;
+  await card.save();
+  res.status(200).json(new ApiResponse(200, card, "Cover added to card"));
+});
