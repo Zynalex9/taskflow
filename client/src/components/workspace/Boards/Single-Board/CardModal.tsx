@@ -20,9 +20,9 @@ const CardModal = () => {
   const { cardId } = useParams();
   if (!cardId) return;
   const [toggleCard] = useToggleCompleteMutation();
-  const [isChecked, setIsChecked] = useState(false);
   const { data, isLoading, error } = useGetSingleCardQuery({ cardId });
   const card = data?.data;
+  const [isChecked, setIsChecked] = useState(card?.checked);
   const [showDescription, setShowDescription] = useState(false);
   const [isEditingDescription, setIsEditingDescription] = useState(false);
   const [editedDescription, setEditedDescription] = useState(
@@ -47,7 +47,7 @@ const CardModal = () => {
     }
   };
   const handleCheckChange = async () => {
-    console.log("It's changed");
+    if (!cardId) return;
     setIsChecked(!isChecked);
     const body = {
       cardId,
@@ -91,7 +91,11 @@ const CardModal = () => {
       <>
         {isImageUrl(card.cover) ? (
           <div className="w-full h-44">
-            <img src={card.cover} alt="" className="object-cover w-4/5 mx-auto" />
+            <img
+              src={card.cover}
+              alt=""
+              className="object-cover w-4/5 mx-auto"
+            />
           </div>
         ) : (
           ""
@@ -113,7 +117,7 @@ const CardModal = () => {
                     <input
                       type="checkbox"
                       name="option"
-                      checked={card.checked}
+                      checked={isChecked}
                       onChange={handleCheckChange}
                       className="peer hidden"
                     />
