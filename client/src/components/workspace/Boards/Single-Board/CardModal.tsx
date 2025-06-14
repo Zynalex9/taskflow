@@ -16,9 +16,10 @@ import {
   useToggleCompleteMutation,
 } from "@/store/cardApi";
 const CardModal = () => {
+  const { cardId } = useParams();
+  if (!cardId) return;
   const [toggleCard] = useToggleCompleteMutation();
   const [isChecked, setIsChecked] = useState(false);
-  const { cardId } = useParams();
   const { data, isLoading, error } = useGetSingleCardQuery({ cardId });
   const card = data?.data;
   const [showDescription, setShowDescription] = useState(false);
