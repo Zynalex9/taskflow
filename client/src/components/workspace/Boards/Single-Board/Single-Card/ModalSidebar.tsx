@@ -9,7 +9,6 @@ import {
   UserPlus,
   X,
 } from "lucide-react";
-import { CustomTooltip } from "./CustomTooltip";
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "@/store/store";
 import {
@@ -18,21 +17,35 @@ import {
   openChecklistDropDown,
   openDatesDropDown,
   openLabelsDropDown,
+  openMembersDropDown,
 } from "@/store/CardModalStatesSlice";
 import AddChecklist from "./dropdowns/Checklist/AddChecklist";
 import AddAttachment from "./dropdowns/attachment/AddAttachment";
 import DateCalendar from "./dropdowns/Date/DateCalendar";
 import AddLabelDropDown from "./dropdowns/Label/AddLabelDropDown";
-
-export function ModalSidebar({ cardId }: { cardId: string }) {
-  const { openChecklist, openAttachments, openDates,openLabels } = useSelector(
-    (state: RootState) => state.cardModalState
-  );
+import AddMembers from "./dropdowns/members/AddMembers";
+import { CustomTooltip } from "./CustomTooltip";
+import { ICard } from "@/types/functionalites.types";
+interface Props {
+  card: ICard;
+}
+export function ModalSidebar({ card }: Props) {
+  const { openChecklist, openAttachments, openDates, openLabels, openMembers } =
+    useSelector((state: RootState) => state.cardModalState);
   const dispatch = useDispatch<AppDispatch>();
-
+  const cardId = card._id;
   const sidebarItems = [
     { icon: UserPlus, label: "Join", tooltip: "Join Card" },
-    { icon: User, label: "Members", tooltip: "Manage members" },
+    {
+      icon: User,
+      label: "Members",
+      tooltip: "Manage members",
+      dropdown: <AddMembers card={card}/>,
+      isOpen: openMembers,
+      onClick: openMembers
+        ? () => dispatch(closeAllDropDown())
+        : () => dispatch(openMembersDropDown()),
+    },
     {
       icon: Tag,
       label: "Labels",

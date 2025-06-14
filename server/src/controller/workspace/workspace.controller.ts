@@ -267,7 +267,7 @@ export const getCalendarData = async (req: Request, res: Response) => {
           _id: 1,
           name: 1,
           endDate: 1,
-          listId: "$listDetails._id",  // Include listId
+          listId: "$listDetails._id", // Include listId
           boardId: "$boardDetails._id", // Include boardId
           labels: {
             $map: {
@@ -329,7 +329,10 @@ export const getWorkspace = asyncHandler(
         .json(new ApiResponse(200, parsedData, "Workspace Found (from cache)"));
       return;
     }
-    const workspace = await workSpaceModel.findById(workspaceId).lean();
+    const workspace = await workSpaceModel
+      .findById(workspaceId)
+      .populate("members")
+      .lean()
     if (!workspace) {
       res.status(404).json(new ApiResponse(404, {}, "No workspace found"));
       return;
