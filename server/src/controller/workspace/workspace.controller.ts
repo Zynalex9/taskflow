@@ -131,12 +131,12 @@ export const getWorkspaceTableData = async (req: Request, res: Response) => {
         .json({ message: "Workspace ID is required", success: false });
       return;
     }
-    const cachedData = await redisClient.get(`tableData:${userId}`);
-    if (cachedData) {
-      const parsed = JSON.parse(cachedData);
-      res.status(200).json(new ApiResponse(200, parsed, "Data from cache"));
-      return;
-    }
+    // const cachedData = await redisClient.get(`tableData:${userId}`);
+    // if (cachedData) {
+    //   const parsed = JSON.parse(cachedData);
+    //   res.status(200).json(new ApiResponse(200, parsed, "Data from cache"));
+    //   return;
+    // }
 
     const tableData = await boardModel.aggregate([
       {
@@ -186,12 +186,27 @@ export const getWorkspaceTableData = async (req: Request, res: Response) => {
           boardName: "$title",
           listName: "$listsDetails.name",
           cardName: "$cardsDetails.name",
-          labels: "$LabelDetails.name",
+          labels: {
+            $map: {
+              input: "$LabelDetails",
+              as: "label",
+              in: {
+                name: "$$label.name",
+                color: "$$label.color",
+              },
+            },
+          },
           members: "$userDetails.username",
           dueDate: {
-            $dateToString: {
-              format: "%d-%m-%Y",
-              date: "$cardsDetails.endDate",
+            $cond: {
+              if: "$cardsDetails.endDate",
+              then: {
+                $dateToString: {
+                  format: "%d-%m-%Y",
+                  date: "$cardsDetails.endDate",
+                },
+              },
+              else: null,
             },
           },
         },
@@ -332,7 +347,7 @@ export const getWorkspace = asyncHandler(
     const workspace = await workSpaceModel
       .findById(workspaceId)
       .populate("members")
-      .lean()
+      .lean();
     if (!workspace) {
       res.status(404).json(new ApiResponse(404, {}, "No workspace found"));
       return;
