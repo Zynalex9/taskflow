@@ -156,7 +156,7 @@ cardRouter
   .post(verifyJWT, addItemToCheckList);
 cardRouter
   .route("/checklist/toggle/:checklistId/:itemId")
-  .post(verifyJWT, toggleCheckListItem);
+  .patch(verifyJWT, toggleCheckListItem);
 cardRouter
   .route("/checklist/edit/:checklistId/:itemId")
   .patch(verifyJWT, editItem);

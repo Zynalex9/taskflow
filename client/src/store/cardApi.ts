@@ -381,6 +381,43 @@ export const cardApi = createApi({
         }
       },
     }),
+    ToggleCheckListItemComplete: builder.mutation({
+      query: (body: {
+        cardId: string;
+        itemId: string;
+        checklistId: string;
+      }) => ({
+        url: `/api/card/checklist/toggle/${body.checklistId}/${body.itemId}`,
+        method: "PATCH",
+        body,
+      }),
+      invalidatesTags: (_, __, { cardId }) => [
+        { type: "singleCard", id: cardId },
+      ],
+      async onQueryStarted(body, { dispatch, queryFulfilled }) {
+        const patchResult = dispatch(
+          cardApi.util.updateQueryData(
+            "getSingleCard",
+            { cardId: body.cardId },
+            (draft) => {
+              const checklist = draft.data.checklist.find(
+                (c) => c._id === body.checklistId
+              );
+              if (!checklist) return;
+              const item = checklist.items.find((i) => i._id === body.itemId);
+              if (item) {
+                item.completed = !item.completed;
+              }
+            }
+          )
+        );
+        try {
+          await queryFulfilled;
+        } catch (error) {
+          patchResult.undo();
+        }
+      },
+    }),
   }),
 });
 export const {
@@ -392,5 +429,6 @@ export const {
   useAddCardDateMutation,
   useAddDescriptionMutation,
   useAddLabelsMutation,
-  useToggleCompleteMutation
+  useToggleCompleteMutation,
+  useToggleCheckListItemCompleteMutation
 } = cardApi;

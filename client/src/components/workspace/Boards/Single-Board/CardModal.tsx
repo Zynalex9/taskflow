@@ -220,7 +220,7 @@ const CardModal = () => {
                     <Attachments Attachment={card?.attachments || []} />
                   )}
                   {card?.checklist && card?.checklist.length > 0 && (
-                    <Checklist Checklist={card.checklist} />
+                    <Checklist Checklist={card.checklist} cardId={card._id} />
                   )}
                   <CommentInput comments={card?.comments} cardId={card._id} />
                 </div>

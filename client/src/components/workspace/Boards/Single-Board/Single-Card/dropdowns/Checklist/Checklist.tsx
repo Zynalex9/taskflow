@@ -4,12 +4,17 @@ import {
   IChecklistItems,
 } from "../../../../../../../types/functionalites.types";
 import { useState } from "react";
-import { useAddItemToCheckListMutation } from "@/store/cardApi";
+import {
+  useAddItemToCheckListMutation,
+  useToggleCheckListItemCompleteMutation,
+} from "@/store/cardApi";
 import { Checkbox } from "@/components/ui/checkbox";
 interface ChecklistProps {
   Checklist: IChecklist[];
+  cardId: string;
 }
-const Checklist: React.FC<ChecklistProps> = ({ Checklist }) => {
+const Checklist: React.FC<ChecklistProps> = ({ Checklist, cardId }) => {
+  const [toggleItem] = useToggleCheckListItemCompleteMutation();
   const calculateCompletion = (items: IChecklistItems[]) => {
     if (!items.length) return 0;
     const completed = items.filter((item) => item.completed).length;
@@ -34,6 +39,18 @@ const Checklist: React.FC<ChecklistProps> = ({ Checklist }) => {
       setActiveChecklistId(checkListId);
     }
   };
+  const handleChange = async (checklistId: string, itemId: string) => {
+    const body = {
+      cardId,
+      checklistId,
+      itemId,
+    };
+    try {
+      await toggleItem(body);
+    } catch (error) {
+      console.log("Error in toggling");
+    }
+  };
 
   return (
     <div className="space-y-6 my-12">
@@ -56,7 +73,10 @@ const Checklist: React.FC<ChecklistProps> = ({ Checklist }) => {
           <div className="pl-10">
             {c.items.map((i) => (
               <div key={i._id} className="flex items-center gap-4">
-                <Checkbox />
+                <Checkbox
+                  onCheckedChange={() => handleChange(c._id, i._id)}
+                  checked={i.completed}
+                />
                 <h3
                   className={`${
                     i.completed ? "line-through text-[#B6C2CF]" : ""
@@ -74,7 +94,7 @@ const Checklist: React.FC<ChecklistProps> = ({ Checklist }) => {
                 onChange={(e) => setItemTitle(e.target.value)}
               />
             )}
-            {activeChecklistId === c._id   ? (
+            {activeChecklistId === c._id ? (
               <div>
                 <button
                   onClick={() => HandleSubmit(c.card, c._id)}

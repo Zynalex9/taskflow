@@ -713,7 +713,7 @@ export const toggleComplete = asyncHandler(
       res.status(404).json(new ApiResponse(401, {}, "No card found"));
       return;
     }
-    card.checked = isComplete;
+    card.checked = !card.checked;
     await card.save();
     res.status(200).json(new ApiResponse(200, {}, "Updateds"));
   }
