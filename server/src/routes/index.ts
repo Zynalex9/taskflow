@@ -60,6 +60,7 @@ import {
   joinCard,
   leaveCard,
   moveCard,
+  toggleComplete,
 } from "../controller/card/card";
 import { addLabel, deleteLabel } from "../controller/card/label";
 import { addComment, deleteComment } from "../controller/card/comment";
@@ -180,4 +181,5 @@ cardRouter.route("/add-description").patch(verifyJWT, addDescription);
 cardRouter.route("/add-start-date").post(verifyJWT, addEndDate);
 cardRouter.route("/add-end-date").post(verifyJWT, addStartDate);
 cardRouter.route("/add-date").patch(verifyJWT, addDate);
+cardRouter.route("/toggle-complete").patch(verifyJWT, toggleComplete);
 export { cardRouter };

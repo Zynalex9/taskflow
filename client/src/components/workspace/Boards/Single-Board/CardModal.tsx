@@ -1,5 +1,5 @@
 import { usePreventScroll } from "./PreventScroll";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useNavigate, useParams, useLocation } from "react-router-dom";
 import { AlignLeft, X } from "lucide-react";
 import InListMove from "./Single-Card/InListMove";
@@ -13,8 +13,11 @@ import { Skeleton } from "@/components/ui/skeleton";
 import {
   useAddDescriptionMutation,
   useGetSingleCardQuery,
+  useToggleCompleteMutation,
 } from "@/store/cardApi";
 const CardModal = () => {
+  const [toggleCard] = useToggleCompleteMutation();
+  const [isChecked, setIsChecked] = useState(false);
   const { cardId } = useParams();
   const { data, isLoading, error } = useGetSingleCardQuery({ cardId });
   const card = data?.data;
@@ -41,9 +44,16 @@ const CardModal = () => {
       await addDescription(body);
     }
   };
-  useEffect(()=>{
+  const handleCheckChange = async () => {
+    console.log("It's changed");
+    setIsChecked(!isChecked);
+    const body = {
+      cardId,
+      isComplete: isChecked,
+    };
+    await toggleCard(body);
+  };
 
-  },[])
   if (isLoading)
     return (
       <div className="fixed inset-0 z-[100] bg-black/70 pt-[60px] flex items-start justify-center p-4">
@@ -94,6 +104,8 @@ const CardModal = () => {
                     <input
                       type="checkbox"
                       name="option"
+                      checked={card.checked}
+                      onChange={handleCheckChange}
                       className="peer hidden"
                     />
                     <div className="w-6 h-6 border border-white rounded-full flex items-center justify-center peer-checked:bg-[#29AD77] peer-checked:border-0"></div>

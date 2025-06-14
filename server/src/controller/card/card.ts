@@ -698,3 +698,23 @@ export const getCardActivities = asyncHandler(
     res.status(200).json(new ApiResponse(200, logs, "Here you go"));
   }
 );
+export const toggleComplete = asyncHandler(
+  async (req: Request, res: Response) => {
+    console.log(req.body);
+    const { cardId, isComplete } = req.body;
+    if (!cardId && !isComplete) {
+      res
+        .status(400)
+        .json(new ApiResponse(402, {}, "Invalid card id or boolean"));
+      return;
+    }
+    const card = await CardModel.findById(cardId);
+    if (!card) {
+      res.status(404).json(new ApiResponse(401, {}, "No card found"));
+      return;
+    }
+    card.checked = isComplete;
+    await card.save();
+    res.status(200).json(new ApiResponse(200, {}, "Updateds"));
+  }
+);

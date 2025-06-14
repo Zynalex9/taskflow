@@ -352,6 +352,35 @@ export const cardApi = createApi({
         }
       },
     }),
+    ToggleComplete: builder.mutation({
+      query: (body: { cardId: string; isComplete: boolean }) => ({
+        url: "/api/card/toggle-complete",
+        method: "PATCH",
+        body,
+      }),
+      invalidatesTags: (_, __, { cardId }) => [
+        { type: "singleCard", id: cardId },
+      ],
+      async onQueryStarted(body, { dispatch, queryFulfilled }) {
+        const patchResult = dispatch(
+          cardApi.util.updateQueryData(
+            "getSingleCard",
+            { cardId: body.cardId },
+            (draft) => {
+              draft.data = {
+                ...draft.data,
+                checked: body.isComplete,
+              };
+            }
+          )
+        );
+        try {
+          await queryFulfilled;
+        } catch (error) {
+          patchResult.undo();
+        }
+      },
+    }),
   }),
 });
 export const {
@@ -363,4 +392,5 @@ export const {
   useAddCardDateMutation,
   useAddDescriptionMutation,
   useAddLabelsMutation,
+  useToggleCompleteMutation
 } = cardApi;
