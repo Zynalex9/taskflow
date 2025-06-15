@@ -1,95 +1,55 @@
-import { Link } from "react-router-dom";
-import { Skeleton } from "../ui/skeleton";
-import { useSelector } from "react-redux";
+import {  useSelector } from "react-redux";
 import { RootState } from "@/store/store";
-
-export interface IWorkspace {
-  _id: string;
-  name: string;
-  admin: string[];
-  boards: string[];
-  members: { role: string; _id: string }[];
-  createdBy: string;
-  createdAt: string;
-  updatedAt: string;
-  __v: number;
-  cover?: string; // made optional in case backend returns undefined
-}
+import { isImageUrl } from "@/utils/helper";
+import BoardPlaceHolder from "../resuable/BoardPlaceHolder";
 
 const AllWorkspaces = () => {
-  const { workspaces, loading } = useSelector(
-    (state: RootState) => state.workspaces
-  );
-  if (loading)
-    return (
-      <div className="p-8 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {[...Array(3)].map((_, i) => (
-          <div
-            key={i}
-            className="bg-fprimary text-white rounded-2xl shadow-md overflow-hidden"
-          >
-            <Skeleton className="h-32 w-full" />
-            <div className="p-4 space-y-2">
-              <Skeleton className="h-6 w-3/4" />
-              <Skeleton className="h-4 w-1/2" />
-              <Skeleton className="h-4 w-1/3" />
-              <Skeleton className="h-4 w-2/5" />
+  const { workspaces } = useSelector((state: RootState) => state.workspaces);
+  return (
+    <div>
+      <h1 className="py-2 text-textP">Your Workspaces</h1>
+      {workspaces &&
+        workspaces.length > 0 &&
+        workspaces.map((workspace) => (
+          <div key={workspace._id}>
+            <div className="flex gap-2 items-center  w-full cursor-pointer rounded py-0.5 px-1">
+              {isImageUrl(workspace.cover) ? (
+                <img
+                  src={workspace.cover}
+                  className="size-12 object-cover object-center rounded"
+                />
+              ) : (
+                <div
+                  className="size-10 rounded-lg text-center flex items-center justify-center"
+                  style={{ backgroundColor: workspace.cover }}
+                >
+                  <h2 className="text-black text-2xl font-charlie-text-sb">
+                    {workspace.name[0]}
+                  </h2>
+                </div>
+              )}
+              <div className="flex items-center justify-between w-full">
+                <h1 className="text-lg text-textP font-charlie-text-r">
+                  {workspace.name}
+                </h1>
+              </div>
+            </div>
+            <div className="flex gap-2 flex-wrap items-center  my-6 w-full">
+              {workspace.boards.map((board) => (
+                <BoardPlaceHolder
+                  key={board._id}
+                  bg={board.cover}
+                  isTemplete={false}
+                  title={board.title}
+                  to={`/user/w/workspace/${workspace._id}/board/${board._id}`}
+                />
+              ))}
+              <button className="min-w-[12rem] h-32 bg-[#333C43] flex items-center justify-center text-center font-charlie-text-sb text-textP text-lg rounded-xl shadow-2xl transition-colors duration-150 hover:bg-[#333C43]/50">
+                <h2>Create new board</h2>
+              </button>
             </div>
           </div>
         ))}
-      </div>
-    );
-
-  return (
-    <div className="p-8">
-      {workspaces.length > 0 ? (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {workspaces.map((workspace) => (
-            <Link key={workspace._id} to={`/user/w/workspace/${workspace._id}`}>
-              <div className="bg-fprimary text-white rounded-2xl shadow-md overflow-hidden transition-transform transform hover:scale-105">
-                <div className="h-32 w-full">
-                  {typeof workspace.cover === "string" &&
-                  workspace.cover.startsWith("http") ? (
-                    <img
-                      src={workspace.cover}
-                      alt="Workspace cover"
-                      className="w-full h-full object-cover"
-                    />
-                  ) : (
-                    <div
-                      className="w-full h-full"
-                      style={{
-                        backgroundColor: workspace.cover || "#ccc",
-                      }}
-                    />
-                  )}
-                </div>
-                <div className="p-4">
-                  <h2 className="text-xl font-semibold">{workspace.name}</h2>
-                  <p className="text-sm text-gray-500 mt-1">
-                    Members: {workspace.members.length}
-                  </p>
-                  <p className="text-sm text-gray-500">
-                    Boards: {workspace.boards.length}
-                  </p>
-                  <p className="text-sm text-gray-500">
-                    Created:{" "}
-                    {new Date(workspace.createdAt).toLocaleDateString("en-US", {
-                      year: "numeric",
-                      month: "short",
-                      day: "numeric",
-                    })}
-                  </p>
-                </div>
-              </div>
-            </Link>
-          ))}
-        </div>
-      ) : (
-        <div className="text-center text-3xl text-gray-600">
-          No Workspace found
-        </div>
-      )}
     </div>
   );
 };

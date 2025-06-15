@@ -311,7 +311,10 @@ export const allWorkspaces = async (
 ): Promise<void> => {
   try {
     const userId = req.user;
-    const workspaces = await workSpaceModel.find({ createdBy: userId }).lean();
+    const workspaces = await workSpaceModel
+      .find({ createdBy: userId })
+      .populate("boards")
+      .lean();
     if (workspaces.length === 0) {
       res.status(404).json({ message: "workspace not found" });
       return;
