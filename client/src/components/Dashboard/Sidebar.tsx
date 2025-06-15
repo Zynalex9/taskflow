@@ -1,25 +1,135 @@
-import { useDispatch, useSelector } from "react-redux";
-import { Link } from "react-router-dom";
-import { AppDispatch, RootState } from "../../store/store";
-import { logoutUser } from "../../store/AuthSlice";
+import {
+  LayoutTemplate,
+  Home,
+  Trello,
+  ChevronDown,
+  Plus,
+  UserPlus,
+  Cog,
+} from "lucide-react";
+import { useSelector } from "react-redux";
+import { NavLink } from "react-router-dom";
+import { RootState } from "../../store/store";
+import { isImageUrl } from "@/utils/helper";
+import { useState } from "react";
 
 const Sidebar = () => {
-  const dispatch = useDispatch<AppDispatch>();
-  const {loading} = useSelector((state:RootState)=>state.auth);
+  const { workspaces } = useSelector((state: RootState) => state.workspaces);
+
+  const [openWorkspaceId, setOpenWorkspaceId] = useState<string | null>(null);
+
+  const toggleWorkspace = (id: string) => {
+    setOpenWorkspaceId((prevId) => (prevId === id ? null : id));
+  };
 
   return (
-    <div className="flex flex-col h-[88vh] justify-between p-6 text-xl">
-      <div className="flex flex-col gap-4">
-        <Link to="/user/dashboard">Workspaces</Link>
-        <Link to="/user/dashboard/edit-info">Edit</Link>
+    <div className="pt-6 max-w-4xl mx-auto space-y-1">
+      <div>
+        <NavLink
+          to={"/user/dashboard"}
+          className={({ isActive }) =>
+            isActive ? "text-blue-600" : "text-textP"
+          }
+        >
+          <div className="flex items-center gap-2 my-4">
+            <LayoutTemplate size={14} />
+            <h1 className="text-md font-charlie-text-r">Boards</h1>
+          </div>
+        </NavLink>
+        <NavLink
+          to={"/user/dashboard/templates"}
+          className={({ isActive }) =>
+            isActive ? "text-blue-600" : "text-textP"
+          }
+        >
+          <div className="flex items-center gap-2 my-4">
+            <Trello size={14} />
+            <h1 className="text-md font-charlie-text-r">Templates</h1>
+          </div>
+        </NavLink>
+        <NavLink
+          to={"/user/dashboard/homes"}
+          className={({ isActive }) =>
+            isActive ? "text-blue-600" : "text-textP"
+          }
+        >
+          <div className="flex items-center gap-2 my-4">
+            <Home size={14} />
+            <h1 className="text-md font-charlie-text-r">Home</h1>
+          </div>
+        </NavLink>
       </div>
 
-      <button
-        className={`${loading?'bg-blue-primary/80':'bg-blue-primary'} px-4 py-2 truncate text-white font-charlie-display-sm rounded-md w-2/3`}
-        onClick={() => dispatch(logoutUser())}
-      >
-        {loading ? "Loging out..":"Logout"}
-      </button>
+      <div className="border-[0.5px] my-4 border-gray-500 w-full"></div>
+      <h1 className="text-xs text-textP font-charlie-display-sm">Workspaces</h1>
+      <div className="space-y-2">
+        {workspaces?.map((workspace) => {
+          const isOpen = openWorkspaceId === workspace._id;
+
+          return (
+            <div key={workspace._id}>
+              <div
+                className="flex gap-2 items-center w-full cursor-pointer transition-all duration-100 hover:bg-gray-500 rounded py-0.5 px-1"
+                onClick={() => toggleWorkspace(workspace._id)}
+              >
+                {isImageUrl(workspace.cover) ? (
+                  <img
+                    src={workspace.cover}
+                    className="size-8 object-cover object-center rounded"
+                  />
+                ) : (
+                  <div
+                    className="size-6 rounded"
+                    style={{ backgroundColor: workspace.cover }}
+                  ></div>
+                )}
+                <div className="flex items-center justify-between w-full">
+                  <h1 className="text-sm text-textP font-charlie-text-r">
+                    {workspace.name}
+                  </h1>
+                  <ChevronDown
+                    size={14}
+                    className={`transition-transform ${
+                      isOpen ? "rotate-180" : "rotate-0"
+                    }`}
+                  />
+                </div>
+              </div>
+
+              {isOpen && (
+                <div className="pl-10">
+                  <NavLink
+                    to={"/user/dashboard/id"}
+                    className={({ isActive }) =>
+                      isActive ? "text-blue-600" : "text-textP"
+                    }
+                  >
+                    <div className="flex items-center gap-2">
+                      <LayoutTemplate size={14} />
+                      <h1 className="text-sm font-charlie-text-r">Boards</h1>
+                    </div>
+                  </NavLink>
+                  <div className="flex items-center  text-textP  gap-2">
+                    <UserPlus size={14} />
+
+                    <h1 className="text-sm my-2 flex-grow text-textP font-charlie-text-r">
+                      Members
+                    </h1>
+                    <Plus size={14} />
+                  </div>
+                  <div className="flex items-center gap-2 text-textP mb-2 ">
+                    <Cog size={14} />
+
+                    <h1 className="text-sm  text-textP  font-charlie-text-r">
+                      Open Settings
+                    </h1>
+                  </div>
+                </div>
+              )}
+            </div>
+          );
+        })}
+      </div>
     </div>
   );
 };

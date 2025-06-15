@@ -1,7 +1,7 @@
-import axios from "axios";
-import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { Skeleton } from "../ui/skeleton";
+import { useSelector } from "react-redux";
+import { RootState } from "@/store/store";
 
 export interface IWorkspace {
   _id: string;
@@ -17,26 +17,9 @@ export interface IWorkspace {
 }
 
 const AllWorkspaces = () => {
-  const [workspaces, setWorkspaces] = useState<IWorkspace[]>([]);
-  const [loading, setLoading] = useState<Boolean>(false);
-  const fetchWorkspaces = async () => {
-    try {
-      setLoading(true);
-      const response = await axios.get<{ data: IWorkspace[] }>(
-        `${import.meta.env.VITE_BASE_URL}/api/workspace/get-workspaces`,
-        { withCredentials: true }
-      );
-      setWorkspaces(response.data.data);
-    } catch (error) {
-      console.log("Error fetching workspaces");
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  useEffect(() => {
-    fetchWorkspaces();
-  }, []);
+  const { workspaces, loading } = useSelector(
+    (state: RootState) => state.workspaces
+  );
   if (loading)
     return (
       <div className="p-8 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">

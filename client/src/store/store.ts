@@ -2,6 +2,7 @@ import { configureStore } from "@reduxjs/toolkit";
 import themeReducer from "./ThemeSlice";
 import authReducer from "./AuthSlice";
 import workspaceReducer from "./workspaceSlice";
+import workspacesReducer from "./workspacesSlice";
 import cardReducer from "./CardSlice";
 import navbarReducer from "./NavBarSlice";
 import forgetReducer from "./ForgetSlice";
@@ -17,6 +18,7 @@ const store = configureStore({
     theme: themeReducer,
     auth: authReducer,
     workspace: workspaceReducer,
+    workspaces: workspacesReducer,
     boards: boardsReducer,
     board: boardReducer,
     card: cardReducer,
