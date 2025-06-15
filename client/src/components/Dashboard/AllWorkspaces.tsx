@@ -1,7 +1,8 @@
-import {  useSelector } from "react-redux";
+import { useSelector } from "react-redux";
 import { RootState } from "@/store/store";
 import { isImageUrl } from "@/utils/helper";
 import BoardPlaceHolder from "../resuable/BoardPlaceHolder";
+import { Link } from "react-router-dom";
 
 const AllWorkspaces = () => {
   const { workspaces } = useSelector((state: RootState) => state.workspaces);
@@ -44,9 +45,11 @@ const AllWorkspaces = () => {
                   to={`/user/w/workspace/${workspace._id}/board/${board._id}`}
                 />
               ))}
-              <button className="min-w-[12rem] h-32 bg-[#333C43] flex items-center justify-center text-center font-charlie-text-sb text-textP text-lg rounded-xl shadow-2xl transition-colors duration-150 hover:bg-[#333C43]/50">
-                <h2>Create new board</h2>
-              </button>
+              <Link to={`/user/w/workspace/${workspace._id}`}>
+                <button className="min-w-[12rem] h-32 bg-[#333C43] flex items-center justify-center text-center font-charlie-text-sb text-textP text-lg rounded-xl shadow-2xl transition-colors duration-150 hover:bg-[#333C43]/50">
+                  <h2>Create new board</h2>
+                </button>
+              </Link>
             </div>
           </div>
         ))}
