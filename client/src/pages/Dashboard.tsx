@@ -6,7 +6,6 @@ import { useEffect } from "react";
 import { getAllWorkspaces } from "@/store/workspacesSlice";
 
 const Dashboard = () => {
-  const { user } = useSelector((state: RootState) => state.auth);
   const { workspaces } = useSelector((state: RootState) => state.workspaces);
   const dispatch = useDispatch<AppDispatch>();
   const fetchAllWorkspaces = async () => {

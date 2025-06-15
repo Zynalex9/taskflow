@@ -75,13 +75,15 @@ const Sidebar = () => {
                 {isImageUrl(workspace.cover) ? (
                   <img
                     src={workspace.cover}
-                    className="size-8 object-cover object-center rounded"
+                    className="w-8 h-6 object-cover object-center rounded"
                   />
                 ) : (
                   <div
-                    className="size-6 rounded"
+                    className="w-8 h-6 rounded flex items-center justify-center text-black font-charlie-display-sm"
                     style={{ backgroundColor: workspace.cover }}
-                  ></div>
+                  >
+                    {workspace.name[0]}
+                  </div>
                 )}
                 <div className="flex items-center justify-between w-full">
                   <h1 className="text-sm text-textP font-charlie-text-r">

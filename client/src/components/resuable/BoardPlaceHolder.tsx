@@ -12,7 +12,7 @@ interface IProps {
 const BoardPlaceHolder: React.FC<IProps> = ({ isTemplete, bg, title, to }) => {
   return (
     <Link to={to}>
-      <div className="rounded w-56 h-32 p-2 shadow-2xl cursor-pointer hover:shadow-xl transition-all duration-300 hover:scale-110">
+      <div className="rounded w-52 h-32 p-2 shadow-2xl cursor-pointer hover:shadow-xl transition-all duration-300 hover:scale-110">
         <div
           className="w-full h-20 rounded-t"
           style={

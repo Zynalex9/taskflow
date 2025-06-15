@@ -14,25 +14,29 @@ const AllWorkspaces = () => {
         workspaces.map((workspace) => (
           <div key={workspace._id}>
             <div className="flex gap-2 items-center  w-full cursor-pointer rounded py-0.5 px-1">
-              {isImageUrl(workspace.cover) ? (
-                <img
-                  src={workspace.cover}
-                  className="size-12 object-cover object-center rounded"
-                />
-              ) : (
-                <div
-                  className="size-10 rounded-lg text-center flex items-center justify-center"
-                  style={{ backgroundColor: workspace.cover }}
-                >
-                  <h2 className="text-black text-2xl font-charlie-text-sb">
-                    {workspace.name[0]}
-                  </h2>
-                </div>
-              )}
+              <Link to={`/user/w/workspace/${workspace._id}`}>
+                {isImageUrl(workspace.cover) ? (
+                  <img
+                    src={workspace.cover}
+                    className="size-12 object-cover object-center rounded"
+                  />
+                ) : (
+                  <div
+                    className="size-10 rounded-lg text-center flex items-center justify-center"
+                    style={{ backgroundColor: workspace.cover }}
+                  >
+                    <h2 className="text-black text-2xl font-charlie-text-sb">
+                      {workspace.name[0]}
+                    </h2>
+                  </div>
+                )}
+              </Link>
               <div className="flex items-center justify-between w-full">
-                <h1 className="text-lg text-textP font-charlie-text-r">
-                  {workspace.name}
-                </h1>
+                <Link to={`/user/w/workspace/${workspace._id}`}>
+                  <h1 className="text-lg text-textP font-charlie-text-r">
+                    {workspace.name}
+                  </h1>
+                </Link>
               </div>
             </div>
             <div className="flex gap-2 flex-wrap items-center  my-6 w-full">
