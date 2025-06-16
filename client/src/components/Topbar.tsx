@@ -11,13 +11,28 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { useEffect, useState } from "react";
 import axios from "axios";
-
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
+import { useForm } from "react-hook-form";
 const Topbar = () => {
   const { user } = useSelector((state: RootState) => state.auth);
   const [activities, setActivities] = useState<string[]>([]);
   const [showMobileMenu, setShowMobileMenu] = useState(false);
   const [showSearch, setShowSearch] = useState(false);
+  const { register, handleSubmit } = useForm();
 
+  const onSubmit = (data) => {
+    console.log(data);
+  };
   const getActivities = async () => {
     try {
       const response = await axios.get(
@@ -110,11 +125,47 @@ const Topbar = () => {
           >
             More
           </Link>
-          <Link to={"/create-workspace"}>
-            <button className="bg-blue-primary px-1.5 py-2 rounded text-white hover:text-textP hover:bg-blue-primary/50 cursor-pointer">
-              <Plus size={16} />
-            </button>
-          </Link>
+          <AlertDialog>
+            <AlertDialogTrigger asChild>
+              <button className="bg-blue-primary px-1.5 py-1 rounded text-white hover:text-textP hover:bg-blue-primary/50 cursor-pointer">
+                <Plus size={16} />
+              </button>
+            </AlertDialogTrigger>
+
+            <AlertDialogContent>
+              <AlertDialogHeader>
+                <AlertDialogTitle>Create a new workspace</AlertDialogTitle>
+                <AlertDialogDescription>
+                  <form
+                    onSubmit={handleSubmit(onSubmit)}
+                    className="space-y-4 mt-2"
+                  >
+                    <input
+                      {...register("title")}
+                      placeholder="Add a title"
+                      className="w-full p-2 border rounded"
+                    />
+                    <input
+                      {...register("file")}
+                      type="file"
+                      className="w-full p-2 border rounded"
+                    />
+                    <AlertDialogFooter>
+                      <AlertDialogCancel className="bg-black text-textP">
+                        Cancel
+                      </AlertDialogCancel>
+                      <AlertDialogAction
+                        type="submit"
+                        className="bg-blue-primary"
+                      >
+                        Continue
+                      </AlertDialogAction>
+                    </AlertDialogFooter>
+                  </form>
+                </AlertDialogDescription>
+              </AlertDialogHeader>
+            </AlertDialogContent>
+          </AlertDialog>
         </div>
       )}
       <div className="hidden md:flex items-center gap-4">
