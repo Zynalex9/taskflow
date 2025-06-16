@@ -7,14 +7,13 @@ import {
   UserPlus,
   Cog,
 } from "lucide-react";
-import { useSelector } from "react-redux";
 import { NavLink } from "react-router-dom";
-import { RootState } from "../../store/store";
 import { isImageUrl } from "@/utils/helper";
 import { useState } from "react";
+import { useWorkspaces } from "@/Context/workspacesContext";
 
 const Sidebar = () => {
-  const { workspaces } = useSelector((state: RootState) => state.workspaces);
+  const workspaces = useWorkspaces();
 
   const [openWorkspaceId, setOpenWorkspaceId] = useState<string | null>(null);
 

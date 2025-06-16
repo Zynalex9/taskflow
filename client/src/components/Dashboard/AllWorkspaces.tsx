@@ -1,11 +1,10 @@
-import { useSelector } from "react-redux";
-import { RootState } from "@/store/store";
 import { isImageUrl } from "@/utils/helper";
 import BoardPlaceHolder from "../resuable/BoardPlaceHolder";
 import { Link } from "react-router-dom";
+import { useWorkspaces } from "@/Context/workspacesContext";
 
 const AllWorkspaces = () => {
-  const { workspaces } = useSelector((state: RootState) => state.workspaces);
+  const workspaces = useWorkspaces();
   return (
     <div>
       <h1 className="py-2 text-textP">Your Workspaces</h1>

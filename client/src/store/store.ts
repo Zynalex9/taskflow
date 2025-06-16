@@ -11,6 +11,7 @@ import CardModalReducer from "./CardModalStatesSlice";
 import { boardsReducer, boardReducer } from "./BoardSlice";
 import { myApi } from "./myApi";
 import { cardApi } from "./cardApi";
+import { workspaceApi } from "./workspaceApi";
 
 const store = configureStore({
   reducer: {
@@ -27,9 +28,14 @@ const store = configureStore({
     boardModalControll: BoardBackgroundReducer,
     [myApi.reducerPath]: myApi.reducer,
     [cardApi.reducerPath]: cardApi.reducer,
+    [workspaceApi.reducerPath]: workspaceApi.reducer,
   },
   middleware: (getDefaultMiddleware) =>
-    getDefaultMiddleware().concat(myApi.middleware, cardApi.middleware),
+    getDefaultMiddleware().concat(
+      myApi.middleware,
+      cardApi.middleware,
+      workspaceApi.middleware
+    ),
 });
 export type RootState = ReturnType<typeof store.getState>;
 export type AppDispatch = typeof store.dispatch;

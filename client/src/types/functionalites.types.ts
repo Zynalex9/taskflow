@@ -1,3 +1,16 @@
+
+export interface IWorkspace {
+  _id: string;
+  name: string;
+  admin: string[];
+  boards: IBoard[];
+  members: { role: string; _id: string }[];
+  createdBy: string;
+  createdAt: string;
+  updatedAt: string;
+  __v: number;
+  cover?: string;
+}
 export interface IComment {
   _id: string;
   comment: string;
