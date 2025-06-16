@@ -58,6 +58,17 @@ const Sidebar = () => {
             <h1 className="text-md font-charlie-text-r">Home</h1>
           </div>
         </NavLink>
+        <NavLink
+          to={"/user/dashboard/edit-info"}
+          className={({ isActive }) =>
+            isActive ? "text-blue-600" : "text-textP"
+          }
+        >
+          <div className="flex items-center gap-2 my-4">
+            <UserPlus size={14} />
+            <h1 className="text-md font-charlie-text-r">Edit Profile</h1>
+          </div>
+        </NavLink>
       </div>
 
       <div className="border-[0.5px] my-4 border-gray-500 w-full"></div>

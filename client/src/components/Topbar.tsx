@@ -1,4 +1,4 @@
-import { BellRingIcon, MenuIcon, SearchIcon } from "lucide-react";
+import { BellRingIcon, MenuIcon, Plus, SearchIcon } from "lucide-react";
 import { useSelector } from "react-redux";
 import { Link } from "react-router-dom";
 import { RootState } from "../store/store";
@@ -37,21 +37,21 @@ const Topbar = () => {
   return (
     <div className="w-full px-4 py-3 bg-fprimary border-b border-white/10 text-white flex flex-col md:flex-row items-center justify-between shadow-sm">
       <div className="w-full md:hidden flex items-center justify-between mb-2 md:mb-0">
-        <button 
+        <button
           onClick={() => setShowMobileMenu(!showMobileMenu)}
           className="p-2 rounded-md hover:bg-[#333C43]"
         >
           <MenuIcon className="size-5" />
         </button>
-        
+
         <div className="flex items-center gap-4">
-          <button 
+          <button
             onClick={() => setShowSearch(!showSearch)}
             className="p-2 rounded-md hover:bg-[#333C43]"
           >
             <SearchIcon className="size-5" />
           </button>
-          
+
           <DropdownMenu>
             <DropdownMenuTrigger>
               <BellRingIcon className="text-white size-5 cursor-pointer hover:text-white/90 transition-colors" />
@@ -59,7 +59,9 @@ const Topbar = () => {
             <DropdownMenuContent>
               <DropdownMenuSeparator />
               {activities && activities.length > 0 ? (
-                activities.map((a,i) => <DropdownMenuItem key={i}>{a}</DropdownMenuItem>)
+                activities.map((a, i) => (
+                  <DropdownMenuItem key={i}>{a}</DropdownMenuItem>
+                ))
               ) : (
                 <DropdownMenuItem>No activities found</DropdownMenuItem>
               )}
@@ -79,7 +81,11 @@ const Topbar = () => {
       )}
 
       {(showMobileMenu || !showMobileMenu) && (
-        <div className={`${showMobileMenu ? 'flex' : 'hidden'} md:flex flex-col md:flex-row gap-2 md:gap-6 text-sm font-medium w-full md:w-auto`}>
+        <div
+          className={`${
+            showMobileMenu ? "flex" : "hidden"
+          } md:flex flex-col items-center md:flex-row gap-2 md:gap-6 text-sm font-medium w-full md:w-auto`}
+        >
           <Link
             to="/user/dashboard/edit-info"
             className="hover:text-white transition-all duration-200 hover:bg-[#333C43] p-2 rounded"
@@ -104,6 +110,11 @@ const Topbar = () => {
           >
             More
           </Link>
+          <Link to={"/create-workspace"}>
+            <button className="bg-blue-primary px-1.5 py-2 rounded text-white hover:text-textP hover:bg-blue-primary/50 cursor-pointer">
+              <Plus size={16} />
+            </button>
+          </Link>
         </div>
       )}
       <div className="hidden md:flex items-center gap-4">
@@ -115,7 +126,7 @@ const Topbar = () => {
           />
           <SearchIcon className="absolute right-3 top-1/2 transform -translate-y-1/2 size-4 text-white/60" />
         </div>
-        
+
         <DropdownMenu>
           <DropdownMenuTrigger>
             <BellRingIcon className="text-white size-5 cursor-pointer hover:text-white/90 transition-colors" />
@@ -123,13 +134,15 @@ const Topbar = () => {
           <DropdownMenuContent>
             <DropdownMenuSeparator />
             {activities && activities.length > 0 ? (
-              activities.map((a,i) => <DropdownMenuItem key={i}>{a}</DropdownMenuItem>)
+              activities.map((a, i) => (
+                <DropdownMenuItem key={i}>{a}</DropdownMenuItem>
+              ))
             ) : (
               <DropdownMenuItem>No activities found</DropdownMenuItem>
             )}
           </DropdownMenuContent>
         </DropdownMenu>
-        
+
         <DropdownMenu>
           <DropdownMenuTrigger>
             <img
