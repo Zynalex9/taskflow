@@ -14,6 +14,16 @@ export const workspaceApi = createApi({
       }),
       providesTags: () => [{ type: "workspace" }],
     }),
+    createWorkspace: builder.mutation<void, FormData>({
+      query: (formData) => ({
+        url: "/api/workspace/create-workspace",
+        credentials: "include",
+        method: "POST",
+        body: formData,
+      }),
+      invalidatesTags: () => [{ type: "workspace" }],
+    }),
   }),
 });
-export const { useGetAllWorkspacesQuery } = workspaceApi;
+export const { useGetAllWorkspacesQuery, useCreateWorkspaceMutation } =
+  workspaceApi;
