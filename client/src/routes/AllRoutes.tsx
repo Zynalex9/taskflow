@@ -42,7 +42,6 @@ const AllRoutes = () => {
   const { token, emailEntered } = useSelector(
     (state: RootState) => state.resetPassword
   );
-  console.log(user);
   [];
   const location = useLocation();
   const background = location?.state?.background;

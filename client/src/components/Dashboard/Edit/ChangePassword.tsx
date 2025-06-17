@@ -16,7 +16,6 @@ const ChangePassword = () => {
     formState: { errors, isSubmitting },
   } = useForm<IData>();
   const onSubmit = async (data: IData) => {
-    console.log(data);
     try {
       const response = await axios.patch(
         "http://localhost:3000/api/user/reset-password",
@@ -28,7 +27,6 @@ const ChangePassword = () => {
       }
       reset();
     } catch (error: any) {
-        console.log(error)
       toast.error(error.response.data.message);
     }
   };
