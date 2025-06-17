@@ -1,10 +1,9 @@
-
 export interface IWorkspace {
   _id: string;
   name: string;
   admin: string[];
   boards: IBoard[];
-  members: { role: string; _id: string }[];
+  members: { role: string; _id: string; user: IUser }[];
   createdBy: string;
   createdAt: string;
   updatedAt: string;

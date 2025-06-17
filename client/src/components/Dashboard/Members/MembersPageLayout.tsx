@@ -21,18 +21,21 @@ const MembersPageLayout = () => {
           to={`/user/dashboard/${workspace._id}/members`}
           className={({ isActive }) =>
             isActive
-              ? "text-blue-400 bg-gray-600 rounded p-2 w-52"
+              ? "text-blue-500 bg-gray-600 rounded p-2 w-52"
               : "text-textP p-2 w-52"
           }
           end
         >
-          <h1 className="font-charlie-display-sm text-sm"> Workspace members (2)</h1>
+          <h1 className="font-charlie-display-sm text-sm">
+            {" "}
+            Workspace members (2)
+          </h1>
         </NavLink>
         <NavLink
-          to={`/user/dashboard/${workspace._id}/members/guests`}
+          to={`/user/dashboard/${workspace._id}/guests`}
           className={({ isActive }) =>
             isActive
-              ? "text-blue-400 bg-gray-600 rounded p-2 w-52"
+              ? "text-blue-500 bg-gray-600 rounded p-2 w-52"
               : "text-textP p-2 w-52"
           }
         >
@@ -40,17 +43,19 @@ const MembersPageLayout = () => {
         </NavLink>
         <div className="border-[0.5px] border-gray-400 w-52 my-2"></div>
         <NavLink
-          to={`/user/dashboard/${workspace._id}/members/invites`}
+          to={`/user/dashboard/${workspace._id}/invites`}
           className={({ isActive }) =>
             isActive
-              ? "text-blue-400 bg-gray-600 rounded p-2 w-52"
+              ? "text-blue-500 bg-gray-600 rounded p-2 w-52"
               : "text-textP p-2 w-52"
           }
         >
           <h1 className="font-charlie-display-sm text-sm"> Invites (2)</h1>
         </NavLink>
       </div>
-      <Outlet />
+      <div className="pl-9 my-4">
+        <Outlet />
+      </div>
     </div>
   );
 };

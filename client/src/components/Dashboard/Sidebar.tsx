@@ -5,7 +5,6 @@ import {
   ChevronDown,
   Plus,
   UserPlus,
-  Cog,
 } from "lucide-react";
 import { NavLink } from "react-router-dom";
 import { isImageUrl } from "@/utils/helper";
@@ -136,13 +135,6 @@ const Sidebar = () => {
                       <Plus size={14} />
                     </div>
                   </NavLink>
-                  <div className="flex items-center gap-2 text-textP mb-2 ">
-                    <Cog size={14} />
-
-                    <h1 className="text-sm  text-textP  font-charlie-text-r">
-                      Open Settings
-                    </h1>
-                  </div>
                 </div>
               )}
             </div>
