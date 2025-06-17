@@ -31,6 +31,9 @@ export const myApi = createApi({
         method: "POST",
         body: newBoard,
       }),
+      invalidatesTags: (_, __, newBoard) => [
+        { type: "Board", id: newBoard.workspaceId },
+      ],
       async onQueryStarted(newBoard, { dispatch, queryFulfilled }) {
         const tempId = `temp-${Date.now()}`;
 
