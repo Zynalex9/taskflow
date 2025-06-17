@@ -11,12 +11,12 @@ const MembersPageLayout = () => {
   return (
     <div>
       <div className="flex items-center justify-between w-full">
-        <h2>Collaborators (2)</h2>
+        <h2 className="text-2xl font-charlie-text-r my-2">Collaborators </h2>
         <button className="flex items-center px-1.5 py-2 bg-blue-500 justify-between  text-black gap-2">
           <UserPlus size={18} /> Invite members to workspace
         </button>
       </div>
-      <div className="flex flex-col pl-8">
+      <div className="flex flex-col pl-8 mt-4">
         <NavLink
           to={`/user/dashboard/${workspace._id}/members`}
           className={({ isActive }) =>
@@ -28,7 +28,7 @@ const MembersPageLayout = () => {
         >
           <h1 className="font-charlie-display-sm text-sm">
             {" "}
-            Workspace members (2)
+            Workspace members 
           </h1>
         </NavLink>
         <NavLink
@@ -39,7 +39,7 @@ const MembersPageLayout = () => {
               : "text-textP p-2 w-52"
           }
         >
-          <h1 className="font-charlie-display-sm text-sm"> Guests (2)</h1>
+          <h1 className="font-charlie-display-sm text-sm"> Guests </h1>
         </NavLink>
         <div className="border-[0.5px] border-gray-400 w-52 my-2"></div>
         <NavLink
@@ -50,10 +50,10 @@ const MembersPageLayout = () => {
               : "text-textP p-2 w-52"
           }
         >
-          <h1 className="font-charlie-display-sm text-sm"> Invites (2)</h1>
+          <h1 className="font-charlie-display-sm text-sm"> Invites </h1>
         </NavLink>
       </div>
-      <div className="pl-9 my-4">
+      <div className="pl-8">
         <Outlet />
       </div>
     </div>

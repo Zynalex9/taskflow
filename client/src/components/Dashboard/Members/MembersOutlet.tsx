@@ -1,5 +1,4 @@
 import { useState } from "react";
-import { ClipboardCopy } from "lucide-react";
 import { useWorkspaces } from "@/Context/workspacesContext";
 import { useParams } from "react-router-dom";
 import { IWorkspace } from "@/types/functionalites.types"; 
@@ -20,11 +19,10 @@ const MembersOutlet = () => {
   };
 
   return (
-    <div className="text-white px-6 py-8 space-y-8">
-      <div>
-        <h1 className="text-xl font-semibold flex items-center gap-2">
+    <div className="text-white pl-2 py-8 space-y-8">
+      <div className="font-charlie-text-r">
+        <h1 className="text-xl font-semibold">
           Workspace members ({workspaceMembers.length})
-          <ClipboardCopy size={16} className="cursor-pointer" />
         </h1>
         <p className="text-sm text-gray-400 mt-2">
           Workspace members can view and join all Workspace visible boards and
@@ -55,7 +53,7 @@ const MembersOutlet = () => {
         className="w-full px-3 py-2 bg-gray-800 border border-gray-600 rounded-md text-sm text-white"
       />
 
-      <div className="space-y-4">
+      <div className="space-y-4 ">
         {workspaceMembers.length > 0 ? (
           workspaceMembers
             .filter((member) =>

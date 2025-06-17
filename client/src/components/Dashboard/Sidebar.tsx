@@ -25,6 +25,7 @@ const Sidebar = () => {
       <div>
         <NavLink
           to={"/user/dashboard"}
+          end
           className={({ isActive }) =>
             isActive ? "text-blue-600" : "text-textP"
           }
