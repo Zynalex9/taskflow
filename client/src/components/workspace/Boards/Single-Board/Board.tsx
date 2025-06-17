@@ -11,9 +11,7 @@ const Board = () => {
   const { data, isLoading } = useGetSingleBoardQuery(boardId ?? "", {
     skip: !boardId,
   });
-
   const cover = data?.data?.cover;
-
   const backgroundStyle = cover
     ? isImageUrl(cover)
       ? {
@@ -61,7 +59,6 @@ const Board = () => {
           </div>
         </div>
       </SingleBoardContext.Provider>
-    );
-};
+    )};
 
 export default Board;
