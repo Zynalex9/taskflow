@@ -111,7 +111,7 @@ const Sidebar = () => {
               {isOpen && (
                 <div className="pl-10">
                   <NavLink
-                    to={"/user/dashboard/id"}
+                    to={`/user/dashboard/${workspace._id}/boards-view`}
                     className={({ isActive }) =>
                       isActive ? "text-blue-600" : "text-textP"
                     }

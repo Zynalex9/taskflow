@@ -47,7 +47,9 @@ const Topbar = () => {
       toast.success("Workspace created successfully!");
       setOpenDialog(false);
     } catch (error: any) {
-      toast.error(error?.data?.message || "Something went wrong");
+      toast.error(error?.data?.message || "Something went wrong", {
+        theme: "dark",
+      });
     }
   };
   const getActivities = async () => {
@@ -172,7 +174,10 @@ const Topbar = () => {
                         className="w-full p-2 border rounded"
                       />
                       <AlertDialogFooter>
-                        <AlertDialogCancel className="bg-black text-textP">
+                        <AlertDialogCancel
+                          className="bg-black text-textP"
+                          onClick={() => setOpenDialog(false)}
+                        >
                           Cancel
                         </AlertDialogCancel>
                         <button
