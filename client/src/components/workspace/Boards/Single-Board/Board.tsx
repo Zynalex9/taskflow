@@ -11,7 +11,7 @@ const Board = () => {
     skip: !boardId,
   });
 
-  const cover = data?.data[0]?.cover;
+  const cover = data?.data?.cover;
 
   const backgroundStyle = cover
     ? isImageUrl(cover)
@@ -27,9 +27,10 @@ const Board = () => {
     return (
       <div className="w-full h-[89.8vh] " style={cover ? backgroundStyle : {}}>
         <BoardHeader
-          title={data?.data[0].title}
-          favourite={data?.data[0].favourite}
-          boardId={data.data[0]._id}
+          title={data?.data.title}
+          favourite={data?.data.favourite}
+          boardId={data.data._id}
+          board={data.data}
         />
 
         <div className="p-8 w-full min-h-[79vh] overflow-x-auto custom-scrollbar">
@@ -49,7 +50,7 @@ const Board = () => {
               ))}
             </div>
           ) : (
-            <List list={data?.data[0].lists} />
+            <List list={data?.data.lists} />
           )}
         </div>
       </div>

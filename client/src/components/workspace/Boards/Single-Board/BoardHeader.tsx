@@ -1,19 +1,19 @@
-import {
-  Ellipsis,
-  Star,
-} from "lucide-react";
+import { Ellipsis, Star } from "lucide-react";
 import { useState } from "react";
 import RightSideBar from "./RightSideBar";
 import { useToggleFavouriteMutation } from "@/store/myApi";
+import { IBoard } from "@/types/functionalites.types";
 
 const BoardHeader = ({
   title,
   boardId,
   favourite,
+  board,
 }: {
   title?: string;
   favourite: boolean;
   boardId: string;
+  board: IBoard;
 }) => {
   const [openSidebar, setOpenSideBar] = useState(false);
   const [toggleFavourite] = useToggleFavouriteMutation();
@@ -38,7 +38,11 @@ const BoardHeader = ({
           onClick={() => setOpenSideBar(true)}
         />
       </div>
-      <RightSideBar setOpenSideBar={setOpenSideBar} openSidebar={openSidebar} />
+      <RightSideBar
+        setOpenSideBar={setOpenSideBar}
+        openSidebar={openSidebar}
+        board={board}
+      />
     </div>
   );
 };

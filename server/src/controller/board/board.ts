@@ -226,8 +226,9 @@ export const getSingleBoard = asyncHandler(
       notFound(board, "Board", res);
       return;
     }
-    await redisClient.set(cachedkey, JSON.stringify(board), "EX", 1300);
-    res.status(200).json(new ApiResponse(200, board, "Board found"));
+    const response = board[0];
+    await redisClient.set(cachedkey, JSON.stringify(response), "EX", 1300);
+    res.status(200).json(new ApiResponse(200, response, "Board found"));
   }
 );
 export const deleteBoard = async (req: Request, res: Response) => {

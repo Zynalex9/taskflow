@@ -97,8 +97,8 @@ export const myApi = createApi({
               "getSingleBoard",
               newList.boardId,
               (draft) => {
-                if (draft.data[0]) {
-                  draft.data[0].lists.push({
+                if (draft.data) {
+                  draft.data.lists.push({
                     _id: tempId,
                     name: newList.name,
                     board: newList.boardId,
@@ -122,17 +122,17 @@ export const myApi = createApi({
                 "getSingleBoard",
                 newList.boardId,
                 (draft) => {
-                  const tempIndex = draft.data[0].lists.findIndex(
+                  const tempIndex = draft.data.lists.findIndex(
                     (l) => l._id === tempId
                   );
                   if (tempIndex !== -1) {
-                    draft.data[0].lists.splice(tempIndex, 1);
+                    draft.data.lists.splice(tempIndex, 1);
                   }
-                  const exists = draft.data[0].lists.some(
+                  const exists = draft.data.lists.some(
                     (l) => l._id === data.newList._id
                   );
                   if (!exists) {
-                    draft.data[0].lists.push(data.newList);
+                    draft.data.lists.push(data.newList);
                   }
                 }
               )
@@ -158,7 +158,7 @@ export const myApi = createApi({
             "getSingleBoard",
             newCardParams.boardId,
             (draft) => {
-              const list = draft.data[0].lists.find(
+              const list = draft.data.lists.find(
                 (l) => l._id === newCardParams.listId
               );
               if (list) {
@@ -194,7 +194,7 @@ export const myApi = createApi({
               "getSingleBoard",
               newCardParams.boardId,
               (draft) => {
-                const list = draft.data[0].lists.find(
+                const list = draft.data.lists.find(
                   (l) =>
                     l._id ===
                     (typeof newCard.list === "string"
@@ -228,7 +228,7 @@ export const myApi = createApi({
       async onQueryStarted(boardId, { dispatch, queryFulfilled }) {
         const patchResult = dispatch(
           myApi.util.updateQueryData("getSingleBoard", boardId, (draft) => {
-            draft.data[0].favourite = !draft.data[0].favourite;
+            draft.data.favourite = !draft.data.favourite;
           })
         );
 

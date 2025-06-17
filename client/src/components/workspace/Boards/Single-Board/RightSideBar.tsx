@@ -1,12 +1,19 @@
 import { useEffect } from "react";
 import ShareComp from "./RightSidebarComps/Share";
+import AboutBoard from "./RightSidebarComps/AboutBoard";
+import Visibility from "./RightSidebarComps/Visibility";
+import ExportsComp from "./RightSidebarComps/Exports/ExportsComp";
+import StarComp from "./RightSidebarComps/StarComp";
+import { X } from "lucide-react";
+import { IBoard } from "@/types/functionalites.types";
 
 interface IProps {
   setOpenSideBar: React.Dispatch<React.SetStateAction<boolean>>;
   openSidebar: boolean;
+  board: IBoard;
 }
 
-const RightSideBar = ({ openSidebar, setOpenSideBar }: IProps) => {
+const RightSideBar = ({ openSidebar, setOpenSideBar, board }: IProps) => {
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.code === "BracketRight" || e.key === "]") {
@@ -23,13 +30,21 @@ const RightSideBar = ({ openSidebar, setOpenSideBar }: IProps) => {
   }, []);
   return (
     <div
-      onClick={() => setOpenSideBar(false)}
-      className={`fixed z-[999999]  right-0 top-0 transition-opacity duration-300 ease-in-out transform bg-[#282E33] w-[20rem] h-[89.8vh]  overflow-y-auto ${
+      className={`fixed z-[999999] px-4  right-0 top-0 transition-opacity duration-300 ease-in-out transform bg-[#282E33] w-[20rem] h-[89.8vh] overflow-y-auto text-textP font-charlie-text-r ${
         openSidebar ? "opacity-100" : "opacity-0 pointer-events-none"
       }`}
     >
+      <div className="flex items-center justify-between w-full my-2">
+        <div></div>
+        <h2>Menu</h2>
+        <X size={18} onClick={() => setOpenSideBar(false)} />
+      </div>
       <ShareComp />
-      <div className="border border-gray-500 mx-5"></div>
+      <div className="border border-gray-500 "></div>
+      <AboutBoard />
+      <Visibility />
+      <ExportsComp />
+      <StarComp board={board} />
     </div>
   );
 };

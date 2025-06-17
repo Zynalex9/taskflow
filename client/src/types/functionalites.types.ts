@@ -129,7 +129,7 @@ export interface IBoardResponse {
 }
 export interface ISingleBoardResponse {
   statusCode: number;
-  data: IBoard[];
+  data: IBoard;
   message: string;
   success: boolean;
 }
