@@ -5,15 +5,13 @@ import Visibility from "./RightSidebarComps/Visibility";
 import ExportsComp from "./RightSidebarComps/Exports/ExportsComp";
 import StarComp from "./RightSidebarComps/StarComp";
 import { X } from "lucide-react";
-import { IBoard } from "@/types/functionalites.types";
 
 interface IProps {
   setOpenSideBar: React.Dispatch<React.SetStateAction<boolean>>;
   openSidebar: boolean;
-  board: IBoard;
 }
 
-const RightSideBar = ({ openSidebar, setOpenSideBar, board }: IProps) => {
+const RightSideBar = ({ openSidebar, setOpenSideBar }: IProps) => {
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.code === "BracketRight" || e.key === "]") {
@@ -44,7 +42,7 @@ const RightSideBar = ({ openSidebar, setOpenSideBar, board }: IProps) => {
       <AboutBoard />
       <Visibility />
       <ExportsComp />
-      <StarComp board={board} />
+      <StarComp />
     </div>
   );
 };
