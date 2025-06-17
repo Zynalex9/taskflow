@@ -2,6 +2,7 @@ import { isImageUrl } from "@/utils/helper";
 import BoardPlaceHolder from "../resuable/BoardPlaceHolder";
 import { Link } from "react-router-dom";
 import { useWorkspaces } from "@/Context/workspacesContext";
+import ModalButton from "../resuable/ModalButton";
 
 const AllWorkspaces = () => {
   const workspaces = useWorkspaces();
@@ -30,12 +31,21 @@ const AllWorkspaces = () => {
                   </div>
                 )}
               </Link>
-              <div className="flex items-center justify-between w-full">
+              <div className="flex items-center justify-between w-[88%]">
                 <Link to={`/user/w/workspace/${workspace._id}`}>
                   <h1 className="text-lg text-textP font-charlie-text-r">
                     {workspace.name}
                   </h1>
                 </Link>
+                <div className="flex items-center gap-4">
+                  <Link to={`/user/dashboard/${workspace._id}/boards-view`}>
+                    <ModalButton btnText="Boards" />
+                  </Link>
+                  <Link to={`/user/dashboard/${workspace._id}/members`}>
+                    <ModalButton btnText="Members" />
+                  </Link>
+                  
+                </div>
               </div>
             </div>
             <div className="flex gap-2 flex-wrap items-center  my-6 w-full">
