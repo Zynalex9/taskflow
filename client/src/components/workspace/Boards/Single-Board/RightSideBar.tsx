@@ -4,7 +4,10 @@ import AboutBoard from "./RightSidebarComps/AboutBoard";
 import Visibility from "./RightSidebarComps/Visibility";
 import ExportsComp from "./RightSidebarComps/Exports/ExportsComp";
 import StarComp from "./RightSidebarComps/StarComp";
-import { X } from "lucide-react";
+import { Copy, Eye, ListCollapse, Minus, X } from "lucide-react";
+import SettingsComp from "./RightSidebarComps/Settings/SettingsComp";
+import ChangeBG from "./RightSidebarComps/BG/ChangeBG";
+import CustomBorder from "@/components/resuable/CustomBorder";
 
 interface IProps {
   setOpenSideBar: React.Dispatch<React.SetStateAction<boolean>>;
@@ -28,7 +31,7 @@ const RightSideBar = ({ openSidebar, setOpenSideBar }: IProps) => {
   }, []);
   return (
     <div
-      className={`fixed z-[999999] px-4  right-0 top-0 transition-opacity duration-300 ease-in-out transform bg-[#282E33] w-[20rem] h-[89.8vh] overflow-y-auto text-textP font-charlie-text-r ${
+      className={`fixed z-[999999] px-4  right-0 top-15 transition-opacity duration-300 ease-in-out transform bg-[#282E33] w-[20rem] h-[78vh] custom-scrollbar overflow-y-auto text-textP font-charlie-text-r ${
         openSidebar ? "opacity-100" : "opacity-0 pointer-events-none"
       }`}
     >
@@ -38,11 +41,32 @@ const RightSideBar = ({ openSidebar, setOpenSideBar }: IProps) => {
         <X size={18} onClick={() => setOpenSideBar(false)} />
       </div>
       <ShareComp />
-      <div className="border border-gray-500 "></div>
+      <CustomBorder />
+
       <AboutBoard />
       <Visibility />
       <ExportsComp />
       <StarComp />
+      <CustomBorder customStyles="mt-2" />
+      <SettingsComp />
+      <ChangeBG />
+      <CustomBorder customStyles="mt-2" />
+      <div className="mt-4    text-sm flex items-center gap-6">
+        <Eye size={18} />
+        <h2 className="">Watch</h2>
+      </div>
+      <div className="mt-4    text-sm flex items-center gap-6">
+        <ListCollapse size={18} />
+        <h2 className="">Collapse All</h2>
+      </div>
+      <div className="mt-4    text-sm flex items-center gap-6">
+        <Copy size={18} />
+        <h2 className="">Copy Board</h2>
+      </div>
+      <div className="mt-4    text-sm flex items-center gap-6">
+        <Minus size={18} />
+        <h2 className="">Close Board</h2>
+      </div>
     </div>
   );
 };

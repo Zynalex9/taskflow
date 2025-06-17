@@ -32,7 +32,7 @@ const BoardHeader = ({
       <div className="flex gap-2 items-center text-[#172B4D]">
         <Ellipsis
           className="cursor-pointer"
-          onClick={() => setOpenSideBar(true)}
+          onClick={() => setOpenSideBar(!openSidebar)}
         />
       </div>
       <RightSideBar setOpenSideBar={setOpenSideBar} openSidebar={openSidebar} />

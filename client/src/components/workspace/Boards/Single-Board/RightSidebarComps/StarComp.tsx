@@ -8,9 +8,10 @@ const StarComp = () => {
   return (
     <div className="mt-4 flex items-center gap-6 ">
       <Star
-        fill={`${board.favourite ? "yellow" : ""}`}
+        fill={`${board.favourite ? "yellow" : "transparent"}`}
         color={`${board.favourite ? "yellow" : "#b6c2cf"}`}
         onClick={() => toggleFavourite(board._id)}
+        size={18}
       />
       <h1 className="text-sm">Star</h1>
     </div>
