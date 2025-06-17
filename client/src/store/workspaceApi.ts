@@ -23,7 +23,19 @@ export const workspaceApi = createApi({
       }),
       invalidatesTags: () => [{ type: "workspace" }],
     }),
+    deleteWorkspace: builder.mutation({
+      query: (body: { workspaceId: string }) => ({
+        url: "/api/workspace/delete-workspace",
+        credentials: "include",
+        method: "DELETE",
+        body,
+      }),
+      invalidatesTags: () => [{ type: "workspace" }],
+    }),
   }),
 });
-export const { useGetAllWorkspacesQuery, useCreateWorkspaceMutation } =
-  workspaceApi;
+export const {
+  useGetAllWorkspacesQuery,
+  useCreateWorkspaceMutation,
+  useDeleteWorkspaceMutation,
+} = workspaceApi;

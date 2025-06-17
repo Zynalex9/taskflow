@@ -12,7 +12,7 @@ import { useState } from "react";
 import { useWorkspaces } from "@/Context/workspacesContext";
 
 const Sidebar = () => {
-  const workspaces = useWorkspaces();
+  const {workspaces} = useWorkspaces();
 
   const [openWorkspaceId, setOpenWorkspaceId] = useState<string | null>(null);
 

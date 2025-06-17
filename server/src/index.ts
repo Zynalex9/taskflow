@@ -1,7 +1,6 @@
 import { configDotenv } from "dotenv";
 import express from "express";
 import { createServer } from "http";
-import { Server } from "socket.io";
 import { connectDB } from "./database/index";
 import { Redis } from "ioredis";
 import cookieParser from "cookie-parser";
@@ -23,7 +22,7 @@ const io = initSocket(server);
 app.use(
   cors({
     origin: ["http://localhost:5173", "http://192.168.1.3:5173"],
-    methods: ["GET", "POST", "PUT", "PATCH"],
+    methods: ["GET", "POST", "PUT", "PATCH", "DELETE"],
     credentials: true,
   })
 );

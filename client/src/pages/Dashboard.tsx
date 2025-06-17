@@ -1,30 +1,21 @@
 import { Outlet } from "react-router-dom";
 import Sidebar from "../components/Dashboard/Sidebar";
-import { useDispatch } from "react-redux";
-import { AppDispatch } from "../store/store";
-import { useEffect } from "react";
-import { getAllWorkspaces } from "@/store/workspacesSlice";
 import { useGetAllWorkspacesQuery } from "@/store/workspaceApi";
 import WorkspacesContext from "@/Context/workspacesContext";
+import { useEffect, useState } from "react";
+import { IWorkspace } from "@/types/functionalites.types";
 
 const Dashboard = () => {
-  const dispatch = useDispatch<AppDispatch>();
   const { data } = useGetAllWorkspacesQuery(undefined);
-  const workspaces = data?.data;
-  console.log(data);
-  const fetchAllWorkspaces = async () => {
-    try {
-      await dispatch(getAllWorkspaces());
-    } catch (error) {
-      console.log(error);
-    }
-  };
+  const [workspaces, setWorkspaces] = useState<IWorkspace[]>([]);
   useEffect(() => {
-    fetchAllWorkspaces();
-  }, []);
+    if (data?.data) {
+      setWorkspaces(data.data);
+    }
+  }, [data]);
 
   return (
-    <WorkspacesContext.Provider value={workspaces}>
+    <WorkspacesContext.Provider value={{ workspaces, setWorkspaces }}>
       <div className="w-full min-h-screen bg-fprimary">
         <div className="w-[90%] mx-auto text-white font-charlie-text-r flex items-start flex-col lg:flex-row">
           <aside className="w-full lg:w-[20%] sticky top-0 px-4 bg-fprimary  z-10">

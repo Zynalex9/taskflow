@@ -42,7 +42,7 @@ const AllWorkspaces = () => {
       });
     }
   };
-  const workspaces = useWorkspaces();
+  const {workspaces} = useWorkspaces();
   return (
     <div>
       <h1 className="py-2 text-textP">Your Workspaces</h1>
@@ -80,7 +80,7 @@ const AllWorkspaces = () => {
                   <Link to={`/user/dashboard/${workspace._id}/members`}>
                     <ModalButton btnText="Members" />
                   </Link>
-                  <DeleteWorkspacePopover />
+                  <DeleteWorkspacePopover workspaceId={workspace._id} />
                 </div>
               </div>
             </div>

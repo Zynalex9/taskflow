@@ -6,9 +6,43 @@ import {
 } from "@/components/ui/popover";
 import ModalButton from "../resuable/ModalButton";
 import { useState } from "react";
+import { useDeleteWorkspaceMutation } from "@/store/workspaceApi";
+import { toast } from "react-toastify";
+import { useWorkspaces } from "@/Context/workspacesContext";
 
-export function DeleteWorkspacePopover() {
+export function DeleteWorkspacePopover({
+  workspaceId,
+}: {
+  workspaceId: string;
+}) {
   const [openPopOver, setOpenPopOver] = useState(false);
+  const [deleteWorkspace] = useDeleteWorkspaceMutation();
+  const { workspaces, setWorkspaces } = useWorkspaces();
+
+  const handleDelete = async () => {
+    try {
+      const body = {
+        workspaceId,
+      };
+      const response: any = await deleteWorkspace(body);
+
+      if (response.error) {
+        toast.error(response.error.data.message || "Something went wrong", {
+          theme: "dark",
+        });
+      } else {
+        toast.success("Workspace deleted", {
+          theme: "dark",
+        });
+        setWorkspaces(workspaces.filter((ws) => ws._id !== workspaceId));
+      }
+    } catch (error) {
+      toast.error("Unexpected error occurred", {
+        theme: "dark",
+      });
+    }
+  };
+
   return (
     <Popover open={openPopOver}>
       <PopoverTrigger asChild>
@@ -27,7 +61,7 @@ export function DeleteWorkspacePopover() {
               btnText="Cancel"
               onClickFn={() => setOpenPopOver(!openPopOver)}
             />
-            <ModalButton btnText="Delete" />
+            <ModalButton btnText="Delete" onClickFn={handleDelete} />
           </div>
         </div>
       </PopoverContent>

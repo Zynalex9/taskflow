@@ -363,12 +363,16 @@ export const getWorkspace = asyncHandler(
 
 export const deleteWorkSpace = async (req: Request, res: Response) => {
   try {
+    console.log(req.body);
     const { workspaceId } = req.body;
     const userId = req.user._id;
     const workspace = await workSpaceModel.findById(workspaceId);
-    if (!workspace?.admin.includes(userId)) {
+    if (
+      !workspace?.admin.includes(userId) &&
+      workspace?.createdBy.toString() !== userId.toString()
+    ) {
       res
-        .status(200)
+        .status(400)
         .json({ message: "You are not authorized to delete the workspace" });
       return;
     }
