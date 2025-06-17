@@ -109,7 +109,7 @@ const Sidebar = () => {
               </div>
 
               {isOpen && (
-                <div className="pl-10">
+                <div className="pl-6 pt-2">
                   <NavLink
                     to={`/user/dashboard/${workspace._id}/boards-view`}
                     className={({ isActive }) =>

@@ -34,6 +34,8 @@ import EnterEmail from "@/components/Authentication/EnterEmail";
 import BoardView from "@/components/Dashboard/BoardView";
 import MembersPageLayout from "@/components/Dashboard/Members/MembersPageLayout";
 import MembersOutlet from "@/components/Dashboard/Members/MembersOutlet";
+import GuestPage from "@/components/Dashboard/Members/GuestPage";
+import Requests from "@/components/Dashboard/Members/Requests";
 
 const AllRoutes = () => {
   const { user } = useSelector((state: RootState) => state.auth);
@@ -154,8 +156,8 @@ const AllRoutes = () => {
             <Route path=":workspaceId/boards-view" element={<BoardView />} />
             <Route path=":workspaceId" element={<MembersPageLayout />}>
               <Route path="members" element={<MembersOutlet/>} />
-              <Route path="guests" element={<h1>Hello Guests</h1>} />
-              <Route path="invites" element={<h1>Hello Invites</h1>} />
+              <Route path="guests" element={<GuestPage/>} />
+              <Route path="invites" element={<Requests/>} />
             </Route>
           </Route>
         </Route>

@@ -41,7 +41,7 @@ const MembersPageLayout = () => {
         >
           <h1 className="font-charlie-display-sm text-sm"> Guests </h1>
         </NavLink>
-        <div className="border-[0.5px] border-gray-400 w-52 my-2"></div>
+        <div className="border border-gray-400 w-52 my-2"></div>
         <NavLink
           to={`/user/dashboard/${workspace._id}/invites`}
           className={({ isActive }) =>
@@ -50,7 +50,7 @@ const MembersPageLayout = () => {
               : "text-textP p-2 w-52"
           }
         >
-          <h1 className="font-charlie-display-sm text-sm"> Invites </h1>
+          <h1 className="font-charlie-display-sm text-sm"> Join Requests </h1>
         </NavLink>
       </div>
       <div className="pl-8">
