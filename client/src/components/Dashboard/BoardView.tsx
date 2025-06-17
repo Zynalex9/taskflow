@@ -4,7 +4,7 @@ import BoardPlaceHolder from "../resuable/BoardPlaceHolder";
 import BoardTop from "../workspace/Boards/BoardTop";
 
 const BoardView = () => {
-  const workspaces = useWorkspaces();
+  const {workspaces} = useWorkspaces();
   const { workspaceId } = useParams();
 
   if (!workspaceId || !workspaces) return <div>Loading...</div>;

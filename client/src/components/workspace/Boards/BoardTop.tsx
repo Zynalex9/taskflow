@@ -7,14 +7,14 @@ import { useSelector } from "react-redux";
 import { RootState } from "@/store/store";
 
 const BoardTop = () => {
-  const allWorkspaces = useWorkspaces?.();
+  const {workspaces} = useWorkspaces?.();
   const { workspaceId } = useParams();
 
   const singleWorkspace = useSelector((state: RootState) => state.workspace.workspace);
 
   let workspace;
-  if (allWorkspaces && workspaceId) {
-    workspace = allWorkspaces.find((w) => w._id === workspaceId);
+  if (workspaces && workspaceId) {
+    workspace = workspaces.find((w) => w._id === workspaceId);
   } else {
     workspace = singleWorkspace;
   }

@@ -5,7 +5,7 @@ import { IWorkspace } from "@/types/functionalites.types";
 
 const MembersOutlet = () => {
   const [filter, setFilter] = useState("");
-  const workspaces = useWorkspaces();
+  const {workspaces} = useWorkspaces();
   const { workspaceId } = useParams();
   const workspace: IWorkspace | undefined = workspaces?.find((w) => w._id === workspaceId);
   const workspaceMembers = workspace?.members || [];
