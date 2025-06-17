@@ -38,7 +38,8 @@ const Topbar = () => {
   const [showSearch, setShowSearch] = useState(false);
   const { register, handleSubmit } = useForm<WorkspaceFormInputs>();
   const [addWorkspace] = useCreateWorkspaceMutation();
-  const dispatch = useDispatch<AppDispatch>()
+  const [loading, SetLoading] = useState(false);
+  const dispatch = useDispatch<AppDispatch>();
   const onSubmit = async (data: WorkspaceFormInputs) => {
     const formData = new FormData();
     formData.append("name", data.name);
@@ -46,6 +47,7 @@ const Topbar = () => {
       formData.append("workspace-cover", data["workspace-cover"][0]);
     }
     try {
+      SetLoading(true);
       await addWorkspace(formData).unwrap();
       toast.success("Workspace created successfully!");
       setOpenDialog(false);
@@ -53,6 +55,8 @@ const Topbar = () => {
       toast.error(error?.data?.message || "Something went wrong", {
         theme: "dark",
       });
+    } finally {
+      SetLoading(false);
     }
   };
   const getActivities = async () => {
@@ -148,7 +152,7 @@ const Topbar = () => {
             >
               More
             </Link>
-            <AlertDialog open={openDialog}>
+            <AlertDialog  open={openDialog}>
               <AlertDialogTrigger asChild>
                 <button
                   onClick={() => setOpenDialog(true)}
@@ -185,9 +189,12 @@ const Topbar = () => {
                         </AlertDialogCancel>
                         <button
                           type="submit"
-                          className="bg-blue-primary text-white px-4 py-2 rounded hover:bg-blue-primary/80"
+                          disabled={loading}
+                          className={` ${
+                            loading ? "bg-blue-primary/80" : "bg-blue-primary"
+                          } text-white px-4 py-2 rounded hover:bg-blue-primary/80`}
                         >
-                          Continue
+                          {loading ? "Creating workspace" : " Continue "}
                         </button>
                       </AlertDialogFooter>
                     </form>
@@ -241,9 +248,12 @@ const Topbar = () => {
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
-          <ModalButton onClickFn={()=>{
-            dispatch(logoutUser())
-          }} btnText="Logout"/>
+          <ModalButton
+            onClickFn={() => {
+              dispatch(logoutUser());
+            }}
+            btnText="Logout"
+          />
         </div>
       </div>
       <ToastContainer />

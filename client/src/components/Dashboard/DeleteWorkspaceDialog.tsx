@@ -18,9 +18,10 @@ export function DeleteWorkspacePopover({
   const [openPopOver, setOpenPopOver] = useState(false);
   const [deleteWorkspace] = useDeleteWorkspaceMutation();
   const { workspaces, setWorkspaces } = useWorkspaces();
-
+  const [loading, setLoading] = useState(false);
   const handleDelete = async () => {
     try {
+      setLoading(true);
       const body = {
         workspaceId,
       };
@@ -40,6 +41,8 @@ export function DeleteWorkspacePopover({
       toast.error("Unexpected error occurred", {
         theme: "dark",
       });
+    } finally {
+      setLoading(true);
     }
   };
 
@@ -60,8 +63,14 @@ export function DeleteWorkspacePopover({
             <ModalButton
               btnText="Cancel"
               onClickFn={() => setOpenPopOver(!openPopOver)}
+              disabled={loading}
             />
-            <ModalButton btnText="Delete" onClickFn={handleDelete} />
+            <ModalButton
+              btnText={`${loading ? "Deleting..." : "Delete"}`}
+              disabled={loading}
+              onClickFn={handleDelete}
+              customStyles={`${loading ? " bg-[#B6C2CF]/60" : ""}`}
+            />
           </div>
         </div>
       </PopoverContent>
