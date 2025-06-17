@@ -1,11 +1,11 @@
-type WorkspaceFormInputs = {
+export type WorkspaceFormInputs = {
   name: string;
   "workspace-cover": FileList;
 };
 import { BellRingIcon, MenuIcon, Plus, SearchIcon } from "lucide-react";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { Link } from "react-router-dom";
-import { RootState } from "../store/store";
+import { AppDispatch, RootState } from "../store/store";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -28,6 +28,8 @@ import {
 import { useForm } from "react-hook-form";
 import { useCreateWorkspaceMutation } from "@/store/workspaceApi";
 import { toast, ToastContainer } from "react-toastify";
+import ModalButton from "./resuable/ModalButton";
+import { logoutUser } from "@/store/AuthSlice";
 const Topbar = () => {
   const [openDialog, setOpenDialog] = useState(false);
   const { user } = useSelector((state: RootState) => state.auth);
@@ -36,6 +38,7 @@ const Topbar = () => {
   const [showSearch, setShowSearch] = useState(false);
   const { register, handleSubmit } = useForm<WorkspaceFormInputs>();
   const [addWorkspace] = useCreateWorkspaceMutation();
+  const dispatch = useDispatch<AppDispatch>()
   const onSubmit = async (data: WorkspaceFormInputs) => {
     const formData = new FormData();
     formData.append("name", data.name);
@@ -238,6 +241,9 @@ const Topbar = () => {
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
+          <ModalButton onClickFn={()=>{
+            dispatch(logoutUser())
+          }} btnText="Logout"/>
         </div>
       </div>
       <ToastContainer />

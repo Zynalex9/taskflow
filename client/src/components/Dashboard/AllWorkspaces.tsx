@@ -1,16 +1,52 @@
+import {
+  AlertDialog,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
 import { isImageUrl } from "@/utils/helper";
 import BoardPlaceHolder from "../resuable/BoardPlaceHolder";
 import { Link } from "react-router-dom";
 import { useWorkspaces } from "@/Context/workspacesContext";
 import ModalButton from "../resuable/ModalButton";
+import { useState } from "react";
+import { Plus } from "lucide-react";
+import { useCreateWorkspaceMutation } from "@/store/workspaceApi";
+import { WorkspaceFormInputs } from "../Topbar";
+import { useForm } from "react-hook-form";
+import { toast, ToastContainer } from "react-toastify";
+import { DeleteWorkspacePopover } from "./DeleteWorkspaceDialog";
 
 const AllWorkspaces = () => {
+  const [openDialog, setOpenDialog] = useState(false);
+  const [addWorkspace] = useCreateWorkspaceMutation();
+  const { register, handleSubmit } = useForm<WorkspaceFormInputs>();
+
+  const onSubmit = async (data: WorkspaceFormInputs) => {
+    const formData = new FormData();
+    formData.append("name", data.name);
+    if (data["workspace-cover"] && data["workspace-cover"].length > 0) {
+      formData.append("workspace-cover", data["workspace-cover"][0]);
+    }
+    try {
+      await addWorkspace(formData).unwrap();
+      toast.success("Workspace created successfully!");
+      setOpenDialog(false);
+    } catch (error: any) {
+      toast.error(error?.data?.message || "Something went wrong", {
+        theme: "dark",
+      });
+    }
+  };
   const workspaces = useWorkspaces();
   return (
     <div>
       <h1 className="py-2 text-textP">Your Workspaces</h1>
-      {workspaces &&
-        workspaces.length > 0 &&
+      {workspaces && workspaces.length > 0 ? (
         workspaces.map((workspace) => (
           <div key={workspace._id}>
             <div className="flex gap-2 items-center  w-full cursor-pointer rounded py-0.5 px-1">
@@ -44,7 +80,7 @@ const AllWorkspaces = () => {
                   <Link to={`/user/dashboard/${workspace._id}/members`}>
                     <ModalButton btnText="Members" />
                   </Link>
-                  
+                  <DeleteWorkspacePopover />
                 </div>
               </div>
             </div>
@@ -65,7 +101,62 @@ const AllWorkspaces = () => {
               </Link>
             </div>
           </div>
-        ))}
+        ))
+      ) : (
+        <div className="flex items-center gap-4">
+          <p className="text-sm text-gray-400 font-charlie-text-r italic">
+            Add a workspace
+          </p>
+          <AlertDialog open={openDialog}>
+            <AlertDialogTrigger asChild>
+              <button
+                onClick={() => setOpenDialog(true)}
+                className="bg-blue-primary px-1.5 py-1 rounded text-white hover:text-textP hover:bg-blue-primary/50 cursor-pointer"
+              >
+                <Plus size={16} />
+              </button>
+            </AlertDialogTrigger>
+
+            <AlertDialogContent>
+              <AlertDialogHeader>
+                <AlertDialogTitle>Create a new workspace</AlertDialogTitle>
+                <AlertDialogDescription>
+                  <form
+                    onSubmit={handleSubmit(onSubmit)}
+                    className="space-y-4 mt-2"
+                  >
+                    <input
+                      {...register("name")}
+                      placeholder="Add a title"
+                      className="w-full p-2 border rounded"
+                    />
+                    <input
+                      {...register("workspace-cover")}
+                      type="file"
+                      className="w-full p-2 border rounded"
+                    />
+                    <AlertDialogFooter>
+                      <AlertDialogCancel
+                        className="bg-black text-textP"
+                        onClick={() => setOpenDialog(false)}
+                      >
+                        Cancel
+                      </AlertDialogCancel>
+                      <button
+                        type="submit"
+                        className="bg-blue-primary text-white px-4 py-2 rounded hover:bg-blue-primary/80"
+                      >
+                        Continue
+                      </button>
+                    </AlertDialogFooter>
+                  </form>
+                </AlertDialogDescription>
+              </AlertDialogHeader>
+            </AlertDialogContent>
+          </AlertDialog>
+        </div>
+      )}
+      <ToastContainer />
     </div>
   );
 };
