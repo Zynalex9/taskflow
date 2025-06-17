@@ -32,6 +32,7 @@ import ResetPasswordWithOTP from "@/components/Authentication/ResetPasswordWithO
 import EnterOTP from "@/components/Authentication/EnterOTP";
 import EnterEmail from "@/components/Authentication/EnterEmail";
 import BoardView from "@/components/Dashboard/BoardView";
+import MembersPageLayout from "@/components/Dashboard/Members/MembersPageLayout";
 
 const AllRoutes = () => {
   const { user } = useSelector((state: RootState) => state.auth);
@@ -150,6 +151,10 @@ const AllRoutes = () => {
             <Route index element={<AllWorkspaces />} />
             <Route path="edit-info" element={<EditComp />} />
             <Route path=":workspaceId/boards-view" element={<BoardView />} />
+            <Route path=":workspaceId/members" element={<MembersPageLayout />}>
+              <Route path="guests" element={<h1>Hello Guests</h1>} />
+              <Route path="invites" element={<h1>Hello Invites</h1>} />
+            </Route>
           </Route>
         </Route>
         <Route

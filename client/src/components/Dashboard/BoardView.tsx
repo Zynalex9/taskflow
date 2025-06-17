@@ -21,7 +21,7 @@ const BoardView = () => {
       <h2 className="text-2xl text-textP font-charlie-text-r pl-5 my-4">
         Your boards
       </h2>
-      <div className="flex items-center w-full flex-wrap pl-5">
+      <div className="flex items-center gap-4 w-full flex-wrap pl-5">
         {workspace.boards.map((board) => (
           <BoardPlaceHolder
             key={board._id}

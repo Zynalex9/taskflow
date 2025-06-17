@@ -121,14 +121,21 @@ const Sidebar = () => {
                       <h1 className="text-sm font-charlie-text-r">Boards</h1>
                     </div>
                   </NavLink>
-                  <div className="flex items-center  text-textP  gap-2">
-                    <UserPlus size={14} />
+                  <NavLink
+                    to={`/user/dashboard/${workspace._id}/members`}
+                    className={({ isActive }) =>
+                      isActive ? "text-blue-600" : "text-textP"
+                    }
+                  >
+                    <div className="flex items-center  text-textP  gap-2">
+                      <UserPlus size={14} />
 
-                    <h1 className="text-sm my-2 flex-grow text-textP font-charlie-text-r">
-                      Members
-                    </h1>
-                    <Plus size={14} />
-                  </div>
+                      <h1 className="text-sm my-2 flex-grow text-textP font-charlie-text-r">
+                        Members
+                      </h1>
+                      <Plus size={14} />
+                    </div>
+                  </NavLink>
                   <div className="flex items-center gap-2 text-textP mb-2 ">
                     <Cog size={14} />
 
