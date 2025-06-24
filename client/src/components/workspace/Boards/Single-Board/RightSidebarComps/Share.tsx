@@ -9,7 +9,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { IUser } from "@/types/functionalites.types";
 import axios from "axios";
 import { ProfileCard } from "./ProfileCard";
@@ -20,9 +20,12 @@ interface ApiResponse {
   success: boolean;
 }
 const ShareComp = () => {
+  const profileCardRef = useRef<HTMLDivElement>(null);
+
   const { user } = useSelector((state: RootState) => state.auth);
   const [searchValue, setSearchValue] = useState("");
   const [loading, setIsLoading] = useState(false);
+  const [showCard, setShowCard] = useState(false);
   const [responsedReturned, setResponsedReturned] = useState(false);
   const [apiResponse, setApiResponse] = useState<ApiResponse | null>(null);
   const handleSearch = async () => {
@@ -59,6 +62,22 @@ const ShareComp = () => {
   useEffect(() => {
     console.log("apiResponse", apiResponse);
   }, [apiResponse]);
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (
+        profileCardRef.current &&
+        !profileCardRef.current.contains(event.target as Node) &&
+        showCard
+      ) {
+        setShowCard(false);
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [showCard]);
   return (
     <div className="text-textP flex w-full justify-between items-center pt-2 pb-1">
       <Dialog>
@@ -126,9 +145,13 @@ const ShareComp = () => {
         src={user?.profilePicture}
         alt="Profile Picture"
         className="size-9 rounded-full object-cover object-center "
+        onClick={() => setShowCard(!showCard)}
       />
-      <div className="absolute shadow-2xl top-12 left-0 w-4/5 z-100">
-        <ProfileCard />
+      <div
+        ref={profileCardRef}
+        className="absolute shadow-2xl top-12 left-0 w-4/5 z-100"
+      >
+        {showCard && <ProfileCard setShowCard={setShowCard} />}
       </div>
     </div>
   );
