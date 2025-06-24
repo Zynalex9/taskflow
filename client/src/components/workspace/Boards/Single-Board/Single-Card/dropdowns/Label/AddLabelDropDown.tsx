@@ -8,18 +8,19 @@ interface ILabel {
   color: string;
   name: string;
   _id: string;
+  isChecked: boolean;
 }
 
 const initialLabels: ILabel[] = [
-  { _id: "1", color: "#216C52", name: "" },
-  { _id: "2", color: "#8E6E00", name: "" },
-  { _id: "4", color: "#C9372C", name: "" },
-  { _id: "5", color: "#5B3FBB", name: "" },
-  { _id: "6", color: "#0079BF", name: "" },
-  { _id: "7", color: "#055A8C", name: "" },
-  { _id: "8", color: "#29CCE5", name: "" },
-  { _id: "9", color: "#61BD4F", name: "" },
-  { _id: "10", color: "#A6C5E2", name: "" },
+  { _id: "1", color: "#216C52", name: "", isChecked: false },
+  { _id: "2", color: "#8E6E00", name: "", isChecked: false },
+  { _id: "4", color: "#C9372C", name: "", isChecked: false },
+  { _id: "5", color: "#5B3FBB", name: "", isChecked: false },
+  { _id: "6", color: "#0079BF", name: "", isChecked: false },
+  { _id: "7", color: "#055A8C", name: "", isChecked: false },
+  { _id: "8", color: "#29CCE5", name: "", isChecked: false },
+  { _id: "9", color: "#61BD4F", name: "", isChecked: false },
+  { _id: "10", color: "#A6C5E2", name: "", isChecked: false }
 ];
 
 const AddLabelDropdown = ({ cardId }: { cardId: string }) => {

@@ -132,9 +132,8 @@ export const loginUser = async (req: Request, res: Response) => {
   } catch (error) {
     console.error("Login error:", error);
     res.status(500).json({ message: "Internal server error", success: false });
-  }finally{
+  } finally {
     console.log("req received for login");
-
   }
 };
 export const logOutUser = async (req: Request, res: Response) => {
@@ -300,17 +299,17 @@ export const sendForgetPasswordOTP = asyncHandler(
     forgetPasswordEmail(user.email, user.username, OTP);
     res
       .status(200)
-      .json(new ApiResponse(200, { user}, "OTP sent to your email !!"));
+      .json(new ApiResponse(200, { user }, "OTP sent to your email !!"));
   }
 );
 export const verifyOTP = asyncHandler(async (req, res) => {
-  const required = ["login","OTP"];
+  const required = ["login", "OTP"];
   if (!checkRequiredBody(req, res, required)) return;
   const { login, OTP } = req.body;
   const cachedOTP = await redisClient.get(`OTP:${login}`);
   if (OTP !== cachedOTP) {
     res.status(201).json(new ApiResponse(401, {}, "Inavlid OTP"));
-    return
+    return;
   }
   const user = await UserModel.findOne({
     $or: [
@@ -472,3 +471,16 @@ export const activityLogs = asyncHandler(
     res.status(200).json(new ApiResponse(200, logs));
   }
 );
+export const findByEmail = asyncHandler(async (req: Request, res: Response) => {
+  const { email } = req.params;
+  if (!email) {
+    res.status(400).json(new ApiResponse(400, {}, "Email is required"));
+    return;
+  }
+  const user = await UserModel.findOne({ email }).select("-password");
+  if (!user) {
+    res.status(404).json(new ApiResponse(404, {}, "User not found"));
+    return;
+  }
+  res.status(200).json(new ApiResponse(200, user, "User found by email"));
+});
