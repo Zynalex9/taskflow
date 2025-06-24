@@ -18,10 +18,14 @@ export const loginSchema = z.object({
 });
 
 export const registerSchema = z.object({
-  profilePicture: z
-    .any(),
-
+  profilePicture: z.any(),
+  firstName: z.string().min(1, { message: "First name is required" }),
+  secondName: z.string().min(1, { message: "Second name is required" }),
   email: z.string().email({ message: "Invalid email address" }),
-  username: z.string().min(3, { message: "Username must be at least 3 characters" }),
-  password: z.string().min(6, { message: "Password must be at least 6 characters" }),
+  username: z
+    .string()
+    .min(3, { message: "Username must be at least 3 characters" }),
+  password: z
+    .string()
+    .min(6, { message: "Password must be at least 6 characters" }),
 });

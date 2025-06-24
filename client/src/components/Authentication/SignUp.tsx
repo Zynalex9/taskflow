@@ -19,6 +19,8 @@ const SignUp = () => {
     try {
       const formData = new FormData();
       formData.append("profilePicture", data.profilePicture[0]);
+      formData.append("firstName", data.firstName);
+      formData.append("secondName", data.secondName);
       formData.append("email", data.email);
       formData.append("username", data.username);
       formData.append("password", data.password);
@@ -115,7 +117,50 @@ const SignUp = () => {
                 )}` */}
               </div>
             </div>
-
+            {/* firstname */}
+            <div>
+              <label
+                htmlFor="firstName"
+                className="block text-sm font-medium text-gray-700"
+              >
+                First Name
+              </label>
+              <div className="mt-0.5">
+                <input
+                  id="firstName"
+                  type="text"
+                  className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                  {...register("firstName")}
+                />
+                {errors.email && (
+                  <p className="mt-0.5 text-sm text-red-600">
+                    {errors?.firstName?.message}
+                  </p>
+                )}
+              </div>
+            </div>
+            <div>
+              <label
+                htmlFor="secondName"
+                className="block text-sm font-medium text-gray-700"
+              >
+                Second Name
+              </label>
+              <div className="mt-0.5">
+                <input
+                  id="secondName"
+                  type="text"
+                  autoComplete="secondName"
+                  className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                  {...register("secondName")}
+                />
+                {errors.email && (
+                  <p className="mt-0.5 text-sm text-red-600">
+                    {errors?.secondName?.message}
+                  </p>
+                )}
+              </div>
+            </div>
             {/* Email */}
             <div>
               <label
@@ -200,7 +245,12 @@ const SignUp = () => {
             </div>
           </form>
         </div>
-        <h2>Already a user? <Link to={"/user/sign-in"} className='text-blue-primary'>Login Now</Link></h2>
+        <h2>
+          Already a user?{" "}
+          <Link to={"/user/sign-in"} className="text-blue-primary">
+            Login Now
+          </Link>
+        </h2>
       </div>
       <div className="w-1/3 h-1/2">
         <img
@@ -208,7 +258,7 @@ const SignUp = () => {
           alt=""
         />
       </div>
-      <ToastContainer style={{marginTop:'80px'}} />
+      <ToastContainer style={{ marginTop: "80px" }} />
     </div>
   );
 };

@@ -52,6 +52,8 @@ export interface IAttachment {
   _id: string;
 }
 export interface IUser {
+  firstName: string;
+  secondName: string;
   _id: string;
   username: string;
   email: string;

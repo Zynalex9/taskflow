@@ -12,7 +12,7 @@ export interface IUser extends Document {
   accessToken?: string;
   refreshToken?: string;
   resetOTP?: string;
-  resetOTPExpiry?:Date;
+  resetOTPExpiry?: Date;
 }
 const userSchema = new Schema(
   {
@@ -20,6 +20,14 @@ const userSchema = new Schema(
       type: String,
       required: true,
       unique: true,
+    },
+    firstName: {
+      type: String,
+      required: true,
+    },
+    secondName: {
+      type: String,
+      required: true,
     },
 
     password: {

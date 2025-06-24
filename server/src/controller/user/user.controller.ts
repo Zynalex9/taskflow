@@ -29,7 +29,7 @@ export const registerUser = async (
   res: Response
 ): Promise<void> => {
   try {
-    const { username, email, password } = req.body;
+    const { username, email, password, firstName, secondName } = req.body;
 
     if (!username || !email || !password) {
       res.status(400).json({ message: "Please provide all the details" });
@@ -72,6 +72,8 @@ export const registerUser = async (
     }
 
     const newUser = await UserModel.create({
+      firstName,
+      secondName,
       username,
       email,
       password: hashedPassword,

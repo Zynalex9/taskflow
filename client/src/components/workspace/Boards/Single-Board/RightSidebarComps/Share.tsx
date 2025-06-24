@@ -12,6 +12,7 @@ import {
 import { useEffect, useState } from "react";
 import { IUser } from "@/types/functionalites.types";
 import axios from "axios";
+import { ProfileCard } from "./ProfileCard";
 interface ApiResponse {
   data: IUser;
   message: string;
@@ -126,6 +127,9 @@ const ShareComp = () => {
         alt="Profile Picture"
         className="size-9 rounded-full object-cover object-center "
       />
+      <div className="absolute shadow-2xl top-12 left-0 w-4/5 z-100">
+        <ProfileCard />
+      </div>
     </div>
   );
 };
