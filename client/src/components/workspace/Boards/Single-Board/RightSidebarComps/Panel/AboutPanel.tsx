@@ -1,3 +1,9 @@
+import { useSingleBoardContext } from "@/Context/SingleBoardContext";
+
 export const AboutPanel = () => {
-  return <div>About Panel</div>;
+  const { board } = useSingleBoardContext();
+  console.log("AboutPanel", board);
+  return <div>
+    
+  </div>;
 };

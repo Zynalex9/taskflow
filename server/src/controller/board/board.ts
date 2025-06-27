@@ -189,39 +189,78 @@ export const getSingleBoard = asyncHandler(
     //     );
     //   return;
     // }
-    const board = await boardModel.aggregate([
-      {
-        $match: { _id: new mongoose.Types.ObjectId(boardId) },
-      },
-      {
-        $lookup: {
-          from: "lists",
-          localField: "lists",
-          foreignField: "_id",
-          as: "lists",
-          pipeline: [
-            {
-              $lookup: {
-                from: "todos",
-                localField: "cards",
-                foreignField: "_id",
-                as: "cards",
-                pipeline: [
-                  {
-                    $lookup: {
-                      from: "labels",
-                      localField: "labels",
-                      foreignField: "_id",
-                      as: "labels",
-                    },
-                  },
-                ],
+  const board = await boardModel.aggregate([
+  {
+    $match: { _id: new mongoose.Types.ObjectId(boardId) },
+  },
+  {
+    $lookup: {
+      from: "lists",
+      localField: "lists",
+      foreignField: "_id",
+      as: "lists",
+      pipeline: [
+        {
+          $lookup: {
+            from: "todos",
+            localField: "cards",
+            foreignField: "_id",
+            as: "cards",
+            pipeline: [
+              {
+                $lookup: {
+                  from: "labels",
+                  localField: "labels",
+                  foreignField: "_id",
+                  as: "labels",
+                },
               },
-            },
-          ],
+            ],
+          },
         },
-      },
-    ]);
+      ],
+    },
+  },
+  {
+    $lookup: {
+      from: "users",
+      localField: "members.user",
+      foreignField: "_id",
+      as: "membersData"
+    }
+  },
+  {
+    $addFields: {
+      members: {
+        $map: {
+          input: "$members",
+          as: "member",
+          in: {
+            $mergeObjects: [
+              "$$member",
+              {
+                $arrayElemAt: [
+                  {
+                    $filter: {
+                      input: "$membersData",
+                      as: "userDoc",
+                      cond: {
+                        $eq: ["$$userDoc._id", "$$member.user"]
+                      }
+                    }
+                  },
+                  0
+                ]
+              }
+            ]
+          }
+        }
+      }
+    }
+  },
+
+]);
+
     if (!board) {
       notFound(board, "Board", res);
       return;
