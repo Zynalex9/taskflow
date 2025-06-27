@@ -47,19 +47,19 @@ const List: React.FC<ListProps> = ({ list }) => {
       console.log("New list received:", newList);
       dispatch(
         myApi.util.updateQueryData("getSingleBoard", boardId, (draft) => {
-          const exists = draft.data[0].lists.some(
+          const exists = draft.data.lists.some(
             (list) => list._id === newList._id
           );
           if (!exists) {
-            draft.data[0].lists.push(newList);
+            draft.data.lists.push(newList);
           }
         })
       );
     };
 
     socket.on("listCreated", handleListCreated);
-    socket.on("cardCreated", (e)=>{
-      console.log('csadsadsadsadasdsadsadadasdsdasdsa')
+    socket.on("cardCreated", (e) => {
+      console.log("csadsadsadsadasdsadsadadasdsdasdsa");
     });
 
     return () => {

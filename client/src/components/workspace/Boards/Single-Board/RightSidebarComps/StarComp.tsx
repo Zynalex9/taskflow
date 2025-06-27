@@ -6,11 +6,13 @@ const StarComp = () => {
   const [toggleFavourite] = useToggleFavouriteMutation();
   const { board } = useSingleBoardContext();
   return (
-    <div className="mt-4 flex items-center gap-6 ">
+    <div
+      className="mt-4 flex items-center gap-6 "
+      onClick={() => toggleFavourite(board._id)}
+    >
       <Star
         fill={`${board.favourite ? "yellow" : "transparent"}`}
         color={`${board.favourite ? "yellow" : "#b6c2cf"}`}
-        onClick={() => toggleFavourite(board._id)}
         size={18}
       />
       <h1 className="text-sm">Star</h1>
