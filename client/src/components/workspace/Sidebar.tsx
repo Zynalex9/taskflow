@@ -41,34 +41,30 @@ const Sidebar = ({ barOpen, setBarOpen }: Props) => {
   });
   const workspaceName = workspace?.name;
   const dispatch = useDispatch<AppDispatch>();
-useEffect(() => {
-  if (!workspace?._id) return;
+  useEffect(() => {
+    if (!workspace?._id) return;
 
-  const handleBoardCreated = (board: IBoard) => {
-    dispatch(
-      myApi.util.updateQueryData(
-        "getAllBoards", 
-        workspace._id,
-        (draft) => {
+    const handleBoardCreated = (board: IBoard) => {
+      dispatch(
+        myApi.util.updateQueryData("getAllBoards", workspace._id, (draft) => {
           draft.data.yourBoards = draft.data.yourBoards.filter(
-            b => !b._id.startsWith('temp-') || b.title !== board.title
+            (b) => !b._id.startsWith("temp-") || b.title !== board.title
           );
-          
-          if (!draft.data.yourBoards.some(b => b._id === board._id)) {
+
+          if (!draft.data.yourBoards.some((b) => b._id === board._id)) {
             draft.data.yourBoards.push(board);
           }
-        }
-      )
-    );
-  };
+        })
+      );
+    };
 
-  socket.emit("joinedWorkspace", workspace._id);
-  socket.on("boardCreated", handleBoardCreated);
+    socket.emit("joinedWorkspace", workspace._id);
+    socket.on("boardCreated", handleBoardCreated);
 
-  return () => {
-    socket.off("boardCreated", handleBoardCreated);
-  };
-}, [workspace?._id, dispatch]);
+    return () => {
+      socket.off("boardCreated", handleBoardCreated);
+    };
+  }, [workspace?._id, dispatch]);
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -225,7 +221,7 @@ useEffect(() => {
                 </div>
               ))
             : data?.data.yourBoards.map((board) =>
-                board._id.startsWith('temp')  ? (
+                board._id.startsWith("temp") ? (
                   <div className="flex items-center justify-between hover:bg-gray-700 p-2 rounded cursor-pointer ">
                     <div className="flex items-center space-x-1">
                       <div
@@ -273,6 +269,75 @@ useEffect(() => {
                 )
               )}
         </div>
+        <div className="text-sm">
+          <div className="flex justify-between items-center text-gray-400">
+            <p className="text-xl font-charlie-display-sm mb-1 text-gray-400 px-2 mt-1 ">
+              Other boards
+            </p>
+     
+          </div>
+          {isLoading
+            ? [...Array(4)].map((_, i) => (
+                <div
+                  key={i}
+                  className="flex items-center justify-between p-2 rounded animate-pulse"
+                >
+                  <div className="flex items-center space-x-2">
+                    <Skeleton className="w-6 h-4 rounded-sm" />
+                    <Skeleton className="h-4 w-32" />
+                  </div>
+                </div>
+              ))
+            : data?.data.otherBoards.map((board) =>
+                board._id.startsWith("temp") ? (
+                  <div className="flex items-center justify-between hover:bg-gray-700 p-2 rounded cursor-pointer ">
+                    <div className="flex items-center space-x-1">
+                      <div
+                        className="w-6 h-4 rounded-sm"
+                        style={
+                          isImageUrl(board.cover)
+                            ? {
+                                backgroundImage: `url(${board.cover})`,
+                                backgroundSize: "cover",
+                                backgroundPosition: "center",
+                              }
+                            : { background: board.cover }
+                        }
+                      />
+                      <span className="text-[#9FADBC] font-charlie-text-r text-md">
+                        {board.title}
+                      </span>
+                    </div>
+                  </div>
+                ) : (
+                  <Link
+                    key={board._id}
+                    to={`/user/w/workspace/${workspace?._id}/board/${board._id}`}
+                  >
+                    <div className="flex items-center justify-between hover:bg-gray-700 p-2 rounded cursor-pointer ">
+                      <div className="flex items-center space-x-1">
+                        <div
+                          className="w-6 h-4 rounded-sm"
+                          style={
+                            isImageUrl(board.cover)
+                              ? {
+                                  backgroundImage: `url(${board.cover})`,
+                                  backgroundSize: "cover",
+                                  backgroundPosition: "center",
+                                }
+                              : { background: board.cover }
+                          }
+                        />
+                        <span className="text-[#9FADBC] font-charlie-text-r text-md">
+                          {board.title}
+                        </span>
+                      </div>
+                    </div>
+                  </Link>
+                )
+              )}
+        </div>
+     
       </aside>
       <div
         className={`p-1.5 shadow-2xl flex items-center justify-center  absolute top-32 left-4 bg-fprimary rounded-full text-center z-[100] text-gray-300 ${
