@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useCallback, useEffect, useRef } from "react";
 import ShareComp from "./RightSidebarComps/Share";
 import AboutBoard from "./RightSidebarComps/AboutBoard";
 import Visibility from "./RightSidebarComps/Visibility";
@@ -8,6 +8,7 @@ import { Copy, Eye, ListCollapse, Minus, X } from "lucide-react";
 import SettingsComp from "./RightSidebarComps/Settings/SettingsComp";
 import ChangeBG from "./RightSidebarComps/BG/ChangeBG";
 import CustomBorder from "@/components/resuable/CustomBorder";
+import { useClickOutside } from "@/Context/useRefContext";
 
 interface IProps {
   setOpenSideBar: React.Dispatch<React.SetStateAction<boolean>>;
@@ -29,8 +30,14 @@ const RightSideBar = ({ openSidebar, setOpenSideBar }: IProps) => {
       document.removeEventListener("keydown", handleKeyDown);
     };
   }, []);
+  const sidebarRef = useRef<HTMLDivElement>(null);
+  const handleClickOutside = useCallback(() => {
+    setOpenSideBar(false);
+  }, []);
+  useClickOutside(sidebarRef, handleClickOutside);
   return (
     <div
+      ref={sidebarRef}
       className={`fixed z-[999999] px-4  pb-3 right-0 top-15 transition-opacity duration-300 ease-in-out transform bg-[#282E33] w-[20rem] h-[78vh] custom-scrollbar overflow-y-auto text-textP font-charlie-text-r ${
         openSidebar ? "opacity-100" : "opacity-0 pointer-events-none"
       }`}

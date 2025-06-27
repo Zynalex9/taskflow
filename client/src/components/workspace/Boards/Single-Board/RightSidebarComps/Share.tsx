@@ -9,10 +9,11 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { IUser } from "@/types/functionalites.types";
 import axios from "axios";
 import { ProfileCard } from "./ProfileCard";
+import { useClickOutside } from "@/Context/useRefContext";
 interface ApiResponse {
   data: IUser;
   message: string;
@@ -20,8 +21,11 @@ interface ApiResponse {
   success: boolean;
 }
 const ShareComp = () => {
-  const profileCardRef = useRef<HTMLDivElement>(null);
-
+  const profileCardRef = useRef<HTMLElement>(null);
+  const handleClickOutside = useCallback(() => {
+    setShowCard(false);
+  }, []);
+  useClickOutside(profileCardRef, handleClickOutside);
   const { user } = useSelector((state: RootState) => state.auth);
   const [searchValue, setSearchValue] = useState("");
   const [loading, setIsLoading] = useState(false);
@@ -62,22 +66,7 @@ const ShareComp = () => {
   useEffect(() => {
     console.log("apiResponse", apiResponse);
   }, [apiResponse]);
-  useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
-      if (
-        profileCardRef.current &&
-        !profileCardRef.current.contains(event.target as Node) &&
-        showCard
-      ) {
-        setShowCard(false);
-      }
-    };
 
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
-    };
-  }, [showCard]);
   return (
     <div className="text-textP flex w-full justify-between items-center pt-2 pb-1">
       <Dialog>
@@ -145,7 +134,10 @@ const ShareComp = () => {
         src={user?.profilePicture}
         alt="Profile Picture"
         className="size-9 rounded-full object-cover object-center "
-        onClick={() => setShowCard(!showCard)}
+        onClick={(e) => {
+          e.stopPropagation();
+          setShowCard(!showCard);
+        }}
       />
       <div
         ref={profileCardRef}

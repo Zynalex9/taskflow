@@ -1,5 +1,5 @@
 import { usePreventScroll } from "./PreventScroll";
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { useNavigate, useParams, useLocation } from "react-router-dom";
 import { AlignLeft, X } from "lucide-react";
 import InListMove from "./Single-Card/InListMove";
@@ -16,6 +16,7 @@ import {
   useToggleCompleteMutation,
 } from "@/store/cardApi";
 import { isImageUrl } from "@/utils/helper";
+import { useClickOutside } from "@/Context/useRefContext";
 const CardModal = () => {
   const { cardId } = useParams();
   if (!cardId) return;
@@ -35,6 +36,8 @@ const CardModal = () => {
   const handleClose = () => {
     navigate(background?.pathname || -1);
   };
+  const modalRef = useRef<HTMLDivElement>(null);
+  useClickOutside(modalRef, handleClose);
   const [addDescription] = useAddDescriptionMutation();
 
   const handleEditDescription = async () => {
@@ -88,7 +91,7 @@ const CardModal = () => {
 
   if (card)
     return (
-      <>
+      <div ref={modalRef}>
         {isImageUrl(card.cover) ? (
           <div className="w-full h-44">
             <img
@@ -245,7 +248,7 @@ const CardModal = () => {
             </div>
           </div>
         </div>
-      </>
+      </div>
     );
 };
 
