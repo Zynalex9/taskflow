@@ -11,7 +11,7 @@ export interface Workspace {
   name: string;
   admin: string[];
   boards: string[];
-  members: Member[];
+  members: Member[] | string[];
   createdBy: string;
   createdAt: string;
   updatedAt: string;
@@ -38,7 +38,9 @@ export const fetchworkspace = createAsyncThunk<
 >("getWorkspace", async (workspaceId: string, { rejectWithValue }) => {
   try {
     const response = await axios.get(
-      `${import.meta.env.VITE_BASE_URL}/api/workspace/get-workspace?workspaceId=${workspaceId}`,
+      `${
+        import.meta.env.VITE_BASE_URL
+      }/api/workspace/get-workspace?workspaceId=${workspaceId}`,
       { withCredentials: true }
     );
     return response.data;

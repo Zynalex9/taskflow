@@ -26,7 +26,8 @@ export const CheckAdmin = async (
 ): Promise<Boolean> => {
   const workspace = await workSpaceModel.findById(workspaceId);
   if (!workspace) return false;
-  if (!workspace.admin.includes(userId)) return false;
+  if (!workspace.admin.includes(userId) && workspace.createdBy !== userId)
+    return false;
   return true;
 };
 

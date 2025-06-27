@@ -465,8 +465,6 @@ export const deleteWorkSpace = async (req: Request, res: Response) => {
   }
 };
 export const addAdmin = asyncHandler(async (req: Request, res: Response) => {
-  const required = ["workspaceId,adminId"];
-  if (!checkRequiredBody(req, res, required)) return;
   const { workspaceId, adminId } = req.body;
   const userId = req.user._id;
   const isAuthorized = await CheckAdmin(userId, workspaceId);
@@ -508,6 +506,7 @@ export const addAdmin = asyncHandler(async (req: Request, res: Response) => {
   });
   workspace.admin.push(admin._id);
   await workspace.save();
+  redisClient.del(`workspace:${workspaceId}`);
   await lPushList(
     userId,
     `You added ${admin.username} as an admin of ${workspace.name}`
