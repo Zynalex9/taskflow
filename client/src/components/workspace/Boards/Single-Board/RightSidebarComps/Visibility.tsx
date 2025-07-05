@@ -33,7 +33,9 @@ const visibilityOptions = [
 
 const Visibility = () => {
   const { board } = useSingleBoardContext();
-  const [selectedVisibility, setSelectedVisibility] = useState(board.visibility || "private");
+  const [selectedVisibility, setSelectedVisibility] = useState(
+    board.visibility || "private"
+  );
   return (
     <Popover>
       <PopoverTrigger asChild>
@@ -42,7 +44,7 @@ const Visibility = () => {
           <h2 className="text-sm capitalize">{selectedVisibility}</h2>
         </div>
       </PopoverTrigger>
-      <PopoverContent className="w-80 h-72 overflow-y-auto custom-scrollbar bg-fprimary border-none text-textP">
+      <PopoverContent className="w-80 bg-fprimary border-none text-textP">
         <div>
           <div className="flex justify-between items-center mb-4 font-charlie-text-r">
             <div></div>
