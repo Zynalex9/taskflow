@@ -53,7 +53,6 @@ const RightSideBar = ({ openSidebar, setOpenSideBar }: IProps) => {
             <X size={18} onClick={() => setOpenSideBar(false)} />
           </div>
 
-          {/* Sidebar menu items */}
           <ShareComp />
           <CustomBorder />
 
@@ -61,7 +60,7 @@ const RightSideBar = ({ openSidebar, setOpenSideBar }: IProps) => {
             <AboutBoard />
           </div>
 
-          <div onClick={() => setActivePanel("visibility")}>
+          <div>
             <Visibility />
           </div>
 

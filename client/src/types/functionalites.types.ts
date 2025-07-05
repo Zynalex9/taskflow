@@ -63,7 +63,9 @@ export interface IUser {
   updatedAt: string;
   __v: number;
 }
-
+export interface MemberData extends IUser {
+  role: string;
+}
 export interface ICard {
   _id: string;
   name: string;
@@ -111,6 +113,7 @@ export interface IBoard {
   members: IMember[];
   createdAt: string;
   updatedAt: string;
+  membersData: MemberData[];
   __v: number;
 }
 

@@ -8,7 +8,7 @@ interface IBoard extends Document {
   visibility: string;
   createdBy: Types.ObjectId;
   workspace: Types.ObjectId;
-  cover:string
+  cover: string;
   members: {
     user: Types.ObjectId;
     role: "member" | "admin";
@@ -36,7 +36,7 @@ const boardSchema = new Schema(
     },
     visibility: {
       type: String,
-      enum: ["workspace", "private"],
+      enum: ["workspace", "private", "public"],
       default: "workspace",
     },
     createdBy: {
@@ -47,8 +47,8 @@ const boardSchema = new Schema(
       type: mongoose.Schema.Types.ObjectId,
       ref: "Workspace",
     },
-    cover:{
-      type:String
+    cover: {
+      type: String,
     },
     members: [
       {
