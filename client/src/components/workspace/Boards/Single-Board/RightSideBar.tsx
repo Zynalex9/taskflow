@@ -10,6 +10,7 @@ import ChangeBG from "./RightSidebarComps/BG/ChangeBG";
 import CustomBorder from "@/components/resuable/CustomBorder";
 import { useClickOutside } from "@/Context/useRefContext";
 import { PanelView } from "./RightSidebarComps/Panel/PanelView";
+import { useSingleBoardContext } from "@/Context/SingleBoardContext";
 
 interface IProps {
   setOpenSideBar: React.Dispatch<React.SetStateAction<boolean>>;
@@ -32,6 +33,8 @@ const RightSideBar = ({ openSidebar, setOpenSideBar }: IProps) => {
     };
   }, []);
   const sidebarRef = useRef<HTMLDivElement>(null);
+  const { board } = useSingleBoardContext();
+  console.log(board);
   const [activePanel, setActivePanel] = useState<null | string>(null);
   const handleClickOutside = useCallback(() => {
     setOpenSideBar(false);
@@ -68,7 +71,7 @@ const RightSideBar = ({ openSidebar, setOpenSideBar }: IProps) => {
             <ExportsComp />
           </div>
 
-            <StarComp />
+          <StarComp />
 
           <CustomBorder customStyles="mt-2" />
 

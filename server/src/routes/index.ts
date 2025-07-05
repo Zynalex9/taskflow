@@ -37,6 +37,7 @@ import {
   editBoard,
   getSingleBoard,
   toggleFavourite,
+  updateVisibility,
 } from "../controller/board/board";
 import {
   createList,
@@ -101,7 +102,7 @@ userRouter.route("/send-otp").post(sendForgetPasswordOTP);
 userRouter.route("/forget-password").patch(forgetPasswordReset);
 userRouter.route("/activity-log").get(verifyJWT, activityLogs);
 userRouter.route("/verify-otp").post(verifyJWT, verifyOTP);
-userRouter.route("/:email/find-by-email").get(verifyJWT,findByEmail);
+userRouter.route("/:email/find-by-email").get(verifyJWT, findByEmail);
 export { userRouter };
 
 workSpaceRouter
@@ -133,6 +134,9 @@ boardRouter.route("/add-member").patch(verifyJWT, addMember);
 boardRouter.route("/remove-member").patch(verifyJWT, removeMember);
 boardRouter.route("/edit-board").patch(verifyJWT, editBoard);
 boardRouter.route("/toggle-favourite").patch(verifyJWT, toggleFavourite);
+boardRouter
+  .route("/update-visibility/:boardId")
+  .patch(verifyJWT, updateVisibility);
 export { boardRouter };
 listRouter.route("/create-list").post(verifyJWT, createList);
 listRouter.route("/copy-list").patch(verifyJWT, copyList);

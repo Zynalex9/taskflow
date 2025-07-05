@@ -6,6 +6,7 @@ import {
 } from "@/components/ui/popover";
 import { useState } from "react";
 import { useSingleBoardContext } from "@/Context/SingleBoardContext";
+import { useUpdateVisibilityMutation } from "@/store/myApi";
 
 const visibilityOptions = [
   {
@@ -33,15 +34,27 @@ const visibilityOptions = [
 
 const Visibility = () => {
   const { board } = useSingleBoardContext();
+  const [updateVisibility] = useUpdateVisibilityMutation();
   const [selectedVisibility, setSelectedVisibility] = useState(
-    board.visibility || "private"
+    board.visibility
   );
+  const handleVisibilityChange = async () => {
+    try {
+      await updateVisibility({
+        boardId: board._id,
+        visibility: selectedVisibility,
+      }).unwrap();
+    } catch (error) {
+      console.error("Failed to update visibility:", error);
+    }
+  };
+
   return (
     <Popover>
       <PopoverTrigger asChild>
         <div className="mt-4 flex items-center gap-6 cursor-pointer">
           <Binoculars size={18} />
-          <h2 className="text-sm capitalize">{selectedVisibility}</h2>
+          <h2 className="text-sm capitalize">Visibility: {selectedVisibility}</h2>
         </div>
       </PopoverTrigger>
       <PopoverContent className="w-80 bg-fprimary border-none text-textP">
@@ -55,7 +68,10 @@ const Visibility = () => {
             {visibilityOptions.map((option) => (
               <div
                 key={option.value}
-                onClick={() => setSelectedVisibility(option.value)}
+                onClick={() => {
+                  setSelectedVisibility(option.value);
+                  handleVisibilityChange();
+                }}
                 className={`flex flex-col p-2 rounded-lg font-charlie-text-r cursor-pointer hover:bg-fsecondary ${
                   selectedVisibility === option.value ? "bg-fsecondary" : ""
                 }`}

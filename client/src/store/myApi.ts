@@ -242,6 +242,14 @@ export const myApi = createApi({
         }
       },
     }),
+    updateVisibility: builder.mutation({
+      query: ({ boardId, visibility }) => ({
+        url: `/api/board/update-visibility/${boardId}`,
+        method: "PATCH",
+        body: { visibility },
+      }),
+      invalidatesTags: (_, __, { boardId }) => [{ type: "Board", id: boardId }],
+    }),
   }),
 });
 
@@ -252,4 +260,5 @@ export const {
   useAddListMutation,
   useAddCardMutation,
   useToggleFavouriteMutation,
+  useUpdateVisibilityMutation,
 } = myApi;

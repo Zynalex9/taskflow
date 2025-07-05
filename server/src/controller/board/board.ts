@@ -189,77 +189,76 @@ export const getSingleBoard = asyncHandler(
     //     );
     //   return;
     // }
-  const board = await boardModel.aggregate([
-  {
-    $match: { _id: new mongoose.Types.ObjectId(boardId) },
-  },
-  {
-    $lookup: {
-      from: "lists",
-      localField: "lists",
-      foreignField: "_id",
-      as: "lists",
-      pipeline: [
-        {
-          $lookup: {
-            from: "todos",
-            localField: "cards",
-            foreignField: "_id",
-            as: "cards",
-            pipeline: [
-              {
-                $lookup: {
-                  from: "labels",
-                  localField: "labels",
-                  foreignField: "_id",
-                  as: "labels",
-                },
+    const board = await boardModel.aggregate([
+      {
+        $match: { _id: new mongoose.Types.ObjectId(boardId) },
+      },
+      {
+        $lookup: {
+          from: "lists",
+          localField: "lists",
+          foreignField: "_id",
+          as: "lists",
+          pipeline: [
+            {
+              $lookup: {
+                from: "todos",
+                localField: "cards",
+                foreignField: "_id",
+                as: "cards",
+                pipeline: [
+                  {
+                    $lookup: {
+                      from: "labels",
+                      localField: "labels",
+                      foreignField: "_id",
+                      as: "labels",
+                    },
+                  },
+                ],
               },
-            ],
+            },
+          ],
+        },
+      },
+      {
+        $lookup: {
+          from: "users",
+          localField: "members.user",
+          foreignField: "_id",
+          as: "membersData",
+        },
+      },
+      {
+        $addFields: {
+          members: {
+            $map: {
+              input: "$members",
+              as: "member",
+              in: {
+                $mergeObjects: [
+                  "$$member",
+                  {
+                    $arrayElemAt: [
+                      {
+                        $filter: {
+                          input: "$membersData",
+                          as: "userDoc",
+                          cond: {
+                            $eq: ["$$userDoc._id", "$$member.user"],
+                          },
+                        },
+                      },
+                      0,
+                    ],
+                  },
+                ],
+              },
+            },
           },
         },
-      ],
-    },
-  },
-  {
-    $lookup: {
-      from: "users",
-      localField: "members.user",
-      foreignField: "_id",
-      as: "membersData"
-    }
-  },
-  {
-    $addFields: {
-      members: {
-        $map: {
-          input: "$members",
-          as: "member",
-          in: {
-            $mergeObjects: [
-              "$$member",
-              {
-                $arrayElemAt: [
-                  {
-                    $filter: {
-                      input: "$membersData",
-                      as: "userDoc",
-                      cond: {
-                        $eq: ["$$userDoc._id", "$$member.user"]
-                      }
-                    }
-                  },
-                  0
-                ]
-              }
-            ]
-          }
-        }
-      }
-    }
-  },
-
-]);
+      },
+    ]);
 
     if (!board) {
       notFound(board, "Board", res);
@@ -584,3 +583,39 @@ export const toggleFavourite = asyncHandler(async (req, res) => {
   await board.save();
   res.status(200).json(new ApiResponse(200, {}, "Updated"));
 });
+export const updateVisibility = asyncHandler(
+  async (req: Request, res: Response) => {
+    console.log(req.params, req.body);
+    const { boardId } = req.params;
+    const { visibility } = req.body;
+    if (!boardId || !visibility) {
+      res.status(400).json({
+        message: "Board ID and visibility are required",
+        success: false,
+      });
+      return;
+    }
+    const board = await boardModel.findById(boardId);
+    if (!board) {
+      notFound(board, "Board", res);
+      return;
+    }
+    const userId = req.user._id;
+    const workspace = await workSpaceModel.findById(board.workspace);
+    if (
+      !workspace?.admin.includes(userId) &&
+      workspace?.createdBy.toString() !== userId.toString()
+    ) {
+      res.status(403).json({
+        message:
+          "You are not authorized to change the visibility of this board",
+        success: false,
+      });
+      return;
+    }
+    board.visibility = visibility;
+    await board.save();
+    await redisClient.del(`singleBoard:${boardId}`);
+    res.status(200).json(new ApiResponse(200, {}, "Visibility updated"));
+  }
+);
