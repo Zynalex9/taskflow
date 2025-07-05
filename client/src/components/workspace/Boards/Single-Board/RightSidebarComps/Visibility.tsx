@@ -48,13 +48,15 @@ const Visibility = () => {
       console.error("Failed to update visibility:", error);
     }
   };
-
+  const [isOpen, setIsOpen] = useState(false);
   return (
-    <Popover>
+    <Popover open={isOpen}>
       <PopoverTrigger asChild>
-        <div className="mt-4 flex items-center gap-6 cursor-pointer">
+        <div className="mt-4 flex items-center gap-6 cursor-pointer" onClick={() => setIsOpen(!isOpen)}>
           <Binoculars size={18} />
-          <h2 className="text-sm capitalize">Visibility: {selectedVisibility}</h2>
+          <h2 className="text-sm capitalize">
+            Visibility: {selectedVisibility}
+          </h2>
         </div>
       </PopoverTrigger>
       <PopoverContent className="w-80 bg-fprimary border-none text-textP">
@@ -62,7 +64,11 @@ const Visibility = () => {
           <div className="flex justify-between items-center mb-4 font-charlie-text-r">
             <div></div>
             <h1 className="text-sm">Change visibility</h1>
-            <X size={16} className="cursor-pointer" />
+            <X
+              size={16}
+              className="cursor-pointer"
+              onClick={() => setIsOpen(false)}
+            />
           </div>
           <div>
             {visibilityOptions.map((option) => (

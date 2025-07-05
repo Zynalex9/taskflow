@@ -103,7 +103,11 @@ const RightSideBar = ({ openSidebar, setOpenSideBar }: IProps) => {
           </div>
         </>
       ) : (
-        <PanelView panel={activePanel} goBack={() => setActivePanel(null)} />
+        <PanelView
+          panel={activePanel}
+          goBack={() => setActivePanel(null)}
+          goToPanel={(param: string) => setActivePanel(param)}
+        />
       )}
     </div>
   );
