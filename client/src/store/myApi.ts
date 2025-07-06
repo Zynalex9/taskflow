@@ -255,11 +255,25 @@ export const myApi = createApi({
       invalidatesTags: (_, __, { boardId }) => [{ type: "Board", id: boardId }],
     }),
     updateBoardCover: builder.mutation({
-      query: ({ boardId, cover }) => ({
-        url: `/api/board/update-cover/${boardId}`,
-        method: "PATCH",
-        body: { cover },
-      }),
+      query: ({ boardId, cover }) => {
+        if (cover instanceof FormData) {
+          return {
+            url: `/api/board/update-cover/${boardId}`,
+            method: "PATCH",
+            body: cover,
+          };
+        }
+
+        return {
+          url: `/api/board/update-cover/${boardId}`,
+          method: "PATCH",
+          body: { cover },
+          headers: {
+            "Content-Type": "application/json",
+          },
+        };
+      },
+
       invalidatesTags: (_, __, { boardId }) => [
         { type: "singleBoard", id: boardId },
       ],

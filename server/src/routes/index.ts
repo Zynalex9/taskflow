@@ -135,7 +135,7 @@ boardRouter.route("/add-member").patch(verifyJWT, addMember);
 boardRouter.route("/remove-member").patch(verifyJWT, removeMember);
 boardRouter.route("/edit-board").patch(verifyJWT, editBoard);
 boardRouter.route("/toggle-favourite").patch(verifyJWT, toggleFavourite);
-boardRouter.route("/update-cover/:boardId").patch(verifyJWT, updateBoardCover);
+boardRouter.route("/update-cover/:boardId").patch(verifyJWT,upload.single("image"), updateBoardCover);
 boardRouter
   .route("/update-visibility/:boardId")
   .patch(verifyJWT, updateVisibility);

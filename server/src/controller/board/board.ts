@@ -624,7 +624,8 @@ export const updateBoardCover = asyncHandler(
   async (req: Request, res: Response) => {
     const { boardId } = req.params;
     const { cover } = req.body;
-    if (!boardId || !cover) {
+    console.log(req.body, req.file);
+    if (!boardId || (!cover && !req.file)) {
       res
         .status(400)
         .json(new ApiResponse(400, {}, "Board ID and cover are required"));
@@ -647,7 +648,23 @@ export const updateBoardCover = asyncHandler(
       });
       return;
     }
-    board.cover = cover;
+    let coverUrl = cover;
+    if (req.file) {
+      const localPath = req.file.path;
+      const response = await UploadOnCloudinary({
+        localFilePath: localPath,
+        folderName: "taskflow/boardCovers",
+      });
+      if (response && response.url) {
+        coverUrl = response.url;
+      } else {
+        res
+          .status(400)
+          .json(new ApiResponse(400, {}, "Failed to upload cover"));
+        return;
+      }
+    }
+    board.cover = coverUrl;
     await board.save();
     await redisClient.del(`singleBoard:${boardId}`);
     res.status(200).json(new ApiResponse(200, {}, "Board cover updated"));

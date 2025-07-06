@@ -1,7 +1,30 @@
 import CustomBorder from "@/components/resuable/CustomBorder";
-import { Plus } from "lucide-react";
+import { useSingleBoardContext } from "@/Context/SingleBoardContext";
+import { useUpdateBoardCoverMutation } from "@/store/myApi";
+import { Circle, LoaderCircle, Plus } from "lucide-react";
+import { useState } from "react";
 
 export const ChangeBGStep1 = ({ goTo }: { goTo: (param: string) => void }) => {
+  const [isLoading, setIsLoading] = useState(false);
+  const [updateCover] = useUpdateBoardCoverMutation();
+  const { board } = useSingleBoardContext();
+  const handleUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    const formData = new FormData();
+    try {
+      setIsLoading(true);
+      formData.append("image", file ?? new Blob(), file?.name || "image.png");
+      await updateCover({
+        boardId: board._id,
+        cover: formData,
+      });
+    } catch (error) {
+      console.error("Error uploading image:", error);
+    } finally {
+      setIsLoading(false);
+      event.target.value = "";
+    }
+  };
   return (
     <div>
       <div className="flex items-center w-full justify-center gap-4 px-2 py-1 rounded-lg shadow-md">
@@ -37,11 +60,25 @@ export const ChangeBGStep1 = ({ goTo }: { goTo: (param: string) => void }) => {
         </div>
       </div>
       <CustomBorder />
-      <div className="flex flex-col justify-center ">
-        <div className="mt-4 rounded-lg h-40 w-32 flex items-center justify-center bg-gray-600">
-          <Plus />
-        </div>
+      <div className="flex flex-col justify-center">
+        <label htmlFor="customImageUpload">
+          <div
+            className={`mt-4 rounded-lg h-40 w-32 flex items-center justify-center bg-gray-600 ${
+              isLoading ? "transition-all duration-150 opacity-50" : ""
+            } cursor-pointer hover:bg-gray-500 transition-colors`}
+          >
+            {isLoading ? <LoaderCircle className="animate-spin" /> : <Plus />}
+          </div>
+        </label>
         <h1>Custom</h1>
+        <input
+          id="customImageUpload"
+          type="file"
+          accept="image/*"
+          className="hidden"
+          disabled={isLoading}
+          onChange={handleUpload}
+        />
       </div>
     </div>
   );
