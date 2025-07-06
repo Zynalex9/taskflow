@@ -13,7 +13,6 @@ export const MoreImages = () => {
   const [images, setImages] = useState<ImageProps[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [hasMore, setHasMore] = useState(true);
-  const [error, setError] = useState("");
   const observer = useRef<IntersectionObserver | null>(null);
   const abortControllerRef = useRef<AbortController | null>(null);
   const controller = new AbortController();
@@ -96,12 +95,10 @@ export const MoreImages = () => {
       );
 
       setHasMore(response.data.results.length > 0);
-      setError("");
     } catch (err) {
       if (axios.isCancel(err)) {
         console.log("Request canceled:", err.message);
       } else {
-        setError("Failed to fetch images");
         console.error("Error fetching images:", err);
       }
     } finally {
@@ -181,7 +178,7 @@ export const MoreImages = () => {
                 ))}
               </div>
             ) : (
-              <h1 className="text-center mt-10 text-3xl font-charlie-display-sm">
+              <h1 className="text-center mt-10 text-3xl font-charlie-display-sm custom-scrollbar">
                 {searchTerm ? "No images found" : "Type to search images"}
               </h1>
             )}
