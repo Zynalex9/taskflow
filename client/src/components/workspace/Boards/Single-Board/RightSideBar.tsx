@@ -4,13 +4,14 @@ import AboutBoard from "./RightSidebarComps/AboutBoard";
 import Visibility from "./RightSidebarComps/Visibility";
 import ExportsComp from "./RightSidebarComps/Exports/ExportsComp";
 import StarComp from "./RightSidebarComps/StarComp";
-import { Copy, Eye, ListCollapse, Minus, X } from "lucide-react";
+import { Eye, ListCollapse, Minus, X } from "lucide-react";
 import SettingsComp from "./RightSidebarComps/Settings/SettingsComp";
 import ChangeBG from "./RightSidebarComps/BG/ChangeBG";
 import CustomBorder from "@/components/resuable/CustomBorder";
 import { useClickOutside } from "@/Context/useRefContext";
 import { PanelView } from "./RightSidebarComps/Panel/PanelView";
 import { useSingleBoardContext } from "@/Context/SingleBoardContext";
+import { CopyBoardPopover } from "./RightSidebarComps/CopyBoardPopover";
 
 interface IProps {
   setOpenSideBar: React.Dispatch<React.SetStateAction<boolean>>;
@@ -93,10 +94,7 @@ const RightSideBar = ({ openSidebar, setOpenSideBar }: IProps) => {
             <ListCollapse size={18} />
             <h2>Collapse All</h2>
           </div>
-          <div className="mt-4 text-sm flex items-center gap-6">
-            <Copy size={18} />
-            <h2>Copy Board</h2>
-          </div>
+          <CopyBoardPopover />
           <div className="mt-4 text-sm flex items-center gap-6">
             <Minus size={18} />
             <h2>Close Board</h2>
