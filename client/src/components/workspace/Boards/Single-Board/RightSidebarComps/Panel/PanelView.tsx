@@ -3,6 +3,7 @@ import { AboutPanel } from "./AboutPanel";
 import { ChangeBGStep1 } from "../BG/ChangeBGStep1";
 import { MoreImages } from "../BG/MoreImages";
 import { BGColors } from "../BG/BGColors";
+import { SettingComp } from "../Settings/SettingComp";
 
 interface PanelViewProps {
   panel: string;
@@ -24,6 +25,7 @@ export const PanelView: React.FC<PanelViewProps> = ({
         {panel === "bg" && <ChangeBGStep1 goTo={goToPanel} />}
         {panel === "bg-images" && <MoreImages />}
         {panel === "bg-colors" && <BGColors />}
+        {panel === "settings" && <SettingComp />}
       </div>
     </div>
   );
