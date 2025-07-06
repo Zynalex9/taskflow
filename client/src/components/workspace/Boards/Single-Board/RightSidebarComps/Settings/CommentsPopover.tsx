@@ -41,10 +41,10 @@ export const CommentsPopover = () => {
   const [selected, setSelected] = useState("members");
 
   return (
-    <div className="space-y-2">
-      <Popover >
-        <PopoverTrigger className="text-textP hover:text-gray-700 text-left">
-          <h2 className="text-sm font-charlie-text-r text-textP">Commenting</h2>
+    <div>
+      <Popover>
+        <PopoverTrigger className="text-textP hover:text-gray-700 text-left space-y-2 cursor-pointer">
+          <h2 className="text-sm font-charlie-display-sm text-textP font-bold">Commenting</h2>
           <p className="text-xs font-charlie-text-r text-textP/80">
             {options.find((o) => o.id === selected)?.title}
           </p>

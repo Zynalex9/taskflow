@@ -22,10 +22,10 @@ export const AddMembersPermissions = () => {
   ];
   const [selected, setSelected] = useState("all_members");
   return (
-    <div>
-      <Popover >
-        <PopoverTrigger className="text-textP hover:text-gray-700 text-left ">
-          <h2 className="text-sm font-charlie-text-r text-textP">
+    <div className="">
+      <Popover>
+        <PopoverTrigger className="text-textP hover:text-gray-700 text-left space-y-2 cursor-pointer">
+          <h2 className="text-sm  text-textP font-charlie-display-sm font-bold">
             Adding and removing members
           </h2>
           <p className="text-xs font-charlie-text-r text-textP/80">
