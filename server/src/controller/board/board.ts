@@ -619,3 +619,37 @@ export const updateVisibility = asyncHandler(
     res.status(200).json(new ApiResponse(200, {}, "Visibility updated"));
   }
 );
+
+export const updateBoardCover = asyncHandler(
+  async (req: Request, res: Response) => {
+    const { boardId } = req.params;
+    const { cover } = req.body;
+    if (!boardId || !cover) {
+      res
+        .status(400)
+        .json(new ApiResponse(400, {}, "Board ID and cover are required"));
+      return;
+    }
+    const board = await boardModel.findById(boardId);
+    if (!board) {
+      notFound(board, "Board", res);
+      return;
+    }
+    const userId = req.user._id;
+    const workspace = await workSpaceModel.findById(board.workspace);
+    if (
+      !workspace?.admin.includes(userId) &&
+      workspace?.createdBy.toString() !== userId.toString()
+    ) {
+      res.status(403).json({
+        message: "You are not authorized to change the cover of this board",
+        success: false,
+      });
+      return;
+    }
+    board.cover = cover;
+    await board.save();
+    await redisClient.del(`singleBoard:${boardId}`);
+    res.status(200).json(new ApiResponse(200, {}, "Board cover updated"));
+  }
+);

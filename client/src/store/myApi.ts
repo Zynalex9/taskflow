@@ -10,7 +10,7 @@ import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 
 export const myApi = createApi({
   reducerPath: "boardApis",
-  tagTypes: ["Board"],
+  tagTypes: ["Board", "singleBoard"],
   baseQuery: fetchBaseQuery({
     baseUrl: import.meta.env.VITE_BASE_URL,
     credentials: "include",
@@ -24,6 +24,10 @@ export const myApi = createApi({
     }),
     getSingleBoard: builder.query<ISingleBoardResponse, string>({
       query: (boardId) => `/api/board/single/${boardId}`,
+      providesTags: (__, _, workspaceId) => [
+        { type: "singleBoard", id: workspaceId },
+        { type: "Board", id: workspaceId },
+      ],
     }),
     addBoard: builder.mutation({
       query: (newBoard) => ({
@@ -256,7 +260,9 @@ export const myApi = createApi({
         method: "PATCH",
         body: { cover },
       }),
-      invalidatesTags: (_, __, { boardId }) => [{ type: "Board", id: boardId }],
+      invalidatesTags: (_, __, { boardId }) => [
+        { type: "singleBoard", id: boardId },
+      ],
     }),
   }),
 });
