@@ -250,6 +250,14 @@ export const myApi = createApi({
       }),
       invalidatesTags: (_, __, { boardId }) => [{ type: "Board", id: boardId }],
     }),
+    updateBoardCover: builder.mutation({
+      query: ({ boardId, cover }) => ({
+        url: `/api/board/update-cover/${boardId}`,
+        method: "PATCH",
+        body: { cover },
+      }),
+      invalidatesTags: (_, __, { boardId }) => [{ type: "Board", id: boardId }],
+    }),
   }),
 });
 
@@ -261,4 +269,5 @@ export const {
   useAddCardMutation,
   useToggleFavouriteMutation,
   useUpdateVisibilityMutation,
+  useUpdateBoardCoverMutation,
 } = myApi;

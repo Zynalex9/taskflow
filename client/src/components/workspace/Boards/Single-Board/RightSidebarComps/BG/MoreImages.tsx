@@ -1,17 +1,73 @@
 import axios from "axios";
-import { useEffect, useState } from "react";
-import Images, { ImageProps } from "../../Add Board Modal/Images";
+import { useCallback, useEffect, useRef, useState } from "react";
+import { ImageProps } from "../../Add Board Modal/Images";
 import ImageSkeleton from "@/components/Skeletons/ImageSkeleton";
+import { useUpdateBoardCoverMutation } from "@/store/myApi";
+import { useSingleBoardContext } from "@/Context/SingleBoardContext";
 
 export const MoreImages = () => {
+  const [selectedImage, setSelectedImage] = useState("");
+  const [uploadingImage, setUploadingImage] = useState(false);
   const [searchTerm, setSearchTerm] = useState("nature");
   const [pageNumber, setPageNumber] = useState(1);
   const [images, setImages] = useState<ImageProps[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [hasMore, setHasMore] = useState(true);
-
+  const [error, setError] = useState("");
+  const observer = useRef<IntersectionObserver | null>(null);
+  const abortControllerRef = useRef<AbortController | null>(null);
   const controller = new AbortController();
+  const { board } = useSingleBoardContext();
+  const [updateCover] = useUpdateBoardCoverMutation();
+  const handleUpload = async (imageUrl: string) => {
+    try {
+      await updateCover({
+        boardId: board._id,
+        cover: imageUrl,
+      }).unwrap();
+      setSelectedImage("");
+      setUploadingImage(false);
+    } catch (error) {
+      console.error("Error uploading image:", error);
+    }
+  };
+  useEffect(() => {
+    setPageNumber(1);
+    setImages([]);
+    setHasMore(true);
+    setIsLoading(true);
+  }, [searchTerm]);
+  const lastElemRef = useCallback<(node: HTMLDivElement | null) => void>(
+    (node) => {
+      if (isLoading || !hasMore) return;
+      if (observer.current) observer.current.disconnect();
+
+      observer.current = new IntersectionObserver(
+        (entries) => {
+          if (entries[0].isIntersecting && hasMore) {
+            setPageNumber((prev) => prev + 1);
+          }
+        },
+        {
+          rootMargin: "50px",
+          threshold: 0.1,
+        }
+      );
+
+      if (node) observer.current.observe(node);
+    },
+    [isLoading, hasMore]
+  );
   const fetchImages = async () => {
+    if (!searchTerm.trim()) return;
+
+    if (abortControllerRef.current) {
+      abortControllerRef.current.abort();
+    }
+
+    const controller = new AbortController();
+    abortControllerRef.current = controller;
+
     try {
       setIsLoading(true);
       const response = await axios.get(
@@ -28,20 +84,28 @@ export const MoreImages = () => {
           signal: controller.signal,
         }
       );
+
       if (response.status !== 200) {
         throw new Error("Failed to fetch images");
       }
-      console.log("Response data:", response.data.results);
+
       setImages((prev) =>
         pageNumber === 1
           ? response.data.results
           : [...prev, ...response.data.results]
       );
-    } catch (error) {
-      console.error("Error fetching images:", error);
+
+      setHasMore(response.data.results.length > 0);
+      setError("");
+    } catch (err) {
+      if (axios.isCancel(err)) {
+        console.log("Request canceled:", err.message);
+      } else {
+        setError("Failed to fetch images");
+        console.error("Error fetching images:", err);
+      }
     } finally {
       setIsLoading(false);
-      setHasMore(images.length > 0);
     }
   };
   useEffect(() => {
@@ -54,6 +118,16 @@ export const MoreImages = () => {
       controller.abort();
     };
   }, [searchTerm, pageNumber]);
+  useEffect(() => {
+    return () => {
+      if (observer.current) {
+        observer.current.disconnect();
+      }
+      if (abortControllerRef.current) {
+        abortControllerRef.current.abort();
+      }
+    };
+  }, []);
   return (
     <div>
       <h1 className="text-center my-4">
@@ -84,7 +158,26 @@ export const MoreImages = () => {
             {images.length > 0 ? (
               <div className="grid grid-cols-2 gap-2 p-1 my-4">
                 {images.map((image, idx) => (
-                  <Images image={image} key={`${image.id}-${idx}`} />
+                  <div
+                    ref={idx === images.length - 1 ? lastElemRef : null}
+                    key={image.id}
+                    className="aspect-square overflow-hidden rounded"
+                  >
+                    <img
+                      onClick={() => {
+                        setSelectedImage(image.urls.full);
+                        setUploadingImage(true);
+                        handleUpload(image.urls.full);
+                      }}
+                      src={image.urls.small}
+                      alt={image.alt_description || "Unsplash image"}
+                      className={`h-full w-full object-cover ${
+                        uploadingImage && selectedImage === image.urls.full
+                          ? "opacity-50  transition-opacity duration-300"
+                          : ""
+                      }`}
+                    />
+                  </div>
                 ))}
               </div>
             ) : (
