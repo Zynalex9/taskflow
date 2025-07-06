@@ -1,6 +1,7 @@
 import { ArrowLeft } from "lucide-react";
 import { AboutPanel } from "./AboutPanel";
 import { ChangeBGStep1 } from "../BG/ChangeBGStep1";
+import { MoreImages } from "../BG/MoreImages";
 
 interface PanelViewProps {
   panel: string;
@@ -20,7 +21,7 @@ export const PanelView: React.FC<PanelViewProps> = ({
       <div className="flex-1 overflow-y-auto ">
         {panel === "about" && <AboutPanel />}
         {panel === "bg" && <ChangeBGStep1 goTo={goToPanel} />}
-        {panel === "bg-images" && <h1>More Images</h1>}
+        {panel === "bg-images" && <MoreImages />}
       </div>
     </div>
   );
