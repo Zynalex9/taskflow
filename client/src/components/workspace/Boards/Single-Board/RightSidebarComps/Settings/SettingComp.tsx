@@ -1,6 +1,7 @@
 import { RootState } from "@/store/store";
 import { useSelector } from "react-redux";
 import { CommentsPopover } from "./CommentsPopover";
+import { AddMembersPermissions } from "./AddMembersPermissions";
 
 export const SettingComp = () => {
   const { workspace } = useSelector((state: RootState) => state.workspace);
@@ -20,6 +21,7 @@ export const SettingComp = () => {
           Permissions
         </h1>
         <CommentsPopover />
+        <AddMembersPermissions/>
       </div>
     </div>
   );
