@@ -32,7 +32,7 @@ export const CloseBoard = () => {
   return (
     <Popover open={openModal} onOpenChange={setOpenModal}>
       <PopoverTrigger>
-        <div className="mt-4 text-sm flex items-center gap-6 cursor-pointer">
+        <div className="mt-4 w-full flex items-center gap-6 hover:bg-gray-700 p-1 rounded-md transition-colors duration-150 cursor-pointer">
           <Minus size={18} />
           <h2>Close Board</h2>
         </div>

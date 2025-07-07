@@ -52,7 +52,10 @@ const Visibility = () => {
   return (
     <Popover open={isOpen}>
       <PopoverTrigger asChild>
-        <div className="mt-4 flex items-center gap-6 cursor-pointer" onClick={() => setIsOpen(!isOpen)}>
+        <div
+          className="mt-4 flex items-center gap-6 hover:bg-gray-700 p-1 rounded-md transition-colors duration-150 cursor-pointer"
+          onClick={() => setIsOpen(!isOpen)}
+        >
           <Binoculars size={18} />
           <h2 className="text-sm capitalize">
             Visibility: {selectedVisibility}

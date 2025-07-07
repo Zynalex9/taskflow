@@ -87,16 +87,20 @@ const RightSideBar = ({ openSidebar, setOpenSideBar }: IProps) => {
 
           <CustomBorder customStyles="mt-2" />
 
-          <div className="mt-4 text-sm flex items-center gap-6">
+          <div className="mt-4 flex items-center gap-6 hover:bg-gray-700 p-1 rounded-md transition-colors duration-150 cursor-pointer">
             <Eye size={18} />
             <h2>Watch</h2>
           </div>
-          <div className="mt-4 text-sm flex items-center gap-6">
+          <div className="mt-4 flex items-center gap-6 hover:bg-gray-700 p-1 rounded-md transition-colors duration-150 cursor-pointer">
             <ListCollapse size={18} />
             <h2>Collapse All</h2>
           </div>
-          <CopyBoardPopover />
-          <CloseBoard />
+          <div>
+            <CopyBoardPopover />
+          </div>
+          <div>
+            <CloseBoard />
+          </div>
         </div>
       ) : (
         <PanelView
