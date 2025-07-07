@@ -278,6 +278,31 @@ export const myApi = createApi({
         { type: "singleBoard", id: boardId },
       ],
     }),
+    deleteBoard: builder.mutation({
+      query: (boardId) => ({
+        url: `/api/board/${boardId}/delete-board`,
+        method: "DELETE",
+      }),
+      invalidatesTags: (_, __, { boardId }) => [
+        { type: "Board", id: boardId },
+        { type: "singleBoard", id: boardId },
+      ],
+      async onQueryStarted(boardId, { dispatch, queryFulfilled }) {
+        const patchResult = dispatch(
+          myApi.util.updateQueryData("getAllBoards", boardId, (draft) => {
+            draft.data.yourBoards = draft.data.yourBoards.filter(
+              (board) => board._id !== boardId
+            );
+          })
+        );
+
+        try {
+          await queryFulfilled;
+        } catch {
+          patchResult.undo();
+        }
+      },
+    }),
   }),
 });
 
@@ -290,4 +315,5 @@ export const {
   useToggleFavouriteMutation,
   useUpdateVisibilityMutation,
   useUpdateBoardCoverMutation,
+  useDeleteBoardMutation,
 } = myApi;

@@ -179,7 +179,7 @@ export const MoreImages = () => {
               </div>
             ) : (
               <h1 className="text-center mt-10 text-3xl font-charlie-display-sm custom-scrollbar">
-                {searchTerm ? "No images found" : "Type to search images"}
+                {searchTerm ? "Loading Images..." : "Type to search images"}
               </h1>
             )}
 
