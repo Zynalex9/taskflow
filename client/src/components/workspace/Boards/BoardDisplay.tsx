@@ -5,14 +5,27 @@ import { Link } from "react-router-dom";
 import { Skeleton } from "@/components/ui/skeleton";
 import { myApi } from "../../../store/myApi";
 import { openModal } from "@/store/BoardBGSlice";
-const BoardDisplay = () => {
+const BoardDisplay = ({
+  searchTerm,
+  sortOption,
+}: {
+  searchTerm: string;
+  sortOption: string;
+}) => {
   const { workspace } = useSelector((state: RootState) => state.workspace);
   const { loading } = useSelector((state: RootState) => state.boards);
-  const dispatch = useDispatch<AppDispatch>()
+  const dispatch = useDispatch<AppDispatch>();
   const bboards = useSelector((state: RootState) =>
     myApi.endpoints.getAllBoards.select(workspace?._id ?? "")(state)
   );
-
+  const filteredBoards = bboards?.data?.data?.yourBoards?.filter((board) =>
+    board.title.toLowerCase().includes(searchTerm.toLowerCase())
+  );
+  if (sortOption === "asc") {
+    filteredBoards?.sort((a, b) => a.title.localeCompare(b.title));
+  } else if (sortOption === "desc") {
+    filteredBoards?.sort((a, b) => b.title.localeCompare(a.title));
+  }
   if (!workspace?._id) {
     return <div>Loading workspace...</div>;
   }
@@ -37,11 +50,11 @@ const BoardDisplay = () => {
   return (
     <div className="py-8 flex flex-wrap items-center justify-center gap-4">
       <div className="bg-[#333C43] aspect-video flex items-center justify-center text-center font-charlie-text-sb text-textP text-2xl w-[30%] rounded-xl shadow-2xl transition-colors duration-150 hover:bg-[#333C43]/50">
-        <button onClick={()=>dispatch(openModal())}>
+        <button onClick={() => dispatch(openModal())}>
           <h2>Create new board</h2>
         </button>
       </div>
-      {bboards?.data?.data?.yourBoards?.map((board) => (
+      {filteredBoards?.map((board) => (
         <Link
           to={`/user/w/workspace/${workspace._id}/board/${board._id}`}
           key={board._id}
