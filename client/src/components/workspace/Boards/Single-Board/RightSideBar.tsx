@@ -45,12 +45,12 @@ const RightSideBar = ({ openSidebar, setOpenSideBar }: IProps) => {
   return (
     <div
       ref={sidebarRef}
-      className={`fixed z-[999999] px-2  overflow-x-hidden pb-3 right-0 top-0 transition-opacity duration-300 ease-in-out transform bg-[#282E33] w-[20rem] h-[78vh] custom-scrollbar overflow-y-auto text-textP font-charlie-text-r ${
+      className={`fixed z-[999999] px-2  overflow-x-hidden pb-3 right-0 top-4 transition-opacity duration-300 ease-in-out transform bg-[#282E33] w-[20rem] h-[82vh] custom-scrollbar text-textP font-charlie-text-r ${
         openSidebar ? "opacity-100" : "opacity-0 pointer-events-none"
       }`}
     >
       {activePanel === null ? (
-        <>
+        <div className="custom-scrollbar px-4 overflow-y-auto h-full">
           {/* Sidebar header */}
           <div className="flex items-center justify-between w-full my-2">
             <div></div>
@@ -97,7 +97,7 @@ const RightSideBar = ({ openSidebar, setOpenSideBar }: IProps) => {
           </div>
           <CopyBoardPopover />
           <CloseBoard />
-        </>
+        </div>
       ) : (
         <PanelView
           panel={activePanel}
