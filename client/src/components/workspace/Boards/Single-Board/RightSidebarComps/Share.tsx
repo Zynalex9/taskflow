@@ -78,7 +78,10 @@ const ShareComp = () => {
           </div>
         </DialogTrigger>
 
-        <DialogContent className="bg-fprimary text-textP border-none">
+        <DialogContent
+          data-ignore-click-outside="true"
+          className="bg-fprimary text-textP border-none"
+        >
           <DialogHeader>
             <DialogTitle>Share Board</DialogTitle>
             <div className="relative">
@@ -98,11 +101,18 @@ const ShareComp = () => {
                 </button>
               </div>
               {searchValue.trim() && (
-                <div className="absolute shadow-2xl top-12 left-0 w-4/5 bg-fprimary p-2 rounded border border-textP/40">
+                <div className="absolute shadow-2xl top-10 left-0 w-4/5 bg-fprimary p-2 rounded border border-textP/40">
                   {loading ? (
                     <div>Searching...</div>
                   ) : apiResponse?.success ? (
-                    <div>{apiResponse.data.username}</div>
+                    <div className="flex items-center gap-2">
+                      <img
+                        src={apiResponse.data.profilePicture}
+                        alt="profile-picture"
+                        className="size-6 rounded-full object-cover object-center"
+                      />
+                      {apiResponse.data.username}
+                    </div>
                   ) : responsedReturned ? (
                     <div>No user found</div>
                   ) : null}

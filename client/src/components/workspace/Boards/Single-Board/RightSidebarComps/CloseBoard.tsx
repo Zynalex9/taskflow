@@ -38,6 +38,7 @@ export const CloseBoard = () => {
         </div>
       </PopoverTrigger>
       <PopoverContent
+        data-ignore-click-outside="true"
         sideOffset={-10}
         side="top"
         className="bg-fprimary p-4 rounded-lg w-96 overflow-y-auto custom-scrollbar h-44"

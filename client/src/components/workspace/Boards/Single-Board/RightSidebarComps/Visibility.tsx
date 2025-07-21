@@ -62,7 +62,10 @@ const Visibility = () => {
           </h2>
         </div>
       </PopoverTrigger>
-      <PopoverContent className="w-80 bg-fprimary border-none text-textP">
+      <PopoverContent
+        data-ignore-click-outside="true"
+        className="w-80 bg-fprimary border-none text-textP"
+      >
         <div>
           <div className="flex justify-between items-center mb-4 font-charlie-text-r">
             <div></div>
