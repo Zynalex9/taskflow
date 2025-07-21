@@ -1,5 +1,5 @@
 import { RootState } from "@/store/store";
-import { Link, UserPlus } from "lucide-react";
+import { CheckCircle, Link, UserPlus } from "lucide-react";
 import { useSelector } from "react-redux";
 import {
   Dialog,
@@ -14,6 +14,8 @@ import { IUser } from "@/types/functionalites.types";
 import axios from "axios";
 import { ProfileCard } from "./ProfileCard";
 import { useClickOutside } from "@/Context/useRefContext";
+import { toast, ToastContainer } from "react-toastify";
+import { useSingleBoardContext } from "@/Context/SingleBoardContext";
 interface ApiResponse {
   data: IUser;
   message: string;
@@ -32,6 +34,27 @@ const ShareComp = () => {
   const [showCard, setShowCard] = useState(false);
   const [responsedReturned, setResponsedReturned] = useState(false);
   const [apiResponse, setApiResponse] = useState<ApiResponse | null>(null);
+  const [linkCreated, setLinkCreated] = useState<boolean>(false);
+  const [textToCopy, setTextToCopy] = useState<string>("");
+  const [copied, setCopied] = useState<boolean>(false);
+  const { board } = useSingleBoardContext();
+  const { workspace } = useSelector((state: RootState) => state.workspace);
+
+  const handleCopy = async () => {
+    try {
+      await navigator.clipboard.writeText(textToCopy);
+      setCopied(true);
+      const newLink = `${import.meta.env.VITE_BASE_URL}/join/${
+        workspace?._id
+      }/${board._id}`;
+      setTextToCopy(newLink);
+      setTimeout(() => {
+        setCopied(false);
+      }, 2000);
+    } catch (error) {
+      toast.error("Failed to copy text", { theme: "dark" });
+    }
+  };
   const handleSearch = async () => {
     try {
       setIsLoading(true);
@@ -66,7 +89,9 @@ const ShareComp = () => {
   useEffect(() => {
     console.log("apiResponse", apiResponse);
   }, [apiResponse]);
-
+  const handleLink = () => {
+    setLinkCreated(true);
+  };
   return (
     <div className="text-textP flex w-full justify-between items-center pt-2 pb-1">
       <Dialog>
@@ -133,7 +158,36 @@ const ShareComp = () => {
                 <h2 className="text-sm text-textP font-charlie-text-sb">
                   Share this board with a link
                 </h2>
-                <button className="text-blue-primary">Create link</button>
+                {linkCreated ? (
+                  <div className="flex gap-4">
+                    <button
+                      onClick={handleCopy}
+                      className="text-blue-primary cursor-pointer underline text-sm"
+                    >
+                      {copied ? (
+                        <div className="flex gap-1 items-center">
+                          <p>Text Copied</p>
+                          <CheckCircle size={14} />
+                        </div>
+                      ) : (
+                        " Copy Link"
+                      )}
+                    </button>
+                    <button
+                      onClick={() => setLinkCreated(false)}
+                      className="text-blue-primary cursor-pointer underline text-sm"
+                    >
+                      Delete Link
+                    </button>
+                  </div>
+                ) : (
+                  <button
+                    onClick={handleLink}
+                    className="text-blue-primary cursor-pointer underline text-sm"
+                  >
+                    Create link
+                  </button>
+                )}
               </div>
             </div>
           </DialogHeader>
@@ -155,6 +209,7 @@ const ShareComp = () => {
       >
         {showCard && <ProfileCard setShowCard={setShowCard} />}
       </div>
+      <ToastContainer />
     </div>
   );
 };
