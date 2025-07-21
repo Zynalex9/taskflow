@@ -39,7 +39,7 @@ const ShareComp = () => {
   const [copied, setCopied] = useState<boolean>(false);
   const { board } = useSingleBoardContext();
   const { workspace } = useSelector((state: RootState) => state.workspace);
-
+  const [selectedMembers, setSelectedMembers] = useState<string[]>([]);
   const handleCopy = async () => {
     try {
       await navigator.clipboard.writeText(textToCopy);
@@ -130,7 +130,19 @@ const ShareComp = () => {
                   {loading ? (
                     <div>Searching...</div>
                   ) : apiResponse?.success ? (
-                    <div className="flex items-center gap-2">
+                    <div
+                      className={`flex items-center curso gap-2 ${
+                        selectedMembers?.includes(apiResponse.data._id)
+                          ? "bg-gray-500 p-2"
+                          : " "
+                      }`}
+                      onClick={() => {
+                        setSelectedMembers((prev) => {
+                          if (prev.includes(apiResponse.data._id)) return prev;
+                          return [...prev, apiResponse.data._id];
+                        });
+                      }}
+                    >
                       <img
                         src={apiResponse.data.profilePicture}
                         alt="profile-picture"
