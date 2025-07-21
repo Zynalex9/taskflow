@@ -104,6 +104,7 @@ export interface IBoard {
   _id: string;
   title: string;
   lists: IList[];
+  description: string;
   favourite: boolean;
   background: string;
   visibility: string;

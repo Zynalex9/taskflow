@@ -9,6 +9,7 @@ interface IBoard extends Document {
   createdBy: Types.ObjectId;
   workspace: Types.ObjectId;
   cover: string;
+  description: string;
   members: {
     user: Types.ObjectId;
     role: "member" | "admin";
@@ -38,6 +39,10 @@ const boardSchema = new Schema(
       type: String,
       enum: ["workspace", "private", "public"],
       default: "workspace",
+    },
+    description: {
+      type: String,
+      default: "",
     },
     createdBy: {
       type: mongoose.Schema.Types.ObjectId,

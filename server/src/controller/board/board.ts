@@ -670,3 +670,20 @@ export const updateBoardCover = asyncHandler(
     res.status(200).json(new ApiResponse(200, {}, "Board cover updated"));
   }
 );
+export const addBoardDescription = asyncHandler(async (req, res) => {
+  const { description, boardId } = req.body;
+  if (!description || !boardId) {
+    res
+      .status(401)
+      .json(new ApiResponse(401, {}, "No Description/boardId provided"));
+    return;
+  }
+  const board = await boardModel.findById(boardId);
+  if (!board) {
+    res.status(404).json(new ApiResponse(404, {}, "No board found"));
+    return;
+  }
+  board.description = description;
+  await board.save();
+  res.status(200).json(new ApiResponse(200, board, "Description updated"));
+});

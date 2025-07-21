@@ -303,6 +303,32 @@ export const myApi = createApi({
         }
       },
     }),
+    addBoardDescription: builder.mutation({
+      query: (body: { description: string; boardId: string }) => ({
+        url: "/api/board/add-description",
+        method: "PATCH",
+        body,
+      }),
+      invalidatesTags: (_, __, { boardId }) => [
+        { type: "singleBoard", id: boardId },
+      ],
+      async onQueryStarted(body, { dispatch, queryFulfilled }) {
+        const patchResult = dispatch(
+          myApi.util.updateQueryData("getSingleBoard", body.boardId, (draft) => {
+            draft.data = {
+              ...draft.data,
+              description: body.description,
+            };
+          })
+        );
+        try {
+          await queryFulfilled;
+        } catch (error) {
+          console.log(error);
+          patchResult.undo();
+        }
+      },
+    }),
   }),
 });
 
@@ -316,4 +342,5 @@ export const {
   useUpdateVisibilityMutation,
   useUpdateBoardCoverMutation,
   useDeleteBoardMutation,
+  useAddBoardDescriptionMutation
 } = myApi;
