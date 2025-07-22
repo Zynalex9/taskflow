@@ -1,5 +1,5 @@
 import { usePreventScroll } from "./PreventScroll";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useNavigate, useParams, useLocation } from "react-router-dom";
 import { AlignLeft, X } from "lucide-react";
 import InListMove from "./Single-Card/InListMove";
@@ -16,7 +16,6 @@ import {
   useToggleCompleteMutation,
 } from "@/store/cardApi";
 import { isImageUrl } from "@/utils/helper";
-import { useClickOutside } from "@/Context/useRefContext";
 const CardModal = () => {
   const { cardId } = useParams();
   if (!cardId) return;
@@ -29,6 +28,11 @@ const CardModal = () => {
   const [editedDescription, setEditedDescription] = useState(
     card?.description || ""
   );
+  useEffect(() => {
+    if (card?.checked !== undefined) {
+      setIsChecked(card.checked);
+    }
+  }, [card?.checked]);
   const navigate = useNavigate();
   const location = useLocation();
   const background = location.state?.background;
@@ -37,7 +41,6 @@ const CardModal = () => {
     navigate(background?.pathname || -1);
   };
   const modalRef = useRef<HTMLDivElement>(null);
-  useClickOutside(modalRef, handleClose);
   const [addDescription] = useAddDescriptionMutation();
 
   const handleEditDescription = async () => {
@@ -51,12 +54,9 @@ const CardModal = () => {
   };
   const handleCheckChange = async () => {
     if (!cardId) return;
-    setIsChecked(!isChecked);
-    const body = {
-      cardId,
-      isComplete: isChecked,
-    };
-    await toggleCard(body);
+    const newCheckedState = !isChecked;
+    setIsChecked(newCheckedState);
+    await toggleCard({ cardId, isComplete: newCheckedState });
   };
 
   if (isLoading)
