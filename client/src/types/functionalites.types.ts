@@ -73,7 +73,7 @@ export interface ICard {
   endDate: string;
   startDate: string;
   createdBy: string;
-  members: IUser[];
+  members: IUser[] | string[];
   list: IList | string;
   comments: IComment[];
   labels: ILabel[];

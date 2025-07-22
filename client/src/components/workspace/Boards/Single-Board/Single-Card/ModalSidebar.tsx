@@ -27,10 +27,51 @@ import AddMembers from "./dropdowns/members/AddMembers";
 import { CustomTooltip } from "./CustomTooltip";
 import { ICard } from "@/types/functionalites.types";
 import AddCover from "./dropdowns/cover/addCover";
+import { useEffect, useState } from "react";
+import { useJoinCardMutation, useLeaveCardMutation } from "@/store/cardApi";
+import { toast, ToastContainer } from "react-toastify";
+
 interface Props {
   card: ICard;
 }
 export function ModalSidebar({ card }: Props) {
+  const [isMember, setIsMember] = useState(false);
+
+  const { user } = useSelector((state: RootState) => state.auth);
+  const [joinCard] = useJoinCardMutation();
+  const [leaveCard] = useLeaveCardMutation();
+  const ToggleJoin = async () => {
+    const body = {
+      cardId: card._id,
+      userId: user?._id!,
+    };
+
+    try {
+      let res;
+
+      if (!isMember) {
+        res = await joinCard(body).unwrap();
+      } else {
+        res = await leaveCard(body).unwrap();
+      }
+
+      if (res.success) {
+        toast.success(
+          res.message ||
+            (!isMember ? "Joined successfully 🎉" : "Left the card"),
+          { theme: "dark" }
+        );
+        setIsMember(!isMember);
+      } else {
+        toast.warning(res.message || "Operation failed", { theme: "dark" });
+      }
+    } catch (err: any) {
+      const errorMessage =
+        err?.data?.message || err?.message || "Something went wrong 😓";
+      toast.error(errorMessage, { theme: "dark" });
+    }
+  };
+
   const {
     openChecklist,
     openAttachments,
@@ -39,10 +80,26 @@ export function ModalSidebar({ card }: Props) {
     openMembers,
     openCover,
   } = useSelector((state: RootState) => state.cardModalState);
+
+  useEffect(() => {
+    if (!user?._id) return;
+
+    const userIsMember = card.members.some((member) =>
+      typeof member === "string" ? member === user._id : member._id === user._id
+    );
+
+    setIsMember(userIsMember);
+  }, [card.members, user?._id]);
+
   const dispatch = useDispatch<AppDispatch>();
   const cardId = card._id;
   const sidebarItems = [
-    { icon: UserPlus, label: "Join", tooltip: "Join Card" },
+    {
+      icon: UserPlus,
+      label: isMember ? "Leave" : "Join",
+      tooltip: isMember ? "Leave Card" : "Join Card",
+      onClick: () => ToggleJoin(),
+    },
     {
       icon: User,
       label: "Members",
@@ -128,6 +185,7 @@ export function ModalSidebar({ card }: Props) {
           </div>
         </div>
       ))}
+      <ToastContainer className={`mt-20`} />
     </div>
   );
 }

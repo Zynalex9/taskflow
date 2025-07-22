@@ -418,6 +418,62 @@ export const cardApi = createApi({
         }
       },
     }),
+    joinCard: builder.mutation({
+      query: (body: { cardId: string; userId: string }) => ({
+        url: "/api/card/join-card",
+        method: "POST",
+        credentials: "include",
+        body,
+      }),
+      invalidatesTags: (_, __, { cardId }) => [
+        { type: "singleCard", id: cardId },
+      ],
+      async onQueryStarted(body, { dispatch, queryFulfilled }) {
+        const patchResult = dispatch(
+          cardApi.util.updateQueryData(
+            "getSingleCard",
+            { cardId: body.cardId },
+            (draft) => {
+              (draft.data.members as string[]).push(body.userId);
+            }
+          )
+        );
+        try {
+          await queryFulfilled;
+        } catch (error) {
+          patchResult.undo();
+        }
+      },
+    }),
+    leaveCard: builder.mutation({
+      query: (body: { cardId: string; userId: string }) => ({
+        url: "/api/card/leave-card",
+        method: "POST",
+        credentials: "include",
+        body,
+      }),
+      invalidatesTags: (_, __, { cardId }) => [
+        { type: "singleCard", id: cardId },
+      ],
+      async onQueryStarted(body, { dispatch, queryFulfilled }) {
+        const patchResult = dispatch(
+          cardApi.util.updateQueryData(
+            "getSingleCard",
+            { cardId: body.cardId },
+            (draft) => {
+              (draft.data.members as string[]) = (
+                draft.data.members as string[]
+              ).filter((m) => m !== body.userId);
+            }
+          )
+        );
+        try {
+          await queryFulfilled;
+        } catch (error) {
+          patchResult.undo();
+        }
+      },
+    }),
   }),
 });
 export const {
@@ -430,5 +486,7 @@ export const {
   useAddDescriptionMutation,
   useAddLabelsMutation,
   useToggleCompleteMutation,
-  useToggleCheckListItemCompleteMutation
+  useToggleCheckListItemCompleteMutation,
+  useJoinCardMutation,
+  useLeaveCardMutation,
 } = cardApi;
