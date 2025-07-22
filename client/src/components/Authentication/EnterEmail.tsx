@@ -4,7 +4,6 @@ import { useForm } from "react-hook-form";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { toast, ToastContainer } from "react-toastify";
-import { useEffect, useState } from "react";
 
 interface IData {
   identifier: string;
@@ -13,10 +12,7 @@ interface IData {
 const EnterEmail = () => {
   const dispatch = useDispatch<AppDispatch>();
   const navigate = useNavigate();
-  const [loginValue, setLoginValue] = useState("");
-  const { loading, error, success, message } = useSelector(
-    (state: RootState) => state.resetPassword
-  );
+  const { loading } = useSelector((state: RootState) => state.resetPassword);
 
   const {
     register,
@@ -25,14 +21,13 @@ const EnterEmail = () => {
   } = useForm<IData>();
 
   const onSubmit = async ({ identifier }: IData) => {
-    setLoginValue(identifier);
     try {
-      const result = await dispatch(sendOTPRequest(identifier)).unwrap(); 
+      const result = await dispatch(sendOTPRequest(identifier)).unwrap();
       if (result.success) {
         navigate("/user/forget/enter-otp", { state: { login: identifier } });
       }
     } catch (err: any) {
-      console.log(err)
+      console.log(err);
       toast.error(err.message || "Failed to send OTP");
     }
   };
