@@ -283,8 +283,8 @@ export const sendForgetPasswordOTP = asyncHandler(
     const otpRequestLimiter = new RateLimiterRedis({
       storeClient: redisClient,
       keyPrefix: "otp-req",
-      points: 3,
-      duration: 600,
+      points: 5,
+      duration: 300,
     });
     const required = ["login"];
     if (!checkRequiredBody(req, res, required)) return;
@@ -299,7 +299,7 @@ export const sendForgetPasswordOTP = asyncHandler(
           new ApiResponse(
             429,
             {},
-            "Too many OTP requests. Please wait 10 minutes before trying again."
+            "Too many OTP requests. Please wait 5 minutes before trying again."
           )
         );
       return;
@@ -328,33 +328,56 @@ export const sendForgetPasswordOTP = asyncHandler(
   }
 );
 export const verifyOTP = asyncHandler(async (req, res) => {
+  const otpVerificationLimiter = new RateLimiterRedis({
+    storeClient: redisClient,
+    duration: 300,
+    points: 5,
+    keyPrefix: "otp-verify",
+  });
   const required = ["login", "OTP"];
   if (!checkRequiredBody(req, res, required)) return;
+
   const { login, OTP } = req.body;
-  const cachedOTP = await redisClient.get(`OTP:${login}`);
-  if (OTP !== cachedOTP) {
-    res.status(201).json(new ApiResponse(401, {}, "Inavlid OTP"));
+
+  try {
+    await otpVerificationLimiter.consume(login);
+  } catch (rejRes) {
+    res
+      .status(429)
+      .json(
+        new ApiResponse(
+          429,
+          {},
+          "Too many OTP requests. Please wait 5 minutes before trying again."
+        )
+      );
     return;
   }
+
+  const cachedOTP = await redisClient.get(`OTP:${login}`);
+
+  if (OTP !== cachedOTP) {
+    res.status(401).json(new ApiResponse(401, {}, "Invalid OTP"));
+    return;
+  }
+
   const user = await UserModel.findOne({
-    $or: [
-      {
-        email: login,
-      },
-      {
-        username: login,
-      },
-    ],
+    $or: [{ email: login }, { username: login }],
   });
+
   if (!user) {
     notFound(user, "User", res);
     return;
   }
+
   const tokenData = { userId: user._id, login };
   const token = jwt.sign(tokenData, process.env.JWT_TOKEN_SECRET!, {
     expiresIn: "5m",
   });
+
   await redisClient.set(`TOKEN:${login}`, token, "EX", 300);
+  await otpVerificationLimiter.delete(login);
+
   res
     .status(200)
     .json(

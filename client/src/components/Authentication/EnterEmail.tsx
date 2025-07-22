@@ -4,7 +4,7 @@ import { useForm } from "react-hook-form";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { toast, ToastContainer } from "react-toastify";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 
 interface IData {
   identifier: string;
@@ -13,6 +13,7 @@ interface IData {
 const EnterEmail = () => {
   const dispatch = useDispatch<AppDispatch>();
   const navigate = useNavigate();
+  const [loginValue, setLoginValue] = useState("");
   const { loading, error, success, message } = useSelector(
     (state: RootState) => state.resetPassword
   );
@@ -23,23 +24,16 @@ const EnterEmail = () => {
     formState: { errors, isSubmitting },
   } = useForm<IData>();
 
-  let identifierValue = "";
-
-  useEffect(() => {
-    if (success && message) {
-      navigate("/user/forget/enter-otp", { state: { login: identifierValue } });
-    }
-
-    if (error) {
-      toast.error(error);
-    }
-  }, [success, error, message, navigate]);
-
   const onSubmit = async ({ identifier }: IData) => {
-    identifierValue = identifier;
+    setLoginValue(identifier);
     try {
-      await dispatch(sendOTPRequest(identifier)).unwrap();
-    } catch (err) {
+      const result = await dispatch(sendOTPRequest(identifier)).unwrap(); 
+      if (result.success) {
+        navigate("/user/forget/enter-otp", { state: { login: identifier } });
+      }
+    } catch (err: any) {
+      console.log(err)
+      toast.error(err.message || "Failed to send OTP");
     }
   };
 
@@ -93,7 +87,7 @@ const EnterEmail = () => {
           By continuing, you agree to our Terms of Service
         </p>
       </div>
-      <ToastContainer style={{marginTop:'80px'}}/>
+      <ToastContainer style={{ marginTop: "80px" }} />
     </div>
   );
 };

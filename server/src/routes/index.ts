@@ -105,7 +105,7 @@ userRouter.route("/reset-password").patch(verifyJWT, resetPassword);
 userRouter.route("/send-otp").post(sendForgetPasswordOTP);
 userRouter.route("/forget-password").patch(forgetPasswordReset);
 userRouter.route("/activity-log").get(verifyJWT, activityLogs);
-userRouter.route("/verify-otp").post(verifyJWT, verifyOTP);
+userRouter.route("/verify-otp").post( verifyOTP);
 userRouter.route("/:email/find-by-email").get(findByEmail);
 export { userRouter };
 

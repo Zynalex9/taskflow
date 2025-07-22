@@ -14,7 +14,7 @@ const EnterOTP = () => {
   const dispatch = useDispatch<AppDispatch>();
   const location = useLocation();
   const login = location.state?.login;
-
+  console.log("Login", login);
   const {
     register,
     handleSubmit,
@@ -22,15 +22,22 @@ const EnterOTP = () => {
   } = useForm<OTPFormData>();
 
   const onSubmit: SubmitHandler<OTPFormData> = async (data) => {
-    if (!login) {
-      toast.error("Missing login information. Please restart the process.");
-      navigator("/user/forget/enter-email");
-      return;
-    }
+    // if (!login) {
+    //   toast.error("Missing login information. Please restart the process.");
+    //   navigator("/user/forget/enter-email");
+    //   return;
+    // }
     try {
-      const result = await dispatch(verifyOTP({ otp: data.otp, login })).unwrap();
-      toast.success("OTP verified! Please reset your password.");
-      navigator("/user/forget/reset-password", { state: { token: result.data, login } });
+      const result = await dispatch(
+        verifyOTP({ otp: data.otp, login })
+      ).unwrap();
+      if (result.success) {
+        toast.success("OTP verified! Please reset your password.");
+
+        navigator("/user/forget/reset-password", {
+          state: { token: result.data, login },
+        });
+      }
     } catch (err: any) {
       toast.error(err || "Failed to verify OTP");
     }
@@ -80,7 +87,7 @@ const EnterOTP = () => {
           </button>
         </form>
       </div>
-      <ToastContainer style={{marginTop:'80px'}} />
+      <ToastContainer style={{ marginTop: "80px" }} />
     </div>
   );
 };
