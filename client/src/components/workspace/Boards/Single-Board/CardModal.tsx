@@ -17,7 +17,7 @@ import {
 } from "@/store/cardApi";
 import { isImageUrl } from "@/utils/helper";
 const CardModal = () => {
-  const { cardId } = useParams();
+  const { cardId, boardId } = useParams();
   if (!cardId) return;
   const [toggleCard] = useToggleCompleteMutation();
   const { data, isLoading, error } = useGetSingleCardQuery({ cardId });
@@ -56,7 +56,7 @@ const CardModal = () => {
     if (!cardId) return;
     const newCheckedState = !isChecked;
     setIsChecked(newCheckedState);
-    await toggleCard({ cardId, isComplete: newCheckedState });
+    await toggleCard({ cardId, isComplete: newCheckedState, boardId:boardId! });
   };
 
   if (isLoading)

@@ -36,14 +36,14 @@ const Card: React.FC<IProps> = ({ card }) => {
                   style={{ backgroundColor: label.color }}
                   className="px-1 min-w-14 h-4 truncate rounded flex items-center justify-center"
                 >
-                 <h1 className="text-xs text-white drop-shadow-md">
+                  <h1 className="text-xs text-white drop-shadow-md">
                     {label.name}
                   </h1>
                 </div>
               ))}
             </div>
           )}
-          <h1> {card?.name}</h1>
+          <h1>{card?.name}</h1>
         </div>
       </HoverCardTrigger>
       {card && (

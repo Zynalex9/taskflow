@@ -11,6 +11,7 @@ import {
 } from "@/types/functionalites.types";
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 import { RootState } from "./store";
+import { syncBoardtoCard } from "@/utils/SyncCache";
 
 export const cardApi = createApi({
   reducerPath: "cardAPIs",
@@ -353,7 +354,11 @@ export const cardApi = createApi({
       },
     }),
     ToggleComplete: builder.mutation({
-      query: (body: { cardId: string; isComplete: boolean }) => ({
+      query: (body: {
+        cardId: string;
+        isComplete: boolean;
+        boardId: string;
+      }) => ({
         url: "/api/card/toggle-complete",
         method: "PATCH",
         body,
@@ -374,10 +379,16 @@ export const cardApi = createApi({
             }
           )
         );
+        syncBoardtoCard(dispatch, body.cardId, body.boardId, {
+          checked: body.isComplete,
+        });
         try {
           await queryFulfilled;
         } catch (error) {
           patchResult.undo();
+          syncBoardtoCard(dispatch, body.cardId, body.boardId, {
+            checked: !body.isComplete,
+          });
         }
       },
     }),
