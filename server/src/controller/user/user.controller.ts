@@ -12,7 +12,6 @@ import {
 } from "../../utils/helpers";
 import ApiResponse from "../../utils/ApiResponse";
 import { forgetPasswordEmail, welcomeEmail } from "../../utils/mailer";
-import { redisClient } from "../..";
 import mongoose from "mongoose";
 import { workSpaceModel } from "../../models/workspace.model";
 import { ListModel } from "../../models/list.models";
@@ -23,6 +22,8 @@ import { CardLabelModel } from "../../models/card.label.model";
 import { CardAttachmentModel } from "../../models/card.attachments.model";
 import { CheckListModel } from "../../models/card.checklist.model";
 import jwt from "jsonwebtoken";
+import { RateLimiterRedis } from "rate-limiter-flexible";
+import { redisClient } from "../..";
 
 export const registerUser = async (
   req: Request,
@@ -279,9 +280,30 @@ export const resetPassword = asyncHandler(
 );
 export const sendForgetPasswordOTP = asyncHandler(
   async (req: Request, res: Response) => {
+    const otpRequestLimiter = new RateLimiterRedis({
+      storeClient: redisClient,
+      keyPrefix: "otp-req",
+      points: 3,
+      duration: 600,
+    });
     const required = ["login"];
     if (!checkRequiredBody(req, res, required)) return;
     const { login } = req.body;
+    await otpRequestLimiter.consume(login);
+    try {
+      await otpRequestLimiter.consume(login);
+    } catch (rejRes) {
+      res
+        .status(429)
+        .json(
+          new ApiResponse(
+            429,
+            {},
+            "Too many OTP requests. Please wait 10 minutes before trying again."
+          )
+        );
+      return;
+    }
     const user = await UserModel.findOne({
       $or: [
         {
@@ -297,6 +319,7 @@ export const sendForgetPasswordOTP = asyncHandler(
       return;
     }
     const OTP = generateOTP();
+    await redisClient.del(`OTP:${login}`);
     await redisClient.set(`OTP:${login}`, OTP, "EX", 600);
     forgetPasswordEmail(user.email, user.username, OTP);
     res
