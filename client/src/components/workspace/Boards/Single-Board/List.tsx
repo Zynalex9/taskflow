@@ -58,9 +58,6 @@ const List: React.FC<ListProps> = ({ list }) => {
     };
 
     socket.on("listCreated", handleListCreated);
-    socket.on("cardCreated", (e) => {
-      console.log("csadsadsadsadasdsadsadadasdsdasdsa");
-    });
 
     return () => {
       socket.off("listCreated", handleListCreated);

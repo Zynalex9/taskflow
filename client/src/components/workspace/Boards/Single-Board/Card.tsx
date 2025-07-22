@@ -6,6 +6,8 @@ import {
   HoverCardTrigger,
 } from "@/components/ui/hover-card";
 import { Paperclip } from "lucide-react";
+import { useEffect, useState } from "react";
+import { useToggleCompleteMutation } from "@/store/cardApi";
 
 interface IProps {
   card: ICard | undefined;
@@ -14,7 +16,24 @@ const Card: React.FC<IProps> = ({ card }) => {
   const location = useLocation();
   const navigate = useNavigate();
   const { workspaceId, boardId } = useParams();
-  console.log("c", card);
+  const cardId = card?._id!;
+  const [isChecked, setIsChecked] = useState(card?.checked);
+  const [toggleCard] = useToggleCompleteMutation();
+  useEffect(() => {
+    if (card?.checked !== undefined) {
+      setIsChecked(card.checked);
+    }
+  }, [card?.checked]);
+  const handleCheckChange = async () => {
+    if (!cardId) return;
+    const newCheckedState = !isChecked;
+    setIsChecked(newCheckedState);
+    await toggleCard({
+      cardId,
+      isComplete: newCheckedState,
+      boardId: boardId!,
+    });
+  };
   return (
     <HoverCard>
       <HoverCardTrigger>
@@ -43,7 +62,19 @@ const Card: React.FC<IProps> = ({ card }) => {
               ))}
             </div>
           )}
-          <h1>{card?.name}</h1>
+          <div className="flex items-center gap-2 my-1">
+            <label className="cursor-pointer">
+              <input
+                type="checkbox"
+                name="option"
+                className="peer hidden"
+                checked={isChecked}
+                onChange={handleCheckChange}
+              />
+              <div className="w-4 h-4 border  rounded-full flex items-center justify-center peer-checked:bg-[#29AD77] peer-checked:border-0"></div>
+            </label>
+            <h1>{card?.name}</h1>
+          </div>
         </div>
       </HoverCardTrigger>
       {card && (
