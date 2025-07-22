@@ -40,6 +40,7 @@ import {
   updateVisibility,
   updateBoardCover,
   addBoardDescription,
+  copyBoard,
 } from "../controller/board/board";
 import {
   createList,
@@ -137,6 +138,7 @@ boardRouter.route("/remove-member").patch(verifyJWT, removeMember);
 boardRouter.route("/edit-board").patch(verifyJWT, editBoard);
 boardRouter.route("/toggle-favourite").patch(verifyJWT, toggleFavourite);
 boardRouter.route("/add-description").patch(verifyJWT, addBoardDescription);
+boardRouter.route("/copy-board").patch(verifyJWT, copyBoard);
 
 boardRouter
   .route("/update-cover/:boardId")

@@ -314,12 +314,16 @@ export const myApi = createApi({
       ],
       async onQueryStarted(body, { dispatch, queryFulfilled }) {
         const patchResult = dispatch(
-          myApi.util.updateQueryData("getSingleBoard", body.boardId, (draft) => {
-            draft.data = {
-              ...draft.data,
-              description: body.description,
-            };
-          })
+          myApi.util.updateQueryData(
+            "getSingleBoard",
+            body.boardId,
+            (draft) => {
+              draft.data = {
+                ...draft.data,
+                description: body.description,
+              };
+            }
+          )
         );
         try {
           await queryFulfilled;
@@ -342,5 +346,5 @@ export const {
   useUpdateVisibilityMutation,
   useUpdateBoardCoverMutation,
   useDeleteBoardMutation,
-  useAddBoardDescriptionMutation
+  useAddBoardDescriptionMutation,
 } = myApi;

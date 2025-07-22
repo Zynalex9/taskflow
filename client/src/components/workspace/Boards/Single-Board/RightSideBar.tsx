@@ -69,7 +69,7 @@ const RightSideBar = ({ openSidebar, setOpenSideBar }: IProps) => {
             <Visibility />
           </div>
 
-          <div onClick={() => setActivePanel("exports")}>
+          <div >
             <ExportsComp />
           </div>
 

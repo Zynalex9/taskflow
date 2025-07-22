@@ -687,3 +687,34 @@ export const addBoardDescription = asyncHandler(async (req, res) => {
   await board.save();
   res.status(200).json(new ApiResponse(200, board, "Description updated"));
 });
+export const copyBoard = asyncHandler(async (req, res) => {
+  const { workspaceId, boardId, title } = req.body;
+  if (!workspaceId || !boardId) {
+    res
+      .status(401)
+      .json(new ApiResponse(401, {}, "No workspaceId/boardId provided"));
+    return;
+  }
+  const workspace = await workSpaceModel.findById(workspaceId);
+  if (!workspace) {
+    res.status(404).json(new ApiResponse(404, {}, "No workspace found"));
+    return;
+  }
+  if (workspace.boards.includes(boardId)) {
+    res
+      .status(401)
+      .json(
+        new ApiResponse(
+          401,
+          {},
+          `Board:${title} is already present in workspace:${workspace.name}`
+        )
+      );
+    return;
+  }
+  workspace.boards.push(boardId);
+  await workspace.save();
+  res
+    .status(200)
+    .json(new ApiResponse(200, {}, `${title} copied to ${workspace.name} `));
+});

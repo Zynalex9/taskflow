@@ -7,9 +7,15 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@radix-ui/react-popover";
+import axios from "axios";
 import { Copy, X } from "lucide-react";
 import { useState } from "react";
-
+import { toast } from "react-toastify";
+interface Iresponse {
+  data: {};
+  success: boolean;
+  message: string;
+}
 export const CopyBoardPopover = () => {
   const [checked, setChecked] = useState(false);
   const [selectedWorkspace, setSelectedWorkspace] = useState<string>("");
@@ -18,12 +24,37 @@ export const CopyBoardPopover = () => {
   const { data } = useGetAllWorkspacesQuery(undefined);
   const [isLoading, setIsLoading] = useState(false);
   const [openModal, setOpenModal] = useState(false);
-  const handleCopyBoard = () => {
-    console.log("Copying board with name:", boardName);
-    console.log("Selected workspace ID:", selectedWorkspace);
-    console.log("Keep cards:", checked);
-    console.log("Board ID:", board._id);
+  const handleCopyBoard = async () => {
+    try {
+      setIsLoading(true);
+      const response = await axios.patch<Iresponse>(
+        `${import.meta.env.VITE_BASE_URL}/api/board/copy-board`,
+        {
+          workspaceId: selectedWorkspace,
+          boardId: board._id,
+          title: boardName,
+        },
+        { withCredentials: true }
+      );
+
+      if (response.data.success) {
+        toast.success(response.data.message, { theme: "dark" });
+      } else {
+        toast.error("Failed to copy board.", { theme: "dark" });
+      }
+    } catch (error: any) {
+      console.log(error);
+      toast.error(error?.response?.data?.message || "Something went wrong.", {
+        theme: "dark",
+      });
+    } finally {
+      setIsLoading(false);
+    }
   };
+
+
+  
+
   return (
     <div>
       <Popover open={openModal} onOpenChange={setOpenModal}>
