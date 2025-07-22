@@ -41,6 +41,7 @@ import {
   updateBoardCover,
   addBoardDescription,
   copyBoard,
+  pdfBoardData,
 } from "../controller/board/board";
 import {
   createList,
@@ -139,6 +140,7 @@ boardRouter.route("/edit-board").patch(verifyJWT, editBoard);
 boardRouter.route("/toggle-favourite").patch(verifyJWT, toggleFavourite);
 boardRouter.route("/add-description").patch(verifyJWT, addBoardDescription);
 boardRouter.route("/copy-board").patch(verifyJWT, copyBoard);
+boardRouter.route("/full-details/:boardId").get(verifyJWT, pdfBoardData);
 
 boardRouter
   .route("/update-cover/:boardId")

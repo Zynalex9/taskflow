@@ -4,7 +4,7 @@ import AboutBoard from "./RightSidebarComps/AboutBoard";
 import Visibility from "./RightSidebarComps/Visibility";
 import ExportsComp from "./RightSidebarComps/Exports/ExportsComp";
 import StarComp from "./RightSidebarComps/StarComp";
-import { Eye, ListCollapse, X } from "lucide-react";
+import { Eye, X } from "lucide-react";
 import SettingsComp from "./RightSidebarComps/Settings/SettingsComp";
 import ChangeBG from "./RightSidebarComps/BG/ChangeBG";
 import CustomBorder from "@/components/resuable/CustomBorder";
@@ -69,8 +69,8 @@ const RightSideBar = ({ openSidebar, setOpenSideBar }: IProps) => {
             <Visibility />
           </div>
 
-          <div >
-            <ExportsComp />
+          <div>
+            <ExportsComp boardId={board._id}/>
           </div>
 
           <StarComp />
@@ -91,10 +91,7 @@ const RightSideBar = ({ openSidebar, setOpenSideBar }: IProps) => {
             <Eye size={18} />
             <h2>Watch</h2>
           </div>
-          <div className="mt-4 flex items-center gap-6 hover:bg-gray-700 p-1 rounded-md transition-colors duration-150 cursor-pointer">
-            <ListCollapse size={18} />
-            <h2>Collapse All</h2>
-          </div>
+
           <div>
             <CopyBoardPopover />
           </div>

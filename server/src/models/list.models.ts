@@ -1,12 +1,12 @@
 import mongoose, { Schema, Types } from "mongoose";
-interface IList extends Document{
-  name:string
-  color:string
-  cards:Types.ObjectId[]
-  createdBy:Types.ObjectId,
-  position:Number,
-  board:Types.ObjectId,
-  isArchived:Boolean
+interface IList extends Document {
+  name: string;
+  color: string;
+  cards: Types.ObjectId[];
+  createdBy: Types.ObjectId;
+  position: Number;
+  board: Types.ObjectId;
+  isArchived: Boolean;
 }
 const listSchema = new Schema({
   name: {
@@ -20,7 +20,7 @@ const listSchema = new Schema({
   cards: [
     {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "Card",
+      ref: "Todo",
     },
   ],
   createdBy: {

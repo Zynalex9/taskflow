@@ -718,3 +718,51 @@ export const copyBoard = asyncHandler(async (req, res) => {
     .status(200)
     .json(new ApiResponse(200, {}, `${title} copied to ${workspace.name} `));
 });
+export const pdfBoardData = asyncHandler(async (req, res) => {
+  const { boardId } = req.params;
+
+  if (!boardId) {
+    res.status(400).json(new ApiResponse(400, {}, "Board ID is required"));
+    return;
+  }
+
+  const cachedKey = `PdfData:${boardId}`;
+  const cachedData = await redisClient.get(cachedKey);
+
+  if (cachedData) {
+    res
+      .status(200)
+      .json(new ApiResponse(200, JSON.parse(cachedData), "Cache hit"));
+    return;
+  }
+
+  const board = await boardModel.findById(boardId).populate({
+    path: "lists",
+    populate: {
+      path: "cards",
+      model: "Todo",
+      populate: [
+        {
+          path: "comments",
+          populate: {
+            path: "author",
+            model: "User",
+          },
+        },
+        { path: "attachments", model: "CardAttachment" },
+        { path: "checklist", model: "Checklist" },
+        { path: "labels", model: "Label" },
+        { path: "members", model: "User" },
+      ],
+    },
+  });
+
+  if (!board) {
+    res.status(404).json(new ApiResponse(404, {}, "Board not found"));
+    return;
+  }
+
+  await redisClient.set(cachedKey, JSON.stringify(board), "EX", 3600);
+
+  res.status(200).json(new ApiResponse(200, board, "Board data fetched"));
+});
