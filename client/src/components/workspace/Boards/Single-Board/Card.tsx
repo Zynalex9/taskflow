@@ -1,11 +1,5 @@
 import { ICard } from "../../../../types/functionalites.types";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
-import {
-  HoverCard,
-  HoverCardContent,
-  HoverCardTrigger,
-} from "@/components/ui/hover-card";
-import { Paperclip } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useToggleCompleteMutation } from "@/store/cardApi";
 
@@ -34,10 +28,20 @@ const Card: React.FC<IProps> = ({ card }) => {
       boardId: boardId!,
     });
   };
+  const [showChecked, setShowChecked] = useState(false);
   return (
-    <HoverCard>
-      <HoverCardTrigger>
-        <div className="flex items-center gap-1">
+    <div
+      onMouseEnter={() => setShowChecked(true)}
+      onMouseLeave={() => setShowChecked(false)}
+    >
+      <div className="flex items-center gap-1">
+        <div
+          className={`transition-all duration-200 ease-in ${
+            showChecked
+              ? "opacity-100 translate-x-0"
+              : "opacity-0 -translate-x-2 absolute pointer-events-none"
+          }`}
+        >
           <label className="cursor-pointer">
             <input
               type="checkbox"
@@ -48,97 +52,38 @@ const Card: React.FC<IProps> = ({ card }) => {
             />
             <div className="w-6 h-6 border  rounded-full flex items-center justify-center peer-checked:bg-[#29AD77] peer-checked:border-0"></div>
           </label>
-          <div
-
-          
-            onClick={() => {
-              card?._id !== "temp-card-id"
-                ? navigate(
-                    `/user/w/workspace/${workspaceId}/board/${boardId}/card/${card?._id}`,
-                    { state: { background: location } }
-                  )
-                : "";
-            }}
-            className="bg-[#22272B] rounded-lg py-2 px-1.5 my-2 w-full transition-all duration-100 hover:border-white hover:border"
-          >
-            {card && card.labels && card.labels.length > 0 && (
-              <div className="flex flex-wrap gap-1">
-                {card.labels.map((label) => (
-                  <div
-                    style={{ backgroundColor: label.color }}
-                    className="px-1 min-w-14 h-4 truncate rounded flex items-center justify-center"
-                  >
-                    <h1 className="text-xs text-white drop-shadow-md">
-                      {label.name}
-                    </h1>
-                  </div>
-                ))}
-              </div>
-            )}
-            <div className="flex items-center gap-2 my-1">
-              <h1>{card?.name}</h1>
-            </div>
-          </div>
         </div>
-      </HoverCardTrigger>
-      {card && (
-        <HoverCardContent className="w-80 bg-[#1e1e1e] border border-[#2a2a2a] shadow-lg rounded-md p-4 space-y-3">
-          <h2 className="text-white text-lg font-semibold mb-2">
-            {card?.name}
-          </h2>
-
-          {card?.description && (
-            <p className="text-sm text-[#B3BFCC] line-clamp-3">
-              {card.description}
-            </p>
-          )}
-
-          {card?.labels.length > 0 && (
-            <div className="flex flex-wrap gap-2">
+        <div
+          onClick={() => {
+            card?._id !== "temp-card-id"
+              ? navigate(
+                  `/user/w/workspace/${workspaceId}/board/${boardId}/card/${card?._id}`,
+                  { state: { background: location } }
+                )
+              : "";
+          }}
+          className="bg-[#22272B] rounded-lg py-2 px-1.5 my-2 w-full transition-all duration-100 hover:border-white hover:border"
+        >
+          {card && card.labels && card.labels.length > 0 && (
+            <div className="flex flex-wrap gap-1">
               {card.labels.map((label) => (
-                <span
-                  key={label._id}
-                  className="text-xs px-2 py-1 rounded-full font-medium"
+                <div
                   style={{ backgroundColor: label.color }}
+                  className="px-1 min-w-14 h-4 truncate rounded flex items-center justify-center"
                 >
-                  {label.name}
-                </span>
+                  <h1 className="text-xs text-white drop-shadow-md">
+                    {label.name}
+                  </h1>
+                </div>
               ))}
             </div>
           )}
-          {card?.attachments.length > 0 && (
-            <div className=" text-textP">
-              <Paperclip className="inline" size={16} />{" "}
-              {card.attachments.length} attachment
-              {card.attachments.length > 1 ? "s" : ""}
-            </div>
-          )}
-
-          {card?.priority && (
-            <div className="text-xs text-[#B3BFCC]">
-              Priority:{" "}
-              <span
-                className={`inline-block ml-1 px-2 py-0.5 rounded-full text-white text-[10px] ${
-                  card.priority === "High"
-                    ? "bg-red-600"
-                    : card.priority === "Medium"
-                    ? "bg-yellow-600"
-                    : "bg-green-600"
-                }`}
-              >
-                {card.priority}
-              </span>
-            </div>
-          )}
-
-          {card?.endDate && (
-            <div className="text-xs text-[#B3BFCC]">
-              📅 Due: {new Date(card.endDate).toLocaleDateString()}
-            </div>
-          )}
-        </HoverCardContent>
-      )}
-    </HoverCard>
+          <div className="flex items-center gap-2 my-1">
+            <h1>{card?.name}</h1>
+          </div>
+        </div>
+      </div>
+    </div>
   );
 };
 
