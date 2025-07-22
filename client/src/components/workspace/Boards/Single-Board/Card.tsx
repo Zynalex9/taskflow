@@ -37,43 +37,47 @@ const Card: React.FC<IProps> = ({ card }) => {
   return (
     <HoverCard>
       <HoverCardTrigger>
-        <div
-          onClick={() => {
-            card?._id !== "temp-card-id"
-              ? navigate(
-                  `/user/w/workspace/${workspaceId}/board/${boardId}/card/${card?._id}`,
-                  { state: { background: location } }
-                )
-              : "";
-          }}
-          className="bg-[#22272B] rounded-xl py-2 px-1 my-2 max-w-full transition-all duration-100 hover:border-white hover:border"
-        >
-          {card && card.labels && card.labels.length > 0 && (
-            <div className="flex flex-wrap gap-1">
-              {card.labels.map((label) => (
-                <div
-                  style={{ backgroundColor: label.color }}
-                  className="px-1 min-w-14 h-4 truncate rounded flex items-center justify-center"
-                >
-                  <h1 className="text-xs text-white drop-shadow-md">
-                    {label.name}
-                  </h1>
-                </div>
-              ))}
+        <div className="flex items-center gap-1">
+          <label className="cursor-pointer">
+            <input
+              type="checkbox"
+              name="option"
+              className="peer hidden"
+              checked={isChecked}
+              onChange={handleCheckChange}
+            />
+            <div className="w-6 h-6 border  rounded-full flex items-center justify-center peer-checked:bg-[#29AD77] peer-checked:border-0"></div>
+          </label>
+          <div
+
+          
+            onClick={() => {
+              card?._id !== "temp-card-id"
+                ? navigate(
+                    `/user/w/workspace/${workspaceId}/board/${boardId}/card/${card?._id}`,
+                    { state: { background: location } }
+                  )
+                : "";
+            }}
+            className="bg-[#22272B] rounded-lg py-2 px-1.5 my-2 w-full transition-all duration-100 hover:border-white hover:border"
+          >
+            {card && card.labels && card.labels.length > 0 && (
+              <div className="flex flex-wrap gap-1">
+                {card.labels.map((label) => (
+                  <div
+                    style={{ backgroundColor: label.color }}
+                    className="px-1 min-w-14 h-4 truncate rounded flex items-center justify-center"
+                  >
+                    <h1 className="text-xs text-white drop-shadow-md">
+                      {label.name}
+                    </h1>
+                  </div>
+                ))}
+              </div>
+            )}
+            <div className="flex items-center gap-2 my-1">
+              <h1>{card?.name}</h1>
             </div>
-          )}
-          <div className="flex items-center gap-2 my-1">
-            <label className="cursor-pointer">
-              <input
-                type="checkbox"
-                name="option"
-                className="peer hidden"
-                checked={isChecked}
-                onChange={handleCheckChange}
-              />
-              <div className="w-4 h-4 border  rounded-full flex items-center justify-center peer-checked:bg-[#29AD77] peer-checked:border-0"></div>
-            </label>
-            <h1>{card?.name}</h1>
           </div>
         </div>
       </HoverCardTrigger>
