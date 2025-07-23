@@ -44,9 +44,7 @@ const ShareComp = () => {
     try {
       await navigator.clipboard.writeText(textToCopy);
       setCopied(true);
-      const newLink = `${import.meta.env.VITE_BASE_URL}/join/${
-        workspace?._id
-      }/${board._id}`;
+      const newLink = `http://localhost:5173/join/${workspace?._id}/${board._id}`;
       setTextToCopy(newLink);
       setTimeout(() => {
         setCopied(false);
