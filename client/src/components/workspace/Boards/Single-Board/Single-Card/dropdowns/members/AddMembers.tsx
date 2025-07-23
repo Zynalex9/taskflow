@@ -23,16 +23,22 @@ const AddMembers = ({ card }: Props) => {
       <div className="space-y-2">
         {card &&
           card.members.length > 0 &&
-          card.members.map((c) => (
-            <div key={c._id} className="my-0.5 flex gap-2 items-center">
-              <img
-                src={c.profilePicture}
-                alt={c.username}
-                className="size-6 rounded-2xl object-cover"
-              />
-              <h1 className="text-textP font-charlie-text-r">{c.username}</h1>
-            </div>
-          ))}
+          card.members.map((c) =>
+            typeof c === "object" &&
+            c !== null &&
+            "_id" in c &&
+            "username" in c &&
+            "profilePicture" in c ? (
+              <div key={c._id} className="my-0.5 flex gap-2 items-center">
+                <img
+                  src={c.profilePicture}
+                  alt={c.username}
+                  className="size-6 rounded-2xl object-cover"
+                />
+                <h1 className="text-textP font-charlie-text-r">{c.username}</h1>
+              </div>
+            ) : null
+          )}
       </div>
     </div>
   );
