@@ -37,7 +37,7 @@ export const addLabel = async (req: Request, res: Response) => {
     );
 
     await CardModel.findByIdAndUpdate(cardId, {
-      $push: { labels: { $each: labelDocs.map((l) => l._id) } },
+      $addToSet: { labels: { $each: labelDocs.map((l) => l._id) } },
     });
 
     await redisClient.del(`tableData:${req.user._id}`);

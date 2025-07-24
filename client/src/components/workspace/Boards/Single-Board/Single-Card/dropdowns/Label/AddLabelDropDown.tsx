@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Pencil } from "lucide-react";
 import DropdownHeader from "../../DropdownHeader";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -8,10 +8,12 @@ interface ILabel {
   color: string;
   name: string;
   _id: string;
+}
+interface ILabelWithChecked extends ILabel {
   isChecked: boolean;
 }
 
-const initialLabels: ILabel[] = [
+const initialLabels: ILabelWithChecked[] = [
   { _id: "1", color: "#216C52", name: "", isChecked: false },
   { _id: "2", color: "#8E6E00", name: "", isChecked: false },
   { _id: "4", color: "#C9372C", name: "", isChecked: false },
@@ -20,12 +22,21 @@ const initialLabels: ILabel[] = [
   { _id: "7", color: "#055A8C", name: "", isChecked: false },
   { _id: "8", color: "#29CCE5", name: "", isChecked: false },
   { _id: "9", color: "#61BD4F", name: "", isChecked: false },
-  { _id: "10", color: "#A6C5E2", name: "", isChecked: false }
+  { _id: "10", color: "#A6C5E2", name: "", isChecked: false },
 ];
 
-const AddLabelDropdown = ({ cardId }: { cardId: string }) => {
+const AddLabelDropdown = ({
+  cardId,
+  existingLabels,
+}: {
+  cardId: string;
+  existingLabels: ILabel[];
+}) => {
   const [labels, setLabels] = useState(initialLabels);
-  const [selected, setSelected] = useState<string[]>([]);
+  const [selected, setSelected] = useState<string[]>(()=>{
+    const existingLabelIds = existingLabels.map((label) => label._id);
+    return existingLabelIds;
+  });
   const [editId, setEditId] = useState<string | null>(null);
   const [editText, setEditText] = useState<string>("");
   const [addLabels] = useAddLabelsMutation();
@@ -69,7 +80,18 @@ const AddLabelDropdown = ({ cardId }: { cardId: string }) => {
       console.error("Error adding labels:", error);
     }
   };
+  console.log("existingLabels", existingLabels);
+  useEffect(() => {
+    const selectedIds = existingLabels.map((label) => label._id);
+    setSelected(selectedIds);
 
+    const updated = initialLabels.map((label) => {
+      const match = existingLabels.find((l) => l.color === label.color);
+      return match ? { ...label, name: match.name, isChecked: true } : label;
+    });
+
+    setLabels(updated);
+  }, [existingLabels]);
   return (
     <div className="absolute -top-20 left-2 w-80 h-96 rounded bg-[#282E33] p-4 shadow-2xl text-white z-30">
       <DropdownHeader headerText="Labels" />
@@ -80,7 +102,7 @@ const AddLabelDropdown = ({ cardId }: { cardId: string }) => {
         {labels.map((label) => (
           <div key={label._id} className="flex items-center gap-2">
             <Checkbox
-              checked={selected.includes(label._id)}
+              checked={label.isChecked || selected.includes(label._id)}
               onCheckedChange={() => toggleLabel(label._id)}
               className="accent-blue-500"
             />

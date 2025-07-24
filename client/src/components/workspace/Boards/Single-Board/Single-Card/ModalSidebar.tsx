@@ -117,7 +117,9 @@ export function ModalSidebar({ card }: Props) {
       onClick: openLabels
         ? () => dispatch(closeAllDropDown())
         : () => dispatch(openLabelsDropDown()),
-      dropdown: <AddLabelDropDown cardId={cardId} />,
+      dropdown: (
+        <AddLabelDropDown cardId={cardId} existingLabels={card.labels} />
+      ),
       isOpen: openLabels,
     },
     {
