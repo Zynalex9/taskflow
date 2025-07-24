@@ -351,7 +351,6 @@ export const cardApi = createApi({
               }
             )
           );
-          
         } catch {
           patchResult.undo();
         }
@@ -489,6 +488,35 @@ export const cardApi = createApi({
         }
       },
     }),
+    deleteChecklist: builder.mutation({
+      query: (body: { checkListId: string; cardId: string }) => ({
+        url: "/api/card/delete-checklist",
+        credentials: "include",
+        body,
+        method: "DELETE",
+      }),
+      invalidatesTags: (_, __, { cardId }) => [
+        { type: "singleCard", id: cardId },
+      ],
+      async onQueryStarted(body, { dispatch, queryFulfilled }) {
+        const patchResult = dispatch(
+          cardApi.util.updateQueryData(
+            "getSingleCard",
+            { cardId: body.cardId },
+            (draft) => {
+              draft.data.checklist = draft.data.checklist.filter(
+                (c) => c._id !== body.checkListId
+              );
+            }
+          )
+        );
+        try {
+          await queryFulfilled;
+        } catch (error) {
+          patchResult.undo();
+        }
+      },
+    }),
   }),
 });
 export const {
@@ -504,4 +532,5 @@ export const {
   useToggleCheckListItemCompleteMutation,
   useJoinCardMutation,
   useLeaveCardMutation,
+  useDeleteChecklistMutation,
 } = cardApi;

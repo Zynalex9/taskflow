@@ -6,15 +6,18 @@ import {
 import { useState } from "react";
 import {
   useAddItemToCheckListMutation,
+  useDeleteChecklistMutation,
   useToggleCheckListItemCompleteMutation,
 } from "@/store/cardApi";
 import { Checkbox } from "@/components/ui/checkbox";
+import { toast, ToastContainer } from "react-toastify";
 interface ChecklistProps {
   Checklist: IChecklist[];
   cardId: string;
 }
 const Checklist: React.FC<ChecklistProps> = ({ Checklist, cardId }) => {
   const [toggleItem] = useToggleCheckListItemCompleteMutation();
+  const [isLoading, setIsLoading] = useState(false);
   const calculateCompletion = (items: IChecklistItems[]) => {
     if (!items.length) return 0;
     const completed = items.filter((item) => item.completed).length;
@@ -37,6 +40,17 @@ const Checklist: React.FC<ChecklistProps> = ({ Checklist, cardId }) => {
       await addItemToChecklist(body);
     } else {
       setActiveChecklistId(checkListId);
+    }
+  };
+  const [deleteCheckList] = useDeleteChecklistMutation();
+  const handleDelete = async (cardId: string, checkListId: string) => {
+    try {
+      setIsLoading(true);
+      await deleteCheckList({ cardId, checkListId });
+    } catch (error) {
+      toast.error("Error deleteing checklist", { theme: "dark" });
+    } finally {
+      setIsLoading(false);
     }
   };
   const handleChange = async (checklistId: string, itemId: string) => {
@@ -66,8 +80,14 @@ const Checklist: React.FC<ChecklistProps> = ({ Checklist, cardId }) => {
                 {calculateCompletion(c.items)}%
               </span>
             </div>
-            <button className="px-2 py-1 rounded cursor-pointer items-center transition-colors duration-150 bg-[#B6C2CF]/20 hover:bg-[#B6C2CF]/10 font-charlie-display-sm shadow-2xl text-[#B3BFCC]">
-              Delete
+            <button
+              disabled={isLoading}
+              onClick={() => handleDelete(cardId, c._id)}
+              className={`px-2 py-1 rounded cursor-pointer items-center transition-colors duration-150 bg-[#B6C2CF]/20 hover:bg-[#B6C2CF]/10 font-charlie-display-sm shadow-2xl text-[#B3BFCC] ${
+                isLoading ? "cursor-not-allowed" : ""
+              }`}
+            >
+              {isLoading ? "Deleting..." : "Delete"}
             </button>
           </div>
           <div className="pl-10">
@@ -95,7 +115,7 @@ const Checklist: React.FC<ChecklistProps> = ({ Checklist, cardId }) => {
                 onChange={(e) => setItemTitle(e.target.value)}
                 onKeyDown={(e) => {
                   if (e.key === "Enter") {
-                    e.preventDefault(); 
+                    e.preventDefault();
                     HandleSubmit(cardId, c._id);
                   }
                 }}
@@ -127,6 +147,7 @@ const Checklist: React.FC<ChecklistProps> = ({ Checklist, cardId }) => {
           </div>
         </div>
       ))}
+      <ToastContainer />
     </div>
   );
 };
