@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useSelector } from "react-redux";
-import {  RootState } from "../../../../../store/store";
+import { RootState } from "../../../../../store/store";
 import { formatDistanceToNow } from "date-fns";
 import { IComment } from "@/types/functionalites.types";
 import { useAddCommentMutation } from "@/store/cardApi";
@@ -15,12 +15,13 @@ const CommentInput = ({ comments, cardId }: IProps) => {
   const [addComment] = useAddCommentMutation();
   const handleSubmit = async () => {
     try {
+      setNewComment("");
+
       const newCommentData = {
         cardId,
         comment: newComment,
       };
       await addComment(newCommentData).unwrap();
-      setNewComment("");
       setIsInputFocused(false);
     } catch (error) {
       console.log(error);
@@ -41,6 +42,7 @@ const CommentInput = ({ comments, cardId }: IProps) => {
           onFocus={() => setIsInputFocused(true)}
           value={newComment}
           onChange={(e) => setNewComment(e.target.value)}
+          onKeyDown={(e) => e.key === "Enter" && handleSubmit()}
         />
         {isInputFocused && (
           <button

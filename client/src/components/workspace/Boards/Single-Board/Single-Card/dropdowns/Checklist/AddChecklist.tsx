@@ -37,6 +37,7 @@ const AddChecklist = ({ cardId }: { cardId: string }) => {
           id="title"
           placeholder="Enter a title"
           value={title}
+          onKeyDown={(e) => e.key === "Enter" && onSubmit()}
           onChange={(e) => setTitle(e.target.value)}
           className="w-full rounded-md border border-[#3A3F44] bg-[#1E2225] px-3 py-2 text-sm text-white placeholder-gray-500 focus:border-[#4C9AFF] focus:outline-none"
         />
