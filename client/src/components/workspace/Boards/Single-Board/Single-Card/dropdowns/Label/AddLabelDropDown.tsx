@@ -3,6 +3,7 @@ import { Pencil } from "lucide-react";
 import DropdownHeader from "../../DropdownHeader";
 import { Checkbox } from "@/components/ui/checkbox";
 import { useAddLabelsMutation } from "@/store/cardApi";
+import { useParams } from "react-router-dom";
 
 interface ILabel {
   color: string;
@@ -33,9 +34,9 @@ const AddLabelDropdown = ({
   existingLabels: ILabel[];
 }) => {
   const [labels, setLabels] = useState(initialLabels);
-  const [selected, setSelected] = useState<string[]>(()=>{
-    const existingLabelIds = existingLabels.map((label) => label._id);
-    return existingLabelIds;
+  const [selected, setSelected] = useState<string[]>(() => {
+    const existingLabelColors = existingLabels.map((label) => label.color);
+    return existingLabelColors;
   });
   const [editId, setEditId] = useState<string | null>(null);
   const [editText, setEditText] = useState<string>("");
@@ -45,7 +46,7 @@ const AddLabelDropdown = ({
       prev.includes(id) ? prev.filter((i) => i !== id) : [...prev, id]
     );
   };
-
+  const { boardId } = useParams();
   const startEditing = (label: ILabel) => {
     setEditId(label._id);
     setEditText(label.name);
@@ -64,9 +65,13 @@ const AddLabelDropdown = ({
     const selectedLabels = labels.filter((label) =>
       selected.includes(label._id)
     );
-
+    if (!boardId) {
+      console.warn("boardId is missing. Cannot proceed with adding labels.");
+      return;
+    }
     const body = {
       cardId,
+      boardId,
       labels: selectedLabels.map((label) => ({
         name: label.name || "",
         color: label.color,

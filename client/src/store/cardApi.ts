@@ -11,7 +11,7 @@ import {
 } from "@/types/functionalites.types";
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 import { RootState } from "./store";
-import { syncBoardtoCard } from "@/utils/SyncCache";
+import { syncBoardtoCard, syncBoardtoLabels } from "@/utils/SyncCache";
 
 export const cardApi = createApi({
   reducerPath: "cardAPIs",
@@ -300,6 +300,7 @@ export const cardApi = createApi({
       ILabelsResponse,
       {
         cardId: string;
+        boardId: string;
         labels: { name?: string; color: string }[];
       }
     >({
@@ -331,6 +332,8 @@ export const cardApi = createApi({
           )
         );
 
+        syncBoardtoLabels(dispatch, body.cardId, body.boardId, tempLabels);
+
         try {
           const { data } = await queryFulfilled;
           const realLabels = data.labels;
@@ -348,6 +351,7 @@ export const cardApi = createApi({
               }
             )
           );
+          
         } catch {
           patchResult.undo();
         }
