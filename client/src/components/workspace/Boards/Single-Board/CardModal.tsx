@@ -56,7 +56,11 @@ const CardModal = () => {
     if (!cardId) return;
     const newCheckedState = !isChecked;
     setIsChecked(newCheckedState);
-    await toggleCard({ cardId, isComplete: newCheckedState, boardId:boardId! });
+    await toggleCard({
+      cardId,
+      isComplete: newCheckedState,
+      boardId: boardId!,
+    });
   };
 
   if (isLoading)
@@ -113,6 +117,17 @@ const CardModal = () => {
             className="bg-[#323940] shadow-lg rounded-lg text-white w-full max-w-4xl my-4  min-h-screen"
             onClick={(e) => e.stopPropagation()}
           >
+            {isImageUrl(card.cover) ? (
+              <div className="w-full">
+                <img
+                  src={card.cover}
+                  alt=""
+                  className="object-cover object-top h-56 w-full mx-auto"
+                />
+              </div>
+            ) : (
+              ""
+            )}
             <div className="p-6">
               <div className="flex items-center justify-between">
                 <div className="flex items-center">
