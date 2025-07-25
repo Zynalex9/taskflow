@@ -5,16 +5,22 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { useDispatch } from "react-redux";
 import { AppDispatch } from "@/store/store";
 import { closeAllDropDown } from "@/store/CardModalStatesSlice";
+import { useUploadCardCoverMutation } from "@/store/cardApi";
 
 const AddCover = ({ cardId }: { cardId: string }) => {
   const [loading, setLoading] = useState(false);
+  const [addCover] = useUploadCardCoverMutation();
   const dispatch = useDispatch<AppDispatch>();
   const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
-
-    setLoading(true);
+    const formdata = new FormData();
+    formdata.append("cardCover", file);
+    formdata.append("cardId", cardId);
     try {
+      setLoading(true);
+      await addCover(formdata).unwrap();
+      toast.success("Cover added successfully", { theme: "dark" });
     } catch (error) {
       console.error(error);
       toast.error("Upload failed");

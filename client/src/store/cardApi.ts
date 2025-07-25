@@ -558,8 +558,6 @@ export const cardApi = createApi({
       },
     }),
     deleteAttachment: builder.mutation({
-
-
       query: (body: { attachmentId: string; cardId: string }) => ({
         url: "/api/card/delete-attachment",
         method: "DELETE",
@@ -588,6 +586,18 @@ export const cardApi = createApi({
         }
       },
     }),
+    uploadCardCover: builder.mutation<void, FormData>({
+      query: (formData:FormData) => ({
+        url: "/api/card/add-cover",
+        method: "POST",
+        body: formData,
+        credentials: "include",
+      }),
+      invalidatesTags: (_, __, formData) => {
+        const cardId = formData.get("cardId") as string;
+        return [{ type: "singleCard", id: cardId }];
+      },
+    }),
   }),
 });
 export const {
@@ -606,4 +616,5 @@ export const {
   useDeleteChecklistMutation,
   useDeleteItemMutation,
   useDeleteAttachmentMutation,
+  useUploadCardCoverMutation,
 } = cardApi;

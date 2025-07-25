@@ -204,5 +204,5 @@ cardRouter.route("/toggle-complete").patch(verifyJWT, toggleComplete);
 cardRouter.route("/delete-checklist-item").delete(verifyJWT, deleteItem);
 cardRouter
   .route("/add-cover")
-  .patch(verifyJWT, upload.single("card-cover"), addCover);
+  .post(verifyJWT, upload.single("cardCover"), addCover);
 export { cardRouter };
