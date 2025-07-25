@@ -58,9 +58,14 @@ const Attachments: React.FC<AttachmentsProps> = ({ Attachment }) => {
               </div>
             </div>
             <div className="flex gap-2 ">
-              <button className="cursor-pointer text-textP">
+              <a
+                href={a.fileUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="cursor-pointer text-textP"
+              >
                 <MoveUpRight size={16} />
-              </button>
+              </a>
               <button className="cursor-pointer text-textP">
                 <Trash
                   className="text-red-500"
