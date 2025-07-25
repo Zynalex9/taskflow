@@ -1,11 +1,28 @@
-import { Ellipsis, MoveUpRight, Paperclip } from "lucide-react";
+import { MoveUpRight, Paperclip, Trash } from "lucide-react";
 import { IAttachment } from "../../../../../types/functionalites.types";
 import { formatDistanceToNow } from "date-fns";
+import { useDeleteAttachmentMutation } from "@/store/cardApi";
+import { toast } from "react-toastify";
 
 interface AttachmentsProps {
   Attachment: IAttachment[];
 }
 const Attachments: React.FC<AttachmentsProps> = ({ Attachment }) => {
+  const [deleteAttachment] = useDeleteAttachmentMutation();
+  const handleDeleteAttachment = async (attachmentId: string) => {
+    try {
+      const response = await deleteAttachment({
+        attachmentId,
+        cardId: Attachment[0].cardId,
+      }).unwrap();
+      toast.success(response.message, { theme: "dark" });
+    } catch (error: any) {
+      toast.error(error.data?.message || "Failed to delete attachment", {
+        theme: "dark",
+      });
+    }
+  };
+
   return (
     <div className="my-3">
       <div className="flex justify-between items-center">
@@ -30,7 +47,9 @@ const Attachments: React.FC<AttachmentsProps> = ({ Attachment }) => {
                 className="w-30 h-20 shadow-2xl object-cover border-2 border-fprimary/60 rounded"
               />
               <div>
-                <h1 className="text-textP text-xl font-charlie-display-sm truncate w-2xs">{a.filename}</h1>
+                <h1 className="text-textP text-xl font-charlie-display-sm truncate w-2xs">
+                  {a.filename}
+                </h1>
                 <h3 className="text-textP/90 text-sm font-charlie-text-r">
                   {formatDistanceToNow(new Date(a.createdAt), {
                     addSuffix: true,
@@ -43,7 +62,11 @@ const Attachments: React.FC<AttachmentsProps> = ({ Attachment }) => {
                 <MoveUpRight size={16} />
               </button>
               <button className="cursor-pointer text-textP">
-                <Ellipsis size={16} />
+                <Trash
+                  className="text-red-500"
+                  size={16}
+                  onClick={() => handleDeleteAttachment(a._id)}
+                />
               </button>
             </div>
           </div>

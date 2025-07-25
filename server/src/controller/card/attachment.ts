@@ -83,46 +83,26 @@ export const addAttachment = async (req: Request, res: Response) => {
 };
 export const deleteAttachment = async (req: Request, res: Response) => {
   try {
-    const required = ["attachmentIDs"];
+    const required = ["attachmentId"];
     if (!checkRequiredBody(req, res, required)) return;
 
-    const { attachmentIds } = req.body;
-    if (!Array.isArray(attachmentIds) || attachmentIds.length === 0) {
-      res
-        .status(400)
-        .json(
-          new ApiResponse(400, {}, "attachmentIds must be a non-empty array")
-        );
+    const { attachmentId } = req.body;
+
+    if (!mongoose.Types.ObjectId.isValid(attachmentId)) {
+      res.status(400).json(new ApiResponse(400, {}, "Invalid attachment ID"));
       return;
     }
 
-    const invalidIds = attachmentIds.filter(
-      (id) => !mongoose.Types.ObjectId.isValid(id)
-    );
-    if (invalidIds.length > 0) {
-      res
-        .status(400)
-        .json(new ApiResponse(400, {}, "Invalid Attachment(s) ID(s)"));
-      return;
-    }
-
-    const result = await CardAttachmentModel.deleteMany({
-      _id: { $in: attachmentIds },
-    });
+    const result = await CardAttachmentModel.deleteOne({ _id: attachmentId });
 
     if (result.deletedCount === 0) {
-      res.status(404).json(new ApiResponse(404, {}, "Attachment(s) not found"));
+      res.status(404).json(new ApiResponse(404, {}, "Attachment not found"));
       return;
     }
+
     res
       .status(200)
-      .json(
-        new ApiResponse(
-          200,
-          {},
-          `${result.deletedCount} attachment(s) deleted successfully`
-        )
-      );
+      .json(new ApiResponse(200, {}, "Attachment deleted successfully"));
   } catch (error) {
     console.error("Error in deleteAttachment:", error);
     res.status(500).json(new ApiResponse(500, {}, "Internal server error"));

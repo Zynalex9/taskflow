@@ -557,6 +557,37 @@ export const cardApi = createApi({
         }
       },
     }),
+    deleteAttachment: builder.mutation({
+
+
+      query: (body: { attachmentId: string; cardId: string }) => ({
+        url: "/api/card/delete-attachment",
+        method: "DELETE",
+        body,
+        credentials: "include",
+      }),
+      invalidatesTags: (_, __, { cardId }) => [
+        { type: "singleCard", id: cardId },
+      ],
+      async onQueryStarted(body, { dispatch, queryFulfilled }) {
+        const patchResult = dispatch(
+          cardApi.util.updateQueryData(
+            "getSingleCard",
+            { cardId: body.cardId },
+            (draft) => {
+              draft.data.attachments = draft.data.attachments.filter(
+                (a) => a._id !== body.attachmentId
+              );
+            }
+          )
+        );
+        try {
+          await queryFulfilled;
+        } catch (error) {
+          patchResult.undo();
+        }
+      },
+    }),
   }),
 });
 export const {
@@ -574,4 +605,5 @@ export const {
   useLeaveCardMutation,
   useDeleteChecklistMutation,
   useDeleteItemMutation,
+  useDeleteAttachmentMutation,
 } = cardApi;
