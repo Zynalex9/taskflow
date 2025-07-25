@@ -76,6 +76,7 @@ import {
   addChecklist,
   addItemToCheckList,
   deleteCheckList,
+  deleteItem,
   editItem,
   toggleCheckListItem,
 } from "../controller/card/checklist";
@@ -200,6 +201,7 @@ cardRouter.route("/add-start-date").post(verifyJWT, addEndDate);
 cardRouter.route("/add-end-date").post(verifyJWT, addStartDate);
 cardRouter.route("/add-date").patch(verifyJWT, addDate);
 cardRouter.route("/toggle-complete").patch(verifyJWT, toggleComplete);
+cardRouter.route("/delete-checklist-item").delete(verifyJWT, deleteItem);
 cardRouter
   .route("/add-cover")
   .patch(verifyJWT, upload.single("card-cover"), addCover);

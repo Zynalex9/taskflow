@@ -1,4 +1,4 @@
-import { ListChecks } from "lucide-react";
+import { ListChecks, Trash } from "lucide-react";
 import {
   IChecklist,
   IChecklistItems,
@@ -7,16 +7,23 @@ import { useState } from "react";
 import {
   useAddItemToCheckListMutation,
   useDeleteChecklistMutation,
+  useDeleteItemMutation,
   useToggleCheckListItemCompleteMutation,
 } from "@/store/cardApi";
 import { Checkbox } from "@/components/ui/checkbox";
 import { toast, ToastContainer } from "react-toastify";
+import { useSelector } from "react-redux";
+import { RootState } from "@/store/store";
 interface ChecklistProps {
   Checklist: IChecklist[];
   cardId: string;
 }
 const Checklist: React.FC<ChecklistProps> = ({ Checklist, cardId }) => {
+  const { user } = useSelector((state: RootState) => state.auth);
+  const [deleteItem] = useDeleteItemMutation();
+
   const [toggleItem] = useToggleCheckListItemCompleteMutation();
+  const [isItemLoading, setIsItemLoading] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const calculateCompletion = (items: IChecklistItems[]) => {
     if (!items.length) return 0;
@@ -65,7 +72,16 @@ const Checklist: React.FC<ChecklistProps> = ({ Checklist, cardId }) => {
       console.log("Error in toggling");
     }
   };
-
+  const handleDeleteItem = async (checklistId: string, itemId: string) => {
+    try {
+      setIsItemLoading(true);
+      await deleteItem({ checkListId: checklistId, itemId, cardId });
+    } catch (error) {
+      console.log("Error in deleting item");
+    } finally {
+      setIsItemLoading(false);
+    }
+  };
   return (
     <div className="space-y-6 my-12">
       {Checklist.map((c) => (
@@ -92,18 +108,36 @@ const Checklist: React.FC<ChecklistProps> = ({ Checklist, cardId }) => {
           </div>
           <div className="pl-10">
             {c.items.map((i) => (
-              <div key={i._id} className="flex items-center gap-4">
-                <Checkbox
-                  onCheckedChange={() => handleChange(c._id, i._id)}
-                  checked={i.completed}
-                />
-                <h3
-                  className={`${
-                    i.completed ? "line-through text-[#B6C2CF]" : ""
-                  }`}
-                >
-                  {i.title}
-                </h3>
+              <div
+                key={i._id}
+                className="flex items-center justify-between mt-1 gap-4"
+              >
+                <div className="flex items-center gap-4">
+                  <Checkbox
+                    onCheckedChange={() => handleChange(c._id, i._id)}
+                    checked={i.completed}
+                  />
+                  <h3
+                    className={`${
+                      i.completed ? "line-through text-[#B6C2CF]" : ""
+                    }`}
+                  >
+                    {i.title}
+                  </h3>
+                </div>
+                {c.createdBy === user?._id ? (
+                  <Trash
+                    size={17}
+                    className={`text-red-500 cursor-pointer ${
+                      isItemLoading
+                        ? "cursor-not-allowed pointer-events-none opacity-80 animate-pulse text-red-500/60"
+                        : ""
+                    }`}
+                    onClick={() => handleDeleteItem(c._id, i._id)}
+                  />
+                ) : (
+                  ""
+                )}
               </div>
             ))}
             {activeChecklistId === c._id && (

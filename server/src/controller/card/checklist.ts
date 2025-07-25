@@ -4,8 +4,9 @@ import { UserModel } from "../../models/user.model";
 import { CheckListModel } from "../../models/card.checklist.model";
 import { CardModel } from "../../models/card.model";
 import ApiResponse from "../../utils/ApiResponse";
-import { checkRequiredBody } from "../../utils/helpers";
+import { checkRequiredBody, notFound } from "../../utils/helpers";
 import { redisClient } from "../..";
+import { asyncHandler } from "../../utils/asyncHandler";
 
 interface INewItem {
   title: string;
@@ -310,3 +311,27 @@ export const deleteCheckList = async (req: Request, res: Response) => {
     res.status(500).json(new ApiResponse(500, {}, "Internal server error"));
   }
 };
+export const deleteItem = asyncHandler(async (req, res) => {
+  try {
+    const required = ["checkListId", "itemId"];
+    if (!checkRequiredBody(req, res, required)) return;
+    const { checkListId, itemId } = req.body;
+    const checkList = await CheckListModel.findById(checkListId);
+    if (!checkList) {
+      notFound(checkList, "Checklist", res);
+      return;
+    }
+    const item = checkList.items.find((item) => item._id?.toString() === itemId);
+    if (!item) {
+      notFound(item, "Item", res);
+      return;
+    }
+    checkList.items = checkList.items.filter((i) => i._id?.toString() !== item._id?.toString());
+    await checkList.save();
+    await redisClient.del(`singleCard:${req.body.cardId}`);
+    res.status(200).json(new ApiResponse(200, {}, "Item deleted"));
+  } catch (error) {
+    console.error("Error in deleteItem:", error);
+    res.status(500).json(new ApiResponse(500, {}, "Internal server error"));
+  }
+});
