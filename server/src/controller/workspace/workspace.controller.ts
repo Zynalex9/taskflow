@@ -637,3 +637,47 @@ export const addWorkspaceMember = asyncHandler(
       .json(new ApiResponse(200, {}, `${member.username} is now a member`));
   }
 );
+export const getWorkspaceMembers = asyncHandler(
+  async (req: Request, res: Response) => {
+    const { workspaceId } = req.params;
+    if (!workspaceId) {
+      res
+        .status(400)
+        .json(new ApiResponse(400, {}, "Workspace ID is required"));
+      return;
+    }
+    const workspaceWithMembers = await workSpaceModel.aggregate([
+      { $match: { _id: new mongoose.Types.ObjectId(workspaceId) } },
+      {
+        $unwind: "$members",
+      },
+      {
+        $lookup: {
+          from: "users", 
+          localField: "members.user",
+          foreignField: "_id",
+          as: "memberInfo",
+        },
+      },
+      { $unwind: "$memberInfo" },
+      {
+        $project: {
+          _id: 0,
+          userId: "$memberInfo._id",
+          username: "$memberInfo.username",
+          email: "$memberInfo.email",
+          avatar: "$memberInfo.avatar",
+          role: "$members.role",
+        },
+      },
+    ]);
+
+    if (workspaceWithMembers.length === 0) {
+      notFound(workspaceWithMembers, "workspace", res);
+      return;
+    }
+    res
+      .status(200)
+      .json(new ApiResponse(200, workspaceWithMembers, "Members found"));
+  }
+);

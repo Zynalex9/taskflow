@@ -24,6 +24,7 @@ import {
   deleteWorkSpace,
   getCalendarData,
   getWorkspace,
+  getWorkspaceMembers,
   getWorkspaceTableData,
   removeAdmin,
 } from "../controller/workspace/workspace.controller";
@@ -107,7 +108,7 @@ userRouter.route("/reset-password").patch(verifyJWT, resetPassword);
 userRouter.route("/send-otp").post(sendForgetPasswordOTP);
 userRouter.route("/forget-password").patch(forgetPasswordReset);
 userRouter.route("/activity-log").get(verifyJWT, activityLogs);
-userRouter.route("/verify-otp").post( verifyOTP);
+userRouter.route("/verify-otp").post(verifyOTP);
 userRouter.route("/:email/find-by-email").get(findByEmail);
 export { userRouter };
 
@@ -125,8 +126,11 @@ workSpaceRouter.route("/get-workspaces").get(verifyJWT, allWorkspaces);
 workSpaceRouter.route("/get-workspace").get(verifyJWT, getWorkspace);
 workSpaceRouter.route("/delete-workspace").delete(verifyJWT, deleteWorkSpace);
 workSpaceRouter.route("/add-admin").patch(verifyJWT, addAdmin);
-workSpaceRouter.route("/remove-admin").patch(verifyJWT, removeAdmin); 
-workSpaceRouter.route("/add-member").patch(verifyJWT, addWorkspaceMember); 
+workSpaceRouter.route("/remove-admin").patch(verifyJWT, removeAdmin);
+workSpaceRouter.route("/add-member").patch(verifyJWT, addWorkspaceMember);
+workSpaceRouter
+  .route("/get-members/:workspaceId")
+  .get(verifyJWT, getWorkspaceMembers);
 
 export { workSpaceRouter };
 boardRouter
