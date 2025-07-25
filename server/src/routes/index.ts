@@ -18,6 +18,7 @@ import { upload } from "../middleware/multer.middleware";
 import { verifyJWT } from "../middleware/auth.middleware";
 import {
   addAdmin,
+  addWorkspaceMember,
   allWorkspaces,
   createWorkSpace,
   deleteWorkSpace,
@@ -124,7 +125,8 @@ workSpaceRouter.route("/get-workspaces").get(verifyJWT, allWorkspaces);
 workSpaceRouter.route("/get-workspace").get(verifyJWT, getWorkspace);
 workSpaceRouter.route("/delete-workspace").delete(verifyJWT, deleteWorkSpace);
 workSpaceRouter.route("/add-admin").patch(verifyJWT, addAdmin);
-workSpaceRouter.route("/remove-admin").patch(verifyJWT, removeAdmin);
+workSpaceRouter.route("/remove-admin").patch(verifyJWT, removeAdmin); 
+workSpaceRouter.route("/add-member").patch(verifyJWT, addWorkspaceMember); 
 
 export { workSpaceRouter };
 boardRouter

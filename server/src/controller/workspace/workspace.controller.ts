@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import { workSpaceModel } from "../../models/workspace.model";
+import { IWorkspace, workSpaceModel } from "../../models/workspace.model";
 import { UserModel } from "../../models/user.model";
 import { boardModel } from "../../models/board.models";
 import { ListModel } from "../../models/list.models";
@@ -566,3 +566,74 @@ export const removeAdmin = asyncHandler(async (req: Request, res: Response) => {
     .json(new ApiResponse(200, {}, `${admin.username} is removed from admins`));
   return;
 });
+export const addWorkspaceMember = asyncHandler(
+  async (req: Request, res: Response) => {
+    const required = ["workspaceId", "memberCredentials"];
+    if (!checkRequiredBody(req, res, required)) return;
+    const { workspaceId, memberCredentials } = req.body;
+    const userId = req.user._id;
+    const isAuthorized = await CheckAdmin(userId, workspaceId);
+    if (!isAuthorized) {
+      res
+        .status(400)
+        .json(
+          new ApiResponse(400, {}, "You are not authorized to add a member")
+        );
+      return;
+    }
+    const workspace = await workSpaceModel.findById(workspaceId);
+    if (!workspace) {
+      notFound(workspace, "workspace", res);
+      return;
+    }
+    let member = null;
+
+    if (/^[0-9a-fA-F]{24}$/.test(memberCredentials)) {
+      member = await UserModel.findById(memberCredentials);
+    }
+
+    if (!member) {
+      member = await UserModel.findOne({
+        $or: [{ email: memberCredentials }, { username: memberCredentials }],
+      });
+    }
+    if (!member) {
+      notFound(member, "member", res);
+      return;
+    }
+    if (
+      workspace.members
+        .map((m) => m.user._id.toString())
+        .includes(member._id.toString())
+    ) {
+      res
+        .status(400)
+        .json(
+          new ApiResponse(
+            400,
+            {},
+            `${member.username} is already a member of this workspace`
+          )
+        );
+      return;
+    }
+    const newMember: { user: typeof member._id; role: "member" } = {
+      user: member._id,
+      role: "member",
+    };
+    workspace.members.push(newMember);
+    await workspace.save();
+    await UserModel.updateOne(
+      { _id: member._id },
+      { $addToSet: { workspace: workspace._id } }
+    );
+    redisClient.del(`workspace:${workspaceId}`);
+    await lPushList(
+      userId,
+      `You added ${member.username} as a member of ${workspace.name}`
+    );
+    res
+      .status(200)
+      .json(new ApiResponse(200, {}, `${member.username} is now a member`));
+  }
+);

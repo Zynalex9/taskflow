@@ -1,11 +1,24 @@
-import React from 'react'
+// If someone is a workspace member. he can view any public board
+// if someone is a workspace admin, he can view/edit any public board and manage members
+// if someone is a workspace owner, he can do everything an admin can do and also delete the workspace
+// if someone is a specific board member only then he can read/write
+//if someone is workspace admin or board admin he can remove members from the board
+import { RootState } from "@/store/store";
+import { useSelector } from "react-redux";
 
 const Members = () => {
-  return (
-    <div>
-      Lorem ipsum dolor, sit amet consectetur adipisicing elit. Facere, ratione asperiores tempora perferendis accusamus animi sit nostrum iure, ut, delectus suscipit culpa. Earum asperiores eaque omnis. Quaerat esse necessitatibus fugit sint labore? Facilis provident impedit minima est corporis nihil officiis quisquam ullam eos in incidunt rem consequuntur exercitationem placeat, recusandae voluptates. Quasi, hic. Laudantium nihil quidem dolorem vel exercitationem aperiam quas. Placeat dolorem perferendis quam veniam, culpa sit quisquam? Cum corrupti doloribus sunt iusto amet explicabo aspernatur ullam minus molestiae! Aut modi nesciunt accusantium neque consectetur. Vel nostrum aliquid autem alias iure, maxime sed vero atque molestiae maiores obcaecati reiciendis temporibus dicta quae libero animi repudiandae sit excepturi consequuntur delectus! Consectetur porro eos distinctio reiciendis commodi aut maxime repellendus minima ab a tempore reprehenderit earum, sint vel delectus repellat iure sequi cumque perspiciatis natus, necessitatibus ducimus? Saepe doloremque corrupti delectus tempora, libero debitis. In sapiente aliquid alias esse dicta magni ea voluptatibus unde reprehenderit necessitatibus eos facilis vitae, eligendi sequi similique excepturi beatae! A, eius fuga repellat odit maiores, molestiae aperiam laborum facere iusto, quos in eos. Inventore ea officiis asperiores quia architecto nobis odio, quae atque dicta rem, minus consequatur numquam voluptates dolorum. Cum fuga obcaecati ea, vitae architecto blanditiis fugiat! Voluptatum velit, at cumque perferendis libero id earum iusto, sunt voluptate ipsam minus iure alias, consequatur non veritatis! Ad neque magni facilis distinctio iusto at in corporis deleniti optio. Quas, odit? Sunt, itaque porro aliquam repellat quidem, iste sequi unde modi dicta officia eum doloribus. Doloribus sint voluptates similique asperiores, soluta atque necessitatibus architecto ipsam nobis aperiam voluptatibus minus qui voluptate quod facilis quibusdam suscipit veritatis quisquam excepturi ea deleniti quos. Minima suscipit consequatur officia ex laborum aperiam, exercitationem, fuga maiores unde magnam architecto molestiae pariatur cumque reiciendis qui illum facilis repellendus commodi impedit possimus obcaecati. Nemo doloremque ex voluptates eum magnam porro perspiciatis, voluptate pariatur consequatur excepturi itaque molestias libero totam distinctio aliquam saepe inventore adipisci soluta qui ut recusandae. Dolor, at harum! Vitae, obcaecati. Ab autem iure nobis distinctio. Eius nemo quibusdam hic. Tenetur impedit fugit earum quaerat ex quidem aliquam a, vitae delectus facere facilis cupiditate dolor! Quod eius id aliquid deserunt hic aspernatur error voluptatibus aliquam quaerat non suscipit ratione doloribus, veniam molestias vel nesciunt dolore numquam distinctio repellendus, dolores, accusantium pariatur. Repellendus amet mollitia dicta itaque maxime facere neque ex voluptates nihil? Incidunt magni, vero totam, corporis ea maxime illo vel eveniet eos exercitationem placeat maiores laudantium omnis! Vitae odio dolorem assumenda maiores. Esse maxime saepe unde ex illum accusantium voluptas repellat dicta animi sit, culpa, quisquam vel a aperiam dolorum mollitia distinctio laudantium reiciendis voluptates ullam neque quia quae. Repellendus ipsa at aspernatur voluptates! Repellat non accusantium praesentium accusamus quae libero quo quam inventore nihil beatae sint quis doloremque aliquam eius molestiae, at repudiandae velit reprehenderit laudantium reiciendis modi quod atque. Voluptate eum reiciendis aliquid laudantium ipsum totam commodi adipisci consequatur sunt et rem quos alias eos atque tempora, aliquam sed tenetur molestias quibusdam provident harum neque! Perferendis facilis sunt ex libero.
-    </div>
-  )
-}
+  const { workspace } = useSelector((state: RootState) => state.workspace);
 
-export default Members
+  if (!workspace) {
+    return <div className="px-2 py-4">Loading...</div>;
+  }
+  return (
+    <div className="px-2 py-4">
+      <h1 className="font-charlie-display-sm text-textP text-xl">
+        Members ({workspace.members.length})
+      </h1>
+    </div>
+  );
+};
+
+export default Members;
