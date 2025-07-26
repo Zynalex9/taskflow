@@ -6,13 +6,24 @@
 import { RootState } from "@/store/store";
 import { useSelector } from "react-redux";
 import CustomBorder from "../resuable/CustomBorder";
-
+import { useGetWorkspaceMembersQuery } from "@/store/workspace.members.api";
+import ModalButton from "../resuable/ModalButton";
+interface IMember {
+  userId: string;
+  username: string;
+  email: string;
+  profilePicture: string;
+  role: string;
+}
 const Members = () => {
   const { workspace } = useSelector((state: RootState) => state.workspace);
-  console.log(workspace);
+
   if (!workspace) {
     return <div className="px-2 py-4">Loading...</div>;
   }
+  const { data: membersData, isLoading } = useGetWorkspaceMembersQuery(
+    workspace._id || ""
+  );
   return (
     <div className="px-2 py-4">
       <h1 className="font-charlie-display-sm text-textP text-xl my-6">
@@ -26,6 +37,41 @@ const Members = () => {
           <p className="text-gray-400 text-xl text-center">No member</p>
         )}
       </div>
+      {membersData && membersData?.data?.length > 0 ? (
+        <div className="space-y-10">
+          {membersData.data.map((member: IMember) => {
+            return (
+              <div
+                key={member.userId}
+                className="flex items-center justify-between gap-2"
+              >
+                <div className="flex items-center gap-2">
+                  <img
+                    src={member.profilePicture}
+                    alt={member.username}
+                    className="w-12 h-12 rounded-full object-cover shadow-sm"
+                  />
+                  <div>
+                    <h2 className="text-xl text-textP">{member.username}</h2>
+                    <p className={`text-xs text-gray-400`}>{member.role[0].toLocaleUpperCase()+member.role.slice(1)}</p>
+                    <p className="text-xs text-gray-400 underline">
+                      {member.email}
+                    </p>
+                  </div>
+                </div>
+                <div className="flex items-center gap-2">
+                  <ModalButton
+                    btnText="Remove"
+                    customStyles="bg-red-500 text-white"
+                  />
+                  <ModalButton btnText="Make an admin" />
+                  <ModalButton btnText="Demote an admin" />
+                </div>
+              </div>
+            );
+          })}
+        </div>
+      ) : null}
     </div>
   );
 };

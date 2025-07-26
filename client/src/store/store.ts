@@ -12,6 +12,7 @@ import { boardsReducer, boardReducer } from "./BoardSlice";
 import { myApi } from "./myApi";
 import { cardApi } from "./cardApi";
 import { workspaceApi } from "./workspaceApi";
+import { workspaceMembersApi } from "./workspace.members.api";
 
 const store = configureStore({
   reducer: {
@@ -29,12 +30,14 @@ const store = configureStore({
     [myApi.reducerPath]: myApi.reducer,
     [cardApi.reducerPath]: cardApi.reducer,
     [workspaceApi.reducerPath]: workspaceApi.reducer,
+    [workspaceMembersApi.reducerPath]: workspaceMembersApi.reducer,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware().concat(
       myApi.middleware,
       cardApi.middleware,
-      workspaceApi.middleware
+      workspaceApi.middleware,
+      workspaceMembersApi.middleware
     ),
 });
 export type RootState = ReturnType<typeof store.getState>;

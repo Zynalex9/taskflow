@@ -665,6 +665,7 @@ export const getWorkspaceMembers = asyncHandler(
           _id: 0,
           userId: "$memberInfo._id",
           username: "$memberInfo.username",
+          profilePicture: "$memberInfo.profilePicture",
           email: "$memberInfo.email",
           avatar: "$memberInfo.avatar",
           role: "$members.role",
