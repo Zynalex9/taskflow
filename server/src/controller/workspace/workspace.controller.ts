@@ -467,6 +467,7 @@ export const deleteWorkSpace = async (req: Request, res: Response) => {
 export const addAdmin = asyncHandler(async (req: Request, res: Response) => {
   const { workspaceId, adminId } = req.body;
   const userId = req.user._id;
+
   const isAuthorized = await CheckAdmin(userId, workspaceId);
   if (!isAuthorized) {
     res
@@ -474,11 +475,13 @@ export const addAdmin = asyncHandler(async (req: Request, res: Response) => {
       .json(new ApiResponse(400, {}, "You are not authorized to add an admin"));
     return;
   }
+
   const workspace = await workSpaceModel.findById(workspaceId);
   if (!workspace) {
     notFound(workspace, "workspace", res);
     return;
   }
+
   const admin = await UserModel.findById(adminId);
   if (!admin) {
     notFound(admin, "admin", res);
@@ -496,15 +499,31 @@ export const addAdmin = asyncHandler(async (req: Request, res: Response) => {
       );
     return;
   }
-  const boards = await boardModel.find({ workspace: workspaceId });
-  boards.forEach(async (board) => {
-    board.members.push({
-      user: admin._id,
-      role: "admin",
-    });
-    await board.save();
-  });
+
+  // Add admin to workspace
   workspace.admin.push(admin._id);
+  const memberObj = workspace.members.find((u) => u.user.equals(admin._id));
+  if (memberObj) {
+    memberObj.role = "admin";
+  }
+
+  const boards = await boardModel.find({ workspace: workspaceId });
+
+  await Promise.all(
+    boards.map(async (board) => {
+      const existing = board.members.find((m) => m.user.equals(admin._id));
+      if (existing) {
+        existing.role = "admin";
+      } else {
+        board.members.push({
+          user: admin._id,
+          role: "admin",
+        });
+      }
+      await board.save();
+    })
+  );
+
   await workspace.save();
   redisClient.del(`workspace:${workspaceId}`);
   await lPushList(
@@ -514,8 +533,9 @@ export const addAdmin = asyncHandler(async (req: Request, res: Response) => {
 
   res
     .status(200)
-    .json(new ApiResponse(200, {}, `${admin.username} now an admin`));
+    .json(new ApiResponse(200, {}, `${admin.username} is now an admin`));
 });
+
 export const removeAdmin = asyncHandler(async (req: Request, res: Response) => {
   const required = ["workspaceId,adminId"];
   if (!checkRequiredBody(req, res, required)) return;
@@ -653,7 +673,7 @@ export const getWorkspaceMembers = asyncHandler(
       },
       {
         $lookup: {
-          from: "users", 
+          from: "users",
           localField: "members.user",
           foreignField: "_id",
           as: "memberInfo",
