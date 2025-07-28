@@ -5,6 +5,7 @@ import ApiResponse from "../../utils/ApiResponse";
 import { checkRequiredParams } from "../../utils/helpers";
 import mongoose from "mongoose";
 import { redisClient } from "../..";
+import { asyncHandler } from "../../utils/asyncHandler";
 
 export const addComment = async (req: Request, res: Response) => {
   try {
@@ -70,3 +71,16 @@ export const deleteComment = async (req: Request, res: Response) => {
     res.status(500).json(new ApiResponse(500, {}, "Internal server error"));
   }
 };
+export const editComment = asyncHandler(async (req: Request, res: Response) => {
+  const { comment,commentId } = req.body;
+  const updatedComment = await commentsModel.findByIdAndUpdate(
+    commentId,
+    { comment },
+    { new: true }
+  );
+  if (!updatedComment) {
+    res.status(404).json(new ApiResponse(404, {}, "Comment not found"));
+    return;
+  }
+  res.status(200).json(new ApiResponse(200, updatedComment));
+});

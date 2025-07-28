@@ -73,7 +73,11 @@ import {
   toggleComplete,
 } from "../controller/card/card";
 import { addLabel, deleteLabel } from "../controller/card/label";
-import { addComment, deleteComment } from "../controller/card/comment";
+import {
+  addComment,
+  deleteComment,
+  editComment,
+} from "../controller/card/comment";
 import { addAttachment, deleteAttachment } from "../controller/card/attachment";
 import {
   addChecklist,
@@ -210,6 +214,7 @@ cardRouter.route("/add-end-date").post(verifyJWT, addStartDate);
 cardRouter.route("/add-date").patch(verifyJWT, addDate);
 cardRouter.route("/toggle-complete").patch(verifyJWT, toggleComplete);
 cardRouter.route("/delete-checklist-item").delete(verifyJWT, deleteItem);
+cardRouter.route("/edit-comment").patch(verifyJWT, editComment);
 cardRouter
   .route("/add-cover")
   .post(verifyJWT, upload.single("cardCover"), addCover);

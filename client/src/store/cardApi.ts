@@ -587,7 +587,7 @@ export const cardApi = createApi({
       },
     }),
     uploadCardCover: builder.mutation<void, FormData>({
-      query: (formData:FormData) => ({
+      query: (formData: FormData) => ({
         url: "/api/card/add-cover",
         method: "POST",
         body: formData,
@@ -596,6 +596,43 @@ export const cardApi = createApi({
       invalidatesTags: (_, __, formData) => {
         const cardId = formData.get("cardId") as string;
         return [{ type: "singleCard", id: cardId }];
+      },
+    }),
+    editComment: builder.mutation({
+      query: (body: {
+        commentId: string;
+        comment: string;
+        cardId: string;
+      }) => ({
+        url: `/api/card/edit-comment`,
+        method: "PATCH",
+        body,
+        credentials: "include",
+      }),
+      invalidatesTags: (_, __, { cardId }) => [
+        { type: "singleCard", id: cardId },
+      ],
+      async onQueryStarted(body, { dispatch, queryFulfilled }) {
+        const patchResult = dispatch(
+          cardApi.util.updateQueryData(
+            "getSingleCard",
+            { cardId: body.cardId },
+            (draft) => {
+              const comment = draft.data.comments.find(
+                (c) => c._id === body.commentId
+              );
+              if (comment) {
+                comment.comment = body.comment;
+                comment.updatedAt = new Date().toISOString();
+              }
+            }
+          )
+        );
+        try {
+          await queryFulfilled;
+        } catch (error) {
+          patchResult.undo();
+        }
       },
     }),
   }),
@@ -617,4 +654,5 @@ export const {
   useDeleteItemMutation,
   useDeleteAttachmentMutation,
   useUploadCardCoverMutation,
+  useEditCommentMutation,
 } = cardApi;
