@@ -21,7 +21,7 @@ const Members = () => {
   return (
     <div className="px-2 py-4">
       <h1 className="font-charlie-display-sm text-textP text-xl my-6">
-        Members ({workspace.members.length})
+        Members ({membersData?.data.length || 0})
       </h1>
       <CustomBorder />
       <AddMembersInput />

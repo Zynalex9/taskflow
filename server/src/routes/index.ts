@@ -27,6 +27,7 @@ import {
   getWorkspaceMembers,
   getWorkspaceTableData,
   removeAdmin,
+  removeWorkspaceMember,
 } from "../controller/workspace/workspace.controller";
 import {
   allBoards,
@@ -128,6 +129,7 @@ workSpaceRouter.route("/delete-workspace").delete(verifyJWT, deleteWorkSpace);
 workSpaceRouter.route("/add-admin").patch(verifyJWT, addAdmin);
 workSpaceRouter.route("/remove-admin").patch(verifyJWT, removeAdmin);
 workSpaceRouter.route("/add-member").patch(verifyJWT, addWorkspaceMember);
+workSpaceRouter.route("/remove-member").patch(verifyJWT, removeWorkspaceMember);
 workSpaceRouter
   .route("/get-members/:workspaceId")
   .get(verifyJWT, getWorkspaceMembers);

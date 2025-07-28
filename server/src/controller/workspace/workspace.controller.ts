@@ -663,6 +663,68 @@ export const addWorkspaceMember = asyncHandler(
       .json(new ApiResponse(200, {}, `${member.username} is now a member`));
   }
 );
+export const removeWorkspaceMember = asyncHandler(
+  async (req: Request, res: Response) => {
+    const required = ["workspaceId", "memberId"];
+    if (!checkRequiredBody(req, res, required)) return;
+    const { workspaceId, memberId } = req.body;
+    const userId = req.user._id;
+    const isAuthorized = await CheckAdmin(userId, workspaceId);
+    if (!isAuthorized) {
+      res
+        .status(400)
+        .json(
+          new ApiResponse(400, {}, "You are not authorized to remove a member")
+        );
+      return;
+    }
+    const workspace = await workSpaceModel.findById(workspaceId);
+    if (!workspace) {
+      notFound(workspace, "workspace", res);
+      return;
+    }
+    const member = await UserModel.findById(memberId);
+    if (!member) {
+      notFound(member, "member", res);
+      return;
+    }
+    const isMember = workspace.members.some(
+      (u) => u.user.toString() === member._id.toString()
+    );
+    if (!isMember) {
+      res
+        .status(400)
+        .json(
+          new ApiResponse(
+            400,
+            {},
+            `${member.username} is not a member of this workspace`
+          )
+        );
+      return;
+    }
+    workspace.members = workspace.members.filter(
+      (u) => u.user.toString() !== member._id.toString()
+    );
+    await workspace.save();
+    await UserModel.updateOne(
+      { _id: member._id },
+      { $pull: { workspace: workspace._id } }
+    );
+    redisClient.del(`workspace:${workspaceId}`);
+    await lPushList(
+      userId,
+      `You removed ${member.username} from ${workspace.name}`
+    );
+    res
+      .status(200)
+      .json(
+        new ApiResponse(200, {}, `${member.username} is removed from members`)
+      );
+    return;
+  }
+);
+
 export const getWorkspaceMembers = asyncHandler(
   async (req: Request, res: Response) => {
     const { workspaceId } = req.params;

@@ -13,7 +13,9 @@ const ModalButton = ({
     <button
       disabled={disabled}
       onClick={onClickFn}
-      className={`flex gap-2 px-2 py-1 rounded cursor-pointer items-center transition-colors duration-150 bg-[#B6C2CF]/20 hover:bg-[#B6C2CF]/10 font-charlie-display-sm shadow-2xl text-[#B3BFCC] ${customStyles}`}
+      className={`flex gap-2 px-2 py-1 rounded cursor-pointer items-center transition-colors duration-150 bg-[#B6C2CF]/20 hover:bg-[#B6C2CF]/10 font-charlie-display-sm shadow-2xl text-[#B3BFCC] ${
+        disabled ? "opacity-50 cursor-not-allowed" : ""
+      } ${customStyles}`}
     >
       {btnText}
     </button>

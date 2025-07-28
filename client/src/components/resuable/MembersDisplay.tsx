@@ -1,9 +1,11 @@
 import {
   useAddWorkspaceAdminMutation,
+  useRemoveWorkspaceAdminMutation,
   useRemoveWorkspaceMemberMutation,
 } from "@/store/workspace.members.api";
 import ModalButton from "./ModalButton";
 import { toast, ToastContainer } from "react-toastify";
+import { useState } from "react";
 
 interface IMember {
   userId: string;
@@ -24,9 +26,13 @@ export const MembersDisplay = ({
   workspaceId,
 }: MembersDisplayProps) => {
   const [addAdmin] = useAddWorkspaceAdminMutation();
-  const [removeAdmin] = useRemoveWorkspaceMemberMutation();
+  const [removeAdmin] = useRemoveWorkspaceAdminMutation();
+  const [removeMember] = useRemoveWorkspaceMemberMutation();
+  const [loadingAdmin, setLoadingAdmin] = useState(false);
+  const [removing, setRemoving] = useState(false);
   const addAdminHandler = async (memberId: string) => {
     try {
+      setLoadingAdmin(true);
       const res = await addAdmin({
         workspaceId,
         adminId: memberId,
@@ -36,10 +42,13 @@ export const MembersDisplay = ({
       }
     } catch (error: any) {
       toast.error(error.data.message || "Failed to add admin");
+    } finally {
+      setLoadingAdmin(false);
     }
   };
   const removeAdminHandler = async (memberId: string) => {
     try {
+      setLoadingAdmin(true);
       const res = await removeAdmin({
         workspaceId,
         adminId: memberId,
@@ -49,6 +58,24 @@ export const MembersDisplay = ({
       }
     } catch (error: any) {
       toast.error(error.data.message || "Failed to add admin");
+    } finally {
+      setLoadingAdmin(false);
+    }
+  };
+  const removeMemerHandler = async (memberId: string) => {
+    try {
+      setRemoving(true);
+      const res = await removeMember({
+        workspaceId,
+        memberId,
+      }).unwrap();
+      if (res.success) {
+        toast.success(res.message || "Admin demoted successfully");
+      }
+    } catch (error: any) {
+      toast.error(error.data.message || "Failed to add admin");
+    } finally {
+      setRemoving(false);
     }
   };
   return (
@@ -82,12 +109,21 @@ export const MembersDisplay = ({
                 </div>
                 <div className="flex items-center gap-2">
                   <ModalButton
-                    btnText="Remove"
+                    disabled={removing}
+                    btnText={removing ? "Removing..." : "Remove"}
                     customStyles="bg-red-500 text-white"
+                    onClickFn={() => removeMemerHandler(member.userId)}
                   />
                   <ModalButton
+                    disabled={loadingAdmin}
                     btnText={
-                      member.role === "admin" ? "Remove admin" : "Make an admin"
+                      member.role === "admin"
+                        ? loadingAdmin
+                          ? "Removing..."
+                          : "Remove admin"
+                        : loadingAdmin
+                        ? "Adding..."
+                        : "Make an admin"
                     }
                     onClickFn={() => {
                       if (member.role === "admin") {
