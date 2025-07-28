@@ -635,6 +635,35 @@ export const cardApi = createApi({
         }
       },
     }),
+    deleteComment: builder.mutation({
+      query: (body: { commentId: string; cardId: string }) => ({
+        url: `/api/card/${body.commentId}/delete-comment`,
+        method: "DELETE",
+        body,
+        credentials: "include",
+      }),
+      invalidatesTags: (_, __, { cardId }) => [
+        { type: "singleCard", id: cardId },
+      ],
+      async onQueryStarted(body, { dispatch, queryFulfilled }) {
+        const patchResult = dispatch(
+          cardApi.util.updateQueryData(
+            "getSingleCard",
+            { cardId: body.cardId },
+            (draft) => {
+              draft.data.comments = draft.data.comments.filter(
+                (c) => c._id !== body.commentId
+              );
+            }
+          )
+        );
+        try {
+          await queryFulfilled;
+        } catch (error) {
+          patchResult.undo();
+        }
+      },
+    }),
   }),
 });
 export const {
@@ -655,4 +684,5 @@ export const {
   useDeleteAttachmentMutation,
   useUploadCardCoverMutation,
   useEditCommentMutation,
+  useDeleteCommentMutation,
 } = cardApi;

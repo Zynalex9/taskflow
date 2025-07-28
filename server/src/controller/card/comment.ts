@@ -72,7 +72,7 @@ export const deleteComment = async (req: Request, res: Response) => {
   }
 };
 export const editComment = asyncHandler(async (req: Request, res: Response) => {
-  const { comment,commentId } = req.body;
+  const { comment, commentId } = req.body;
   const updatedComment = await commentsModel.findByIdAndUpdate(
     commentId,
     { comment },

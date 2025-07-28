@@ -3,7 +3,11 @@ import { useSelector } from "react-redux";
 import { RootState } from "../../../../../store/store";
 import { formatDistanceToNow } from "date-fns";
 import { IComment } from "@/types/functionalites.types";
-import { useAddCommentMutation, useEditCommentMutation } from "@/store/cardApi";
+import {
+  useAddCommentMutation,
+  useDeleteCommentMutation,
+  useEditCommentMutation,
+} from "@/store/cardApi";
 import { Pencil, Trash } from "lucide-react";
 import { toast, ToastContainer } from "react-toastify";
 interface IProps {
@@ -20,6 +24,16 @@ const CommentInput = ({ comments, cardId }: IProps) => {
   console.log(isEditing, editingCommentId, editText);
   const [addComment] = useAddCommentMutation();
   const [editComment] = useEditCommentMutation();
+  const [deleteComment] = useDeleteCommentMutation();
+  const handleDelete = async (commentId: string) => {
+    try {
+      await deleteComment({ commentId, cardId }).unwrap();
+    } catch (error: any) {
+      toast.error(error.data?.message || "Failed to delete comment", {
+        theme: "dark",
+      });
+    }
+  };
   const handleSubmit = async () => {
     try {
       setNewComment("");
@@ -104,7 +118,11 @@ const CommentInput = ({ comments, cardId }: IProps) => {
               </div>
               {c.author._id === user?._id && (
                 <div className="flex items-center gap-2">
-                  <Trash size={16} className="text-red-500 cursor-pointer" />
+                  <Trash
+                    size={16}
+                    className="text-red-500 cursor-pointer"
+                    onClick={() => handleDelete(c._id)}
+                  />
                   <Pencil
                     size={16}
                     className="text-blue-500 cursor-pointer"
@@ -133,7 +151,15 @@ const CommentInput = ({ comments, cardId }: IProps) => {
                     onChange={(e) => setEditText(e.target.value)}
                   />
                 ) : (
-                  <h1>{c.comment}</h1>
+                  <h1
+                    onDoubleClick={() => {
+                      setIsEditing(true);
+                      setEditText(c.comment);
+                      setEditingCommentId(c._id);
+                    }}
+                  >
+                    {c.comment}
+                  </h1>
                 )}
               </div>
             </div>
