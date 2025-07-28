@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { IList } from "../../../../types/functionalites.types";
 import Card from "./Card";
-import { Ellipsis, Plus } from "lucide-react";
+import { Plus } from "lucide-react";
 import AddList from "./AddList";
 import { useParams } from "react-router-dom";
 import { myApi, useAddCardMutation } from "@/store/myApi";
@@ -10,6 +10,7 @@ import { toast, ToastContainer } from "react-toastify";
 import { socket } from "@/socket/socket";
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "@/store/store";
+import { ListDropdown } from "@/components/resuable/ListMenu";
 
 interface ListProps {
   list: IList[] | undefined;
@@ -63,6 +64,7 @@ const List: React.FC<ListProps> = ({ list }) => {
       socket.off("listCreated", handleListCreated);
     };
   }, [dispatch, boardId]);
+  const [openListId, setOpenListId] = useState<string | null>(null);
 
   return (
     <div className="flex gap-4 w-full items-stretch">
@@ -75,7 +77,13 @@ const List: React.FC<ListProps> = ({ list }) => {
               >
                 <div className="font-bold mb-2 w-full flex items-center justify-between">
                   <h1>{singleList.name}</h1>
-                  <Ellipsis size={16} />
+                  <ListDropdown
+                    activeListId={activeListId}
+                    setActiveListId={setActiveListId}
+                    listId={singleList._id}
+                    openListId={openListId}
+                    setOpenListId={setOpenListId}
+                  />
                 </div>
                 <div className="custom-scrollbar  overflow-y-auto max-h-56 pr-3">
                   {singleList.cards.map((card) => (
