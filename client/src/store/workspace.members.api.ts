@@ -10,6 +10,10 @@ export const workspaceMembersApi = createApi({
   endpoints: (builder) => ({
     getWorkspaceMembers: builder.query({
       query: (workspaceId) => `/get-members/${workspaceId}`,
+      providesTags: () => [
+        { type: "workspaceMembers" },
+        { type: "workspaceMember" },
+      ],
     }),
     addWorkspaceAdmin: builder.mutation({
       query: (body: { workspaceId: string; adminId: string }) => ({
@@ -18,8 +22,27 @@ export const workspaceMembersApi = createApi({
         body,
         credentials: "include",
       }),
-      invalidatesTags: ["workspaceMembers", "workspaceMember"],
+      invalidatesTags: () => [
+        { type: "workspaceMembers" },
+        { type: "workspaceMember" },
+      ],
+    }),
+    addWorkspaceMember: builder.mutation({
+      query: (body: { workspaceId: string; memberCredentials: string }) => ({
+        url: `/add-member`,
+        method: "PATCH",
+        body,
+        credentials: "include",
+      }),
+      invalidatesTags: () => [
+        { type: "workspaceMembers" },
+        { type: "workspaceMember" },
+      ],
     }),
   }),
 });
-export const { useGetWorkspaceMembersQuery,useAddWorkspaceAdminMutation } = workspaceMembersApi;
+export const {
+  useGetWorkspaceMembersQuery,
+  useAddWorkspaceAdminMutation,
+  useAddWorkspaceMemberMutation,
+} = workspaceMembersApi;

@@ -70,10 +70,9 @@ export const MembersDisplay = ({
                     customStyles="bg-red-500 text-white"
                   />
                   <ModalButton
-                    btnText="Make an admin"
-                    onClickFn={() => addAdminHandler(member.userId)}
+                    btnText={ member.role === "admin" ? "Remove admin" : "Make an admin"}
+                    onClickFn={() =>  addAdminHandler(member.userId)}
                   />
-                  <ModalButton btnText="Demote an admin" />
                 </div>
               </div>
             );

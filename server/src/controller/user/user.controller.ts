@@ -519,16 +519,18 @@ export const activityLogs = asyncHandler(
     res.status(200).json(new ApiResponse(200, logs));
   }
 );
-export const findByEmail = asyncHandler(async (req: Request, res: Response) => {
-  const { email } = req.params;
-  if (!email) {
-    res.status(400).json(new ApiResponse(400, {}, "Email is required"));
+export const findByIdentifier = asyncHandler(async (req: Request, res: Response) => {
+  const { identifier } = req.params;
+  if (!identifier) {
+    res.status(400).json(new ApiResponse(400, {}, "identifier is required"));
     return;
   }
-  const user = await UserModel.findOne({ email }).select("-password");
+  const user = await UserModel.findOne({
+    $or: [{ email: identifier }, { username: identifier }],
+  }).select("-password");
   if (!user) {
     res.status(404).json(new ApiResponse(404, {}, "User not found"));
     return;
   }
-  res.status(200).json(new ApiResponse(200, user, "User found by email"));
+  res.status(200).json(new ApiResponse(200, user, "User found by identifier"));
 });

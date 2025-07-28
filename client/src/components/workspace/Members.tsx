@@ -14,13 +14,9 @@ const Members = () => {
   if (!workspace) {
     return <div className="px-2 py-4">Loading...</div>;
   }
-  const { data: membersData, isLoading } = useGetWorkspaceMembersQuery(
+  const { data: membersData } = useGetWorkspaceMembersQuery(
     workspace._id || ""
   );
-
-  if (isLoading) {
-    return <div className="px-2 py-4">Loading...</div>;
-  }
 
   return (
     <div className="px-2 py-4">
@@ -28,13 +24,6 @@ const Members = () => {
         Members ({workspace.members.length})
       </h1>
       <CustomBorder />
-      <div className="mt-4">
-        {workspace.members.length > 0 ? (
-          <div>{}</div>
-        ) : (
-          <p className="text-gray-400 text-xl text-center">No member</p>
-        )}
-      </div>
       <AddMembersInput />
       <MembersDisplay membersData={membersData} workspaceId={workspace._id} />
     </div>
