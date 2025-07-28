@@ -1,4 +1,7 @@
-import { useAddWorkspaceAdminMutation } from "@/store/workspace.members.api";
+import {
+  useAddWorkspaceAdminMutation,
+  useRemoveWorkspaceMemberMutation,
+} from "@/store/workspace.members.api";
 import ModalButton from "./ModalButton";
 import { toast, ToastContainer } from "react-toastify";
 
@@ -21,7 +24,7 @@ export const MembersDisplay = ({
   workspaceId,
 }: MembersDisplayProps) => {
   const [addAdmin] = useAddWorkspaceAdminMutation();
-
+  const [removeAdmin] = useRemoveWorkspaceMemberMutation();
   const addAdminHandler = async (memberId: string) => {
     try {
       const res = await addAdmin({
@@ -29,10 +32,23 @@ export const MembersDisplay = ({
         adminId: memberId,
       }).unwrap();
       if (res.success) {
-        toast.success(res.data.message || "Admin added successfully");
+        toast.success(res.message || "Admin added successfully");
       }
-    } catch (error) {
-      toast.error("Failed to add admin");
+    } catch (error: any) {
+      toast.error(error.data.message || "Failed to add admin");
+    }
+  };
+  const removeAdminHandler = async (memberId: string) => {
+    try {
+      const res = await removeAdmin({
+        workspaceId,
+        adminId: memberId,
+      }).unwrap();
+      if (res.success) {
+        toast.success(res.message || "Admin demoted successfully");
+      }
+    } catch (error: any) {
+      toast.error(error.data.message || "Failed to add admin");
     }
   };
   return (
@@ -70,8 +86,16 @@ export const MembersDisplay = ({
                     customStyles="bg-red-500 text-white"
                   />
                   <ModalButton
-                    btnText={ member.role === "admin" ? "Remove admin" : "Make an admin"}
-                    onClickFn={() =>  addAdminHandler(member.userId)}
+                    btnText={
+                      member.role === "admin" ? "Remove admin" : "Make an admin"
+                    }
+                    onClickFn={() => {
+                      if (member.role === "admin") {
+                        removeAdminHandler(member.userId);
+                      } else {
+                        addAdminHandler(member.userId);
+                      }
+                    }}
                   />
                 </div>
               </div>

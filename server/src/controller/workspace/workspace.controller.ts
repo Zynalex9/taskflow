@@ -537,7 +537,7 @@ export const addAdmin = asyncHandler(async (req: Request, res: Response) => {
 });
 
 export const removeAdmin = asyncHandler(async (req: Request, res: Response) => {
-  const required = ["workspaceId,adminId"];
+  const required = ["workspaceId", "adminId"];
   if (!checkRequiredBody(req, res, required)) return;
   const { workspaceId, adminId } = req.body;
   const userId = req.user._id;
@@ -576,6 +576,12 @@ export const removeAdmin = asyncHandler(async (req: Request, res: Response) => {
   workspace.admin = workspace.admin.filter(
     (id) => id.toString() !== admin._id.toString()
   );
+  workspace.members = workspace.members.map((member) => {
+    if (member.user._id.toString() === admin._id.toString()) {
+      member.role = "member";
+    }
+    return member;
+  });
   await workspace.save();
   await lPushList(
     userId,

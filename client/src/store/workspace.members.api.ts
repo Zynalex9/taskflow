@@ -39,10 +39,23 @@ export const workspaceMembersApi = createApi({
         { type: "workspaceMember" },
       ],
     }),
+    removeWorkspaceMember: builder.mutation({
+      query: (body: { workspaceId: string; adminId: string }) => ({
+        url: `/remove-admin`,
+        method: "PATCH",
+        body,
+        credentials: "include",
+      }),
+      invalidatesTags: () => [
+        { type: "workspaceMembers" },
+        { type: "workspaceMember" },
+      ],
+    }),
   }),
 });
 export const {
   useGetWorkspaceMembersQuery,
   useAddWorkspaceAdminMutation,
   useAddWorkspaceMemberMutation,
+  useRemoveWorkspaceMemberMutation,
 } = workspaceMembersApi;
