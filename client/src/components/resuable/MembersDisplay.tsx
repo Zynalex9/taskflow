@@ -21,6 +21,7 @@ interface MembersDisplayProps {
   membersData: MembersData;
   workspaceId: string;
 }
+
 export const MembersDisplay = ({
   membersData,
   workspaceId,
@@ -28,61 +29,65 @@ export const MembersDisplay = ({
   const [addAdmin] = useAddWorkspaceAdminMutation();
   const [removeAdmin] = useRemoveWorkspaceAdminMutation();
   const [removeMember] = useRemoveWorkspaceMemberMutation();
-  const [loadingAdmin, setLoadingAdmin] = useState(false);
-  const [removing, setRemoving] = useState(false);
+
+  const [adminLoadingIds, setAdminLoadingIds] = useState<string[]>([]);
+  const [removingMemberIds, setRemovingMemberIds] = useState<string[]>([]);
+
   const addAdminHandler = async (memberId: string) => {
+    if (adminLoadingIds.includes(memberId)) return;
+    setAdminLoadingIds((prev) => [...prev, memberId]);
     try {
-      setLoadingAdmin(true);
-      const res = await addAdmin({
-        workspaceId,
-        adminId: memberId,
-      }).unwrap();
-      if (res.success) {
-        toast.success(res.message || "Admin added successfully");
-      }
+      const res = await addAdmin({ workspaceId, adminId: memberId }).unwrap();
+      if (res.success) toast.success(res.message || "Admin added successfully");
     } catch (error: any) {
-      toast.error(error.data.message || "Failed to add admin");
+      toast.error(error.data?.message || "Failed to add admin");
     } finally {
-      setLoadingAdmin(false);
+      setAdminLoadingIds((prev) => prev.filter((id) => id !== memberId));
     }
   };
+
   const removeAdminHandler = async (memberId: string) => {
+    if (adminLoadingIds.includes(memberId)) return;
+    setAdminLoadingIds((prev) => [...prev, memberId]);
     try {
-      setLoadingAdmin(true);
       const res = await removeAdmin({
         workspaceId,
         adminId: memberId,
       }).unwrap();
-      if (res.success) {
+      if (res.success)
         toast.success(res.message || "Admin demoted successfully");
-      }
     } catch (error: any) {
-      toast.error(error.data.message || "Failed to add admin");
+      toast.error(error.data?.message || "Failed to remove admin");
     } finally {
-      setLoadingAdmin(false);
+      setAdminLoadingIds((prev) => prev.filter((id) => id !== memberId));
     }
   };
-  const removeMemerHandler = async (memberId: string) => {
+
+  const removeMemberHandler = async (memberId: string) => {
+    if (removingMemberIds.includes(memberId)) return;
+    setRemovingMemberIds((prev) => [...prev, memberId]);
     try {
-      setRemoving(true);
       const res = await removeMember({
         workspaceId,
         memberId,
       }).unwrap();
-      if (res.success) {
-        toast.success(res.message || "Admin demoted successfully");
-      }
+      if (res.success)
+        toast.success(res.message || "Member removed successfully");
     } catch (error: any) {
-      toast.error(error.data.message || "Failed to add admin");
+      toast.error(error.data?.message || "Failed to remove member");
     } finally {
-      setRemoving(false);
+      setRemovingMemberIds((prev) => prev.filter((id) => id !== memberId));
     }
   };
+
   return (
     <div>
-      {membersData && membersData?.data?.length > 0 ? (
+      {membersData?.data?.length > 0 ? (
         <div className="space-y-6">
           {membersData.data.map((member: IMember, idx: number) => {
+            const isAdminLoading = adminLoadingIds.includes(member.userId);
+            const isRemoving = removingMemberIds.includes(member.userId);
+
             return (
               <div
                 key={member.userId}
@@ -98,9 +103,8 @@ export const MembersDisplay = ({
                   />
                   <div>
                     <h2 className="text-xl text-textP">{member.username}</h2>
-                    <p className={`text-xs text-gray-400`}>
-                      {member.role[0].toLocaleUpperCase() +
-                        member.role.slice(1)}
+                    <p className="text-xs text-gray-400 capitalize">
+                      {member.role}
                     </p>
                     <p className="text-xs text-gray-400 underline">
                       {member.email}
@@ -109,29 +113,27 @@ export const MembersDisplay = ({
                 </div>
                 <div className="flex items-center gap-2">
                   <ModalButton
-                    disabled={removing}
-                    btnText={removing ? "Removing..." : "Remove"}
+                    disabled={isRemoving}
+                    btnText={isRemoving ? "Removing..." : "Remove"}
                     customStyles="bg-red-500 text-white"
-                    onClickFn={() => removeMemerHandler(member.userId)}
+                    onClickFn={() => removeMemberHandler(member.userId)}
                   />
                   <ModalButton
-                    disabled={loadingAdmin}
+                    disabled={isAdminLoading}
                     btnText={
                       member.role === "admin"
-                        ? loadingAdmin
+                        ? isAdminLoading
                           ? "Removing..."
                           : "Remove admin"
-                        : loadingAdmin
+                        : isAdminLoading
                         ? "Adding..."
                         : "Make an admin"
                     }
-                    onClickFn={() => {
-                      if (member.role === "admin") {
-                        removeAdminHandler(member.userId);
-                      } else {
-                        addAdminHandler(member.userId);
-                      }
-                    }}
+                    onClickFn={() =>
+                      member.role === "admin"
+                        ? removeAdminHandler(member.userId)
+                        : addAdminHandler(member.userId)
+                    }
                   />
                 </div>
               </div>
