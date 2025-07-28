@@ -1,6 +1,8 @@
 import { Dialog, DialogTrigger, DialogContent } from "@/components/ui/dialog";
 import { useState, useRef } from "react";
 import { useClickOutside } from "@/Context/useRefContext";
+import { X } from "lucide-react";
+import CustomBorder from "./CustomBorder";
 
 interface IProps {
   setOpenListId: React.Dispatch<React.SetStateAction<string | null>>;
@@ -50,6 +52,37 @@ export const ListItems: React.FC<IProps> = ({ setOpenListId }) => {
       ),
     },
     {
+      id: "moveAllCards",
+      label: "Move all cards in this list",
+      type: "panel" as const,
+      panelContent: (
+        <>
+          Lorem ipsum dolor, sit amet consectetur adipisicing elit. Ipsa alias
+          quam inventore architecto maiores officiis sed quod commodi corporis
+          dolore eius molestias mollitia provident recusandae quia, delectus eos
+          ut nisi sunt ea expedita reiciendis iusto beatae. Obcaecati
+          exercitationem perferendis quia iure quod quisquam aliquid sint
+          similique harum officia. Nam sed officia debitis quasi fugit numquam
+          nulla tenetur ullam ea laudantium delectus facilis ad dolor quaerat
+          libero ducimus mollitia, earum fuga, magnam id unde in magni velit
+          alias. Debitis laborum natus soluta, illo quasi quo. Quam quia enim,
+          necessitatibus molestiae et fugit aliquid. Aut quaerat quod, molestias
+          voluptatem odit ab placeat explicabo reiciendis ducimus, rerum fugit
+          eligendi minus fuga odio inventore ad quia officiis? Obcaecati esse
+          itaque aperiam sapiente soluta facilis ducimus tempora recusandae illo
+          iure. Repudiandae in mollitia cumque officia dolorum laborum magni
+          sequi repellendus, provident ipsum. Cupiditate molestias numquam
+          labore sunt accusamus, suscipit illo optio necessitatibus omnis quis
+          sint, dolore esse dicta, voluptas quasi facilis fuga atque nulla.
+          Veniam, voluptates similique eum ut adipisci suscipit distinctio?
+          Magnam cum consectetur, illo culpa, nulla sint officiis corrupti
+          tempora officia, ratione nobis! Cupiditate ipsa voluptatibus dolores
+          laborum optio fugiat est unde iste cum, maiores rerum quas magni ea et
+          totam. Blanditiis, tempora?
+        </>
+      ),
+    },
+    {
       id: "deleteList",
       label: "Delete List",
       type: "panel" as const,
@@ -68,12 +101,12 @@ export const ListItems: React.FC<IProps> = ({ setOpenListId }) => {
   return (
     <div
       ref={dropdownRef}
-      className="absolute -top-10 bg-bgS h-[27.5rem] w-[18rem] p-4 rounded-md z-[40000]"
+      className="absolute -top-10 bg-bgS w-[18rem] rounded-md z-[30]"
     >
       {activePanel ? (
-        <div>
+        <div className="h-56 overflow-y-auto custom-scrollbar p-4">
           <button
-            className="text-sm text-blue-400 mb-2"
+            className="text-sm text-blue-400 mb-2 "
             onClick={() => setActivePanel(null)}
           >
             ← Back
@@ -83,14 +116,22 @@ export const ListItems: React.FC<IProps> = ({ setOpenListId }) => {
           </div>
         </div>
       ) : (
-        <ul className="space-y-2">
+        <ul className="space-y-2 h-[27.5rem]">
+          <div className="flex items-center justify-between px-2 py-1">
+            <X size={16} onClick={closeDropdown} />
+            <h2 className="text-sm text-textP font-charlie-text-r">
+              List actions
+            </h2>
+            <div></div>
+          </div>
+          <CustomBorder />
           {menuItems.map((item) => {
             if (item.type === "button") {
               return (
                 <li
                   key={item.id}
                   onClick={item.action}
-                  className="cursor-pointer text-sm text-textP hover:text-white hover:bg-gray-500 p-2 rounded"
+                  className="cursor-pointer font-charlie-text-r text-sm text-textP hover:text-white hover:bg-gray-500 p-2 rounded"
                 >
                   {item.label}
                 </li>
@@ -101,7 +142,7 @@ export const ListItems: React.FC<IProps> = ({ setOpenListId }) => {
               return (
                 <Dialog key={item.id}>
                   <DialogTrigger asChild>
-                    <li className="cursor-pointer text-sm text-textP hover:text-white hover:bg-gray-500 p-2 rounded">
+                    <li className="cursor-pointer  font-charlie-text-r text-sm text-textP hover:text-white hover:bg-gray-500 p-2 rounded">
                       {item.label}
                     </li>
                   </DialogTrigger>
@@ -115,7 +156,7 @@ export const ListItems: React.FC<IProps> = ({ setOpenListId }) => {
                 <li
                   key={item.id}
                   onClick={() => setActivePanel(item.id)}
-                  className="cursor-pointer text-sm text-textP hover:text-white hover:bg-gray-500 p-2 rounded"
+                  className="cursor-pointer  font-charlie-text-r text-sm text-textP hover:text-white hover:bg-gray-500 p-2 rounded"
                 >
                   {item.label}
                 </li>
