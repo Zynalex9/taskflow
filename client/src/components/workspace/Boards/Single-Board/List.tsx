@@ -78,11 +78,10 @@ const List: React.FC<ListProps> = ({ list }) => {
                 <div className="font-bold mb-2 w-full flex items-center justify-between">
                   <h1>{singleList.name}</h1>
                   <ListDropdown
-                    activeListId={activeListId}
-                    setActiveListId={setActiveListId}
                     listId={singleList._id}
                     openListId={openListId}
                     setOpenListId={setOpenListId}
+                    setActiveListId={setActiveListId}
                   />
                 </div>
                 <div className="custom-scrollbar  overflow-y-auto max-h-56 pr-3">

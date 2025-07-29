@@ -1,17 +1,23 @@
-import { Dialog, DialogTrigger, DialogContent } from "@/components/ui/dialog";
+import { Dialog, DialogTrigger } from "@/components/ui/dialog";
 import { useState, useRef } from "react";
 import { useClickOutside } from "@/Context/useRefContext";
 import { X } from "lucide-react";
 import CustomBorder from "./CustomBorder";
+import { CopyingList } from "./CopyingList";
 
 interface IProps {
   setOpenListId: React.Dispatch<React.SetStateAction<string | null>>;
+  listId: string;
+  setActiveListId: React.Dispatch<React.SetStateAction<string | null>>;
 }
 
-export const ListItems: React.FC<IProps> = ({ setOpenListId }) => {
+export const ListItems: React.FC<IProps> = ({
+  setOpenListId,
+  listId,
+  setActiveListId,
+}) => {
   const dropdownRef = useRef<HTMLDivElement>(null);
   useClickOutside(dropdownRef, () => setOpenListId(null));
-
   const [activePanel, setActivePanel] = useState<string | null>(null);
 
   const closeDropdown = () => setOpenListId(null);
@@ -22,7 +28,7 @@ export const ListItems: React.FC<IProps> = ({ setOpenListId }) => {
       label: "Add Card",
       type: "button" as const,
       action: () => {
-        console.log("Card Added");
+        setActiveListId(listId);
         closeDropdown();
       },
     },
@@ -30,12 +36,7 @@ export const ListItems: React.FC<IProps> = ({ setOpenListId }) => {
       id: "copyList",
       label: "Copy List",
       type: "dialog" as const,
-      dialogContent: (
-        <DialogContent>
-          <h2 className="text-lg">Copy List</h2>
-          <p>Confirm copying list...</p>
-        </DialogContent>
-      ),
+      dialogContent: <CopyingList />,
     },
     {
       id: "moveList",
@@ -96,6 +97,15 @@ export const ListItems: React.FC<IProps> = ({ setOpenListId }) => {
         </>
       ),
     },
+    {
+      id: "watchCard",
+      label: "Watch Card",
+      type: "button" as const,
+      action: () => {
+        console.log("Card Added");
+        closeDropdown();
+      },
+    },
   ];
 
   return (
@@ -116,7 +126,7 @@ export const ListItems: React.FC<IProps> = ({ setOpenListId }) => {
           </div>
         </div>
       ) : (
-        <ul className="space-y-2 h-[27.5rem]">
+        <ul className="space-y-2 h-[19rem]">
           <div className="flex items-center justify-between px-2 py-1">
             <X size={16} onClick={closeDropdown} />
             <h2 className="text-sm text-textP font-charlie-text-r">

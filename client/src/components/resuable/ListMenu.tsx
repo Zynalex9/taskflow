@@ -6,10 +6,12 @@ export const ListDropdown = ({
   listId,
   openListId,
   setOpenListId,
+  setActiveListId
 }: {
   listId: string;
   openListId: string | null;
   setOpenListId: React.Dispatch<React.SetStateAction<string | null>>;
+  setActiveListId: React.Dispatch<React.SetStateAction<string | null>>;
 }) => {
   return (
     <div className="relative">
@@ -17,7 +19,7 @@ export const ListDropdown = ({
         onClick={() => setOpenListId(openListId === listId ? null : listId)}
       />
 
-      {openListId === listId && <ListItems setOpenListId={setOpenListId} />}
+      {openListId === listId && <ListItems setOpenListId={setOpenListId} setActiveListId={setActiveListId} listId={listId} />}
     </div>
   );
 };
