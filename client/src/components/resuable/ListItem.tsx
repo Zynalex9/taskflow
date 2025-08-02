@@ -4,6 +4,7 @@ import { useClickOutside } from "@/Context/useRefContext";
 import { X } from "lucide-react";
 import CustomBorder from "./CustomBorder";
 import { CopyingList } from "./CopyingList";
+import { MoveList } from "./MoveList";
 
 interface IProps {
   setOpenListId: React.Dispatch<React.SetStateAction<string | null>>;
@@ -42,15 +43,7 @@ export const ListItems: React.FC<IProps> = ({
       id: "moveList",
       label: "Move List",
       type: "panel" as const,
-      panelContent: (
-        <>
-          <h2 className="text-lg font-bold">Move List</h2>
-          <p>Select board or position to move.</p>
-          <button className="bg-blue-500 text-white px-2 py-1 rounded mt-2">
-            Move
-          </button>
-        </>
-      ),
+      panelContent: <MoveList listId={listId} setOpenListId={setOpenListId} />,
     },
     {
       id: "moveAllCards",
@@ -114,7 +107,7 @@ export const ListItems: React.FC<IProps> = ({
       className="absolute -top-10 bg-bgS w-[18rem] rounded-md z-[30]"
     >
       {activePanel ? (
-        <div className="h-56 overflow-y-auto custom-scrollbar p-4">
+        <div className="overflow-y-auto custom-scrollbar p-4 font-charlie-text-r">
           <button
             className="text-sm text-blue-400 mb-2 "
             onClick={() => setActivePanel(null)}

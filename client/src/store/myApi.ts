@@ -173,7 +173,7 @@ export const myApi = createApi({
                   _id: "temp-card-id",
                   name: newCardParams.name,
                   description: "",
-                  startDate:new Date().toISOString(),
+                  startDate: new Date().toISOString(),
                   endDate: new Date().toISOString(),
                   createdBy: "6831e098d6f0ccbee9895831",
                   members: [],
@@ -334,6 +334,38 @@ export const myApi = createApi({
         }
       },
     }),
+    moveList: builder.mutation({
+      query: (body: {
+        currentBoardId: string;
+        listId: string;
+        targetedBoardId: string;
+      }) => ({
+        url: "/api/list/move-list",
+        method: "PATCH",
+        body,
+      }),
+      invalidatesTags: (_, __, { currentBoardId }) => [
+        { type: "singleBoard", id: currentBoardId },
+      ],
+      async onQueryStarted(body, { dispatch, queryFulfilled }) {
+        const patchResult = dispatch(
+          myApi.util.updateQueryData(
+            "getSingleBoard",
+            body.currentBoardId,
+            (draft) => {
+              draft.data.lists = draft.data.lists.filter(
+                (list) => list._id !== body.listId
+              );
+            }
+          )
+        );
+        try {
+          await queryFulfilled;
+        } catch (error) {
+          patchResult.undo();
+        }
+      },
+    }),
   }),
 });
 
@@ -348,4 +380,5 @@ export const {
   useUpdateBoardCoverMutation,
   useDeleteBoardMutation,
   useAddBoardDescriptionMutation,
+  useMoveListMutation,
 } = myApi;
