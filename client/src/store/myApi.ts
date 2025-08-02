@@ -366,6 +366,35 @@ export const myApi = createApi({
         }
       },
     }),
+    deleteList: builder.mutation({
+      query: (body: {
+        listId: string;
+        workspaceId: string;
+        boardId: string;
+      }) => ({
+        url: `/api/list/${body.workspaceId}/${body.listId}/delete-list`,
+        method: "DELETE",
+        body: { listId: body.listId },
+        credentials: "include",
+      }),
+      invalidatesTags: (_, __, { boardId }) => [
+        { type: "singleBoard", id: boardId },
+      ],
+      async onQueryStarted({ listId, boardId }, { dispatch, queryFulfilled }) {
+        const patchResult = dispatch(
+          myApi.util.updateQueryData("getSingleBoard", boardId, (draft) => {
+            draft.data.lists = draft.data.lists.filter(
+              (list) => list._id !== listId
+            );
+          })
+        );
+        try {
+          await queryFulfilled;
+        } catch (error) {
+          patchResult.undo();
+        }
+      },
+    }),
   }),
 });
 
@@ -381,4 +410,5 @@ export const {
   useDeleteBoardMutation,
   useAddBoardDescriptionMutation,
   useMoveListMutation,
+  useDeleteListMutation,
 } = myApi;

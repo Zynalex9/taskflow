@@ -160,13 +160,16 @@ export const deleteList = async (req: Request, res: Response) => {
   const session = await mongoose.startSession();
   try {
     session.startTransaction();
+
     const { listId, workspaceId } = req.params;
     const userId = req.user._id;
+
     if (!listId) {
       await session.abortTransaction();
       res.status(400).json({ message: "List id missing" });
       return;
     }
+
     const isAuthorized = await CheckAdmin(userId, workspaceId);
     if (!isAuthorized) {
       await session.abortTransaction();
@@ -175,6 +178,7 @@ export const deleteList = async (req: Request, res: Response) => {
         .json({ message: "You are not authorized to delete the board" });
       return;
     }
+
     const list = await ListModel.findById(listId).session(session);
     if (!list) {
       await session.abortTransaction();
@@ -183,17 +187,17 @@ export const deleteList = async (req: Request, res: Response) => {
     }
 
     const cards = await CardModel.find({ list: listId });
-    if (cards.length == 0) {
+
+    if (cards.length === 0) {
       await ListModel.findByIdAndDelete(listId).session(session);
-      session.commitTransaction();
+      await session.commitTransaction(); // ✅ Await commit
       res
         .status(200)
-        .json({ message: "List deleted. There was no cards in the list" });
+        .json({ message: "List deleted. There were no cards in the list" });
       return;
     }
 
-    const cardIds = cards.flatMap((c) => c._id);
-
+    const cardIds = cards.map((c) => c._id);
     const allCommentsIds = findData(cards, "comments");
     const allLabelsIds = findData(cards, "labels");
     const allAttachmentsId = findData(cards, "attachments");
@@ -206,10 +210,11 @@ export const deleteList = async (req: Request, res: Response) => {
 
     await CardModel.deleteMany({ _id: { $in: cardIds } }).session(session);
     await ListModel.findByIdAndDelete(listId).session(session);
+
+    await session.commitTransaction(); // ✅ Await commit
     await redisClient.del(`lists:${list.board}:userId:${userId}`);
-    session.commitTransaction();
+
     res.status(200).json({ message: `List is deleted with related data` });
-    return;
   } catch (error) {
     await session.abortTransaction();
     console.error("Delete List Error:", error);
@@ -218,6 +223,7 @@ export const deleteList = async (req: Request, res: Response) => {
     session.endSession();
   }
 };
+
 export const copyList = asyncHandler(async (req, res) => {
   const required = ["listId", "targetedBoardId"];
   if (!checkRequiredBody(req, res, required)) return;

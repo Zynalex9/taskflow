@@ -5,6 +5,7 @@ import { X } from "lucide-react";
 import CustomBorder from "./CustomBorder";
 import { CopyingList } from "./CopyingList";
 import { MoveList } from "./MoveList";
+import { DeleteList } from "./DeleteList";
 
 interface IProps {
   setOpenListId: React.Dispatch<React.SetStateAction<string | null>>;
@@ -45,50 +46,42 @@ export const ListItems: React.FC<IProps> = ({
       type: "panel" as const,
       panelContent: <MoveList listId={listId} setOpenListId={setOpenListId} />,
     },
-    {
-      id: "moveAllCards",
-      label: "Move all cards in this list",
-      type: "panel" as const,
-      panelContent: (
-        <>
-          Lorem ipsum dolor, sit amet consectetur adipisicing elit. Ipsa alias
-          quam inventore architecto maiores officiis sed quod commodi corporis
-          dolore eius molestias mollitia provident recusandae quia, delectus eos
-          ut nisi sunt ea expedita reiciendis iusto beatae. Obcaecati
-          exercitationem perferendis quia iure quod quisquam aliquid sint
-          similique harum officia. Nam sed officia debitis quasi fugit numquam
-          nulla tenetur ullam ea laudantium delectus facilis ad dolor quaerat
-          libero ducimus mollitia, earum fuga, magnam id unde in magni velit
-          alias. Debitis laborum natus soluta, illo quasi quo. Quam quia enim,
-          necessitatibus molestiae et fugit aliquid. Aut quaerat quod, molestias
-          voluptatem odit ab placeat explicabo reiciendis ducimus, rerum fugit
-          eligendi minus fuga odio inventore ad quia officiis? Obcaecati esse
-          itaque aperiam sapiente soluta facilis ducimus tempora recusandae illo
-          iure. Repudiandae in mollitia cumque officia dolorum laborum magni
-          sequi repellendus, provident ipsum. Cupiditate molestias numquam
-          labore sunt accusamus, suscipit illo optio necessitatibus omnis quis
-          sint, dolore esse dicta, voluptas quasi facilis fuga atque nulla.
-          Veniam, voluptates similique eum ut adipisci suscipit distinctio?
-          Magnam cum consectetur, illo culpa, nulla sint officiis corrupti
-          tempora officia, ratione nobis! Cupiditate ipsa voluptatibus dolores
-          laborum optio fugiat est unde iste cum, maiores rerum quas magni ea et
-          totam. Blanditiis, tempora?
-        </>
-      ),
-    },
+    // {
+    //   id: "moveAllCards",
+    //   label: "Move all cards in this list",
+    //   type: "panel" as const,
+    //   panelContent: (
+    //     <>
+    //       Lorem ipsum dolor, sit amet consectetur adipisicing elit. Ipsa alias
+    //       quam inventore architecto maiores officiis sed quod commodi corporis
+    //       dolore eius molestias mollitia provident recusandae quia, delectus eos
+    //       ut nisi sunt ea expedita reiciendis iusto beatae. Obcaecati
+    //       exercitationem perferendis quia iure quod quisquam aliquid sint
+    //       similique harum officia. Nam sed officia debitis quasi fugit numquam
+    //       nulla tenetur ullam ea laudantium delectus facilis ad dolor quaerat
+    //       libero ducimus mollitia, earum fuga, magnam id unde in magni velit
+    //       alias. Debitis laborum natus soluta, illo quasi quo. Quam quia enim,
+    //       necessitatibus molestiae et fugit aliquid. Aut quaerat quod, molestias
+    //       voluptatem odit ab placeat explicabo reiciendis ducimus, rerum fugit
+    //       eligendi minus fuga odio inventore ad quia officiis? Obcaecati esse
+    //       itaque aperiam sapiente soluta facilis ducimus tempora recusandae illo
+    //       iure. Repudiandae in mollitia cumque officia dolorum laborum magni
+    //       sequi repellendus, provident ipsum. Cupiditate molestias numquam
+    //       labore sunt accusamus, suscipit illo optio necessitatibus omnis quis
+    //       sint, dolore esse dicta, voluptas quasi facilis fuga atque nulla.
+    //       Veniam, voluptates similique eum ut adipisci suscipit distinctio?
+    //       Magnam cum consectetur, illo culpa, nulla sint officiis corrupti
+    //       tempora officia, ratione nobis! Cupiditate ipsa voluptatibus dolores
+    //       laborum optio fugiat est unde iste cum, maiores rerum quas magni ea et
+    //       totam. Blanditiis, tempora?
+    //     </>
+    //   ),
+    // },
     {
       id: "deleteList",
       label: "Delete List",
       type: "panel" as const,
-      panelContent: (
-        <>
-          <h2 className="text-lg font-bold text-red-500">Delete List</h2>
-          <p>This action cannot be undone.</p>
-          <button className="bg-red-600 text-white px-2 py-1 rounded mt-2">
-            Delete
-          </button>
-        </>
-      ),
+      panelContent: <DeleteList listId={listId} />,
     },
     {
       id: "watchCard",
