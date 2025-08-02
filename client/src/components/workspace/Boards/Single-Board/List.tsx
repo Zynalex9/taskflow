@@ -67,7 +67,7 @@ const List: React.FC<ListProps> = ({ list }) => {
   const [openListId, setOpenListId] = useState<string | null>(null);
 
   return (
-    <div className="flex gap-4 w-full items-stretch">
+    <div className="flex gap-4 items-stretch w-max">
       {list?.length
         ? list.map((singleList) => (
             <div>

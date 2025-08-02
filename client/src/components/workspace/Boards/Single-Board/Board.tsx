@@ -34,7 +34,7 @@ const Board = () => {
             boardId={data.data._id}
           />
 
-          <div className="p-8 w-full min-h-[79vh] overflow-x-auto custom-scrollbar">
+<div className="p-8 w-full min-h-[79vh] overflow-x-auto overflow-y-hidden custom-scrollbar">
             {isLoading ? (
               <div className="flex gap-4 w-max min-w-full mt-4">
                 {[...Array(3)].map((_, i) => (
