@@ -59,7 +59,7 @@ export const getBoardPermissions = async (
   return [];
 };
 
-export const getPermission = async (
+export const getUserPermissions = async (
   userId: Types.ObjectId,
   resourceType: "workspace" | "board" | "list" | "card",
   resourceId: string
@@ -85,4 +85,44 @@ export const getPermission = async (
     }
   }
   return Array.from(permissions);
+};
+export const hasPermission = async (
+  userId: Types.ObjectId,
+  permission: string,
+  resourceType: "workspace" | "board" | "card",
+  resourceId: string
+): Promise<boolean> => {
+  try {
+    const userPermissions = await getUserPermissions(
+      userId,
+      resourceType,
+      resourceId
+    );
+    return userPermissions.includes(permission);
+  } catch (error) {
+    console.error("Permission check error:", error);
+    return false;
+  }
+};
+export const authorize = async (
+  userId: Types.ObjectId,
+  action: string,
+  resourceType: "workspace" | "board" | "card",
+  resourceId: string
+): Promise<{ authorized: boolean; reason?: string }> => {
+  const userHasPermission = await hasPermission(
+    userId,
+    action,
+    resourceType,
+    resourceId
+  );
+
+  if (!userHasPermission) {
+    return {
+      authorized: false,
+      reason: `You don't have permission to ${action} on this ${resourceType}`,
+    };
+  }
+
+  return { authorized: true };
 };
