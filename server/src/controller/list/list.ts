@@ -450,6 +450,8 @@ export const copyIntoNewList = asyncHandler(async (req, res) => {
   await ListModel.findByIdAndUpdate(newList._id, {
     $set: { cards: newCardIds },
   });
-
+  await boardModel.findByIdAndUpdate(boardId, {
+    $push: { lists: newList._id },
+  });
   res.status(201).json({ message: "List copied successfully", newList });
 });

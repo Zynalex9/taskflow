@@ -395,6 +395,20 @@ export const myApi = createApi({
         }
       },
     }),
+    copyListIntoNewList: builder.mutation({
+      query: (body: {
+        listId: string;
+        boardId: string;
+      }) => ({
+        url: `/api/list/copy-list-new`,
+        method: "POST",
+        credentials: "include",
+        body
+      }),
+      invalidatesTags: (_, __, { boardId }) => [
+        { type: "singleBoard", id: boardId },
+      ],
+    })
   }),
 });
 
@@ -411,4 +425,5 @@ export const {
   useAddBoardDescriptionMutation,
   useMoveListMutation,
   useDeleteListMutation,
+  useCopyListIntoNewListMutation,
 } = myApi;

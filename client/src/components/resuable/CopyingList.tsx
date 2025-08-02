@@ -1,9 +1,32 @@
 import { useSingleBoardContext } from "@/Context/SingleBoardContext";
 import { DialogContent } from "../ui/dialog";
 import ModalButton from "./ModalButton";
+import { useState } from "react";
+import { useCopyListIntoNewListMutation } from "@/store/myApi";
 
-export const CopyingList = () => {
+export const CopyingList = ({ listId }: { listId: string }) => {
   const { board } = useSingleBoardContext();
+  const [loading, setLoading] = useState(false);
+  const [copyList] = useCopyListIntoNewListMutation();
+  const handleCopy = async () => {
+    try {
+      if (!board._id || !listId) {
+        console.error("Missing required parameters");
+        return;
+      }
+      const body = {
+        listId,
+        boardId: board._id,
+      };
+      setLoading(true);
+      await copyList(body).unwrap();
+
+      setLoading(false);
+    } catch (error) {
+      console.error("Failed to copy list:", error);
+      setLoading(false);
+    }
+  };
   return (
     <DialogContent
       data-ignore-click-outside="true"
@@ -22,7 +45,12 @@ export const CopyingList = () => {
           ))}
         </select>
       </div>
-      <ModalButton btnText="Copy" />
+      <ModalButton
+        btnText="Copy"
+        disabled={loading}
+        onClickFn={handleCopy}
+        customStyles={`${loading ? "opacity-50 cursor-not-allowed" : ""} w-1/2`}
+      />
     </DialogContent>
   );
 };

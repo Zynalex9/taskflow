@@ -38,7 +38,7 @@ export const ListItems: React.FC<IProps> = ({
       id: "copyList",
       label: "Copy List",
       type: "dialog" as const,
-      dialogContent: <CopyingList />,
+      dialogContent: <CopyingList listId={listId} />,
     },
     {
       id: "moveList",
@@ -83,15 +83,15 @@ export const ListItems: React.FC<IProps> = ({
       type: "panel" as const,
       panelContent: <DeleteList listId={listId} />,
     },
-    {
-      id: "watchCard",
-      label: "Watch Card",
-      type: "button" as const,
-      action: () => {
-        console.log("Card Added");
-        closeDropdown();
-      },
-    },
+    // {
+    //   id: "watchCard",
+    //   label: "Watch Card",
+    //   type: "button" as const,
+    //   action: () => {
+    //     console.log("Card Added");
+    //     closeDropdown();
+    //   },
+    // },
   ];
 
   return (
