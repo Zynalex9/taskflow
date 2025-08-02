@@ -3,11 +3,14 @@ import mongoose from "mongoose";
 import { boardModel } from "../../models/board.models";
 import { workSpaceModel } from "../../models/workspace.model";
 import { ListModel } from "../../models/list.models";
-import { commentsModel } from "../../models/card.comments.models";
-import { CardLabelModel } from "../../models/card.label.model";
-import { CheckListModel } from "../../models/card.checklist.model";
-import { CardAttachmentModel } from "../../models/card.attachments.model";
-import { CardModel } from "../../models/card.model";
+import { commentsModel, IComment } from "../../models/card.comments.models";
+import { CardLabelModel, ICardLabel } from "../../models/card.label.model";
+import { CheckListModel, IChecklist } from "../../models/card.checklist.model";
+import {
+  CardAttachmentModel,
+  ICardAttachment,
+} from "../../models/card.attachments.model";
+import { CardModel, ICard } from "../../models/card.model";
 import {
   CheckAdmin,
   checkRequiredBody,
@@ -279,4 +282,168 @@ export const moveList = asyncHandler(async (req, res) => {
         `${list.name} moved to ${targetedBoard.title}`
       )
     );
+});
+export const copyIntoNewList = asyncHandler(async (req, res) => {
+  const { listId, boardId } = req.body;
+
+  if (!listId || !boardId) {
+    res.status(400).json({ message: "List ID and Board ID are required" });
+    return;
+  }
+
+  // Fixed: Consistent model naming (assuming PascalCase convention)
+  const targetBoard = await boardModel.findById(boardId);
+  if (!targetBoard) {
+    res.status(404).json({ message: "Target board not found" });
+    return;
+  }
+
+  const [originalList] = await ListModel.aggregate([
+    { $match: { _id: new mongoose.Types.ObjectId(listId) } },
+    {
+      $lookup: {
+        from: "todos",
+        localField: "cards",
+        foreignField: "_id",
+        as: "cards",
+        pipeline: [
+          {
+            $lookup: {
+              from: "comments",
+              localField: "comments",
+              foreignField: "_id",
+              as: "comments",
+            },
+          },
+          {
+            $lookup: {
+              from: "labels",
+              localField: "labels",
+              foreignField: "_id",
+              as: "labels",
+            },
+          },
+          {
+            $lookup: {
+              from: "checklists",
+              localField: "checklist",
+              foreignField: "_id",
+              as: "checklist",
+            },
+          },
+          {
+            $lookup: {
+              from: "attachments",
+              localField: "attachments",
+              foreignField: "_id",
+              as: "attachments",
+            },
+          },
+        ],
+      },
+    },
+  ]);
+
+  if (!originalList) {
+    res.status(404).json({ message: "List not found" });
+    return;
+  }
+
+  const newList = await ListModel.create({
+    name: `${originalList.name} (Copy)`,
+    color: originalList.color,
+    createdBy: originalList.createdBy,
+    position: originalList.position + 1,
+    board: new mongoose.Types.ObjectId(boardId),
+    cards: [],
+    isArchived: false,
+  });
+
+  // Collect all new card IDs for efficient batch update
+  const newCardIds: any[] = [];
+
+  await Promise.all(
+    originalList.cards.map(async (card: any) => {
+      const [newComments, newLabels, newChecklists, newAttachments] =
+        await Promise.all([
+          Promise.all(
+            card.comments.map((c: any) =>
+              commentsModel.create({
+                comment: c.comment,
+                author: c.author,
+              })
+            )
+          ),
+          Promise.all(
+            card.labels.map((l: any) =>
+              CardLabelModel.create({
+                name: l.name,
+                color: l.color,
+              })
+            )
+          ),
+          Promise.all(
+            card.checklist.map((ch: any) =>
+              CheckListModel.create({
+                title: ch.title,
+                items: ch.items,
+                createdBy: ch.createdBy,
+              })
+            )
+          ),
+          Promise.all(
+            card.attachments.map((a: any) =>
+              CardAttachmentModel.create({
+                fileUrl: a.fileUrl,
+                filename: a.filename,
+                uploadedBy: a.uploadedBy,
+              })
+            )
+          ),
+        ]);
+
+      const newCard = await CardModel.create({
+        name: card.name,
+        description: card.description,
+        createdBy: card.createdBy,
+        comments: newComments.map((c) => c._id),
+        labels: newLabels.map((l) => l._id),
+        checklist: newChecklists.map((ch) => ch._id),
+        attachments: newAttachments.map((a) => a._id),
+        list: newList._id,
+      });
+
+      // Update related documents with new card ID references
+      await Promise.all([
+        // Update checklists with cardId reference
+        ...newChecklists.map((checklist) =>
+          CheckListModel.findByIdAndUpdate(checklist._id, {
+            cardId: newCard._id,
+          })
+        ),
+        // Update attachments with cardId reference
+        ...newAttachments.map((attachment) =>
+          CardAttachmentModel.findByIdAndUpdate(attachment._id, {
+            cardId: newCard._id,
+          })
+        ),
+        // Update labels with card reference (if your model has this field)
+        ...newLabels.map((label) =>
+          CardLabelModel.findByIdAndUpdate(label._id, {
+            card: newCard._id,
+          })
+        ),
+      ]);
+
+      // Collect card ID instead of updating list immediately
+      newCardIds.push(newCard._id);
+    })
+  );
+
+  // Fixed: Single efficient batch update instead of multiple individual updates
+  await ListModel.findByIdAndUpdate(newList._id, {
+    $set: { cards: newCardIds },
+  });
+
+  res.status(201).json({ message: "List copied successfully", newList });
 });

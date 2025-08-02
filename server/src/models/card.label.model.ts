@@ -1,6 +1,6 @@
 import mongoose, { Schema, model, Document } from "mongoose";
 
-interface ICardLabel extends Document {
+export interface ICardLabel extends Document {
   name: string;
   color: string;
   createdAt: Date;
@@ -8,12 +8,11 @@ interface ICardLabel extends Document {
 }
 const CardLabelSchema: Schema = new Schema(
   {
-    name: { type: String},
+    name: { type: String },
     color: { type: String, required: true },
     card: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Card",
-      required: true,
     },
   },
   { timestamps: true }

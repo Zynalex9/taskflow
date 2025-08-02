@@ -52,6 +52,7 @@ import {
   getAllLists,
   copyList,
   moveList,
+  copyIntoNewList,
 } from "../controller/list/list";
 import {
   addCover,
@@ -169,6 +170,7 @@ listRouter
   .route("/:workspaceId/:listId/delete-list")
   .delete(verifyJWT, deleteList);
 listRouter.route("/:boardId/get-lists").get(verifyJWT, getAllLists);
+listRouter.route("/copy-list-new").post(verifyJWT, copyIntoNewList);
 export { listRouter };
 cardRouter.route("/join-card").post(verifyJWT, joinCard);
 cardRouter.route("/leave-card").post(verifyJWT, leaveCard);

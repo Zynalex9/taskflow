@@ -57,7 +57,6 @@ const CheckListSchema: Schema = new Schema(
     card: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Card",
-      required: true,
     },
   },
   { timestamps: true }

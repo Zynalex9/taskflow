@@ -1,6 +1,6 @@
 import { Schema, model, Document, Types } from "mongoose";
 
-interface ICardAttachment extends Document {
+ interface ICardAttachment extends Document {
   cardId: Types.ObjectId;
   filename?: string;
   fileUrl: string;
@@ -9,7 +9,7 @@ interface ICardAttachment extends Document {
 
 const CardAttachmentSchema = new Schema<ICardAttachment>(
   {
-    cardId: { type: Schema.Types.ObjectId, ref: "Card", required: true },
+    cardId: { type: Schema.Types.ObjectId, ref: "Card", },
     filename: String,
     fileUrl: { type: String, required: true },
     uploadedBy: { type: Schema.Types.ObjectId, ref: "User" },

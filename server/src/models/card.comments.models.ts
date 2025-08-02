@@ -1,5 +1,5 @@
 import mongoose, { Schema, Document, Types } from "mongoose";
-interface IComment extends Document {
+export interface IComment extends Document {
   comment: string;
   author: Types.ObjectId;
 }
