@@ -48,7 +48,7 @@ export const ShareDialogContent = () => {
       console.log("sending request with searchValue:", searchValue);
       if (!searchValue.trim()) return;
       const response = await axios.get<ApiResponse>(
-        `${import.meta.env.VITE_BASE_URL}/api/user/${searchValue}/find-by-email`
+        `${import.meta.env.VITE_BASE_URL}/api/user/${searchValue}/find-by-identifier`
       );
       if (response.data.success) {
         setApiResponse(response.data);
@@ -94,6 +94,7 @@ export const ShareDialogContent = () => {
           />
           <button
             disabled={loading}
+            
             className="bg-blue-primary px-2 py-2 text-black rounded border-black border-1"
           >
             Share

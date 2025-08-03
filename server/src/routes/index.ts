@@ -181,11 +181,7 @@ workSpaceRouter
   .route("/get-members/:workspaceId")
   .get(
     verifyJWT,
-    requirePermission(
-      PERMISSIONS.WORKSPACE_VIEW,
-      "workspace",
-      "workspaceId"
-    ),
+    requirePermission(PERMISSIONS.WORKSPACE_VIEW, "workspace", "workspaceId"),
     getWorkspaceMembers
   );
 
@@ -213,7 +209,13 @@ boardRouter
   .route("/update-visibility/:boardId")
   .patch(verifyJWT, updateVisibility);
 export { boardRouter };
-listRouter.route("/create-list").post(verifyJWT, createList);
+listRouter
+  .route("/create-list")
+  .post(
+    verifyJWT,
+    requirePermission(PERMISSIONS.BOARD_CREATE_LIST, "board", "boardId"),
+    createList
+  );
 listRouter.route("/copy-list").patch(verifyJWT, copyList);
 listRouter.route("/move-list").patch(verifyJWT, moveList);
 listRouter

@@ -29,6 +29,8 @@ export const AboutPanel = () => {
           <User2 size={18} />
           <h1>Board Members</h1>
         </div>
+        <div className="h-36 overflow-y-auto custom-scrollbar">
+
         {board.membersData.map((member) => (
           <div key={member._id} className="flex items-center gap-2 p-2">
             <img
@@ -46,6 +48,7 @@ export const AboutPanel = () => {
             </div>
           </div>
         ))}
+        </div>
         <CustomBorder />
         <div>
           <div className="flex gap-1 items-center">
