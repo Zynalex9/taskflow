@@ -62,7 +62,7 @@ const Topbar = () => {
   const getActivities = async () => {
     try {
       const response = await axios.get(
-        "http://localhost:3000/api/user/activity-log",
+       `${import.meta.env.VITE_BASE_URL}/api/user/activity-log`,
         { withCredentials: true }
       );
       setActivities(response.data.data);
@@ -162,7 +162,7 @@ const Topbar = () => {
                 </button>
               </AlertDialogTrigger>
 
-              <AlertDialogContent>
+              <AlertDialogContent className="bg-bgS border-none text-textP">
                 <AlertDialogHeader>
                   <AlertDialogTitle>Create a new workspace</AlertDialogTitle>
                   <AlertDialogDescription>
@@ -173,16 +173,17 @@ const Topbar = () => {
                       <input
                         {...register("name")}
                         placeholder="Add a title"
-                        className="w-full p-2 border rounded"
+                        className="w-full p-2 border rounded text-textP"
                       />
                       <input
                         {...register("workspace-cover")}
                         type="file"
-                        className="w-full p-2 border rounded"
+                        accept="image/*"
+                        className="w-full p-2 border rounded text-textP"
                       />
                       <AlertDialogFooter>
                         <AlertDialogCancel
-                          className="bg-black text-textP"
+                          className="bg-bgS hover:bg-S/60 text-white hover:text-white cursor-pointers"
                           onClick={() => setOpenDialog(false)}
                         >
                           Cancel
