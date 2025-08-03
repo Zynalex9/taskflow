@@ -6,6 +6,8 @@ import {
 import ModalButton from "./ModalButton";
 import { toast, ToastContainer } from "react-toastify";
 import { useState } from "react";
+import { useSelector } from "react-redux";
+import { RootState } from "@/store/store";
 
 interface IMember {
   userId: string;
@@ -26,6 +28,8 @@ export const MembersDisplay = ({
   membersData,
   workspaceId,
 }: MembersDisplayProps) => {
+  const { user } = useSelector((state: RootState) => state.auth);
+
   const [addAdmin] = useAddWorkspaceAdminMutation();
   const [removeAdmin] = useRemoveWorkspaceAdminMutation();
   const [removeMember] = useRemoveWorkspaceMemberMutation();
@@ -102,7 +106,11 @@ export const MembersDisplay = ({
                     className="w-12 h-12 rounded-full object-cover shadow-sm"
                   />
                   <div>
-                    <h2 className="text-xl text-textP">{member.username}</h2>
+                    <h2 className="text-xl text-textP">
+                      {user?._id === member.userId
+                        ? `${member.username} (You)`
+                        : member.username}
+                    </h2>
                     <p className="text-xs text-gray-400 capitalize">
                       {member.role}
                     </p>
@@ -112,29 +120,38 @@ export const MembersDisplay = ({
                   </div>
                 </div>
                 <div className="flex items-center gap-2">
-                  <ModalButton
-                    disabled={isRemoving}
-                    btnText={isRemoving ? "Removing..." : "Remove"}
-                    customStyles="bg-red-500 text-white"
-                    onClickFn={() => removeMemberHandler(member.userId)}
-                  />
-                  <ModalButton
-                    disabled={isAdminLoading}
-                    btnText={
-                      member.role === "admin"
-                        ? isAdminLoading
-                          ? "Removing..."
-                          : "Remove admin"
-                        : isAdminLoading
-                        ? "Adding..."
-                        : "Make an admin"
-                    }
-                    onClickFn={() =>
-                      member.role === "admin"
-                        ? removeAdminHandler(member.userId)
-                        : addAdminHandler(member.userId)
-                    }
-                  />
+                  {user?._id === member.userId ? (
+                    ""
+                  ) : (
+                    <ModalButton
+                      disabled={isRemoving}
+                      btnText={isRemoving ? "Removing..." : "Remove"}
+                      customStyles="bg-red-500 text-white"
+                      onClickFn={() => removeMemberHandler(member.userId)}
+                    />
+                  )}
+
+                  {user?._id === member.userId ? (
+                    ""
+                  ) : (
+                    <ModalButton
+                      disabled={isAdminLoading}
+                      btnText={
+                        member.role === "admin"
+                          ? isAdminLoading
+                            ? "Removing..."
+                            : "Remove admin"
+                          : isAdminLoading
+                          ? "Adding..."
+                          : "Make an admin"
+                      }
+                      onClickFn={() =>
+                        member.role === "admin"
+                          ? removeAdminHandler(member.userId)
+                          : addAdminHandler(member.userId)
+                      }
+                    />
+                  )}
                 </div>
               </div>
             );

@@ -10,7 +10,7 @@ export const getWorkspacePermissions = async (
   const workspace = await workSpaceModel.findById(workspaceId);
   if (!workspace) return [];
   if (workspace.createdBy.equals(userId)) {
-    return ROLES.WORKSPACE_ADMIN.permissions;
+    return ROLES.WORKSPACE_OWNER.permissions;
   }
   if (workspace.admin.includes(userId)) {
     return ROLES.WORKSPACE_ADMIN.permissions;

@@ -11,7 +11,6 @@ import { CardAttachmentModel } from "../../models/card.attachments.model";
 import { CheckListModel } from "../../models/card.checklist.model";
 import { asyncHandler } from "../../utils/asyncHandler";
 import {
-  CheckAdmin,
   checkRequiredBody,
   getRandomColor,
   lPushList,
@@ -28,11 +27,7 @@ interface IParams {
 
 export const createWorkSpace = async (req: Request, res: Response) => {
   try {
-    const {
-      name,
-      members: memberIdentifiers,
-      admins: adminIdentifiers,
-    }: IParams = req.body;
+    const { name }: IParams = req.body;
     const userId = req.user._id;
     if (!name) {
       res.status(409).json({ message: "Please name your workspace" });
@@ -46,41 +41,7 @@ export const createWorkSpace = async (req: Request, res: Response) => {
       return;
     }
     const workspaceAdmins = [userId];
-    const fetchUsersByIdentifiers = async (identifiers: string[]) => {
-      const users = await UserModel.find({
-        $or: [
-          {
-            email: { $in: identifiers },
-          },
-          {
-            username: { $in: identifiers },
-          },
-        ],
-      });
-      return users;
-    };
 
-    if (adminIdentifiers && adminIdentifiers.length > 0) {
-      const AdditionalAdmins = await fetchUsersByIdentifiers(adminIdentifiers);
-      if (AdditionalAdmins && AdditionalAdmins.length > 0) {
-        AdditionalAdmins.forEach((admin) => {
-          if (!workspaceAdmins.includes(admin)) {
-            workspaceAdmins.push(admin._id);
-          }
-        });
-      }
-    }
-    const workspaceMembers: any = [];
-    if (memberIdentifiers && memberIdentifiers.length > 0) {
-      const addedMembers = await fetchUsersByIdentifiers(memberIdentifiers);
-      if (addedMembers && addedMembers.length > 0) {
-        addedMembers.forEach((member) => {
-          if (!workspaceMembers.includes(member)) {
-            workspaceMembers.push(member._id);
-          }
-        });
-      }
-    }
     let workspaceCover;
     if (req.file) {
       const localFilePath = req.file.path;
@@ -97,20 +58,16 @@ export const createWorkSpace = async (req: Request, res: Response) => {
     const workSpace = await workSpaceModel.create({
       name,
       admin: workspaceAdmins,
-      members: workspaceMembers || [],
       createdBy: userId,
       cover: workspaceCover,
+      members: [
+        {
+          user: userId,
+          role: "admin",
+        },
+      ],
     });
 
-    const allUsers = [...workspaceAdmins, ...workspaceMembers];
-    await UserModel.updateMany(
-      { _id: { $in: allUsers } },
-      {
-        $push: {
-          workspace: workSpace._id,
-        },
-      }
-    );
     await lPushList(userId, `Created Workspace: ${workSpace.name}`);
     await redisClient.del(`workspace:${workSpace._id}`);
     res.status(201).json({
@@ -307,11 +264,11 @@ export const getCalendarData = async (req: Request, res: Response) => {
 };
 export const allWorkspaces = asyncHandler(
   async (req: Request, res: Response) => {
-    const userId = req.user?._id; 
-    
+    const userId = req.user?._id;
+
     if (!userId) {
-       res.status(401).json(new ApiResponse(401, {}, "Unauthorized"));
-       return
+      res.status(401).json(new ApiResponse(401, {}, "Unauthorized"));
+      return;
     }
 
     const cachedKey = `user:${userId}:workspaces`;
@@ -325,23 +282,30 @@ export const allWorkspaces = asyncHandler(
     // }
 
     // 1️⃣ Query all workspaces where user is creator, admin, or member
-    const allUserWorkspaces = await workSpaceModel.find({
-      $or: [
-        { createdBy: userId },
-        { admin: userId },
-        { "members.user": userId }
-      ]
-    })
-    .populate("boards")
-    .lean();
+    const allUserWorkspaces = await workSpaceModel
+      .find({
+        $or: [
+          { createdBy: userId },
+          { admin: userId },
+          { "members.user": userId },
+        ],
+      })
+      .populate("boards")
+      .lean();
 
-    const ownedWorkspaces = allUserWorkspaces.filter(ws => ws.createdBy.toString() === userId.toString());
-    const joinedWorkspaces = allUserWorkspaces.filter(ws => ws.createdBy.toString() !== userId.toString());
+    const ownedWorkspaces = allUserWorkspaces.filter(
+      (ws) => ws.createdBy.toString() === userId.toString()
+    );
+    const joinedWorkspaces = allUserWorkspaces.filter(
+      (ws) => ws.createdBy.toString() !== userId.toString()
+    );
 
     const responseData = { ownedWorkspaces, joinedWorkspaces };
     await redisClient.set(cachedKey, JSON.stringify(responseData), "EX", 3600);
 
-    res.status(200).json(new ApiResponse(200, responseData, "Workspaces Found"));
+    res
+      .status(200)
+      .json(new ApiResponse(200, responseData, "Workspaces Found"));
   }
 );
 
@@ -484,15 +448,6 @@ export const deleteWorkSpace = async (req: Request, res: Response) => {
 export const addAdmin = asyncHandler(async (req: Request, res: Response) => {
   const { workspaceId, adminId } = req.body;
   const userId = req.user._id;
-
-  const isAuthorized = await CheckAdmin(userId, workspaceId);
-  if (!isAuthorized) {
-    res
-      .status(400)
-      .json(new ApiResponse(400, {}, "You are not authorized to add an admin"));
-    return;
-  }
-
   const workspace = await workSpaceModel.findById(workspaceId);
   if (!workspace) {
     notFound(workspace, "workspace", res);
@@ -558,13 +513,7 @@ export const removeAdmin = asyncHandler(async (req: Request, res: Response) => {
   if (!checkRequiredBody(req, res, required)) return;
   const { workspaceId, adminId } = req.body;
   const userId = req.user._id;
-  const isAuthorized = await CheckAdmin(userId, workspaceId);
-  if (!isAuthorized) {
-    res
-      .status(400)
-      .json(new ApiResponse(400, {}, "You are not authorized to add an admin"));
-    return;
-  }
+
   const workspace = await workSpaceModel.findById(workspaceId);
   if (!workspace) {
     notFound(workspace, "workspace", res);
@@ -615,15 +564,6 @@ export const addWorkspaceMember = asyncHandler(
     if (!checkRequiredBody(req, res, required)) return;
     const { workspaceId, memberCredentials } = req.body;
     const userId = req.user._id;
-    const isAuthorized = await CheckAdmin(userId, workspaceId);
-    if (!isAuthorized) {
-      res
-        .status(400)
-        .json(
-          new ApiResponse(400, {}, "You are not authorized to add a member")
-        );
-      return;
-    }
     const workspace = await workSpaceModel.findById(workspaceId);
     if (!workspace) {
       notFound(workspace, "workspace", res);
@@ -686,15 +626,7 @@ export const removeWorkspaceMember = asyncHandler(
     if (!checkRequiredBody(req, res, required)) return;
     const { workspaceId, memberId } = req.body;
     const userId = req.user._id;
-    const isAuthorized = await CheckAdmin(userId, workspaceId);
-    if (!isAuthorized) {
-      res
-        .status(400)
-        .json(
-          new ApiResponse(400, {}, "You are not authorized to remove a member")
-        );
-      return;
-    }
+
     const workspace = await workSpaceModel.findById(workspaceId);
     if (!workspace) {
       notFound(workspace, "workspace", res);
