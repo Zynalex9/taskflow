@@ -88,6 +88,8 @@ import {
   editItem,
   toggleCheckListItem,
 } from "../controller/card/checklist";
+import { requirePermission } from "../middleware/permission.middleware";
+import { PERMISSIONS } from "../RBAC/Permissions";
 
 const userRouter = Router();
 const workSpaceRouter = Router();
@@ -131,8 +133,28 @@ workSpaceRouter
 workSpaceRouter.route("/get-workspaces").get(verifyJWT, allWorkspaces);
 workSpaceRouter.route("/get-workspace").get(verifyJWT, getWorkspace);
 workSpaceRouter.route("/delete-workspace").delete(verifyJWT, deleteWorkSpace);
-workSpaceRouter.route("/add-admin").patch(verifyJWT, addAdmin);
-workSpaceRouter.route("/remove-admin").patch(verifyJWT, removeAdmin);
+workSpaceRouter
+  .route("/add-admin")
+  .patch(
+    verifyJWT,
+    requirePermission(
+      PERMISSIONS.WORKSPACE_MANAGE_ADMINS,
+      "workspace",
+      "workspaceId"
+    ),
+    addAdmin
+  );
+workSpaceRouter
+  .route("/remove-admin")
+  .patch(
+    verifyJWT,
+    requirePermission(
+      PERMISSIONS.WORKSPACE_MANAGE_ADMINS,
+      "workspace",
+      "workspaceId"
+    ),
+    removeAdmin
+  );
 workSpaceRouter.route("/add-member").patch(verifyJWT, addWorkspaceMember);
 workSpaceRouter.route("/remove-member").patch(verifyJWT, removeWorkspaceMember);
 workSpaceRouter

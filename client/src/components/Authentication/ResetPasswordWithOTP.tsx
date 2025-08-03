@@ -32,7 +32,7 @@ const ResetPasswordWithOTP = () => {
       return;
     }
     try {
-      await axios.post("http://localhost:3000/api/user/forget-password-reset", {
+      await axios.patch("http://localhost:3000/api/user/forget-password", {
         login,
         token,
         newPassword: data.password,

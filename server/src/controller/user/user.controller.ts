@@ -41,9 +41,11 @@ export const registerUser = async (
       res.status(400).json({ message: "Please provide a profile picture" });
       return;
     }
+    const normalizedEmail = email.toLowerCase();
+    const normalizedUsername = username.toLowerCase();
 
     const existingUser = await UserModel.findOne({
-      $or: [{ email }, { username }],
+      $or: [{ email: normalizedEmail }, { username: normalizedUsername }],
     });
 
     if (existingUser) {
@@ -75,8 +77,8 @@ export const registerUser = async (
     const newUser = await UserModel.create({
       firstName,
       secondName,
-      username,
-      email,
+      username: normalizedUsername,
+      email: normalizedEmail,
       password: hashedPassword,
       profilePicture: uploadedPfp.url,
     });
@@ -105,8 +107,9 @@ export const loginUser = async (req: Request, res: Response) => {
         .json({ message: "Please enter all details", success: false });
       return;
     }
+    const normalizedLogin = login.toLowerCase();
     const user = await UserModel.findOne({
-      $or: [{ username: login }, { email: login }],
+      $or: [{ username: normalizedLogin }, { email: login.normalizedLogin }],
     });
     if (!user) {
       res
@@ -519,18 +522,22 @@ export const activityLogs = asyncHandler(
     res.status(200).json(new ApiResponse(200, logs));
   }
 );
-export const findByIdentifier = asyncHandler(async (req: Request, res: Response) => {
-  const { identifier } = req.params;
-  if (!identifier) {
-    res.status(400).json(new ApiResponse(400, {}, "identifier is required"));
-    return;
+export const findByIdentifier = asyncHandler(
+  async (req: Request, res: Response) => {
+    const { identifier } = req.params;
+    if (!identifier) {
+      res.status(400).json(new ApiResponse(400, {}, "identifier is required"));
+      return;
+    }
+    const user = await UserModel.findOne({
+      $or: [{ email: identifier }, { username: identifier }],
+    }).select("-password");
+    if (!user) {
+      res.status(404).json(new ApiResponse(404, {}, "User not found"));
+      return;
+    }
+    res
+      .status(200)
+      .json(new ApiResponse(200, user, "User found by identifier"));
   }
-  const user = await UserModel.findOne({
-    $or: [{ email: identifier }, { username: identifier }],
-  }).select("-password");
-  if (!user) {
-    res.status(404).json(new ApiResponse(404, {}, "User not found"));
-    return;
-  }
-  res.status(200).json(new ApiResponse(200, user, "User found by identifier"));
-});
+);
