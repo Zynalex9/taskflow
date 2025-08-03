@@ -1,7 +1,6 @@
 import { useWorkspaces } from "@/Context/workspacesContext";
 import { Link, useParams } from "react-router-dom";
 import BoardPlaceHolder from "../resuable/BoardPlaceHolder";
-import BoardTop from "../workspace/Boards/BoardTop";
 
 const BoardView = () => {
   const {workspaces} = useWorkspaces();
@@ -17,7 +16,6 @@ const BoardView = () => {
 
   return (
     <div>
-      <BoardTop />
       <h2 className="text-2xl text-textP font-charlie-text-r pl-5 my-4">
         Your boards
       </h2>

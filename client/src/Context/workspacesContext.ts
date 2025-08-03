@@ -3,7 +3,10 @@ import { IWorkspace } from "@/types/functionalites.types";
 import { createContext, useContext } from "react";
 
 type WorkspacesContextType = {
-  workspaces: IWorkspace[];
+  workspaces: {
+    ownedWorkspaces: IWorkspace[] | [];
+    joinedWorkspaces: IWorkspace[] | [];
+  };
   setWorkspaces: React.Dispatch<React.SetStateAction<IWorkspace[]>>;
 };
 

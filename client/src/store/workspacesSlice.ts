@@ -14,20 +14,34 @@ interface IWorkspace {
   __v: number;
   cover?: string;
 }
-
+interface APIResponse {
+  message: string;
+  statusCode: number;
+  success: boolean;
+  data: {
+    ownedWorkspaces: IWorkspace[];
+    joinedWorkspaces: IWorkspace[];
+  };
+}
 interface IinitialState {
-  workspaces: IWorkspace[]; 
+  workspaces: {
+    ownedWorkspaces: IWorkspace[] | [];
+    joinedWorkspaces: IWorkspace[] | [];
+  };
   loading: boolean;
   error: string | null;
 }
 
 const initialState: IinitialState = {
-  workspaces: [],
+  workspaces: {
+    ownedWorkspaces: [],
+    joinedWorkspaces: [],
+  },
   error: null,
   loading: false,
 };
 
-export const getAllWorkspaces = createAsyncThunk(
+export const getAllWorkspaces = createAsyncThunk<APIResponse>(
   "allWorkspaces",
   async (_, { rejectWithValue }) => {
     try {
@@ -56,7 +70,8 @@ const allWorkspacesSlice = createSlice({
       })
       .addCase(getAllWorkspaces.fulfilled, (state, action) => {
         state.loading = false;
-        state.workspaces = action.payload;
+        state.workspaces.joinedWorkspaces = action.payload.data.joinedWorkspaces;
+        state.workspaces.ownedWorkspaces = action.payload.data.ownedWorkspaces;
       })
       .addCase(getAllWorkspaces.rejected, (state, action) => {
         state.loading = false;

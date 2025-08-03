@@ -305,29 +305,46 @@ export const getCalendarData = async (req: Request, res: Response) => {
     res.status(500).json({ message: "Internal server error", success: false });
   }
 };
-export const allWorkspaces = async (
-  req: Request,
-  res: Response
-): Promise<void> => {
-  try {
-    const userId = req.user;
-    const workspaces = await workSpaceModel
-      .find({ createdBy: userId })
-      .populate("boards")
-      .lean();
-    if (workspaces.length === 0) {
-      res.status(404).json({ message: "workspace not found" });
-      return;
+export const allWorkspaces = asyncHandler(
+  async (req: Request, res: Response) => {
+    const userId = req.user?._id; 
+    
+    if (!userId) {
+       res.status(401).json(new ApiResponse(401, {}, "Unauthorized"));
+       return
     }
-    res
-      .status(201)
-      .json(new ApiResponse(201, workspaces, "Workspace(s) Found"));
-    return;
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ message: "Internal server error" });
+
+    const cachedKey = `user:${userId}:workspaces`;
+
+    // Uncomment if caching is needed
+    // const cachedWorkspaces = await redisClient.get(cachedKey);
+    // if (cachedWorkspaces) {
+    //   return res.status(200).json(
+    //     new ApiResponse(200, JSON.parse(cachedWorkspaces), "Workspaces Found (cache)")
+    //   );
+    // }
+
+    // 1️⃣ Query all workspaces where user is creator, admin, or member
+    const allUserWorkspaces = await workSpaceModel.find({
+      $or: [
+        { createdBy: userId },
+        { admin: userId },
+        { "members.user": userId }
+      ]
+    })
+    .populate("boards")
+    .lean();
+
+    const ownedWorkspaces = allUserWorkspaces.filter(ws => ws.createdBy.toString() === userId.toString());
+    const joinedWorkspaces = allUserWorkspaces.filter(ws => ws.createdBy.toString() !== userId.toString());
+
+    const responseData = { ownedWorkspaces, joinedWorkspaces };
+    await redisClient.set(cachedKey, JSON.stringify(responseData), "EX", 3600);
+
+    res.status(200).json(new ApiResponse(200, responseData, "Workspaces Found"));
   }
-};
+);
+
 export const getWorkspace = asyncHandler(
   async (req: Request, res: Response) => {
     const { workspaceId } = req.query;

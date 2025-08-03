@@ -69,6 +69,9 @@ const workspaceSchema = new Schema(
   { timestamps: true }
 );
 
+workspaceSchema.index({ createdBy: 1 });
+workspaceSchema.index({ admin: 1 });
+workspaceSchema.index({ "members.user": 1 });
 export const workSpaceModel = mongoose.model<IWorkspace>(
   "Workspace",
   workspaceSchema

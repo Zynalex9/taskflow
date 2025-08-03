@@ -35,7 +35,7 @@ export function DeleteWorkspacePopover({
         toast.success("Workspace deleted", {
           theme: "dark",
         });
-        setWorkspaces(workspaces.filter((ws) => ws._id !== workspaceId));
+        setWorkspaces(workspaces.ownedWorkspaces.filter((ws) => ws._id !== workspaceId));
       }
     } catch (error) {
       toast.error("Unexpected error occurred", {

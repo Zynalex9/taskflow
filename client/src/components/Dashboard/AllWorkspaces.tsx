@@ -20,12 +20,14 @@ import { WorkspaceFormInputs } from "../Topbar";
 import { useForm } from "react-hook-form";
 import { toast, ToastContainer } from "react-toastify";
 import { DeleteWorkspacePopover } from "./DeleteWorkspaceDialog";
+import { useSelector } from "react-redux";
+import { RootState } from "@/store/store";
 
 const AllWorkspaces = () => {
   const [openDialog, setOpenDialog] = useState(false);
   const [addWorkspace] = useCreateWorkspaceMutation();
   const { register, handleSubmit } = useForm<WorkspaceFormInputs>();
-
+  const { user } = useSelector((state: RootState) => state.auth);
   const onSubmit = async (data: WorkspaceFormInputs) => {
     const formData = new FormData();
     formData.append("name", data.name);
@@ -42,12 +44,13 @@ const AllWorkspaces = () => {
       });
     }
   };
-  const {workspaces} = useWorkspaces();
+  const { workspaces } = useWorkspaces();
+  console.log(workspaces.joinedWorkspaces);
   return (
     <div>
       <h1 className="py-2 text-textP">Your Workspaces</h1>
-      {workspaces && workspaces.length > 0 ? (
-        workspaces.map((workspace) => (
+      {workspaces && workspaces.ownedWorkspaces?.length > 0 ? (
+        workspaces.ownedWorkspaces.map((workspace) => (
           <div key={workspace._id}>
             <div className="flex gap-2 items-center  w-full cursor-pointer rounded py-0.5 px-1">
               <Link to={`/user/w/workspace/${workspace._id}`}>
@@ -154,6 +157,72 @@ const AllWorkspaces = () => {
               </AlertDialogHeader>
             </AlertDialogContent>
           </AlertDialog>
+        </div>
+      )}
+      <h1 className="py-2 text-textP">Joined Workspaces</h1>
+      {workspaces && workspaces.joinedWorkspaces?.length > 0 ? (
+        workspaces.joinedWorkspaces.map((workspace) => (
+          <div key={workspace._id}>
+            <div className="flex gap-2 items-center  w-full cursor-pointer rounded py-0.5 px-1">
+              <Link to={`/user/w/workspace/${workspace._id}`}>
+                {isImageUrl(workspace.cover) ? (
+                  <img
+                    src={workspace.cover}
+                    className="size-12 object-cover object-center rounded"
+                  />
+                ) : (
+                  <div
+                    className="size-10 rounded-lg text-center flex items-center justify-center"
+                    style={{ backgroundColor: workspace.cover }}
+                  >
+                    <h2 className="text-black text-2xl font-charlie-text-sb">
+                      {workspace.name[0]}
+                    </h2>
+                  </div>
+                )}
+              </Link>
+              <div className="flex items-center justify-between w-[88%]">
+                <Link to={`/user/w/workspace/${workspace._id}`}>
+                  <h1 className="text-lg text-textP font-charlie-text-r">
+                    {workspace.name}
+                  </h1>
+                </Link>
+                <div className="flex items-center gap-4">
+                  <Link to={`/user/dashboard/${workspace._id}/boards-view`}>
+                    <ModalButton btnText="Boards" />
+                  </Link>
+                  <Link to={`/user/dashboard/${workspace._id}/members`}>
+                    <ModalButton btnText="Members" />
+                  </Link>
+                  {workspace.createdBy === user?._id && (
+                    <DeleteWorkspacePopover workspaceId={workspace._id} />
+                  )}
+                </div>
+              </div>
+            </div>
+            <div className="flex gap-2 flex-wrap items-center  my-6 w-full">
+              {workspace.boards.map((board) => (
+                <BoardPlaceHolder
+                  key={board._id}
+                  bg={board.cover}
+                  isTemplete={false}
+                  title={board.title}
+                  to={`/user/w/workspace/${workspace._id}/board/${board._id}`}
+                />
+              ))}
+              <Link to={`/user/w/workspace/${workspace._id}`}>
+                <button className="min-w-[12rem] h-32 bg-[#333C43] flex items-center justify-center text-center font-charlie-text-sb text-textP text-lg rounded-xl shadow-2xl transition-colors duration-150 hover:bg-[#333C43]/50">
+                  <h2>Create new board</h2>
+                </button>
+              </Link>
+            </div>
+          </div>
+        ))
+      ) : (
+        <div className="flex items-center gap-4">
+          <p className="text-sm text-gray-400 font-charlie-text-r italic">
+            You're not member of any other workspace
+          </p>
         </div>
       )}
       <ToastContainer />
