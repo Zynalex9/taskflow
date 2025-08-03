@@ -63,7 +63,7 @@ export const createWorkSpace = async (req: Request, res: Response) => {
       members: [
         {
           user: userId,
-          role: "admin",
+          role: "owner",
         },
       ],
     });
@@ -632,7 +632,7 @@ export const removeWorkspaceMember = asyncHandler(
       notFound(workspace, "workspace", res);
       return;
     }
-    
+
     const member = await UserModel.findById(memberId);
     if (!member) {
       notFound(member, "member", res);

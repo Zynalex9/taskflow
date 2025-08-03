@@ -11,7 +11,7 @@ export interface IWorkspace {
   table: Types.ObjectId;
   members: {
     user: Types.ObjectId;
-    role: "admin" | "member";
+    role: "admin" | "member" | "owner";
   }[];
   createdBy: Types.ObjectId;
   cover: string;
@@ -56,7 +56,7 @@ const workspaceSchema = new Schema(
         },
         role: {
           type: String,
-          enum: ["admin", "member"],
+          enum: ["admin", "member", "owner"],
           default: "member",
         },
       },

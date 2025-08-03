@@ -87,6 +87,12 @@ export const MembersDisplay = ({
       setRemovingMemberIds((prev) => prev.filter((id) => id !== memberId));
     }
   };
+
+  const canManage = (targetRole: string, member: any) => {
+    if (isOwner && user?._id !== member.userId) return true;
+    if (isLoggedInAdmin && targetRole === "member") return true;
+    return false;
+  };
   return (
     <div>
       {membersData?.data?.length > 0 ? (
@@ -123,35 +129,34 @@ export const MembersDisplay = ({
                   </div>
                 </div>
 
-                {(isOwner || isLoggedInAdmin) &&
-                  user?._id !== member.userId && (
-                    <div className="flex items-center gap-2">
-                      <ModalButton
-                        disabled={isRemoving}
-                        btnText={isRemoving ? "Removing..." : "Remove"}
-                        customStyles="bg-red-500 text-white"
-                        onClickFn={() => removeMemberHandler(member.userId)}
-                      />
+                {canManage(member.role, member) && (
+                  <div className="flex items-center gap-2">
+                    <ModalButton
+                      disabled={isRemoving}
+                      btnText={isRemoving ? "Removing..." : "Remove"}
+                      customStyles="bg-red-500 text-white"
+                      onClickFn={() => removeMemberHandler(member.userId)}
+                    />
 
-                      <ModalButton
-                        disabled={isAdminLoading}
-                        btnText={
-                          member.role === "admin"
-                            ? isAdminLoading
-                              ? "Removing..."
-                              : "Remove admin"
-                            : isAdminLoading
-                            ? "Adding..."
-                            : "Make an admin"
-                        }
-                        onClickFn={() =>
-                          member.role === "admin"
-                            ? removeAdminHandler(member.userId)
-                            : addAdminHandler(member.userId)
-                        }
-                      />
-                    </div>
-                  )}
+                    <ModalButton
+                      disabled={isAdminLoading}
+                      btnText={
+                        member.role === "admin"
+                          ? isAdminLoading
+                            ? "Removing..."
+                            : "Remove admin"
+                          : isAdminLoading
+                          ? "Adding..."
+                          : "Make an admin"
+                      }
+                      onClickFn={() =>
+                        member.role === "admin"
+                          ? removeAdminHandler(member.userId)
+                          : addAdminHandler(member.userId)
+                      }
+                    />
+                  </div>
+                )}
               </div>
             );
           })}
