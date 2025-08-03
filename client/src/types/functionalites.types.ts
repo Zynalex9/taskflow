@@ -124,6 +124,15 @@ export interface IMember {
   _id: string;
 }
 
+export interface IWorkspaceResponse {
+  statusCode: number;
+  data: {
+    ownedWorkspaces: IWorkspace[];
+    joinedWorkspaces: IWorkspace[];
+  };
+  message: string;
+  success: boolean;
+}
 export interface IBoardResponse {
   statusCode: number;
   data: {

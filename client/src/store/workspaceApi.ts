@@ -1,3 +1,4 @@
+import { IWorkspaceResponse } from "@/types/functionalites.types";
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 
 export const workspaceApi = createApi({
@@ -8,7 +9,7 @@ export const workspaceApi = createApi({
     credentials: "include",
   }),
   endpoints: (builder) => ({
-    getAllWorkspaces: builder.query({
+    getAllWorkspaces: builder.query<IWorkspaceResponse,void>({
       query: () => ({
         url: "/api/workspace/get-workspaces",
       }),

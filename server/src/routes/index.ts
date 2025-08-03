@@ -155,11 +155,39 @@ workSpaceRouter
     ),
     removeAdmin
   );
-workSpaceRouter.route("/add-member").patch(verifyJWT, addWorkspaceMember);
-workSpaceRouter.route("/remove-member").patch(verifyJWT, removeWorkspaceMember);
+workSpaceRouter
+  .route("/add-member")
+  .patch(
+    verifyJWT,
+    requirePermission(
+      PERMISSIONS.WORKSPACE_MANAGE_MEMBERS,
+      "workspace",
+      "workspaceId"
+    ),
+    addWorkspaceMember
+  );
+workSpaceRouter
+  .route("/remove-member")
+  .patch(
+    verifyJWT,
+    requirePermission(
+      PERMISSIONS.WORKSPACE_MANAGE_MEMBERS,
+      "workspace",
+      "workspaceId"
+    ),
+    removeWorkspaceMember
+  );
 workSpaceRouter
   .route("/get-members/:workspaceId")
-  .get(verifyJWT, getWorkspaceMembers);
+  .get(
+    verifyJWT,
+    requirePermission(
+      PERMISSIONS.WORKSPACE_VIEW,
+      "workspace",
+      "workspaceId"
+    ),
+    getWorkspaceMembers
+  );
 
 export { workSpaceRouter };
 boardRouter

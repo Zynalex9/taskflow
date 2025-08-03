@@ -52,9 +52,6 @@ export const CopyBoardPopover = () => {
     }
   };
 
-
-  
-
   return (
     <div>
       <Popover open={openModal} onOpenChange={setOpenModal}>
@@ -101,7 +98,7 @@ export const CopyBoardPopover = () => {
                 id="workspaces"
                 className="w-full p-2 border rounded bg-fprimary text-textP font-charlie-text-r focus:outline-none focus:ring-2 focus:ring-blue-primary focus:border-none transition-colors duration-150"
               >
-                {data?.data.map((workspace: IWorkspace) => (
+                {data?.data.ownedWorkspaces.map((workspace: IWorkspace) => (
                   <option key={workspace._id} value={workspace._id}>
                     {workspace.name}
                   </option>
