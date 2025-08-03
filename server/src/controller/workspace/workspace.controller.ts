@@ -632,6 +632,7 @@ export const removeWorkspaceMember = asyncHandler(
       notFound(workspace, "workspace", res);
       return;
     }
+    
     const member = await UserModel.findById(memberId);
     if (!member) {
       notFound(member, "member", res);

@@ -50,7 +50,7 @@ const WorkspaceLayout = () => {
   const isAuthenticated =
     (!!user && workspace.createdBy === user._id) ||
     workspace.admin?.some((admin) => admin === user?._id) ||
-    workspace.members?.some((member) => member === user?._id);
+    workspace.members?.some((member) => member.user === user?._id);
 
   if (!isAuthenticated) {
     return (

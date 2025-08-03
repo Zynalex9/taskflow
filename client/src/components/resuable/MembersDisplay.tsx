@@ -29,6 +29,10 @@ export const MembersDisplay = ({
   workspaceId,
 }: MembersDisplayProps) => {
   const { user } = useSelector((state: RootState) => state.auth);
+  const { workspace } = useSelector((state: RootState) => state.workspace);
+  const isOwner = user?._id === workspace?.createdBy;
+  const loggedInMember = membersData?.data?.find((m) => m.userId === user?._id);
+  const isLoggedInAdmin = loggedInMember?.role === "admin";
 
   const [addAdmin] = useAddWorkspaceAdminMutation();
   const [removeAdmin] = useRemoveWorkspaceAdminMutation();
@@ -83,12 +87,11 @@ export const MembersDisplay = ({
       setRemovingMemberIds((prev) => prev.filter((id) => id !== memberId));
     }
   };
-
   return (
     <div>
       {membersData?.data?.length > 0 ? (
         <div className="space-y-6">
-          {membersData.data.map((member: IMember, idx: number) => {
+          {membersData.data.map((member, idx) => {
             const isAdminLoading = adminLoadingIds.includes(member.userId);
             const isRemoving = removingMemberIds.includes(member.userId);
 
@@ -119,40 +122,36 @@ export const MembersDisplay = ({
                     </p>
                   </div>
                 </div>
-                <div className="flex items-center gap-2">
-                  {user?._id === member.userId ? (
-                    ""
-                  ) : (
-                    <ModalButton
-                      disabled={isRemoving}
-                      btnText={isRemoving ? "Removing..." : "Remove"}
-                      customStyles="bg-red-500 text-white"
-                      onClickFn={() => removeMemberHandler(member.userId)}
-                    />
-                  )}
 
-                  {user?._id === member.userId ? (
-                    ""
-                  ) : (
-                    <ModalButton
-                      disabled={isAdminLoading}
-                      btnText={
-                        member.role === "admin"
-                          ? isAdminLoading
-                            ? "Removing..."
-                            : "Remove admin"
-                          : isAdminLoading
-                          ? "Adding..."
-                          : "Make an admin"
-                      }
-                      onClickFn={() =>
-                        member.role === "admin"
-                          ? removeAdminHandler(member.userId)
-                          : addAdminHandler(member.userId)
-                      }
-                    />
+                {(isOwner || isLoggedInAdmin) &&
+                  user?._id !== member.userId && (
+                    <div className="flex items-center gap-2">
+                      <ModalButton
+                        disabled={isRemoving}
+                        btnText={isRemoving ? "Removing..." : "Remove"}
+                        customStyles="bg-red-500 text-white"
+                        onClickFn={() => removeMemberHandler(member.userId)}
+                      />
+
+                      <ModalButton
+                        disabled={isAdminLoading}
+                        btnText={
+                          member.role === "admin"
+                            ? isAdminLoading
+                              ? "Removing..."
+                              : "Remove admin"
+                            : isAdminLoading
+                            ? "Adding..."
+                            : "Make an admin"
+                        }
+                        onClickFn={() =>
+                          member.role === "admin"
+                            ? removeAdminHandler(member.userId)
+                            : addAdminHandler(member.userId)
+                        }
+                      />
+                    </div>
                   )}
-                </div>
               </div>
             );
           })}

@@ -11,7 +11,10 @@ export interface Workspace {
   name: string;
   admin: string[];
   boards: string[];
-  members: Member[] | string[];
+  members: {
+    user: string;
+    role: "admin" | "member";
+  }[];
   createdBy: string;
   createdAt: string;
   updatedAt: string;
