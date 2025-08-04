@@ -1,21 +1,22 @@
 import { Ellipsis, Star } from "lucide-react";
-import { useState } from "react";
-import RightSideBar from "./RightSideBar";
 import { useToggleFavouriteMutation } from "@/store/myApi";
 
 const BoardHeader = ({
   title,
   boardId,
   favourite,
+  setOpenSideBar,
+  openSidebar
 }: {
   title?: string;
   favourite: boolean;
   boardId: string;
+   setOpenSideBar: React.Dispatch<React.SetStateAction<boolean>>;
+  openSidebar: boolean;
 }) => {
-  const [openSidebar, setOpenSideBar] = useState(false);
   const [toggleFavourite] = useToggleFavouriteMutation();
   return (
-    <div className="p-4 min-w-full bg-white/5 font-charlie-display-sm backdrop-blur-3xl shadow-md flex items-center justify-between">
+    <div className="p-4 z-[100] min-w-full bg-white/5 font-charlie-display-sm backdrop-blur-3xl shadow-md flex items-center justify-between">
       <div className="flex gap-2 items-center text-[#172B4D]">
         <h1 className="text-lg font-bold ">{title}</h1>
         {favourite ? (
@@ -35,7 +36,6 @@ const BoardHeader = ({
           onClick={() => setOpenSideBar(!openSidebar)}
         />
       </div>
-      <RightSideBar setOpenSideBar={setOpenSideBar} openSidebar={openSidebar} />
     </div>
   );
 };

@@ -45,7 +45,7 @@ const RightSideBar = ({ openSidebar, setOpenSideBar }: IProps) => {
   return (
     <div
       ref={sidebarRef}
-      className={`fixed z-[999999] px-2  overflow-x-hidden pb-3 right-0 top-4 transition-opacity duration-300 ease-in-out transform bg-[#282E33] w-[20rem] h-[82vh] custom-scrollbar text-textP font-charlie-text-r ${
+      className={`fixed z-[100] px-2 top-30 overflow-x-hidden pb-3 right-0  transition-opacity duration-300 ease-in-out transform bg-[#282E33] w-[20rem] h-[72vh] custom-scrollbar text-textP font-charlie-text-r ${
         openSidebar ? "opacity-100" : "opacity-0 pointer-events-none"
       }`}
     >

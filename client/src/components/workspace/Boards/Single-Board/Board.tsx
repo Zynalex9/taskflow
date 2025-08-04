@@ -5,8 +5,12 @@ import { isImageUrl } from "../../../../utils/helper";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useGetSingleBoardQuery } from "@/store/myApi";
 import { SingleBoardContext } from "@/Context/SingleBoardContext";
+import { useState } from "react";
+import RightSideBar from "./RightSideBar";
 
 const Board = () => {
+  const [openSidebar, setOpenSideBar] = useState(false);
+
   const { boardId } = useParams();
   const { data, isLoading } = useGetSingleBoardQuery(boardId ?? "", {
     skip: !boardId,
@@ -32,9 +36,15 @@ const Board = () => {
             title={data?.data.title}
             favourite={data?.data.favourite}
             boardId={data.data._id}
+            setOpenSideBar={setOpenSideBar}
+            openSidebar={openSidebar}
+          />
+          <RightSideBar
+            setOpenSideBar={setOpenSideBar}
+            openSidebar={openSidebar}
           />
 
-<div className="p-8 w-full min-h-[79vh] overflow-x-auto overflow-y-hidden custom-scrollbar">
+          <div className="p-8 w-full min-h-[79vh] overflow-x-auto overflow-y-hidden custom-scrollbar">
             {isLoading ? (
               <div className="flex gap-4 w-max min-w-full mt-4">
                 {[...Array(3)].map((_, i) => (
@@ -59,6 +69,7 @@ const Board = () => {
           </div>
         </div>
       </SingleBoardContext.Provider>
-    )};
+    );
+};
 
 export default Board;

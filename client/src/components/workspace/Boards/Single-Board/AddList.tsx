@@ -31,7 +31,7 @@ const AddList = () => {
     <div
       className={`${
         isAddList ? "h-24" : "h-10"
-      } font-charlie-display-sm backdrop-blur-3xl shadow-xl shadow-gray-400 hover:bg-gray-50/30 bg-transparent w-56 rounded-lg p-1.5`}
+      } z-0 font-charlie-display-sm backdrop-blur-3xl shadow-xl shadow-gray-400 hover:bg-gray-50/30 bg-transparent w-56 rounded-lg p-1.5`}
     >
       {isAddList ? (
         <form
