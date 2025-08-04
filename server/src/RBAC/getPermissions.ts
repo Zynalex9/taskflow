@@ -38,7 +38,7 @@ export const getBoardPermissions = async (
     if (member.role === "admin") {
       return ROLES.BOARD_ADMIN.permissions;
     } else {
-      return ROLES.BOARD_MEMBER.permissions;
+      return ROLES.WORKSPACE_MEMBER.permissions;
     }
   }
   if (board.visibility === "private") {
@@ -51,7 +51,7 @@ export const getBoardPermissions = async (
         if (member.role === "admin") {
           return ROLES.BOARD_ADMIN.permissions;
         } else {
-          return ROLES.BOARD_MEMBER.permissions;
+          return ROLES.WORKSPACE_MEMBER.permissions;
         }
       }
     }

@@ -21,7 +21,7 @@ const AddList = () => {
         reset();
         await addList(body).unwrap();
       } catch (error: any) {
-        console.log();
+        console.log(error.data.message);
         toast.error(error.data.message, { theme: "dark" });
       }
     }

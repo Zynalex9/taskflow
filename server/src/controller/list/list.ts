@@ -73,14 +73,6 @@ export const createList = async (req: Request, res: Response) => {
       });
       return;
     }
-    const existingList = await ListModel.findOne({ name, board: boardId });
-    if (existingList) {
-      res.status(401).json({
-        message: "Name already exist, please choose another name",
-        success: false,
-      });
-      return;
-    }
     const newList = await ListModel.create({
       name,
       createdBy: userId,
