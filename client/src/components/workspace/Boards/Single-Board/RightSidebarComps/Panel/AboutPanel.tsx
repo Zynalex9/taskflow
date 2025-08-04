@@ -9,6 +9,7 @@ import { toast } from "react-toastify";
 
 export const AboutPanel = () => {
   const { board } = useSingleBoardContext();
+  console.log("bobaba", board);
   const [description, setDescription] = useState(board.description);
   const [addDesc, setAddDesc] = useState(false);
   const [addDescription] = useAddBoardDescriptionMutation();
@@ -30,24 +31,26 @@ export const AboutPanel = () => {
           <h1>Board Members</h1>
         </div>
         <div className="h-36 overflow-y-auto custom-scrollbar">
-
-        {board.membersData.map((member) => (
-          <div key={member._id} className="flex items-center gap-2 p-2">
-            <img
-              src={member.profilePicture}
-              alt={member.firstName}
-              className="w-12 h-12 rounded-full object-cover shadow-sm"
-            />
-            <div>
-              <h1 className="text-lg text-gray-400 font-charlie-text-r underline font-medium">
-                {member.firstName} {member.secondName}
-              </h1>
-              <h1 className="text-sm text-textP underline">
-                @{member.username}
-              </h1>
+          {board.membersData.map((member) => (
+            <div key={member._id} className="flex items-center gap-2 p-2">
+              <img
+                src={member.profilePicture}
+                alt={member.firstName}
+                className="w-12 h-12 rounded-full object-cover shadow-sm"
+              />
+              <div>
+                <h1 className="text-lg text-gray-400 font-charlie-text-r underline font-medium">
+                  {member.firstName} {member.secondName}
+                </h1>
+                <h1 className="text-sm text-textP underline">
+                  @{member.username}
+                </h1>
+                <h1 className="text-sm text-textP underline">
+                  {member.role}
+                </h1>
+              </div>
             </div>
-          </div>
-        ))}
+          ))}
         </div>
         <CustomBorder />
         <div>

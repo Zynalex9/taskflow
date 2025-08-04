@@ -1,3 +1,5 @@
+import { CardAttachmentModel } from "../models/card.attachments.model";
+
 export const PERMISSIONS = {
   WORKSPACE_VIEW: "workspace:view",
   WORKSPACE_EDIT: "workspace:edit",
@@ -24,4 +26,9 @@ export const PERMISSIONS = {
   CARD_DELETE: "card:delete",
   CARD_MOVE: "card:move",
   CARD_COMMENT: "card:comment",
+  CARD_ATTACHMENT: "card:attachment",
+  CARD_CHECKLIST: "card:checklist",
+  CARD_DATE: "card:date",
+  CARD_LABEL: "card:label",
+  
 } as const;
