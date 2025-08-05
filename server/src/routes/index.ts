@@ -140,55 +140,17 @@ workSpaceRouter
 
 workSpaceRouter
   .route("/:workspaceId/get-table-data")
-  .get(
-    verifyJWT,
-    requirePermission(
-      PERMISSIONS.WORKSPACE_VIEW,
-      "workspace",
-      "workspaceId",
-      ERROR_MESSAGES.WORKSPACE_VIEW
-    ),
-    getWorkspaceTableData
-  );
+  .get(verifyJWT, getWorkspaceTableData);
 
-workSpaceRouter
-  .route("/:workspaceId/get-calendar-data")
-  .get(
-    verifyJWT,
-    requirePermission(
-      PERMISSIONS.WORKSPACE_VIEW,
-      "workspace",
-      "workspaceId",
-      ERROR_MESSAGES.WORKSPACE_VIEW
-    ),
-    getCalendarData
-  );
+workSpaceRouter.route("/:workspaceId/get-calendar-data").get(
+  verifyJWT,
 
-workSpaceRouter
-  .route("/get-workspaces")
-  .get(
-    verifyJWT,
-    requirePermission(
-      PERMISSIONS.WORKSPACE_VIEW,
-      "workspace",
-      "workspaceId",
-      ERROR_MESSAGES.WORKSPACE_VIEW
-    ),
-    allWorkspaces
-  );
+  getCalendarData
+);
 
-workSpaceRouter
-  .route("/get-workspace")
-  .get(
-    verifyJWT,
-    requirePermission(
-      PERMISSIONS.WORKSPACE_VIEW,
-      "workspace",
-      "workspaceId",
-      ERROR_MESSAGES.WORKSPACE_VIEW
-    ),
-    getWorkspace
-  );
+workSpaceRouter.route("/get-workspaces").get(verifyJWT, allWorkspaces);
+
+workSpaceRouter.route("/get-workspace").get(verifyJWT, getWorkspace);
 
 workSpaceRouter
   .route("/delete-workspace")
@@ -255,18 +217,11 @@ workSpaceRouter
     removeWorkspaceMember
   );
 
-workSpaceRouter
-  .route("/get-members/:workspaceId")
-  .get(
-    verifyJWT,
-    requirePermission(
-      PERMISSIONS.WORKSPACE_VIEW,
-      "workspace",
-      "workspaceId",
-      ERROR_MESSAGES.WORKSPACE_VIEW
-    ),
-    getWorkspaceMembers
-  );
+workSpaceRouter.route("/get-members/:workspaceId").get(
+  verifyJWT,
+
+  getWorkspaceMembers
+);
 
 export { workSpaceRouter };
 boardRouter
@@ -283,18 +238,7 @@ boardRouter
     createBoard
   );
 
-boardRouter
-  .route("/:workspaceId/get-boards")
-  .get(
-    verifyJWT,
-    requirePermission(
-      PERMISSIONS.WORKSPACE_VIEW,
-      "workspace",
-      "workspaceId",
-      ERROR_MESSAGES.BOARD_VIEW
-    ),
-    allBoards
-  );
+boardRouter.route("/:workspaceId/get-boards").get(verifyJWT, allBoards);
 
 boardRouter
   .route("/single/:boardId")

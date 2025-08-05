@@ -64,14 +64,7 @@ export const createBoard = async (req: Request, res: Response) => {
       });
       return;
     }
-    if (!workspace.admin.includes(userId)) {
-      res.status(403).json({
-        message: "You are not authorized to create a board in this workspace",
-        success: false,
-      });
-      return;
-    }
-    console.log(req.file);
+
     const allMemberIdsSet = new Set([
       ...memberId.map((id: any) => id.toString()),
       workspace.createdBy.toString(),

@@ -58,21 +58,6 @@ export const createList = async (req: Request, res: Response) => {
       });
       return;
     }
-    const isBoardAdmin = board.members.find(
-      (member) => member.user._id.toString() === userId.toString()
-    );
-    const isUserBoardCreator = board.createdBy.toString() === userId.toString();
-    const isUserWorkspaceCreator =
-      workspace.createdBy.toString() === userId.toString();
-    const isAdminMember = isBoardAdmin && isBoardAdmin.role === "admin";
-
-    if (!isAdminMember && !isUserBoardCreator && !isUserWorkspaceCreator) {
-      res.status(401).json({
-        message: "You're not authorized to create list in this board",
-        success: false,
-      });
-      return;
-    }
     const newList = await ListModel.create({
       name,
       createdBy: userId,
@@ -161,16 +146,6 @@ export const deleteList = async (req: Request, res: Response) => {
       res.status(400).json({ message: "List id missing" });
       return;
     }
-
-    const isAuthorized = await CheckAdmin(userId, workspaceId);
-    if (!isAuthorized) {
-      await session.abortTransaction();
-      res
-        .status(403)
-        .json({ message: "You are not authorized to delete the board" });
-      return;
-    }
-
     const list = await ListModel.findById(listId).session(session);
     if (!list) {
       await session.abortTransaction();
