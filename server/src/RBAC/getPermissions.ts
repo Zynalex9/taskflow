@@ -2,6 +2,8 @@ import { Types } from "mongoose";
 import { workSpaceModel } from "../models/workspace.model";
 import { ROLES } from "./Roles";
 import { boardModel } from "../models/board.models";
+import { ListModel } from "../models/list.models";
+import { CardModel } from "../models/card.model";
 
 export const getWorkspacePermissions = async (
   userId: Types.ObjectId,
@@ -58,6 +60,40 @@ export const getBoardPermissions = async (
   }
   return [];
 };
+export const getListPermissions = async (
+  userId: Types.ObjectId,
+  listId: string
+): Promise<string[]> => {
+  const list = await ListModel.findById(listId);
+  if (!list) return [];
+
+  if (list.createdBy.equals(userId)) return ROLES.LIST_CREATOR.permissions;
+  const boardPermissions = await getBoardPermissions(
+    userId,
+    list.board.toString()
+  );
+  return boardPermissions.filter(
+    (p) => p.startsWith("list:") || p.startsWith("card:")
+  );
+};
+export const getCardPermissions = async (
+  userId: Types.ObjectId,
+  cardId: string
+): Promise<string[]> => {
+  const card = await CardModel.findById(cardId);
+  if (!card) return [];
+
+  if (card.createdBy.equals(userId)) {
+    return ROLES.CARD_CREATOR.permissions;
+  }
+
+  const listPermissions = await getListPermissions(
+    userId,
+    card.list.toString()
+  );
+
+  return listPermissions.filter((p) => p.startsWith("card:"));
+};
 
 export const getUserPermissions = async (
   userId: Types.ObjectId,
@@ -83,6 +119,14 @@ export const getUserPermissions = async (
       );
       workspacePermissions.forEach((p) => permissions.add(p));
     }
+  }
+  if (resourceType === "list") {
+    const listPermissions = await getListPermissions(userId, resourceId);
+    listPermissions.forEach((p) => permissions.add(p));
+  }
+  if (resourceType === "card") {
+    const cardPermissions = await getCardPermissions(userId, resourceId);
+    cardPermissions.forEach((p) => permissions.add(p));
   }
   return Array.from(permissions);
 };
