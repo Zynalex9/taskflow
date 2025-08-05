@@ -44,4 +44,5 @@ export const ERROR_MESSAGES = {
   CARD_LABEL: "You are not authorized to manage labels on this card",
   CARD_DATE: "You are not authorized to manage dates on this card",
   CARD_COPY: "You are not authorized to copy this card",
+  CARD_TOGGLE:"You are not authorized to toggle this card",
 };

@@ -48,50 +48,9 @@ export const createCard = async (req: Request, res: Response) => {
       return;
     }
     const userId = req.user._id;
-    const list = await ListModel.aggregate([
-      {
-        $match: { _id: new mongoose.Types.ObjectId(listId) },
-      },
-      {
-        $lookup: {
-          from: "boards",
-          localField: "board",
-          foreignField: "_id",
-          as: "board",
-        },
-      },
-      {
-        $unwind: "$board",
-      },
-      {
-        $lookup: {
-          from: "workspaces",
-          localField: "board.workspace",
-          foreignField: "_id",
-          as: "targetedWorkSpace",
-        },
-      },
-      {
-        $unwind: "$targetedWorkSpace",
-      },
-      {
-        $project: {
-          name: 1,
-          "board.title": 1,
-          "targetedWorkSpace.admin": 1,
-        },
-      },
-    ]);
-    const adminsId = list[0].targetedWorkSpace.admin.map((id: any) =>
-      id.toString()
-    );
-
-    if (!adminsId.includes(userId.toString())) {
-      res.status(408).json({
-        message:
-          "Sorry, you're not authorized to create card in this workspace",
-        success: false,
-      });
+    const List = await ListModel.findById(listId);
+    if (!List) {
+      res.status(409).json(new ApiResponse(404, {}, "List not found"));
       return;
     }
     const existingCards = await CardModel.find({
@@ -115,8 +74,12 @@ export const createCard = async (req: Request, res: Response) => {
     const lastCard = await CardModel.findOne({ list: listId })
       .sort({ position: -1 })
       .select("position");
+
     const newPosition = lastCard ? lastCard.position + 1 : 0;
 
+    const cardMembers = [
+      ...new Set([userId.toString(), List.createdBy.toString()]),
+    ];
     const newCard = await CardModel.create({
       name: uniqueName,
       createdBy: userId,
@@ -126,17 +89,12 @@ export const createCard = async (req: Request, res: Response) => {
       description: description ? description : "",
       priority: priority ? priority : "",
       position: newPosition,
+      members: cardMembers,
     });
-    await ListModel.findOneAndUpdate(
-      { _id: listId },
-      {
-        $push: { cards: newCard._id },
-      }
-    );
-    const listBoard = await ListModel.findById(newCard.list);
-    const boardId = listBoard?._id;
+    List.cards.push(newCard._id);
+    await List.save();
     await redisClient.del(`tableData:${userId}`);
-    await redisClient.del(`singleBoard:${boardId}`);
+    await redisClient.del(`singleBoard:${List.board}`);
     cardActivityUpdate(
       newCard._id,
       `(${req.user.username}) created a (${newCard.name})`
@@ -731,7 +689,7 @@ export const addCover = asyncHandler(async (req: Request, res: Response) => {
     res.status(400).json(new ApiResponse(400, {}, "No file uploaded"));
     return;
   }
-  console.log(req.file)
+  console.log(req.file);
   const path = req.file.path;
   const uploadResult = await UploadOnCloudinary({ localFilePath: path });
   const coverUrl = uploadResult?.url;

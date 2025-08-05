@@ -526,13 +526,13 @@ cardRouter
   .route("/add-attachment")
   .post(
     verifyJWT,
+    upload.fields([{ name: "uploadedFile", maxCount: 1 }]),
     requirePermission(
       PERMISSIONS.CARD_ATTACHMENT,
       "card",
       "cardId",
       ERROR_MESSAGES.CARD_ATTACHMENT
     ),
-    upload.fields([{ name: "uploadedFile", maxCount: 1 }]),
     addAttachment
   );
 
@@ -814,10 +814,10 @@ cardRouter
   .patch(
     verifyJWT,
     requirePermission(
-      PERMISSIONS.CARD_DATE,
+      PERMISSIONS.CARD_TOGGLE,
       "card",
       "cardId",
-      ERROR_MESSAGES.CARD_DATE
+      ERROR_MESSAGES.CARD_TOGGLE
     ),
     toggleComplete
   );
@@ -848,18 +848,16 @@ cardRouter
     editComment
   );
 
-cardRouter
-  .route("/add-cover")
-  .post(
-    verifyJWT,
-    requirePermission(
-      PERMISSIONS.CARD_ATTACHMENT,
-      "card",
-      "cardId",
-      ERROR_MESSAGES.CARD_ATTACHMENT
-    ),
-    upload.single("cardCover"),
-    addCover
-  );
+cardRouter.route("/add-cover").post(
+  verifyJWT,
+  upload.single("cardCover"),
+  requirePermission(
+    PERMISSIONS.CARD_COVER,
+    "card",
+    "cardId",
+    ERROR_MESSAGES.CARD_ATTACHMENT
+  ),
+  addCover
+);
 
 export { cardRouter };

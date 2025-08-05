@@ -22,7 +22,6 @@ export const requirePermission = (
         res.status(401).json(new ApiResponse(401, {}, "Unauthorized"));
         return;
       }
-
       const userId = req.user._id;
       const resourceId =
         req.params[resourceIdParam] || req.body[resourceIdParam];

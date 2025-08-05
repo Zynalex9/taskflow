@@ -4,6 +4,7 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { useSingleBoardContext } from "@/Context/SingleBoardContext";
+import { useAddBoardMemberMutation } from "@/store/myApi";
 import { RootState } from "@/store/store";
 import { IUser } from "@/types/functionalites.types";
 import axios from "axios";
@@ -28,7 +29,8 @@ export const ShareDialogContent = () => {
   const [copied, setCopied] = useState<boolean>(false);
   const { board } = useSingleBoardContext();
   const { workspace } = useSelector((state: RootState) => state.workspace);
-  const [selectedMembers, setSelectedMembers] = useState<string[]>([]);
+  const [selectedMember, setSelectedMember] = useState<string[]>([]);
+  const [addMember] = useAddBoardMemberMutation();
   const handleCopy = async () => {
     try {
       await navigator.clipboard.writeText(textToCopy);
@@ -48,7 +50,9 @@ export const ShareDialogContent = () => {
       console.log("sending request with searchValue:", searchValue);
       if (!searchValue.trim()) return;
       const response = await axios.get<ApiResponse>(
-        `${import.meta.env.VITE_BASE_URL}/api/user/${searchValue}/find-by-identifier`
+        `${
+          import.meta.env.VITE_BASE_URL
+        }/api/user/${searchValue}/find-by-identifier`
       );
       if (response.data.success) {
         setApiResponse(response.data);
@@ -59,6 +63,24 @@ export const ShareDialogContent = () => {
     } finally {
       setIsLoading(false);
       setResponsedReturned(true);
+    }
+  };
+  const handleAddMember = async () => {
+    const body = {
+      boardId: board._id,
+      targetedId: selectedMember[0],
+    };
+    try {
+      setIsLoading(true);
+      await addMember(body).unwrap();
+      setSearchValue("");
+      toast.success("Member added successfully!", { theme: "dark" });
+      setSelectedMember([]);
+      setApiResponse(null);
+    } catch (error: any) {
+      toast.error(error.data.message, { theme: "dark" });
+    } finally {
+      setIsLoading(false);
     }
   };
   useEffect(() => {
@@ -94,10 +116,10 @@ export const ShareDialogContent = () => {
           />
           <button
             disabled={loading}
-            
+            onClick={handleAddMember}
             className="bg-blue-primary px-2 py-2 text-black rounded border-black border-1"
           >
-            Share
+            Add
           </button>
         </div>
         {searchValue.trim() && (
@@ -107,12 +129,12 @@ export const ShareDialogContent = () => {
             ) : apiResponse?.success ? (
               <div
                 className={`flex items-center curso gap-2 ${
-                  selectedMembers?.includes(apiResponse.data._id)
+                  selectedMember?.includes(apiResponse.data._id)
                     ? "bg-gray-500 p-2"
                     : " "
                 }`}
                 onClick={() => {
-                  setSelectedMembers((prev) => {
+                  setSelectedMember((prev) => {
                     if (prev.includes(apiResponse.data._id)) return prev;
                     return [...prev, apiResponse.data._id];
                   });

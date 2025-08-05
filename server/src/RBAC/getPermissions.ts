@@ -40,7 +40,7 @@ export const getBoardPermissions = async (
     if (member.role === "admin") {
       return ROLES.BOARD_ADMIN.permissions;
     } else {
-      return ROLES.WORKSPACE_MEMBER.permissions;
+      return ROLES.BOARD_MEMBER.permissions;
     }
   }
   if (board.visibility === "private") {
@@ -53,7 +53,7 @@ export const getBoardPermissions = async (
         if (member.role === "admin") {
           return ROLES.BOARD_ADMIN.permissions;
         } else {
-          return ROLES.WORKSPACE_MEMBER.permissions;
+          return ROLES.BOARD_MEMBER.permissions;
         }
       }
     }
@@ -85,6 +85,9 @@ export const getCardPermissions = async (
 
   if (card.createdBy.equals(userId)) {
     return ROLES.CARD_CREATOR.permissions;
+  }
+  if(card.members.includes(userId)){
+    return ROLES.CARD_MEMBER.permissions
   }
 
   const listPermissions = await getListPermissions(
