@@ -9,7 +9,7 @@ interface IData {
   title: string;
 }
 const Form = () => {
-  const [addBoard] = useAddBoardMutation()
+  const [addBoard] = useAddBoardMutation();
   const { workspace } = useSelector((state: RootState) => state.workspace);
   const { selectedColor, selectedImg } = useSelector(
     (state: RootState) => state.boardModalControll
@@ -23,7 +23,6 @@ const Form = () => {
   } = useForm<IData>();
   const dispatch = useDispatch<AppDispatch>();
   const onSubmit = async (data: IData) => {
-    console.log(data)
     const newData = {
       ...data,
       cover: selectedColor ? selectedColor : selectedImg,
@@ -32,12 +31,11 @@ const Form = () => {
       visibility: "workspace",
     };
     try {
-      await addBoard(newData);
+      await addBoard(newData).unwrap();
       dispatch(closeModal());
     } catch (error: any) {
-      toast.error(error.response.data.message, { theme: "dark" });
+      toast.error(error.data.message, { theme: "dark" });
     }
-    console.log(newData);
   };
   const titleValue = watch("title");
   return (
