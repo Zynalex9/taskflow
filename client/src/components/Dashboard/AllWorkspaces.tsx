@@ -28,6 +28,8 @@ const AllWorkspaces = () => {
   const [addWorkspace] = useCreateWorkspaceMutation();
   const { register, handleSubmit } = useForm<WorkspaceFormInputs>();
   const { user } = useSelector((state: RootState) => state.auth);
+  const [loading, SetLoading] = useState(false);
+
   const onSubmit = async (data: WorkspaceFormInputs) => {
     const formData = new FormData();
     formData.append("name", data.name);
@@ -35,6 +37,7 @@ const AllWorkspaces = () => {
       formData.append("workspace-cover", data["workspace-cover"][0]);
     }
     try {
+      SetLoading(true);
       await addWorkspace(formData).unwrap();
       toast.success("Workspace created successfully!");
       setOpenDialog(false);
@@ -42,6 +45,8 @@ const AllWorkspaces = () => {
       toast.error(error?.data?.message || "Something went wrong", {
         theme: "dark",
       });
+    } finally {
+      SetLoading(false);
     }
   };
   const { workspaces } = useWorkspaces();
@@ -120,7 +125,7 @@ const AllWorkspaces = () => {
               </button>
             </AlertDialogTrigger>
 
-            <AlertDialogContent>
+            <AlertDialogContent className="bg-bgS border-none text-textP">
               <AlertDialogHeader>
                 <AlertDialogTitle>Create a new workspace</AlertDialogTitle>
                 <AlertDialogDescription>
@@ -131,25 +136,29 @@ const AllWorkspaces = () => {
                     <input
                       {...register("name")}
                       placeholder="Add a title"
-                      className="w-full p-2 border rounded"
+                      className="w-full p-2 border rounded text-textP"
                     />
                     <input
                       {...register("workspace-cover")}
                       type="file"
-                      className="w-full p-2 border rounded"
+                      accept="image/*"
+                      className="w-full p-2 border rounded text-textP"
                     />
                     <AlertDialogFooter>
                       <AlertDialogCancel
-                        className="bg-black text-textP"
+                        className="bg-bgS hover:bg-S/60 text-white hover:text-white cursor-pointers"
                         onClick={() => setOpenDialog(false)}
                       >
                         Cancel
                       </AlertDialogCancel>
                       <button
                         type="submit"
-                        className="bg-blue-primary text-white px-4 py-2 rounded hover:bg-blue-primary/80"
+                        disabled={loading}
+                        className={` ${
+                          loading ? "bg-blue-primary/80" : "bg-blue-primary"
+                        } text-white px-4 py-2 rounded hover:bg-blue-primary/80`}
                       >
-                        Continue
+                        {loading ? "Creating workspace" : " Continue "}
                       </button>
                     </AlertDialogFooter>
                   </form>

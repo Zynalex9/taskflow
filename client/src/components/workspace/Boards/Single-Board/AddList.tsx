@@ -3,7 +3,7 @@ import { Plus } from "lucide-react";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { useParams } from "react-router-dom";
-import { toast, ToastContainer } from "react-toastify";
+import { toast } from "react-toastify";
 
 const AddList = () => {
   const [isAddList, setIsAddList] = useState(false);
@@ -69,7 +69,6 @@ const AddList = () => {
           Add a list
         </button>
       )}
-      <ToastContainer />
     </div>
   );
 };

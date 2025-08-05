@@ -13,13 +13,14 @@ export interface AuthorizedRequest extends Request {
 export const requirePermission = (
   permission: string,
   resourceType: "workspace" | "board" | "card",
-  resourceIdParam: string = "id"
+  resourceIdParam: string = "id",
+  errorMessage?: string,
 ) => {
   return async (req: Request, res: Response, next: NextFunction) => {
     try {
       if (!req.user) {
-         res.status(401).json(new ApiResponse(401, {}, "Unauthorized"));
-         return
+        res.status(401).json(new ApiResponse(401, {}, "Unauthorized"));
+        return;
       }
 
       const userId = req.user._id;
@@ -27,28 +28,38 @@ export const requirePermission = (
         req.params[resourceIdParam] || req.body[resourceIdParam];
 
       if (!resourceId) {
-         res
+        res
           .status(400)
           .json(new ApiResponse(400, {}, `${resourceIdParam} is required`));
-          return
+        return;
       }
 
-      const authResult = await authorize(userId, permission, resourceType, resourceId);
+      const authResult = await authorize(
+        userId,
+        permission,
+        resourceType,
+        resourceId
+      );
 
       if (!authResult.authorized) {
-         res
+        res
           .status(403)
-          .json(new ApiResponse(403, {}, authResult.reason || "Access denied"));
-          return
+          .json(
+            new ApiResponse(
+              403,
+              {},
+              errorMessage || authResult.reason || "Access denied"
+            )
+          );
+        return;
       }
 
       next();
     } catch (error) {
       console.error("Authorization middleware error:", error);
-       res
+      res
         .status(500)
         .json(new ApiResponse(500, {}, "Authorization check failed"));
     }
   };
 };
-

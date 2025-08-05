@@ -140,7 +140,8 @@ workSpaceRouter
     requirePermission(
       PERMISSIONS.WORKSPACE_MANAGE_ADMINS,
       "workspace",
-      "workspaceId"
+      "workspaceId",
+      "You are not authorized to add an admin in this workspace"
     ),
     addAdmin
   );
@@ -151,7 +152,8 @@ workSpaceRouter
     requirePermission(
       PERMISSIONS.WORKSPACE_MANAGE_ADMINS,
       "workspace",
-      "workspaceId"
+      "workspaceId",
+      "You are not authorized to remove an admin in this workspace"
     ),
     removeAdmin
   );
@@ -162,7 +164,8 @@ workSpaceRouter
     requirePermission(
       PERMISSIONS.WORKSPACE_MANAGE_MEMBERS,
       "workspace",
-      "workspaceId"
+      "workspaceId",
+      "You are not authorized to add a member in this workspace"
     ),
     addWorkspaceMember
   );
@@ -173,7 +176,8 @@ workSpaceRouter
     requirePermission(
       PERMISSIONS.WORKSPACE_MANAGE_MEMBERS,
       "workspace",
-      "workspaceId"
+      "workspaceId",
+      "You are not authorized to remove a member in this workspace"
     ),
     removeWorkspaceMember
   );
@@ -213,7 +217,12 @@ listRouter
   .route("/create-list")
   .post(
     verifyJWT,
-    requirePermission(PERMISSIONS.BOARD_CREATE_LIST, "board", "boardId"),
+    requirePermission(
+      PERMISSIONS.BOARD_CREATE_LIST,
+      "board",
+      "boardId",
+      "You are not authorized to create a list in this board"
+    ),
     createList
   );
 listRouter.route("/copy-list").patch(verifyJWT, copyList);
