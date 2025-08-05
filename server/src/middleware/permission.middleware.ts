@@ -12,9 +12,9 @@ export interface AuthorizedRequest extends Request {
 
 export const requirePermission = (
   permission: string,
-  resourceType: "workspace" | "board" | "card",
+  resourceType: "workspace" | "board" | "list" | "card",
   resourceIdParam: string = "id",
-  errorMessage?: string,
+  errorMessage?: string
 ) => {
   return async (req: Request, res: Response, next: NextFunction) => {
     try {

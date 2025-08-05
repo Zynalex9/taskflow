@@ -89,7 +89,7 @@ export const getUserPermissions = async (
 export const hasPermission = async (
   userId: Types.ObjectId,
   permission: string,
-  resourceType: "workspace" | "board" | "card",
+  resourceType: "workspace" | "board" | "list" | "card",
   resourceId: string
 ): Promise<boolean> => {
   try {
@@ -107,7 +107,7 @@ export const hasPermission = async (
 export const authorize = async (
   userId: Types.ObjectId,
   action: string,
-  resourceType: "workspace" | "board" | "card",
+  resourceType: "workspace" | "board" | "list" | "card",
   resourceId: string
 ): Promise<{ authorized: boolean; reason?: string }> => {
   const userHasPermission = await hasPermission(

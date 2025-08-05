@@ -42,4 +42,6 @@ export const ERROR_MESSAGES = {
   CARD_JOIN: "You are not authorized to join this card",
   CARD_LEAVE: "You are not authorized to leave this card",
   CARD_LABEL: "You are not authorized to manage labels on this card",
+  CARD_DATE: "You are not authorized to manage dates on this card",
+  CARD_COPY: "You are not authorized to copy this card",
 };

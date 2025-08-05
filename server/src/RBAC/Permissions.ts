@@ -43,4 +43,5 @@ export const PERMISSIONS = {
   CARD_DATE: "card:date",
   CARD_LABEL: "card:label",
   CARD_COPY: "card:copy",
+  CARD_JOIN:"card:join"
 } as const;

@@ -90,6 +90,7 @@ import {
 } from "../controller/card/checklist";
 import { requirePermission } from "../middleware/permission.middleware";
 import { PERMISSIONS } from "../RBAC/Permissions";
+import { ERROR_MESSAGES } from "../RBAC/ErrorMessage";
 
 const userRouter = Router();
 const workSpaceRouter = Router();
@@ -123,16 +124,85 @@ export { userRouter };
 workSpaceRouter
   .route("/create-workspace")
   .post(verifyJWT, upload.single("workspace-cover"), createWorkSpace);
-workSpaceRouter.route("/create-card").post(verifyJWT, createCard);
+
+workSpaceRouter
+  .route("/create-card")
+  .post(
+    verifyJWT,
+    requirePermission(
+      PERMISSIONS.LIST_CREATE_CARD,
+      "board",
+      "boardId",
+      ERROR_MESSAGES.LIST_CREATE_CARD
+    ),
+    createCard
+  );
+
 workSpaceRouter
   .route("/:workspaceId/get-table-data")
-  .get(verifyJWT, getWorkspaceTableData);
+  .get(
+    verifyJWT,
+    requirePermission(
+      PERMISSIONS.WORKSPACE_VIEW,
+      "workspace",
+      "workspaceId",
+      ERROR_MESSAGES.WORKSPACE_VIEW
+    ),
+    getWorkspaceTableData
+  );
+
 workSpaceRouter
   .route("/:workspaceId/get-calendar-data")
-  .get(verifyJWT, getCalendarData);
-workSpaceRouter.route("/get-workspaces").get(verifyJWT, allWorkspaces);
-workSpaceRouter.route("/get-workspace").get(verifyJWT, getWorkspace);
-workSpaceRouter.route("/delete-workspace").delete(verifyJWT, deleteWorkSpace);
+  .get(
+    verifyJWT,
+    requirePermission(
+      PERMISSIONS.WORKSPACE_VIEW,
+      "workspace",
+      "workspaceId",
+      ERROR_MESSAGES.WORKSPACE_VIEW
+    ),
+    getCalendarData
+  );
+
+workSpaceRouter
+  .route("/get-workspaces")
+  .get(
+    verifyJWT,
+    requirePermission(
+      PERMISSIONS.WORKSPACE_VIEW,
+      "workspace",
+      "workspaceId",
+      ERROR_MESSAGES.WORKSPACE_VIEW
+    ),
+    allWorkspaces
+  );
+
+workSpaceRouter
+  .route("/get-workspace")
+  .get(
+    verifyJWT,
+    requirePermission(
+      PERMISSIONS.WORKSPACE_VIEW,
+      "workspace",
+      "workspaceId",
+      ERROR_MESSAGES.WORKSPACE_VIEW
+    ),
+    getWorkspace
+  );
+
+workSpaceRouter
+  .route("/delete-workspace")
+  .delete(
+    verifyJWT,
+    requirePermission(
+      PERMISSIONS.WORKSPACE_DELETE,
+      "workspace",
+      "workspaceId",
+      ERROR_MESSAGES.WORKSPACE_DELETE
+    ),
+    deleteWorkSpace
+  );
+
 workSpaceRouter
   .route("/add-admin")
   .patch(
@@ -141,10 +211,11 @@ workSpaceRouter
       PERMISSIONS.WORKSPACE_MANAGE_ADMINS,
       "workspace",
       "workspaceId",
-      "You are not authorized to add an admin in this workspace"
+      ERROR_MESSAGES.WORKSPACE_MANAGE_ADMINS_ADD
     ),
     addAdmin
   );
+
 workSpaceRouter
   .route("/remove-admin")
   .patch(
@@ -153,10 +224,11 @@ workSpaceRouter
       PERMISSIONS.WORKSPACE_MANAGE_ADMINS,
       "workspace",
       "workspaceId",
-      "You are not authorized to remove an admin in this workspace"
+      ERROR_MESSAGES.WORKSPACE_MANAGE_ADMINS_REMOVE
     ),
     removeAdmin
   );
+
 workSpaceRouter
   .route("/add-member")
   .patch(
@@ -165,10 +237,11 @@ workSpaceRouter
       PERMISSIONS.WORKSPACE_MANAGE_MEMBERS,
       "workspace",
       "workspaceId",
-      "You are not authorized to add a member in this workspace"
+      ERROR_MESSAGES.WORKSPACE_MANAGE_MEMBERS_ADD
     ),
     addWorkspaceMember
   );
+
 workSpaceRouter
   .route("/remove-member")
   .patch(
@@ -177,34 +250,194 @@ workSpaceRouter
       PERMISSIONS.WORKSPACE_MANAGE_MEMBERS,
       "workspace",
       "workspaceId",
-      "You are not authorized to remove a member in this workspace"
+      ERROR_MESSAGES.WORKSPACE_MANAGE_MEMBERS_REMOVE
     ),
     removeWorkspaceMember
   );
+
 workSpaceRouter
   .route("/get-members/:workspaceId")
   .get(
     verifyJWT,
-    requirePermission(PERMISSIONS.WORKSPACE_VIEW, "workspace", "workspaceId"),
+    requirePermission(
+      PERMISSIONS.WORKSPACE_VIEW,
+      "workspace",
+      "workspaceId",
+      ERROR_MESSAGES.WORKSPACE_VIEW
+    ),
     getWorkspaceMembers
   );
 
 export { workSpaceRouter };
 boardRouter
   .route("/create-board")
-  .post(verifyJWT, upload.single("cover-image"), createBoard);
-boardRouter.route("/:workspaceId/get-boards").get(verifyJWT, allBoards);
-boardRouter.route("/single/:boardId").get(verifyJWT, getSingleBoard);
-boardRouter.route("/:boardId/delete-board").delete(verifyJWT, deleteBoard);
-boardRouter.route("/add-admin").patch(verifyJWT, makeBoardAdmin);
-boardRouter.route("/remove-admin").patch(verifyJWT, demoteAdmin);
-boardRouter.route("/add-member").patch(verifyJWT, addMember);
-boardRouter.route("/remove-member").patch(verifyJWT, removeMember);
-boardRouter.route("/edit-board").patch(verifyJWT, editBoard);
-boardRouter.route("/toggle-favourite").patch(verifyJWT, toggleFavourite);
-boardRouter.route("/add-description").patch(verifyJWT, addBoardDescription);
-boardRouter.route("/copy-board").patch(verifyJWT, copyBoard);
-boardRouter.route("/full-details/:boardId").get(verifyJWT, pdfBoardData);
+  .post(
+    verifyJWT,
+    upload.single("cover-image"),
+    requirePermission(
+      PERMISSIONS.WORKSPACE_CREATE_BOARD,
+      "workspace",
+      "workspaceId",
+      ERROR_MESSAGES.BOARD_CREATE
+    ),
+    createBoard
+  );
+
+boardRouter
+  .route("/:workspaceId/get-boards")
+  .get(
+    verifyJWT,
+    requirePermission(
+      PERMISSIONS.WORKSPACE_VIEW,
+      "workspace",
+      "workspaceId",
+      ERROR_MESSAGES.BOARD_VIEW
+    ),
+    allBoards
+  );
+
+boardRouter
+  .route("/single/:boardId")
+  .get(
+    verifyJWT,
+    requirePermission(
+      PERMISSIONS.BOARD_VIEW,
+      "board",
+      "boardId",
+      ERROR_MESSAGES.BOARD_VIEW
+    ),
+    getSingleBoard
+  );
+
+boardRouter
+  .route("/:boardId/delete-board")
+  .delete(
+    verifyJWT,
+    requirePermission(
+      PERMISSIONS.BOARD_DELETE,
+      "board",
+      "boardId",
+      ERROR_MESSAGES.BOARD_DELETE
+    ),
+    deleteBoard
+  );
+
+boardRouter
+  .route("/add-admin")
+  .patch(
+    verifyJWT,
+    requirePermission(
+      PERMISSIONS.BOARD_MANAGE_ADMINS_ADD,
+      "board",
+      "boardId",
+      ERROR_MESSAGES.BOARD_MANAGE_ADMINS_ADD
+    ),
+    makeBoardAdmin
+  );
+
+boardRouter
+  .route("/remove-admin")
+  .patch(
+    verifyJWT,
+    requirePermission(
+      PERMISSIONS.BOARD_MANAGE_ADMINS_REMOVE,
+      "board",
+      "boardId",
+      ERROR_MESSAGES.BOARD_MANAGE_ADMINS_REMOVE
+    ),
+    demoteAdmin
+  );
+
+boardRouter
+  .route("/add-member")
+  .patch(
+    verifyJWT,
+    requirePermission(
+      PERMISSIONS.BOARD_MANAGE_MEMBERS,
+      "board",
+      "boardId",
+      ERROR_MESSAGES.BOARD_MANAGE_MEMBERS_ADD
+    ),
+    addMember
+  );
+
+boardRouter
+  .route("/remove-member")
+  .patch(
+    verifyJWT,
+    requirePermission(
+      PERMISSIONS.BOARD_MANAGE_MEMBERS,
+      "board",
+      "boardId",
+      ERROR_MESSAGES.BOARD_MANAGE_MEMBERS_REMOVE
+    ),
+    removeMember
+  );
+
+boardRouter
+  .route("/edit-board")
+  .patch(
+    verifyJWT,
+    requirePermission(
+      PERMISSIONS.BOARD_EDIT,
+      "board",
+      "boardId",
+      ERROR_MESSAGES.BOARD_EDIT
+    ),
+    editBoard
+  );
+
+boardRouter
+  .route("/toggle-favourite")
+  .patch(
+    verifyJWT,
+    requirePermission(
+      PERMISSIONS.BOARD_FAVOURITE,
+      "board",
+      "boardId",
+      ERROR_MESSAGES.BOARD_FAVOURITE
+    ),
+    toggleFavourite
+  );
+
+boardRouter
+  .route("/add-description")
+  .patch(
+    verifyJWT,
+    requirePermission(
+      PERMISSIONS.BOARD_DESCRIPTION,
+      "board",
+      "boardId",
+      ERROR_MESSAGES.BOARD_DESCRIPTION
+    ),
+    addBoardDescription
+  );
+
+boardRouter
+  .route("/copy-board")
+  .patch(
+    verifyJWT,
+    requirePermission(
+      PERMISSIONS.BOARD_COPY,
+      "board",
+      "boardId",
+      ERROR_MESSAGES.BOARD_COPY
+    ),
+    copyBoard
+  );
+
+boardRouter
+  .route("/full-details/:boardId")
+  .get(
+    verifyJWT,
+    requirePermission(
+      PERMISSIONS.BOARD_DETAILS,
+      "board",
+      "boardId",
+      ERROR_MESSAGES.BOARD_DETAILS
+    ),
+    pdfBoardData
+  );
 
 boardRouter
   .route("/update-cover/:boardId")
@@ -213,6 +446,7 @@ boardRouter
   .route("/update-visibility/:boardId")
   .patch(verifyJWT, updateVisibility);
 export { boardRouter };
+
 listRouter
   .route("/create-list")
   .post(
@@ -221,64 +455,467 @@ listRouter
       PERMISSIONS.BOARD_CREATE_LIST,
       "board",
       "boardId",
-      "You are not authorized to create a list in this board"
+      ERROR_MESSAGES.LIST_CREATE
     ),
     createList
   );
-listRouter.route("/copy-list").patch(verifyJWT, copyList);
-listRouter.route("/move-list").patch(verifyJWT, moveList);
+
+listRouter
+  .route("/copy-list")
+  .patch(
+    verifyJWT,
+    requirePermission(
+      PERMISSIONS.LIST_COPY,
+      "list",
+      "listId",
+      ERROR_MESSAGES.LIST_COPY
+    ),
+    copyList
+  );
+
+listRouter
+  .route("/move-list")
+  .patch(
+    verifyJWT,
+    requirePermission(
+      PERMISSIONS.LIST_MOVE,
+      "list",
+      "listId",
+      ERROR_MESSAGES.LIST_MOVE
+    ),
+    moveList
+  );
+
 listRouter
   .route("/:workspaceId/:listId/delete-list")
-  .delete(verifyJWT, deleteList);
-listRouter.route("/:boardId/get-lists").get(verifyJWT, getAllLists);
-listRouter.route("/copy-list-new").post(verifyJWT, copyIntoNewList);
+  .delete(
+    verifyJWT,
+    requirePermission(
+      PERMISSIONS.LIST_DELETE,
+      "list",
+      "listId",
+      ERROR_MESSAGES.LIST_DELETE
+    ),
+    deleteList
+  );
+
+listRouter
+  .route("/:boardId/get-lists")
+  .get(
+    verifyJWT,
+    requirePermission(
+      PERMISSIONS.LIST_VIEW,
+      "board",
+      "boardId",
+      ERROR_MESSAGES.LIST_VIEW
+    ),
+    getAllLists
+  );
+
+listRouter
+  .route("/copy-list-new")
+  .post(
+    verifyJWT,
+    requirePermission(
+      PERMISSIONS.LIST_COPY,
+      "list",
+      "listId",
+      ERROR_MESSAGES.LIST_COPY
+    ),
+    copyIntoNewList
+  );
+
 export { listRouter };
-cardRouter.route("/join-card").post(verifyJWT, joinCard);
-cardRouter.route("/leave-card").post(verifyJWT, leaveCard);
-cardRouter.route("/add-label").post(verifyJWT, addLabel);
-cardRouter.route("/add-comment").post(verifyJWT, addComment);
+cardRouter
+  .route("/join-card")
+  .post(
+    verifyJWT,
+    requirePermission(
+      PERMISSIONS.CARD_JOIN,
+      "card",
+      "cardId",
+      ERROR_MESSAGES.CARD_JOIN
+    ),
+    joinCard
+  );
+
+cardRouter
+  .route("/leave-card")
+  .post(
+    verifyJWT,
+    requirePermission(
+      PERMISSIONS.CARD_VIEW,
+      "card",
+      "cardId",
+      ERROR_MESSAGES.CARD_VIEW
+    ),
+    leaveCard
+  );
+
+cardRouter
+  .route("/add-label")
+  .post(
+    verifyJWT,
+    requirePermission(
+      PERMISSIONS.CARD_LABEL,
+      "card",
+      "cardId",
+      ERROR_MESSAGES.CARD_LABEL
+    ),
+    addLabel
+  );
+
+cardRouter
+  .route("/add-comment")
+  .post(
+    verifyJWT,
+    requirePermission(
+      PERMISSIONS.CARD_COMMENT,
+      "card",
+      "cardId",
+      ERROR_MESSAGES.CARD_COMMENT
+    ),
+    addComment
+  );
+
 cardRouter
   .route("/add-attachment")
   .post(
     verifyJWT,
+    requirePermission(
+      PERMISSIONS.CARD_ATTACHMENT,
+      "card",
+      "cardId",
+      ERROR_MESSAGES.CARD_ATTACHMENT
+    ),
     upload.fields([{ name: "uploadedFile", maxCount: 1 }]),
     addAttachment
   );
-cardRouter.route("/add-checklist").post(verifyJWT, addChecklist);
+
+cardRouter
+  .route("/add-checklist")
+  .post(
+    verifyJWT,
+    requirePermission(
+      PERMISSIONS.CARD_CHECKLIST,
+      "card",
+      "cardId",
+      ERROR_MESSAGES.CARD_CHECKLIST
+    ),
+    addChecklist
+  );
+
 cardRouter
   .route("/checklist/:checkListId/add-items")
-  .post(verifyJWT, addItemToCheckList);
+  .post(
+    verifyJWT,
+    requirePermission(
+      PERMISSIONS.CARD_CHECKLIST,
+      "card",
+      "cardId",
+      ERROR_MESSAGES.CARD_CHECKLIST
+    ),
+    addItemToCheckList
+  );
+
 cardRouter
   .route("/checklist/toggle/:checklistId/:itemId")
-  .patch(verifyJWT, toggleCheckListItem);
+  .patch(
+    verifyJWT,
+    requirePermission(
+      PERMISSIONS.CARD_CHECKLIST,
+      "card",
+      "cardId",
+      ERROR_MESSAGES.CARD_CHECKLIST
+    ),
+    toggleCheckListItem
+  );
+
 cardRouter
   .route("/checklist/edit/:checklistId/:itemId")
-  .patch(verifyJWT, editItem);
-cardRouter.route("/edit/:listId/:cardId").patch(verifyJWT, editCardDetails);
-cardRouter.route("/get-all-cards").get(verifyJWT, getCardsByUser);
-cardRouter.route("/:listId/get-list-cards").get(verifyJWT, getCardsByList);
+  .patch(
+    verifyJWT,
+    requirePermission(
+      PERMISSIONS.CARD_CHECKLIST,
+      "card",
+      "cardId",
+      ERROR_MESSAGES.CARD_CHECKLIST
+    ),
+    editItem
+  );
+
+cardRouter
+  .route("/edit/:listId/:cardId")
+  .patch(
+    verifyJWT,
+    requirePermission(
+      PERMISSIONS.CARD_EDIT,
+      "card",
+      "cardId",
+      ERROR_MESSAGES.CARD_EDIT
+    ),
+    editCardDetails
+  );
+
+cardRouter
+  .route("/get-all-cards")
+  .get(
+    verifyJWT,
+    requirePermission(
+      PERMISSIONS.CARD_VIEW,
+      "card",
+      "cardId",
+      ERROR_MESSAGES.CARD_VIEW
+    ),
+    getCardsByUser
+  );
+
+cardRouter
+  .route("/:listId/get-list-cards")
+  .get(
+    verifyJWT,
+    requirePermission(
+      PERMISSIONS.CARD_VIEW,
+      "card",
+      "cardId",
+      ERROR_MESSAGES.CARD_VIEW
+    ),
+    getCardsByList
+  );
+
 cardRouter
   .route("/:workspaceId/:cardId/delete-card")
-  .delete(verifyJWT, deleteCard);
-cardRouter.route("/delete-label").delete(verifyJWT, deleteLabel);
-cardRouter.route("/:commentId/delete-comment").delete(verifyJWT, deleteComment);
-cardRouter.route("/delete-attachment").delete(verifyJWT, deleteAttachment);
+  .delete(
+    verifyJWT,
+    requirePermission(
+      PERMISSIONS.CARD_DELETE,
+      "card",
+      "cardId",
+      ERROR_MESSAGES.CARD_DELETE
+    ),
+    deleteCard
+  );
+
+cardRouter
+  .route("/delete-label")
+  .delete(
+    verifyJWT,
+    requirePermission(
+      PERMISSIONS.CARD_LABEL,
+      "card",
+      "cardId",
+      ERROR_MESSAGES.CARD_LABEL
+    ),
+    deleteLabel
+  );
+
+cardRouter
+  .route("/:commentId/delete-comment")
+  .delete(
+    verifyJWT,
+    requirePermission(
+      PERMISSIONS.CARD_COMMENT,
+      "card",
+      "cardId",
+      ERROR_MESSAGES.CARD_COMMENT
+    ),
+    deleteComment
+  );
+
+cardRouter
+  .route("/delete-attachment")
+  .delete(
+    verifyJWT,
+    requirePermission(
+      PERMISSIONS.CARD_ATTACHMENT,
+      "card",
+      "cardId",
+      ERROR_MESSAGES.CARD_ATTACHMENT
+    ),
+    deleteAttachment
+  );
+
 cardRouter
   .route("/:commentId/delete-checklist")
-  .delete(verifyJWT, deleteCheckList);
-cardRouter.route("/delete-checklist").delete(verifyJWT, deleteCheckList);
-cardRouter.route("/move-card").patch(verifyJWT, moveCard);
-cardRouter.route("/copy-card").patch(verifyJWT, copyCard);
-cardRouter.route("/single-card/:cardId").get(verifyJWT, getSingleCard);
-cardRouter.route("/card-activities/:cardId").get(verifyJWT, getCardActivities);
-cardRouter.route("/add-description").patch(verifyJWT, addDescription);
-cardRouter.route("/add-start-date").post(verifyJWT, addEndDate);
-cardRouter.route("/add-end-date").post(verifyJWT, addStartDate);
-cardRouter.route("/add-date").patch(verifyJWT, addDate);
-cardRouter.route("/toggle-complete").patch(verifyJWT, toggleComplete);
-cardRouter.route("/delete-checklist-item").delete(verifyJWT, deleteItem);
-cardRouter.route("/edit-comment").patch(verifyJWT, editComment);
+  .delete(
+    verifyJWT,
+    requirePermission(
+      PERMISSIONS.CARD_CHECKLIST,
+      "card",
+      "cardId",
+      ERROR_MESSAGES.CARD_CHECKLIST
+    ),
+    deleteCheckList
+  );
+
+cardRouter
+  .route("/delete-checklist")
+  .delete(
+    verifyJWT,
+    requirePermission(
+      PERMISSIONS.CARD_CHECKLIST,
+      "card",
+      "cardId",
+      ERROR_MESSAGES.CARD_CHECKLIST
+    ),
+    deleteCheckList
+  );
+
+cardRouter
+  .route("/move-card")
+  .patch(
+    verifyJWT,
+    requirePermission(
+      PERMISSIONS.CARD_MOVE,
+      "card",
+      "cardId",
+      ERROR_MESSAGES.CARD_MOVE
+    ),
+    moveCard
+  );
+
+cardRouter
+  .route("/copy-card")
+  .patch(
+    verifyJWT,
+    requirePermission(
+      PERMISSIONS.CARD_COPY,
+      "card",
+      "cardId",
+      ERROR_MESSAGES.CARD_COPY
+    ),
+    copyCard
+  );
+
+cardRouter
+  .route("/single-card/:cardId")
+  .get(
+    verifyJWT,
+    requirePermission(
+      PERMISSIONS.CARD_VIEW,
+      "card",
+      "cardId",
+      ERROR_MESSAGES.CARD_VIEW
+    ),
+    getSingleCard
+  );
+
+cardRouter
+  .route("/card-activities/:cardId")
+  .get(
+    verifyJWT,
+    requirePermission(
+      PERMISSIONS.CARD_VIEW,
+      "card",
+      "cardId",
+      ERROR_MESSAGES.CARD_VIEW
+    ),
+    getCardActivities
+  );
+
+cardRouter
+  .route("/add-description")
+  .patch(
+    verifyJWT,
+    requirePermission(
+      PERMISSIONS.CARD_EDIT,
+      "card",
+      "cardId",
+      ERROR_MESSAGES.CARD_EDIT
+    ),
+    addDescription
+  );
+
+cardRouter
+  .route("/add-start-date")
+  .post(
+    verifyJWT,
+    requirePermission(
+      PERMISSIONS.CARD_DATE,
+      "card",
+      "cardId",
+      ERROR_MESSAGES.CARD_DATE
+    ),
+    addEndDate
+  );
+
+cardRouter
+  .route("/add-end-date")
+  .post(
+    verifyJWT,
+    requirePermission(
+      PERMISSIONS.CARD_DATE,
+      "card",
+      "cardId",
+      ERROR_MESSAGES.CARD_DATE
+    ),
+    addStartDate
+  );
+
+cardRouter
+  .route("/add-date")
+  .patch(
+    verifyJWT,
+    requirePermission(
+      PERMISSIONS.CARD_DATE,
+      "card",
+      "cardId",
+      ERROR_MESSAGES.CARD_DATE
+    ),
+    addDate
+  );
+
+cardRouter
+  .route("/toggle-complete")
+  .patch(
+    verifyJWT,
+    requirePermission(
+      PERMISSIONS.CARD_DATE,
+      "card",
+      "cardId",
+      ERROR_MESSAGES.CARD_DATE
+    ),
+    toggleComplete
+  );
+
+cardRouter
+  .route("/delete-checklist-item")
+  .delete(
+    verifyJWT,
+    requirePermission(
+      PERMISSIONS.CARD_CHECKLIST,
+      "card",
+      "cardId",
+      ERROR_MESSAGES.CARD_CHECKLIST
+    ),
+    deleteItem
+  );
+
+cardRouter
+  .route("/edit-comment")
+  .patch(
+    verifyJWT,
+    requirePermission(
+      PERMISSIONS.CARD_COMMENT,
+      "card",
+      "cardId",
+      ERROR_MESSAGES.CARD_COMMENT
+    ),
+    editComment
+  );
+
 cardRouter
   .route("/add-cover")
-  .post(verifyJWT, upload.single("cardCover"), addCover);
+  .post(
+    verifyJWT,
+    requirePermission(
+      PERMISSIONS.CARD_ATTACHMENT,
+      "card",
+      "cardId",
+      ERROR_MESSAGES.CARD_ATTACHMENT
+    ),
+    upload.single("cardCover"),
+    addCover
+  );
+
 export { cardRouter };
