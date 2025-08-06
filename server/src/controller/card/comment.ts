@@ -6,10 +6,11 @@ import { checkRequiredParams } from "../../utils/helpers";
 import mongoose from "mongoose";
 import { redisClient } from "../..";
 import { asyncHandler } from "../../utils/asyncHandler";
+import { getIO } from "../../socket";
 
 export const addComment = async (req: Request, res: Response) => {
   try {
-    const { comment, cardId } = req.body;
+    const { comment, cardId, workspaceId } = req.body;
     const userId = req.user._id;
     if (!comment || !cardId) {
       res
@@ -28,11 +29,16 @@ export const addComment = async (req: Request, res: Response) => {
     });
     card.comments.push(newComment._id);
     await card.save();
+    const addedComment = await commentsModel
+      .find({ _id: newComment._id })
+      .populate("author");
     await redisClient.del(`singleCard:${cardId}`);
+    const io = getIO();
+    io.to(workspaceId).emit("commentCreated", addedComment);
     res.status(201).json({
       message: `New comment ${comment} has been made`,
       success: true,
-      newComment,
+      newComment: addedComment,
     });
   } catch (error) {
     console.error(error);
@@ -47,11 +53,11 @@ export const addComment = async (req: Request, res: Response) => {
 
 export const deleteComment = async (req: Request, res: Response) => {
   try {
-    const required = ["commentId"];
+    const required = ["commentId", "workspaceId"];
     if (!checkRequiredParams(req, res, required)) return;
 
     const { commentId } = req.params;
-    const { cardId } = req.body;
+    const { cardId, workspaceId } = req.body;
     if (!mongoose.Types.ObjectId.isValid(commentId)) {
       res.status(400).json(new ApiResponse(400, {}, "Invalid comment ID"));
       return;
@@ -63,6 +69,8 @@ export const deleteComment = async (req: Request, res: Response) => {
       return;
     }
     await redisClient.del(`singleCard:${cardId}`);
+    const io = getIO();
+    io.to(workspaceId).emit("commentDeleted", deletedComment);
     res
       .status(200)
       .json(new ApiResponse(200, {}, "Comment deleted successfully"));

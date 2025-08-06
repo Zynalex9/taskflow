@@ -28,7 +28,7 @@ export const cardApi = createApi({
     }),
     addComment: builder.mutation<
       ICommentResponse,
-      { comment: string; cardId: string }
+      { comment: string; cardId: string; workspaceId: string }
     >({
       query: (newComment) => ({
         url: "/api/card/add-comment",

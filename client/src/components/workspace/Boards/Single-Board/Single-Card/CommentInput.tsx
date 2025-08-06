@@ -1,21 +1,25 @@
-import { useState } from "react";
-import { useSelector } from "react-redux";
-import { RootState } from "../../../../../store/store";
+import { useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { AppDispatch, RootState } from "../../../../../store/store";
 import { formatDistanceToNow } from "date-fns";
 import { IComment } from "@/types/functionalites.types";
 import {
+  cardApi,
   useAddCommentMutation,
   useDeleteCommentMutation,
   useEditCommentMutation,
 } from "@/store/cardApi";
 import { Pencil, Trash } from "lucide-react";
 import { toast, ToastContainer } from "react-toastify";
+import { useParams } from "react-router-dom";
+import { socket } from "@/socket/socket";
 interface IProps {
   comments: IComment[];
   cardId: string;
 }
 const CommentInput = ({ comments, cardId }: IProps) => {
   const [newComment, setNewComment] = useState("");
+  const { workspaceId } = useParams();
   const { user } = useSelector((state: RootState) => state.auth);
   const [isInputFocused, setIsInputFocused] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
@@ -25,6 +29,29 @@ const CommentInput = ({ comments, cardId }: IProps) => {
   const [addComment] = useAddCommentMutation();
   const [editComment] = useEditCommentMutation();
   const [deleteComment] = useDeleteCommentMutation();
+  const disptach = useDispatch<AppDispatch>();
+  useEffect(() => {
+    const handleCreateComment = (comment: IComment) => {
+      const newCommentObj = Array.isArray(comment) ? comment[0] : comment;
+
+      disptach(
+        cardApi.util.updateQueryData("getSingleCard", { cardId }, (draft) => {
+          const exist = draft.data.comments.find(
+            (c) => c._id === newCommentObj._id
+          );
+          if (!exist) {
+            draft.data.comments = [...draft.data.comments, newCommentObj];
+          }
+        })
+      );
+    };
+
+    socket.on("commentCreated", handleCreateComment);
+    return () => {
+      socket.off("commentCreated", handleCreateComment);
+    };
+  }, [disptach, cardId]);
+
   const handleDelete = async (commentId: string) => {
     try {
       await deleteComment({ commentId, cardId }).unwrap();
@@ -41,6 +68,7 @@ const CommentInput = ({ comments, cardId }: IProps) => {
       const newCommentData = {
         cardId,
         comment: newComment,
+        workspaceId: workspaceId!,
       };
       await addComment(newCommentData).unwrap();
       setIsInputFocused(false);
@@ -103,7 +131,7 @@ const CommentInput = ({ comments, cardId }: IProps) => {
             <div className="flex items-center justify-between gap-3">
               <div className="flex items-center gap-3">
                 <img
-                  src={c.author.profilePicture}
+                  src={c.author?.profilePicture || "/default_pfp.png"}
                   alt="profile picture"
                   className="rounded shadow-xl cursor-pointer w-8 h-8"
                 />
