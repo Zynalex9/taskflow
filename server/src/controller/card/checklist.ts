@@ -7,6 +7,7 @@ import ApiResponse from "../../utils/ApiResponse";
 import { checkRequiredBody, notFound } from "../../utils/helpers";
 import { redisClient } from "../..";
 import { asyncHandler } from "../../utils/asyncHandler";
+import { getIO } from "../../socket";
 
 interface INewItem {
   title: string;
@@ -17,7 +18,7 @@ interface INewItem {
 }
 export const addChecklist = async (req: Request, res: Response) => {
   try {
-    const { title, cardId } = req.body;
+    const { title, cardId, workspaceId } = req.body;
     const userId = req.user._id;
     if (!title || !cardId) {
       res
@@ -38,7 +39,9 @@ export const addChecklist = async (req: Request, res: Response) => {
     card.checklist.push(checkList._id);
     await card.save();
     await redisClient.del(`singleCard:${cardId}`);
-
+    const io = getIO();
+    console.log("iddd", workspaceId);
+    io.to(workspaceId).emit("checkListCreated", checkList);
     res.status(200).json({
       message: `Checklist (${checkList.title}) added to ${card.name}`,
       newChecklist: checkList,
@@ -321,12 +324,16 @@ export const deleteItem = asyncHandler(async (req, res) => {
       notFound(checkList, "Checklist", res);
       return;
     }
-    const item = checkList.items.find((item) => item._id?.toString() === itemId);
+    const item = checkList.items.find(
+      (item) => item._id?.toString() === itemId
+    );
     if (!item) {
       notFound(item, "Item", res);
       return;
     }
-    checkList.items = checkList.items.filter((i) => i._id?.toString() !== item._id?.toString());
+    checkList.items = checkList.items.filter(
+      (i) => i._id?.toString() !== item._id?.toString()
+    );
     await checkList.save();
     await redisClient.del(`singleCard:${req.body.cardId}`);
     res.status(200).json(new ApiResponse(200, {}, "Item deleted"));

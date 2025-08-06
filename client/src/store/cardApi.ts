@@ -86,7 +86,7 @@ export const cardApi = createApi({
     }),
     addChecklist: builder.mutation<
       IChecklistResponse,
-      { title: string; cardId: string }
+      { title: string; cardId: string; workspaceId: string }
     >({
       query: (checklistData) => ({
         url: "/api/card/add-checklist",
