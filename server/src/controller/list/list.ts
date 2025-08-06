@@ -3,16 +3,12 @@ import mongoose from "mongoose";
 import { boardModel } from "../../models/board.models";
 import { workSpaceModel } from "../../models/workspace.model";
 import { ListModel } from "../../models/list.models";
-import { commentsModel, IComment } from "../../models/card.comments.models";
-import { CardLabelModel, ICardLabel } from "../../models/card.label.model";
-import { CheckListModel, IChecklist } from "../../models/card.checklist.model";
+import { commentsModel } from "../../models/card.comments.models";
+import { CardLabelModel } from "../../models/card.label.model";
+import { CheckListModel } from "../../models/card.checklist.model";
+import { CardAttachmentModel } from "../../models/card.attachments.model";
+import { CardModel } from "../../models/card.model";
 import {
-  CardAttachmentModel,
-  ICardAttachment,
-} from "../../models/card.attachments.model";
-import { CardModel, ICard } from "../../models/card.model";
-import {
-  CheckAdmin,
   checkRequiredBody,
   deleteIfExists,
   findData,
@@ -22,6 +18,7 @@ import { asyncHandler } from "../../utils/asyncHandler";
 import ApiResponse from "../../utils/ApiResponse";
 import { redisClient } from "../..";
 import { getIO } from "../../socket";
+
 export const createList = async (req: Request, res: Response) => {
   try {
     const { name, boardId } = req.body;
@@ -157,7 +154,10 @@ export const deleteList = async (req: Request, res: Response) => {
 
     if (cards.length === 0) {
       await ListModel.findByIdAndDelete(listId).session(session);
-      await session.commitTransaction(); // ✅ Await commit
+      await session.commitTransaction();
+      const io = getIO();
+      io.to(workspaceId).emit("listDeleted", listId);
+
       res
         .status(200)
         .json({ message: "List deleted. There were no cards in the list" });
@@ -180,7 +180,13 @@ export const deleteList = async (req: Request, res: Response) => {
 
     await session.commitTransaction(); // ✅ Await commit
     await redisClient.del(`lists:${list.board}:userId:${userId}`);
-
+    const io = getIO();
+    console.log("Emitting listDeleted to workspace:", workspaceId);
+    console.log(
+      "Sockets in workspace:",
+      io.sockets.adapter.rooms.get(workspaceId)
+    );
+    io.to(workspaceId).emit("listDeleted", listId);
     res.status(200).json({ message: `List is deleted with related data` });
   } catch (error) {
     await session.abortTransaction();

@@ -57,11 +57,20 @@ const List: React.FC<ListProps> = ({ list }) => {
         })
       );
     };
-
+    const handleListDelete = (listId: string) => {
+      dispatch(
+        myApi.util.updateQueryData("getSingleBoard", boardId, (draft) => {
+          draft.data.lists = draft.data.lists.filter(
+            (list) => list._id !== listId
+          );
+        })
+      );
+    };
     socket.on("listCreated", handleListCreated);
-
+    socket.on("listDeleted", handleListDelete);
     return () => {
       socket.off("listCreated", handleListCreated);
+      socket.off("listDeleted", handleListDelete);
     };
   }, [dispatch, boardId]);
   const [openListId, setOpenListId] = useState<string | null>(null);
