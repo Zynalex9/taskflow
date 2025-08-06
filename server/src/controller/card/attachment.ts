@@ -5,11 +5,12 @@ import ApiResponse from "../../utils/ApiResponse";
 import { cardActivityUpdate, checkRequiredBody } from "../../utils/helpers";
 import { UploadOnCloudinary } from "../../utils/cloudinary";
 import { CardModel } from "../../models/card.model";
+import { getIO } from "../../socket";
 
 export const addAttachment = async (req: Request, res: Response) => {
   try {
     console.log(req.body);
-    const { cardId, name } = req.body;
+    const { cardId, name, workspaceId } = req.body;
     const userId = req.user._id;
     if (!cardId) {
       res.status(404).json({ message: "No Card Found", success: false });
@@ -67,10 +68,11 @@ export const addAttachment = async (req: Request, res: Response) => {
       cardId,
       `(${req.user.username}) added a new attachment (${attachment.filename})`
     );
+    const io = getIO();
+    io.to(workspaceId).emit("attachmentCreated", attachment);
     res.status(201).json({
       message: `${filename} is uploaded`,
       success: true,
-      card,
       attachment,
     });
   } catch (error) {

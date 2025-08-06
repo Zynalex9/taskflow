@@ -210,13 +210,16 @@ export const cardApi = createApi({
       query: ({
         uploadedFile,
         cardId,
+        workspaceId
       }: {
         uploadedFile: File;
         cardId: string;
+        workspaceId: string;
       }) => {
         const formData = new FormData();
         formData.append("uploadedFile", uploadedFile);
         formData.append("cardId", cardId);
+        formData.append("workspaceId", workspaceId);
 
         return {
           url: "/api/card/add-attachment",

@@ -1,23 +1,46 @@
 import DropdownHeader from "../../DropdownHeader";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { toast, ToastContainer } from "react-toastify";
-import { useAddAttachmentMutation } from "@/store/cardApi";
+import { cardApi, useAddAttachmentMutation } from "@/store/cardApi";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useDispatch } from "react-redux";
 import { AppDispatch } from "@/store/store";
 import { closeAllDropDown } from "@/store/CardModalStatesSlice";
+import { useParams } from "react-router-dom";
+import { socket } from "@/socket/socket";
+import { IAttachment } from "@/types/functionalites.types";
 
 const AddAttachment = ({ cardId }: { cardId: string }) => {
   const [loading, setLoading] = useState(false);
   const [AddAttachment] = useAddAttachmentMutation();
+  const { workspaceId } = useParams();
   const dispatch = useDispatch<AppDispatch>();
+  useEffect(() => {
+    const handleAttachmentAdded = (data: IAttachment) => {
+      console.log(data);
+      dispatch(
+        cardApi.util.updateQueryData("getSingleCard", { cardId }, (draft) => {
+          draft.data.attachments.push(data);
+        })
+      );
+    };
+    socket.on("attachmentCreated", handleAttachmentAdded);
+    return () => {
+      socket.off("attachmentCreated", handleAttachmentAdded);
+    };
+  }, [dispatch, cardId]);
+
   const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
 
     setLoading(true);
     try {
-      await AddAttachment({ uploadedFile: file, cardId }).unwrap();
+      await AddAttachment({
+        uploadedFile: file,
+        cardId,
+        workspaceId: workspaceId!,
+      }).unwrap();
     } catch (error) {
       console.error(error);
       toast.error("Upload failed");
