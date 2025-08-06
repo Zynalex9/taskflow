@@ -433,7 +433,11 @@ export const cardApi = createApi({
       },
     }),
     joinCard: builder.mutation({
-      query: (body: { cardId: string; userId: string }) => ({
+      query: (body: {
+        cardId: string;
+        userId: string;
+        workspaceId: string;
+      }) => ({
         url: "/api/card/join-card",
         method: "POST",
         credentials: "include",
@@ -460,7 +464,11 @@ export const cardApi = createApi({
       },
     }),
     leaveCard: builder.mutation({
-      query: (body: { cardId: string; userId: string }) => ({
+      query: (body: {
+        cardId: string;
+        userId: string;
+        workspaceId: string;
+      }) => ({
         url: "/api/card/leave-card",
         method: "POST",
         credentials: "include",

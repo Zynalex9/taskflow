@@ -100,7 +100,6 @@ export const createCard = async (req: Request, res: Response) => {
       `(${req.user.username}) created a (${newCard.name})`
     );
     const io = getIO();
-    console.log(workspaceId);
     io.to(workspaceId).emit("cardCreated", newCard);
     res.status(201).json({
       message: "Card created successfully",
@@ -119,7 +118,7 @@ export const createCard = async (req: Request, res: Response) => {
 };
 export const joinCard = async (req: Request, res: Response) => {
   try {
-    const { cardId } = req.body;
+    const { cardId, workspaceId } = req.body;
     const userId = req.user?._id;
     if (!userId) {
       res.status(401).json(new ApiResponse(401, {}, "You're not authorized"));
@@ -141,17 +140,18 @@ export const joinCard = async (req: Request, res: Response) => {
       cardId,
       { $addToSet: { members: userId } },
       { new: true }
-    );
+    ).populate("members")
     await redisClient.del(`singleCard:${cardId}`);
     cardActivityUpdate(
       card._id,
       `(${req.user.username}) joined (${card.name})`
     );
-    res.status(200).json({
-      message: "User added to the card successfully",
-      success: true,
-      card: updatedCard,
-    });
+    const io = getIO();
+
+    io.to(workspaceId).emit("joinedCard", updatedCard);
+    res
+      .status(200)
+      .json(new ApiResponse(200, { updatedCard }, "Joined card successfully"));
   } catch (error) {
     console.error(error);
     res.status(500).json({
@@ -162,7 +162,7 @@ export const joinCard = async (req: Request, res: Response) => {
 };
 export const leaveCard = async (req: Request, res: Response) => {
   try {
-    const { cardId } = req.body;
+    const { cardId, workspaceId } = req.body;
     const userId = req.user._id;
     const card = await CardModel.findById(cardId);
     if (!card) {
@@ -180,9 +180,13 @@ export const leaveCard = async (req: Request, res: Response) => {
     const updatedCard = await CardModel.findByIdAndUpdate(
       cardId,
       { $pull: { members: userId } },
-      { new: true }
-    );
+      { new: true },
+    ).populate("members")
     cardActivityUpdate(card._id, `(${req.user.username}) left (${card.name})`);
+    const io = getIO();
+
+    io.to(workspaceId).emit("joinedCard",updatedCard);
+
     res.status(200).json({
       message: "User removed from the card successfully",
       success: true,

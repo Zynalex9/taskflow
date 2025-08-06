@@ -28,15 +28,22 @@ import { CustomTooltip } from "./CustomTooltip";
 import { ICard } from "@/types/functionalites.types";
 import AddCover from "./dropdowns/cover/addCover";
 import { useEffect, useState } from "react";
-import { useJoinCardMutation, useLeaveCardMutation } from "@/store/cardApi";
-import { toast, ToastContainer } from "react-toastify";
+import {
+  cardApi,
+  useJoinCardMutation,
+  useLeaveCardMutation,
+} from "@/store/cardApi";
+import { toast } from "react-toastify";
+import { useParams } from "react-router-dom";
+import { socket } from "@/socket/socket";
 
 interface Props {
   card: ICard;
 }
+
 export function ModalSidebar({ card }: Props) {
   const [isMember, setIsMember] = useState(false);
-
+  const { workspaceId } = useParams();
   const { user } = useSelector((state: RootState) => state.auth);
   const [joinCard] = useJoinCardMutation();
   const [leaveCard] = useLeaveCardMutation();
@@ -44,6 +51,7 @@ export function ModalSidebar({ card }: Props) {
     const body = {
       cardId: card._id,
       userId: user?._id!,
+      workspaceId: workspaceId!,
     };
 
     try {
@@ -93,6 +101,35 @@ export function ModalSidebar({ card }: Props) {
 
   const dispatch = useDispatch<AppDispatch>();
   const cardId = card._id;
+
+  useEffect(() => {
+    const handleJoined = (data: ICard) => {
+      console.log("joinedCard:", data);
+      dispatch(
+        cardApi.util.updateQueryData("getSingleCard", { cardId }, (draft) => {
+          draft.data.members = data.members;
+        })
+      );
+    };
+    const handleLeft = (data: ICard) => {
+      console.log("leftCard:", data);
+
+      dispatch(
+        cardApi.util.updateQueryData("getSingleCard", { cardId }, (draft) => {
+          draft.data.members = draft.data.members = data.members;
+        })
+      );
+    };
+
+    socket.on("joinedCard", handleJoined);
+    socket.on("leftCard", handleLeft);
+
+    return () => {
+      socket.off("joinedCard", handleJoined);
+      socket.off("leftCard", handleLeft);
+    };
+  }, [dispatch, cardId]);
+
   const sidebarItems = [
     {
       icon: UserPlus,
@@ -187,7 +224,6 @@ export function ModalSidebar({ card }: Props) {
           </div>
         </div>
       ))}
-      <ToastContainer className={`mt-20`} />
     </div>
   );
 }

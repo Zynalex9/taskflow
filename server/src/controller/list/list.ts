@@ -423,8 +423,12 @@ export const copyIntoNewList = asyncHandler(async (req, res) => {
   await ListModel.findByIdAndUpdate(newList._id, {
     $set: { cards: newCardIds },
   });
-  await boardModel.findByIdAndUpdate(boardId, {
+  const board = await boardModel.findByIdAndUpdate(boardId, {
     $push: { lists: newList._id },
   });
+  const io = getIO();
+  if (board) {
+    io.to(board.workspace.toString()).emit("listCreated", newList);
+  }
   res.status(201).json({ message: "List copied successfully", newList });
 });
