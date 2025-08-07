@@ -413,7 +413,7 @@ export const addEndDate = asyncHandler(async (req, res) => {
   res.status(200).json(new ApiResponse(200, card, "End date addded"));
 });
 export const addDate = asyncHandler(async (req, res) => {
-  const { startDate, endDate, cardId,workspaceId } = req.body;
+  const { startDate, endDate, cardId, workspaceId } = req.body;
   if (!startDate && !endDate) {
     res.status(401).json(new ApiResponse(401, {}, "No date provided"));
     return;
@@ -433,13 +433,13 @@ export const addDate = asyncHandler(async (req, res) => {
   if (endDate) {
     card.endDate = endDate;
   }
-  const io=getIO();
+  const io = getIO();
   io.to(workspaceId).emit("dateAdded", card);
   await card.save();
   res.status(200).json(new ApiResponse(200, card, "Description updated"));
 });
 export const addStartDate = asyncHandler(async (req, res) => {
-  const { startDate, cardId,workspaceId } = req.body;
+  const { startDate, cardId, workspaceId } = req.body;
   if (!startDate || !cardId) {
     res
       .status(401)
@@ -453,7 +453,7 @@ export const addStartDate = asyncHandler(async (req, res) => {
   }
   card.startDate = startDate;
   await card.save();
-  const io=getIO();
+  const io = getIO();
 
   io.to(workspaceId).emit("dateAdded", card);
 
@@ -673,7 +673,7 @@ export const getCardActivities = asyncHandler(
 export const toggleComplete = asyncHandler(
   async (req: Request, res: Response) => {
     console.log(req.body);
-    const { cardId, isComplete } = req.body;
+    const { cardId, isComplete, workspaceId } = req.body;
     if (!cardId && !isComplete) {
       res
         .status(400)
@@ -687,6 +687,8 @@ export const toggleComplete = asyncHandler(
     }
     card.checked = !card.checked;
     await card.save();
+    const io = getIO();
+    io.to(workspaceId).emit("cardUpdated", card.checked);
     res.status(200).json(new ApiResponse(200, {}, "Updateds"));
   }
 );
