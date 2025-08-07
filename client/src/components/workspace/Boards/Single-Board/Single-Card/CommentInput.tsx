@@ -26,7 +26,6 @@ const CommentInput = ({ comments, cardId }: IProps) => {
   const [isEditing, setIsEditing] = useState(false);
   const [editingCommentId, setEditingCommentId] = useState<string | null>(null);
   const [editText, setEditText] = useState("");
-  console.log(isEditing, editingCommentId, editText);
   const [addComment] = useAddCommentMutation();
   const [editComment] = useEditCommentMutation();
   const [deleteComment] = useDeleteCommentMutation();

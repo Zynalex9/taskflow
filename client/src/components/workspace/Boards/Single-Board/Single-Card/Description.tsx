@@ -1,9 +1,6 @@
-import { socket } from "@/socket/socket";
-import { cardApi, useAddDescriptionMutation } from "@/store/cardApi";
-import { AppDispatch } from "@/store/store";
-import React, { useEffect } from "react";
+import { useCardSocketInvalidate } from "@/hooks/useSocketInvalidate";
+import { useAddDescriptionMutation } from "@/store/cardApi";
 import { useForm } from "react-hook-form";
-import { useDispatch } from "react-redux";
 import { useParams } from "react-router-dom";
 
 interface IProps {
@@ -16,7 +13,6 @@ interface IData {
 const Description: React.FC<IProps> = ({ setShowDescription, cardId }) => {
   const { register, handleSubmit, reset } = useForm<IData>();
   const { workspaceId } = useParams();
-  const dispatch = useDispatch<AppDispatch>();
   const [addDescription] = useAddDescriptionMutation();
   const onSubmit = async (data: IData) => {
     const body = {
@@ -28,16 +24,7 @@ const Description: React.FC<IProps> = ({ setShowDescription, cardId }) => {
     reset();
     setShowDescription(false);
   };
-  const handleDescSocket = (data: string) => {
-    dispatch(
-      cardApi.util.updateQueryData("getSingleCard", { cardId }, (draft) => {
-        draft.data.description = data;
-      })
-    );
-  };
-  useEffect(() => {
-    socket.on("descriptionAdded", handleDescSocket);
-  }, [dispatch, cardId]);
+  useCardSocketInvalidate({ eventName: "descriptionAdded", id: cardId });
   return (
     <div className="ml-10">
       <form onSubmit={handleSubmit(onSubmit)}>

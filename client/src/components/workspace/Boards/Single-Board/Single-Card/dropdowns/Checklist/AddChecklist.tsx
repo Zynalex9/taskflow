@@ -2,12 +2,11 @@ import { closeAllDropDown } from "@/store/CardModalStatesSlice";
 import DropdownHeader from "../../DropdownHeader";
 import { useDispatch } from "react-redux";
 import { AppDispatch } from "@/store/store";
-import { useEffect, useState } from "react";
-import { cardApi, useAddChecklistMutation } from "@/store/cardApi";
+import {  useState } from "react";
+import { useAddChecklistMutation } from "@/store/cardApi";
 import ModalButton from "@/components/resuable/ModalButton";
-import { socket } from "@/socket/socket";
-import { IChecklist } from "@/types/functionalites.types";
 import { useParams } from "react-router-dom";
+import { useCardSocketInvalidate } from "@/hooks/useSocketInvalidate";
 
 const AddChecklist = ({ cardId }: { cardId: string }) => {
   const dispatch = useDispatch<AppDispatch>();
@@ -29,21 +28,7 @@ const AddChecklist = ({ cardId }: { cardId: string }) => {
       console.log(error);
     }
   };
-
-  useEffect(() => {
-    const handleCheckListCreated = (data: IChecklist) => {
-      console.log("data", data);
-      dispatch(
-        cardApi.util.updateQueryData("getSingleCard", { cardId }, (draft) => {
-          draft.data.checklist.push(data);
-        })
-      );
-    };
-    socket.on("checkListCreated", handleCheckListCreated);
-    return () => {
-      socket.off("checkListCreated", handleCheckListCreated);
-    };
-  }, [dispatch, cardId]);
+  useCardSocketInvalidate({ eventName: "checkListCreated", id: cardId });
   return (
     <div className="absolute top-2 left-2 w-72 rounded bg-[#282E33] p-4 shadow-2xl text-white z-30">
       <DropdownHeader headerText="Add a checklist" />

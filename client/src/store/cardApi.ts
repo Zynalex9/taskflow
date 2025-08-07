@@ -506,7 +506,7 @@ export const cardApi = createApi({
       },
     }),
     deleteChecklist: builder.mutation({
-      query: (body: { checkListId: string; cardId: string }) => ({
+      query: (body: { checkListId: string; cardId: string,workspaceId:string }) => ({
         url: "/api/card/delete-checklist",
         credentials: "include",
         body,
@@ -575,7 +575,11 @@ export const cardApi = createApi({
       },
     }),
     deleteAttachment: builder.mutation({
-      query: (body: { attachmentId: string; cardId: string }) => ({
+      query: (body: {
+        attachmentId: string;
+        cardId: string;
+        workspaceId: string;
+      }) => ({
         url: "/api/card/delete-attachment",
         method: "DELETE",
         body,

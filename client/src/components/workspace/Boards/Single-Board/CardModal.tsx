@@ -16,6 +16,7 @@ import {
   useToggleCompleteMutation,
 } from "@/store/cardApi";
 import { isImageUrl } from "@/utils/helper";
+import { socket } from "@/socket/socket";
 const CardModal = () => {
   const { cardId, boardId } = useParams();
   if (!cardId) return;
@@ -63,6 +64,10 @@ const CardModal = () => {
       boardId: boardId!,
     });
   };
+
+  useEffect(() => {
+    socket.emit("joinedWorkspace", workspaceId);
+  }, []);
 
   if (isLoading)
     return (

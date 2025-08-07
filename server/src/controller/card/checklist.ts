@@ -295,7 +295,7 @@ export const deleteCheckList = async (req: Request, res: Response) => {
     const required = ["checkListId"];
     if (!checkRequiredBody(req, res, required)) return;
 
-    const { checkListId } = req.body;
+    const { checkListId, workspaceId } = req.body;
     if (!mongoose.Types.ObjectId.isValid(checkListId)) {
       res.status(400).json(new ApiResponse(400, {}, "Invalid checklist ID"));
       return;
@@ -307,7 +307,8 @@ export const deleteCheckList = async (req: Request, res: Response) => {
       return;
     }
     await redisClient.del(`singleCard:${req.body.cardId}`);
-
+    const io = getIO();
+    io.to(workspaceId).emit("checkListDeleted", checkListId);
     res.status(200).json(new ApiResponse(200, {}, "Checklist deleted"));
   } catch (error) {
     console.error("Error in deleteCheckList:", error);

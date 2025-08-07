@@ -86,7 +86,6 @@ const AddLabelDropdown = ({
       console.error("Error adding labels:", error);
     }
   };
-  console.log("existingLabels", existingLabels);
   useEffect(() => {
     const selectedIds = existingLabels.map((label) => label._id);
     setSelected(selectedIds);

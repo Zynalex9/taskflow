@@ -14,6 +14,8 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { toast, ToastContainer } from "react-toastify";
 import { useSelector } from "react-redux";
 import { RootState } from "@/store/store";
+import { useCardSocketInvalidate } from "@/hooks/useSocketInvalidate";
+import { useParams } from "react-router-dom";
 interface ChecklistProps {
   Checklist: IChecklist[];
   cardId: string;
@@ -21,6 +23,7 @@ interface ChecklistProps {
 const Checklist: React.FC<ChecklistProps> = ({ Checklist, cardId }) => {
   const { user } = useSelector((state: RootState) => state.auth);
   const [deleteItem] = useDeleteItemMutation();
+  const {workspaceId} = useParams()
 
   const [toggleItem] = useToggleCheckListItemCompleteMutation();
   const [isItemLoading, setIsItemLoading] = useState(false);
@@ -53,7 +56,7 @@ const Checklist: React.FC<ChecklistProps> = ({ Checklist, cardId }) => {
   const handleDelete = async (cardId: string, checkListId: string) => {
     try {
       setIsLoading(true);
-      await deleteCheckList({ cardId, checkListId });
+      await deleteCheckList({ cardId, checkListId,workspaceId:workspaceId! });
     } catch (error) {
       toast.error("Error deleteing checklist", { theme: "dark" });
     } finally {
@@ -82,6 +85,8 @@ const Checklist: React.FC<ChecklistProps> = ({ Checklist, cardId }) => {
       setIsItemLoading(false);
     }
   };
+
+  useCardSocketInvalidate({eventName:"checkListDeleted",id:cardId});
   return (
     <div className="space-y-6 my-12">
       {Checklist.map((c) => (

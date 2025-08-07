@@ -3,17 +3,22 @@ import { IAttachment } from "../../../../../types/functionalites.types";
 import { formatDistanceToNow } from "date-fns";
 import { useDeleteAttachmentMutation } from "@/store/cardApi";
 import { toast } from "react-toastify";
+import { useCardSocketInvalidate } from "@/hooks/useSocketInvalidate";
+import { useParams } from "react-router-dom";
 
 interface AttachmentsProps {
   Attachment: IAttachment[];
 }
 const Attachments: React.FC<AttachmentsProps> = ({ Attachment }) => {
+  const {workspaceId} = useParams()
   const [deleteAttachment] = useDeleteAttachmentMutation();
+
   const handleDeleteAttachment = async (attachmentId: string) => {
     try {
       const response = await deleteAttachment({
         attachmentId,
         cardId: Attachment[0].cardId,
+        workspaceId:workspaceId!
       }).unwrap();
       toast.success(response.message, { theme: "dark" });
     } catch (error: any) {
@@ -22,6 +27,11 @@ const Attachments: React.FC<AttachmentsProps> = ({ Attachment }) => {
       });
     }
   };
+
+  useCardSocketInvalidate({
+    eventName: "attachmentDeleted",
+    id: Attachment[0].cardId,
+  });
 
   return (
     <div className="my-3">

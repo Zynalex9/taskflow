@@ -88,7 +88,7 @@ export const deleteAttachment = async (req: Request, res: Response) => {
     const required = ["attachmentId"];
     if (!checkRequiredBody(req, res, required)) return;
 
-    const { attachmentId } = req.body;
+    const { attachmentId, workspaceId } = req.body;
 
     if (!mongoose.Types.ObjectId.isValid(attachmentId)) {
       res.status(400).json(new ApiResponse(400, {}, "Invalid attachment ID"));
@@ -101,7 +101,8 @@ export const deleteAttachment = async (req: Request, res: Response) => {
       res.status(404).json(new ApiResponse(404, {}, "Attachment not found"));
       return;
     }
-
+    const io = getIO();
+    io.to(workspaceId).emit("attachmentDeleted", attachmentId);
     res
       .status(200)
       .json(new ApiResponse(200, {}, "Attachment deleted successfully"));
