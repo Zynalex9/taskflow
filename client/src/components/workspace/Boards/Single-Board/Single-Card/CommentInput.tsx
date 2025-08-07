@@ -32,6 +32,7 @@ const CommentInput = ({ comments, cardId }: IProps) => {
   const disptach = useDispatch<AppDispatch>();
 
   useCardSocketInvalidate({ eventName: "commentDeleted", id: cardId });
+  useCardSocketInvalidate({ eventName: "commentEdited", id: cardId });
   useEffect(() => {
     const handleCreateComment = (comment: IComment) => {
       const newCommentObj = Array.isArray(comment) ? comment[0] : comment;
@@ -90,6 +91,8 @@ const CommentInput = ({ comments, cardId }: IProps) => {
         cardId,
         comment: editText,
         commentId: editingCommentId,
+        workspaceId: workspaceId!,
+
       };
       await editComment(newCommentData).unwrap();
       setIsEditing(false);

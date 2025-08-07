@@ -414,7 +414,7 @@ export const cardApi = createApi({
         cardId: string;
         itemId: string;
         checklistId: string;
-        workspaceId:string
+        workspaceId: string;
       }) => ({
         url: `/api/card/checklist/toggle/${body.checklistId}/${body.itemId}`,
         method: "PATCH",
@@ -635,6 +635,7 @@ export const cardApi = createApi({
         commentId: string;
         comment: string;
         cardId: string;
+        workspaceId: string;
       }) => ({
         url: `/api/card/edit-comment`,
         method: "PATCH",

@@ -53,7 +53,7 @@ export const addComment = async (req: Request, res: Response) => {
 
 export const deleteComment = async (req: Request, res: Response) => {
   try {
-console.log(req.body)
+    console.log(req.body);
 
     const { commentId } = req.params;
     const { cardId, workspaceId } = req.body;
@@ -79,7 +79,7 @@ console.log(req.body)
   }
 };
 export const editComment = asyncHandler(async (req: Request, res: Response) => {
-  const { comment, commentId } = req.body;
+  const { comment, commentId, workspaceId } = req.body;
   const updatedComment = await commentsModel.findByIdAndUpdate(
     commentId,
     { comment },
@@ -89,5 +89,7 @@ export const editComment = asyncHandler(async (req: Request, res: Response) => {
     res.status(404).json(new ApiResponse(404, {}, "Comment not found"));
     return;
   }
+  const io = getIO();
+  io.to(workspaceId).emit("commentEdited", comment);
   res.status(200).json(new ApiResponse(200, updatedComment));
 });
