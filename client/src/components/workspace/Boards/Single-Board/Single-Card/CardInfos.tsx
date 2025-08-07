@@ -1,5 +1,8 @@
 import ModalButton from "@/components/resuable/ModalButton";
-import { ICard } from "@/types/functionalites.types";
+import { socket } from "@/socket/socket";
+import { cardApi } from "@/store/cardApi";
+import { AppDispatch } from "@/store/store";
+import { ICard, ILabel } from "@/types/functionalites.types";
 import {
   format,
   isBefore,
@@ -8,10 +11,12 @@ import {
   addDays,
   parseISO,
 } from "date-fns";
+import { useEffect } from "react";
+import { useDispatch } from "react-redux";
 
 const CardInfos = ({ card }: { card: ICard }) => {
   if (!card) return null;
-
+  const dispatch = useDispatch<AppDispatch>();
   const hasStartDate = !!card.startDate;
   const hasEndDate = !!card.endDate;
 
@@ -38,7 +43,37 @@ const CardInfos = ({ card }: { card: ICard }) => {
   };
 
   const deadlineLabel = getDeadlineLabel();
+  useEffect(() => {
+    const handleNewLabels = (data: ILabel[]) => {
+      console.log("data", data);
+      dispatch(
+        cardApi.util.updateQueryData(
+          "getSingleCard",
+          { cardId: card._id },
+          (draft) => {
+            const existingLabels = draft.data.labels;
 
+            const mergedLabels = [
+              ...existingLabels,
+              ...data.filter(
+                (newLabel) =>
+                  !existingLabels.some(
+                    (existingLabel) => existingLabel._id === newLabel._id
+                  )
+              ),
+            ];
+
+            draft.data.labels = mergedLabels;
+          }
+        )
+      );
+    };
+  
+    socket.on("labelAdded", handleNewLabels);
+    return () => {
+      socket.off("labelAdded", handleNewLabels);
+    };
+  }, [dispatch, card._id]);
   return (
     <div className="ml-12">
       <div className="flex flex-wrap items-center gap-4">

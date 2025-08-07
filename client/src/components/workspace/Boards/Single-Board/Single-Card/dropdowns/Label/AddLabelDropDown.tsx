@@ -46,7 +46,7 @@ const AddLabelDropdown = ({
       prev.includes(id) ? prev.filter((i) => i !== id) : [...prev, id]
     );
   };
-  const { boardId } = useParams();
+  const { boardId,workspaceId } = useParams();
   const startEditing = (label: ILabel) => {
     setEditId(label._id);
     setEditText(label.name);
@@ -65,12 +65,13 @@ const AddLabelDropdown = ({
     const selectedLabels = labels.filter((label) =>
       selected.includes(label._id)
     );
-    if (!boardId) {
+    if (!boardId || !workspaceId) {
       console.warn("boardId is missing. Cannot proceed with adding labels.");
       return;
     }
     const body = {
       cardId,
+      workspaceId,
       boardId,
       labels: selectedLabels.map((label) => ({
         name: label.name || "",

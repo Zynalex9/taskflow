@@ -5,9 +5,10 @@ import ApiResponse from "../../utils/ApiResponse";
 import { checkRequiredBody } from "../../utils/helpers";
 import mongoose from "mongoose";
 import { redisClient } from "../..";
+import { getIO } from "../../socket";
 export const addLabel = async (req: Request, res: Response) => {
   try {
-    const { cardId, labels } = req.body;
+    const { cardId, labels,workspaceId } = req.body;
 
     if (!cardId || !Array.isArray(labels) || labels.length === 0) {
       res.status(400).json({
@@ -42,7 +43,9 @@ export const addLabel = async (req: Request, res: Response) => {
 
     await redisClient.del(`tableData:${req.user._id}`);
     await redisClient.del(`singleCard:${cardId}`);
-
+    const io = getIO()
+    console.log(workspaceId)
+    io.to(workspaceId).emit("labelAdded", labelDocs);
     res.status(201).json({
       message: "Labels added successfully",
       success: true,

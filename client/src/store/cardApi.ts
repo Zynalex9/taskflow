@@ -210,7 +210,7 @@ export const cardApi = createApi({
       query: ({
         uploadedFile,
         cardId,
-        workspaceId
+        workspaceId,
       }: {
         uploadedFile: File;
         cardId: string;
@@ -270,7 +270,11 @@ export const cardApi = createApi({
       },
     }),
     addDescription: builder.mutation({
-      query: (body: { description: string; cardId: string }) => ({
+      query: (body: {
+        description: string;
+        cardId: string;
+        workspaceId: string;
+      }) => ({
         url: "/api/card/add-description",
         method: "PATCH",
         body,
@@ -302,6 +306,7 @@ export const cardApi = createApi({
     addLabels: builder.mutation<
       ILabelsResponse,
       {
+        workspaceId: string;
         cardId: string;
         boardId: string;
         labels: { name?: string; color: string }[];

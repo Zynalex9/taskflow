@@ -42,12 +42,13 @@ const CardModal = () => {
   };
   const modalRef = useRef<HTMLDivElement>(null);
   const [addDescription] = useAddDescriptionMutation();
-
+  const { workspaceId } = useParams();
   const handleEditDescription = async () => {
     if (editedDescription && cardId) {
       const body = {
         description: editedDescription,
         cardId,
+        workspaceId: workspaceId!,
       };
       await addDescription(body);
     }

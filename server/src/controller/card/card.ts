@@ -140,7 +140,7 @@ export const joinCard = async (req: Request, res: Response) => {
       cardId,
       { $addToSet: { members: userId } },
       { new: true }
-    ).populate("members")
+    ).populate("members");
     await redisClient.del(`singleCard:${cardId}`);
     cardActivityUpdate(
       card._id,
@@ -180,12 +180,12 @@ export const leaveCard = async (req: Request, res: Response) => {
     const updatedCard = await CardModel.findByIdAndUpdate(
       cardId,
       { $pull: { members: userId } },
-      { new: true },
-    ).populate("members")
+      { new: true }
+    ).populate("members");
     cardActivityUpdate(card._id, `(${req.user.username}) left (${card.name})`);
     const io = getIO();
 
-    io.to(workspaceId).emit("joinedCard",updatedCard);
+    io.to(workspaceId).emit("joinedCard", updatedCard);
 
     res.status(200).json({
       message: "User removed from the card successfully",
@@ -377,7 +377,7 @@ export const editCardDetails = async (req: Request, res: Response) => {
   }
 };
 export const addDescription = asyncHandler(async (req, res) => {
-  const { description, cardId } = req.body;
+  const { description, cardId, workspaceId } = req.body;
   if (!description || !cardId) {
     res
       .status(401)
@@ -391,6 +391,8 @@ export const addDescription = asyncHandler(async (req, res) => {
   }
   card.description = description;
   await card.save();
+  const io = getIO();
+  io.to(workspaceId).emit("descriptionAdded", description);
   res.status(200).json(new ApiResponse(200, card, "Description updated"));
 });
 export const addEndDate = asyncHandler(async (req, res) => {
