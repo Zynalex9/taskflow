@@ -13,6 +13,7 @@ import { Pencil, Trash } from "lucide-react";
 import { toast, ToastContainer } from "react-toastify";
 import { useParams } from "react-router-dom";
 import { socket } from "@/socket/socket";
+import { useCardSocketInvalidate } from "@/hooks/useSocketInvalidate";
 interface IProps {
   comments: IComment[];
   cardId: string;
@@ -30,6 +31,8 @@ const CommentInput = ({ comments, cardId }: IProps) => {
   const [editComment] = useEditCommentMutation();
   const [deleteComment] = useDeleteCommentMutation();
   const disptach = useDispatch<AppDispatch>();
+
+  useCardSocketInvalidate({ eventName: "commentDeleted", id: cardId });
   useEffect(() => {
     const handleCreateComment = (comment: IComment) => {
       const newCommentObj = Array.isArray(comment) ? comment[0] : comment;
@@ -54,7 +57,11 @@ const CommentInput = ({ comments, cardId }: IProps) => {
 
   const handleDelete = async (commentId: string) => {
     try {
-      await deleteComment({ commentId, cardId }).unwrap();
+      await deleteComment({
+        commentId,
+        cardId,
+        workspaceId: workspaceId!,
+      }).unwrap();
     } catch (error: any) {
       toast.error(error.data?.message || "Failed to delete comment", {
         theme: "dark",

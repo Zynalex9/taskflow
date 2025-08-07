@@ -653,18 +653,7 @@ cardRouter
     deleteLabel
   );
 
-cardRouter
-  .route("/:commentId/delete-comment")
-  .delete(
-    verifyJWT,
-    requirePermission(
-      PERMISSIONS.CARD_COMMENT,
-      "card",
-      "cardId",
-      ERROR_MESSAGES.CARD_COMMENT
-    ),
-    deleteComment
-  );
+cardRouter.route("/:commentId/delete-comment").delete(verifyJWT, deleteComment);
 
 cardRouter
   .route("/delete-attachment")
@@ -848,16 +837,18 @@ cardRouter
     editComment
   );
 
-cardRouter.route("/add-cover").post(
-  verifyJWT,
-  upload.single("cardCover"),
-  requirePermission(
-    PERMISSIONS.CARD_COVER,
-    "card",
-    "cardId",
-    ERROR_MESSAGES.CARD_ATTACHMENT
-  ),
-  addCover
-);
+cardRouter
+  .route("/add-cover")
+  .post(
+    verifyJWT,
+    upload.single("cardCover"),
+    requirePermission(
+      PERMISSIONS.CARD_COVER,
+      "card",
+      "cardId",
+      ERROR_MESSAGES.CARD_ATTACHMENT
+    ),
+    addCover
+  );
 
 export { cardRouter };

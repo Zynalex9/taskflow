@@ -53,8 +53,7 @@ export const addComment = async (req: Request, res: Response) => {
 
 export const deleteComment = async (req: Request, res: Response) => {
   try {
-    const required = ["commentId", "workspaceId"];
-    if (!checkRequiredParams(req, res, required)) return;
+console.log(req.body)
 
     const { commentId } = req.params;
     const { cardId, workspaceId } = req.body;

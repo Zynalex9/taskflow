@@ -237,7 +237,7 @@ export const cardApi = createApi({
         startDate?: string | undefined;
         endDate?: string | undefined;
         cardId: string;
-        workspaceId:string
+        workspaceId: string;
       }
     >({
       query: (body) => ({
@@ -653,7 +653,11 @@ export const cardApi = createApi({
       },
     }),
     deleteComment: builder.mutation({
-      query: (body: { commentId: string; cardId: string }) => ({
+      query: (body: {
+        commentId: string;
+        cardId: string;
+        workspaceId: string;
+      }) => ({
         url: `/api/card/${body.commentId}/delete-comment`,
         method: "DELETE",
         body,
