@@ -26,6 +26,7 @@ import { useDispatch } from "react-redux";
 import { AppDispatch } from "@/store/store";
 import { closeAllDropDown } from "@/store/CardModalStatesSlice";
 import { useAddCardDateMutation } from "@/store/cardApi";
+import { useParams } from "react-router-dom";
 
 const FormSchema = z.object({
   startDate: z.date().optional(),
@@ -37,6 +38,7 @@ export function DateCalendar({ cardId }: { cardId: string }) {
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
   });
+  const { workspaceId } = useParams();
   const [addDate] = useAddCardDateMutation();
   async function onSubmit(data: z.infer<typeof FormSchema>) {
     console.log(data);
@@ -45,6 +47,7 @@ export function DateCalendar({ cardId }: { cardId: string }) {
       return;
     }
     const body = {
+      workspaceId: workspaceId!,
       cardId,
       startDate: data.startDate ? data.startDate.toISOString() : "",
       endDate: data.endDate ? data.endDate.toISOString() : "",
@@ -59,7 +62,7 @@ export function DateCalendar({ cardId }: { cardId: string }) {
   }
 
   return (
-    <div className= " absolute bg-[#282E33] -top-50">
+    <div className=" absolute bg-[#282E33] -top-50">
       <div className="p-2">
         <DropdownHeader headerText="Add dates to card" />
       </div>
@@ -166,7 +169,7 @@ export function DateCalendar({ cardId }: { cardId: string }) {
           </Button>
         </form>
       </Form>
-    </div >
+    </div>
   );
 }
 export default DateCalendar;

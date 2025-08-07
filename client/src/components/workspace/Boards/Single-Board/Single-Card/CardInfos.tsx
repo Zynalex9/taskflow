@@ -68,9 +68,16 @@ const CardInfos = ({ card }: { card: ICard }) => {
         )
       );
     };
-  
+
+    const handleAddDate = () => {
+      dispatch(
+        cardApi.util.invalidateTags([{ type: "singleCard", id: card._id }])
+      );
+    };
+    socket.on("dateAdded", handleAddDate);
     socket.on("labelAdded", handleNewLabels);
     return () => {
+      socket.off("dateAdded", handleAddDate);
       socket.off("labelAdded", handleNewLabels);
     };
   }, [dispatch, card._id]);

@@ -413,7 +413,7 @@ export const addEndDate = asyncHandler(async (req, res) => {
   res.status(200).json(new ApiResponse(200, card, "End date addded"));
 });
 export const addDate = asyncHandler(async (req, res) => {
-  const { startDate, endDate, cardId } = req.body;
+  const { startDate, endDate, cardId,workspaceId } = req.body;
   if (!startDate && !endDate) {
     res.status(401).json(new ApiResponse(401, {}, "No date provided"));
     return;
@@ -433,11 +433,13 @@ export const addDate = asyncHandler(async (req, res) => {
   if (endDate) {
     card.endDate = endDate;
   }
+  const io=getIO();
+  io.to(workspaceId).emit("dateAdded", card);
   await card.save();
   res.status(200).json(new ApiResponse(200, card, "Description updated"));
 });
 export const addStartDate = asyncHandler(async (req, res) => {
-  const { startDate, cardId } = req.body;
+  const { startDate, cardId,workspaceId } = req.body;
   if (!startDate || !cardId) {
     res
       .status(401)
@@ -451,6 +453,10 @@ export const addStartDate = asyncHandler(async (req, res) => {
   }
   card.startDate = startDate;
   await card.save();
+  const io=getIO();
+
+  io.to(workspaceId).emit("dateAdded", card);
+
   res.status(200).json(new ApiResponse(200, card, "Start date addded"));
 });
 export const getCardsByUser = async (req: Request, res: Response) => {
@@ -685,7 +691,7 @@ export const toggleComplete = asyncHandler(
   }
 );
 export const addCover = asyncHandler(async (req: Request, res: Response) => {
-  const { cardId } = req.body;
+  const { cardId, workspaceId } = req.body;
   const card = await CardModel.findById(cardId);
   if (!card) {
     res.status(404).json(new ApiResponse(404, {}, "No card found"));
@@ -695,7 +701,6 @@ export const addCover = asyncHandler(async (req: Request, res: Response) => {
     res.status(400).json(new ApiResponse(400, {}, "No file uploaded"));
     return;
   }
-  console.log(req.file);
   const path = req.file.path;
   const uploadResult = await UploadOnCloudinary({ localFilePath: path });
   const coverUrl = uploadResult?.url;
@@ -708,5 +713,7 @@ export const addCover = asyncHandler(async (req: Request, res: Response) => {
 
   card.cover = coverUrl;
   await card.save();
+  const io = getIO();
+  io.to(workspaceId).emit("coverAdded", coverUrl);
   res.status(200).json(new ApiResponse(200, card, "Cover added to card"));
 });

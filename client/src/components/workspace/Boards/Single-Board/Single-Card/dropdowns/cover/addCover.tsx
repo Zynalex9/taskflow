@@ -1,13 +1,16 @@
 import DropdownHeader from "../../DropdownHeader";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { toast, ToastContainer } from "react-toastify";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useDispatch } from "react-redux";
 import { AppDispatch } from "@/store/store";
 import { closeAllDropDown } from "@/store/CardModalStatesSlice";
-import { useUploadCardCoverMutation } from "@/store/cardApi";
+import { cardApi, useUploadCardCoverMutation } from "@/store/cardApi";
+import { socket } from "@/socket/socket";
+import { useParams } from "react-router-dom";
 
 const AddCover = ({ cardId }: { cardId: string }) => {
+  const {workspaceId} = useParams()
   const [loading, setLoading] = useState(false);
   const [addCover] = useUploadCardCoverMutation();
   const dispatch = useDispatch<AppDispatch>();
@@ -17,6 +20,7 @@ const AddCover = ({ cardId }: { cardId: string }) => {
     const formdata = new FormData();
     formdata.append("cardCover", file);
     formdata.append("cardId", cardId);
+    formdata.append("workspaceId", workspaceId!);
     try {
       setLoading(true);
       await addCover(formdata).unwrap();
@@ -29,6 +33,17 @@ const AddCover = ({ cardId }: { cardId: string }) => {
       dispatch(closeAllDropDown());
     }
   };
+
+  useEffect(() => {
+const handleUpdateCover = () => {
+  dispatch(
+    cardApi.util.invalidateTags([
+      { type: "singleCard", id: cardId } 
+    ])
+  );
+};
+    socket.on("coverAdded", handleUpdateCover);
+  }, [dispatch, cardId]);
   if (loading)
     return (
       <div className="relative w-72 h-52 bg-[#282E33]/60 rounded overflow-hidden">

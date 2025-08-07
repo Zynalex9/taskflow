@@ -237,6 +237,7 @@ export const cardApi = createApi({
         startDate?: string | undefined;
         endDate?: string | undefined;
         cardId: string;
+        workspaceId:string
       }
     >({
       query: (body) => ({
