@@ -1,3 +1,4 @@
+import { useCardSocketInvalidate } from "@/hooks/useSocketInvalidate";
 import { useToggleCompleteMutation } from "@/store/cardApi";
 import { ICard } from "@/types/functionalites.types";
 import { X } from "lucide-react";
@@ -22,8 +23,8 @@ export const CardModalTopBar = ({ card }: { card: ICard }) => {
       setIsChecked(card.checked);
     }
   }, [card?.checked]);
+  const cardId = card?._id;
   const handleCheckChange = async () => {
-    const cardId = card?._id;
     if (!cardId) return;
     const newCheckedState = !isChecked;
     setIsChecked(newCheckedState);
@@ -33,6 +34,8 @@ export const CardModalTopBar = ({ card }: { card: ICard }) => {
       boardId: boardId!,
     });
   };
+
+  useCardSocketInvalidate({ eventName: "cardToggled", id: cardId });
   return (
     <div>
       <div className="flex items-center justify-between">

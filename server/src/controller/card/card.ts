@@ -688,7 +688,7 @@ export const toggleComplete = asyncHandler(
     card.checked = !card.checked;
     await card.save();
     const io = getIO();
-    io.to(workspaceId).emit("cardUpdated", card.checked);
+    io.to(workspaceId).emit("cardToggled", card.checked);
     res.status(200).json(new ApiResponse(200, {}, "Updateds"));
   }
 );

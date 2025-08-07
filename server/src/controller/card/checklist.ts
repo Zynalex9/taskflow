@@ -54,9 +54,8 @@ export const addChecklist = async (req: Request, res: Response) => {
 };
 export const addItemToCheckList = async (req: Request, res: Response) => {
   try {
-    const { title, assignedTo, dueDate, checkListId } = req.body;
+    const { title, assignedTo, dueDate, checkListId, workspaceId } = req.body;
     const userId = req.user._id;
-    console.log(req.body);
     if (!title || !checkListId) {
       res
         .status(404)
@@ -107,6 +106,15 @@ export const addItemToCheckList = async (req: Request, res: Response) => {
     await redisClient.del(`singleCard:${req.body.cardId}`);
 
     await checkList.save();
+    const io = getIO();
+
+    console.log(newItem);
+    console.log(workspaceId);
+    io.to(workspaceId).emit("checkListItemCreated", {
+      newItem,
+      checkListId: checkList._id,
+      cardId: req.body.cardId,
+    });
     res.status(201).json({
       message: `${newItem.title} is added to ${checkList.title}`,
       checkList,
@@ -123,6 +131,7 @@ export const toggleCheckListItem = async (
 ): Promise<void> => {
   try {
     const { checklistId, itemId } = req.params;
+    const { workspaceId } = req.body;
     const checkList = await CheckListModel.findById(checklistId);
     if (!checkList) {
       res.status(404).json({ message: "Checklist not found", success: false });
@@ -142,6 +151,10 @@ export const toggleCheckListItem = async (
     item.completed = !item.completed;
     await checkList.save();
     await redisClient.del(`singleCard:${req.body.cardId}`);
+    console.log(workspaceId);
+    console.log(req.body);
+    const io = getIO();
+    io.to(workspaceId).emit("checkListItemToggled", item);
 
     res.status(200).json({
       message: `Item "${item.title}" is now ${
@@ -319,7 +332,7 @@ export const deleteItem = asyncHandler(async (req, res) => {
   try {
     const required = ["checkListId", "itemId"];
     if (!checkRequiredBody(req, res, required)) return;
-    const { checkListId, itemId } = req.body;
+    const { checkListId, itemId, workspaceId } = req.body;
     const checkList = await CheckListModel.findById(checkListId);
     if (!checkList) {
       notFound(checkList, "Checklist", res);
@@ -337,6 +350,8 @@ export const deleteItem = asyncHandler(async (req, res) => {
     );
     await checkList.save();
     await redisClient.del(`singleCard:${req.body.cardId}`);
+    const io = getIO();
+    io.to(workspaceId).emit("checkListItemDeleted", checkListId);
     res.status(200).json(new ApiResponse(200, {}, "Item deleted"));
   } catch (error) {
     console.error("Error in deleteItem:", error);

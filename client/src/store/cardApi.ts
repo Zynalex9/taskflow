@@ -145,7 +145,12 @@ export const cardApi = createApi({
     }),
     addItemToCheckList: builder.mutation<
       IChecklistItemResponse,
-      { title: string; checkListId: string; cardId: string }
+      {
+        title: string;
+        checkListId: string;
+        cardId: string;
+        workspaceId: string;
+      }
     >({
       query: (item) => ({
         url: `/api/card/checklist/${item.checkListId}/add-items`,
@@ -409,6 +414,7 @@ export const cardApi = createApi({
         cardId: string;
         itemId: string;
         checklistId: string;
+        workspaceId:string
       }) => ({
         url: `/api/card/checklist/toggle/${body.checklistId}/${body.itemId}`,
         method: "PATCH",
@@ -506,7 +512,11 @@ export const cardApi = createApi({
       },
     }),
     deleteChecklist: builder.mutation({
-      query: (body: { checkListId: string; cardId: string,workspaceId:string }) => ({
+      query: (body: {
+        checkListId: string;
+        cardId: string;
+        workspaceId: string;
+      }) => ({
         url: "/api/card/delete-checklist",
         credentials: "include",
         body,
@@ -539,6 +549,7 @@ export const cardApi = createApi({
         checkListId: string;
         cardId: string;
         itemId: string;
+        workspaceId: string;
       }) => ({
         url: "/api/card/delete-checklist-item",
         credentials: "include",

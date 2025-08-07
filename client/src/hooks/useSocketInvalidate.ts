@@ -14,6 +14,7 @@ export const useCardSocketInvalidate = ({
 }: socketInvalidateOptions) => {
   const dispatch = useDispatch<AppDispatch>();
   useEffect(() => {
+    console.log(`${eventName} triggered`);
     const fn = () => {
       dispatch(cardApi.util.invalidateTags([{ type: "singleCard", id }]));
     };

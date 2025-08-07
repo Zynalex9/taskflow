@@ -23,7 +23,7 @@ interface ChecklistProps {
 const Checklist: React.FC<ChecklistProps> = ({ Checklist, cardId }) => {
   const { user } = useSelector((state: RootState) => state.auth);
   const [deleteItem] = useDeleteItemMutation();
-  const {workspaceId} = useParams()
+  const { workspaceId } = useParams();
 
   const [toggleItem] = useToggleCheckListItemCompleteMutation();
   const [isItemLoading, setIsItemLoading] = useState(false);
@@ -44,6 +44,7 @@ const Checklist: React.FC<ChecklistProps> = ({ Checklist, cardId }) => {
         cardId,
         title: itemTitle,
         checkListId,
+        workspaceId: workspaceId!,
       };
       setItemTitle("");
       setActiveChecklistId(null);
@@ -56,7 +57,7 @@ const Checklist: React.FC<ChecklistProps> = ({ Checklist, cardId }) => {
   const handleDelete = async (cardId: string, checkListId: string) => {
     try {
       setIsLoading(true);
-      await deleteCheckList({ cardId, checkListId,workspaceId:workspaceId! });
+      await deleteCheckList({ cardId, checkListId, workspaceId: workspaceId! });
     } catch (error) {
       toast.error("Error deleteing checklist", { theme: "dark" });
     } finally {
@@ -68,6 +69,7 @@ const Checklist: React.FC<ChecklistProps> = ({ Checklist, cardId }) => {
       cardId,
       checklistId,
       itemId,
+      workspaceId: workspaceId!,
     };
     try {
       await toggleItem(body);
@@ -78,7 +80,12 @@ const Checklist: React.FC<ChecklistProps> = ({ Checklist, cardId }) => {
   const handleDeleteItem = async (checklistId: string, itemId: string) => {
     try {
       setIsItemLoading(true);
-      await deleteItem({ checkListId: checklistId, itemId, cardId });
+      await deleteItem({
+        checkListId: checklistId,
+        itemId,
+        cardId,
+        workspaceId: workspaceId!,
+      });
     } catch (error) {
       console.log("Error in deleting item");
     } finally {
@@ -86,7 +93,11 @@ const Checklist: React.FC<ChecklistProps> = ({ Checklist, cardId }) => {
     }
   };
 
-  useCardSocketInvalidate({eventName:"checkListDeleted",id:cardId});
+  useCardSocketInvalidate({ eventName: "checkListDeleted", id: cardId });
+  useCardSocketInvalidate({ eventName: "checkListItemCreated", id: cardId });
+  useCardSocketInvalidate({ eventName: "checkListItemDeleted", id: cardId });
+  useCardSocketInvalidate({ eventName: "checkListItemToggled", id: cardId });
+
   return (
     <div className="space-y-6 my-12">
       {Checklist.map((c) => (
