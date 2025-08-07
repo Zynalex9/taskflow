@@ -26,7 +26,6 @@ export const myApi = createApi({
       query: (boardId) => `/api/board/single/${boardId}`,
       providesTags: (__, _, workspaceId) => [
         { type: "singleBoard", id: workspaceId },
-        { type: "Board", id: workspaceId },
       ],
     }),
     addBoard: builder.mutation({

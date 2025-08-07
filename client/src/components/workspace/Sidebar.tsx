@@ -28,6 +28,7 @@ import ImagesPopUp from "./Boards/Single-Board/Add Board Modal/ImagesPopUp";
 import { myApi, useGetAllBoardsQuery } from "@/store/myApi";
 import { socket } from "@/socket/socket";
 import { IBoard } from "@/types/functionalites.types";
+import { useAllBoardSocketsInvalidate, useBoardSocketsInvalidate } from "@/hooks/useBoardSocketsInvalidate";
 interface Props {
   barOpen: boolean;
   setBarOpen: React.Dispatch<React.SetStateAction<boolean>>;
@@ -44,27 +45,33 @@ const Sidebar = ({ barOpen, setBarOpen }: Props) => {
   useEffect(() => {
     if (!workspace?._id) return;
 
-    const handleBoardCreated = (board: IBoard) => {
-      dispatch(
-        myApi.util.updateQueryData("getAllBoards", workspace._id, (draft) => {
-          draft.data.yourBoards = draft.data.yourBoards.filter(
-            (b) => !b._id.startsWith("temp-") || b.title !== board.title
-          );
+    // const handleBoardCreated = (board: IBoard) => {
+    //   dispatch(
+    //     myApi.util.updateQueryData("getAllBoards", workspace._id, (draft) => {
+    //       draft.data.yourBoards = draft.data.yourBoards.filter(
+    //         (b) => !b._id.startsWith("temp-") || b.title !== board.title
+    //       );
 
-          if (!draft.data.yourBoards.some((b) => b._id === board._id)) {
-            draft.data.yourBoards.push(board);
-          }
-        })
-      );
-    };
+    //       if (!draft.data.yourBoards.some((b) => b._id === board._id)) {
+    //         draft.data.yourBoards.push(board);
+    //       }
+    //     })
+    //   );
+    // };
 
     socket.emit("joinedWorkspace", workspace._id);
-    socket.on("boardCreated", handleBoardCreated);
+    // socket.on("boardCreated", handleBoardCreated);
 
-    return () => {
-      socket.off("boardCreated", handleBoardCreated);
-    };
+    // return () => {
+    //   socket.off("boardCreated", handleBoardCreated);
+    // };
   }, [workspace?._id, dispatch]);
+
+useAllBoardSocketsInvalidate({
+  eventName: "boardCreated",
+  id: workspace?._id ?? "",
+});
+
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {

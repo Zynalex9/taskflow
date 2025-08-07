@@ -7,6 +7,7 @@ import { useGetSingleBoardQuery } from "@/store/myApi";
 import { SingleBoardContext } from "@/Context/SingleBoardContext";
 import { useState } from "react";
 import RightSideBar from "./RightSideBar";
+import { useBoardSocketsInvalidate } from "@/hooks/useBoardSocketsInvalidate";
 
 const Board = () => {
   const [openSidebar, setOpenSideBar] = useState(false);
@@ -25,6 +26,8 @@ const Board = () => {
         }
       : { background: cover }
     : {};
+useBoardSocketsInvalidate({ eventName: "cardCreated", id: boardId?? "" });
+
   if (data)
     return (
       <SingleBoardContext.Provider value={{ board: data.data }}>
