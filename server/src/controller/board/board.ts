@@ -463,7 +463,7 @@ export const demoteAdmin = asyncHandler(async (req, res) => {
 export const addMember = asyncHandler(async (req, res) => {
   const required = ["boardId", "targetedId"];
   if (!checkRequiredBody(req, res, required)) return;
-  const { boardId, targetedId } = req.body;
+  const { boardId, targetedId, workspaceId } = req.body;
   const board = await boardModel.findById(boardId);
   if (!board) {
     notFound(board, "Board", res);
@@ -488,6 +488,8 @@ export const addMember = asyncHandler(async (req, res) => {
     req.user._id,
     `You made added member to ${board.title} board`
   );
+  const io = getIO();
+  io.to(workspaceId).emit("boardUpdated", board);
   res.status(200).json(new ApiResponse(200, board, "User added to board"));
 });
 
@@ -519,7 +521,8 @@ export const removeMember = asyncHandler(async (req, res) => {
     req.user._id,
     `You made removed member from ${board.title} board`
   );
-
+  const io = getIO();
+  io.to(board.workspace.toString()).emit("boardUpdated", board);
   res
     .status(200)
     .json(new ApiResponse(200, {}, "User removed from the board successfully"));
@@ -563,7 +566,8 @@ export const editBoard = asyncHandler(async (req, res) => {
 
   await board.save();
   await lPushList(req.user._id, `You edited ${board.title} board`);
-
+  const io = getIO();
+  io.to(board.workspace.toString()).emit("boardUpdated", board);
   res.status(200).json(new ApiResponse(200, board, "Board edited"));
 });
 export const toggleFavourite = asyncHandler(async (req, res) => {
@@ -575,6 +579,8 @@ export const toggleFavourite = asyncHandler(async (req, res) => {
   if (!board) return;
   board.favourite = !board.favourite;
   await board.save();
+  const io = getIO();
+  io.to(board.workspace.toString()).emit("boardUpdated", board);
   res.status(200).json(new ApiResponse(200, {}, "Updated"));
 });
 export const updateVisibility = asyncHandler(
@@ -610,6 +616,8 @@ export const updateVisibility = asyncHandler(
     board.visibility = visibility;
     await board.save();
     await redisClient.del(`singleBoard:${boardId}`);
+    const io = getIO();
+    io.to(board.workspace.toString()).emit("boardUpdated", board);
     res.status(200).json(new ApiResponse(200, {}, "Visibility updated"));
   }
 );
@@ -661,6 +669,8 @@ export const updateBoardCover = asyncHandler(
     board.cover = coverUrl;
     await board.save();
     await redisClient.del(`singleBoard:${boardId}`);
+    const io = getIO();
+    io.to(board.workspace.toString()).emit("boardUpdated", board);
     res.status(200).json(new ApiResponse(200, {}, "Board cover updated"));
   }
 );
@@ -679,6 +689,8 @@ export const addBoardDescription = asyncHandler(async (req, res) => {
   }
   board.description = description;
   await board.save();
+  const io = getIO();
+  io.to(board.workspace.toString()).emit("boardUpdated", description);
   res.status(200).json(new ApiResponse(200, board, "Description updated"));
 });
 export const copyBoard = asyncHandler(async (req, res) => {
@@ -694,6 +706,8 @@ export const copyBoard = asyncHandler(async (req, res) => {
     res.status(404).json(new ApiResponse(404, {}, "No workspace found"));
     return;
   }
+  const io = getIO();
+  io.to(workspaceId).emit("boardUpdated", workspaceId);
   if (workspace.boards.includes(boardId)) {
     res
       .status(401)

@@ -13,6 +13,7 @@ import { PanelView } from "./RightSidebarComps/Panel/PanelView";
 import { useSingleBoardContext } from "@/Context/SingleBoardContext";
 import { CopyBoardPopover } from "./RightSidebarComps/CopyBoardPopover";
 import { CloseBoard } from "./RightSidebarComps/CloseBoard";
+import { useBoardSocketsInvalidate } from "@/hooks/useBoardSocketsInvalidate";
 
 interface IProps {
   setOpenSideBar: React.Dispatch<React.SetStateAction<boolean>>;
@@ -36,12 +37,12 @@ const RightSideBar = ({ openSidebar, setOpenSideBar }: IProps) => {
   }, []);
   const sidebarRef = useRef<HTMLDivElement>(null);
   const { board } = useSingleBoardContext();
-  console.log(board);
   const [activePanel, setActivePanel] = useState<null | string>(null);
   const handleClickOutside = useCallback(() => {
     setOpenSideBar(false);
   }, []);
   useClickOutside(sidebarRef, handleClickOutside);
+  useBoardSocketsInvalidate({ eventName: "boardUpdated", id: board._id?? "" });
   return (
     <div
       ref={sidebarRef}
@@ -65,7 +66,7 @@ const RightSideBar = ({ openSidebar, setOpenSideBar }: IProps) => {
             <AboutBoard />
           </div>
 
-          <div>
+          <div className="z-[102]">
             <Visibility />
           </div>
 

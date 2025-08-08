@@ -406,7 +406,7 @@ export const myApi = createApi({
       ],
     }),
     addBoardMember: builder.mutation({
-      query: (body: { boardId: string; targetedId: string }) => ({
+      query: (body: { boardId: string; targetedId: string,workspaceId:string }) => ({
         url: `/api/board/add-member`,
         body,
         method: "PATCH",

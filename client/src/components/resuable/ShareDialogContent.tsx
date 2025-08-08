@@ -69,6 +69,7 @@ export const ShareDialogContent = () => {
     const body = {
       boardId: board._id,
       targetedId: selectedMember[0],
+      workspaceId: board.workspace,
     };
     try {
       setIsLoading(true);
