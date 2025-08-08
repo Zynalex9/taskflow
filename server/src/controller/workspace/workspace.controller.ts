@@ -19,6 +19,7 @@ import {
 import ApiResponse from "../../utils/ApiResponse";
 import { redisClient } from "../..";
 import { UploadOnCloudinary } from "../../utils/cloudinary";
+import { getIO } from "../../socket";
 interface IParams {
   name: string;
   members?: string[];
@@ -502,7 +503,8 @@ export const addAdmin = asyncHandler(async (req: Request, res: Response) => {
     userId,
     `You added ${admin.username} as an admin of ${workspace.name}`
   );
-
+  const io = getIO();
+  io.to(workspaceId).emit("workspaceAdminUpdated", workspace);
   res
     .status(200)
     .json(new ApiResponse(200, {}, `${admin.username} is now an admin`));
@@ -533,7 +535,7 @@ export const removeAdmin = asyncHandler(async (req: Request, res: Response) => {
   const boards = await boardModel.find({ workspace: workspaceId });
   boards.forEach(async (board) => {
     board.members.map((member) => {
-      if (member.user._id.toString === adminId) {
+      if (member.user._id.toString() === adminId) {
         member.role = "member";
       }
     });
@@ -553,6 +555,8 @@ export const removeAdmin = asyncHandler(async (req: Request, res: Response) => {
     userId,
     `You removed ${admin.username} as an admin of ${workspace.name}`
   );
+  const io = getIO();
+  io.to(workspaceId).emit("workspaceAdminUpdated", workspace);
   res
     .status(200)
     .json(new ApiResponse(200, {}, `${admin.username} is removed from admins`));
@@ -615,6 +619,8 @@ export const addWorkspaceMember = asyncHandler(
       userId,
       `You added ${member.username} as a member of ${workspace.name}`
     );
+    const io = getIO();
+    io.to(workspaceId).emit("workspaceAdminUpdated", workspace);
     res
       .status(200)
       .json(new ApiResponse(200, {}, `${member.username} is now a member`));
@@ -666,6 +672,8 @@ export const removeWorkspaceMember = asyncHandler(
       userId,
       `You removed ${member.username} from ${workspace.name}`
     );
+    const io = getIO();
+    io.to(workspaceId).emit("workspaceAdminUpdated", workspace);
     res
       .status(200)
       .json(
