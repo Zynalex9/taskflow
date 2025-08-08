@@ -15,7 +15,6 @@ export const useBoardSocketsInvalidate = ({
   const dispatch = useDispatch<AppDispatch>();
   useEffect(() => {
     const fn = () => {
-        console.log("I am called")
       dispatch(myApi.util.invalidateTags([{ type: "singleBoard", id }]));
     };
     socket.on(eventName, fn);
@@ -29,6 +28,8 @@ export const useAllBoardSocketsInvalidate = ({
   id,
 }: socketInvalidateOptions) => {
   const dispatch = useDispatch<AppDispatch>();
+  console.log("I am called");
+
   useEffect(() => {
     const fn = () => {
       dispatch(myApi.util.invalidateTags([{ type: "Board", id }]));

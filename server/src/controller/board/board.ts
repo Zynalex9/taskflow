@@ -269,6 +269,7 @@ export const deleteBoard = async (req: Request, res: Response) => {
 
     const { boardId } = req.params;
     const user = req.user._id;
+    const io = getIO();
 
     if (!boardId) {
       res.status(407).json({ message: "Board Id is required" });
@@ -284,13 +285,11 @@ export const deleteBoard = async (req: Request, res: Response) => {
     const workspace = await workSpaceModel
       .findById(board.workspace)
       .session(session);
-    if (!workspace?.admin.includes(user)) {
-      res
-        .status(403)
-        .json({ message: "You are not authorized to delete the board" });
+
+    if (!workspace) {
+      res.status(404).json({ message: "No workspace found" });
       return;
     }
-
     const lists = await ListModel.find({ board }).session(session);
     if (lists.length === 0) {
       await boardModel.findByIdAndDelete(boardId).session(session);
@@ -299,6 +298,7 @@ export const deleteBoard = async (req: Request, res: Response) => {
         (b) => b.toString() !== boardId.toString()
       );
       await workspace.save();
+      io.to(workspace._id.toString()).emit("boardDeleted", boardId);
       res.status(200).json({ message: "Board Deleted.." });
       return;
     }
@@ -316,6 +316,7 @@ export const deleteBoard = async (req: Request, res: Response) => {
         (b) => b.toString() !== boardId.toString()
       );
       await workspace.save();
+      io.to(workspace._id.toString()).emit("boardDeleted", boardId);
       res.status(200).json({ message: "Board and list(s) deleted" });
       return;
     }
@@ -357,7 +358,7 @@ export const deleteBoard = async (req: Request, res: Response) => {
     await session.commitTransaction();
     await lPushList(req.user._id, `Board Deleted : ${board.title}`);
     await redisClient.del(`boards:${req.user._id}`);
-
+    io.to(workspace._id.toString()).emit("boardDeleted", boardId);
     res.status(200).json({ message: "Board deleted with all related data" });
   } catch (error) {
     await session.abortTransaction();

@@ -71,6 +71,10 @@ useAllBoardSocketsInvalidate({
   eventName: "boardCreated",
   id: workspace?._id ?? "",
 });
+useAllBoardSocketsInvalidate({
+  eventName: "boardDeleted",
+  id: workspace?._id ?? "",
+});
 
 
   useEffect(() => {
