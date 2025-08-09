@@ -26,6 +26,7 @@ import {
   getWorkspace,
   getWorkspaceMembers,
   getWorkspaceTableData,
+  leaveWorkspace,
   removeAdmin,
   removeWorkspaceMember,
 } from "../controller/workspace/workspace.controller";
@@ -217,12 +218,12 @@ workSpaceRouter
     removeWorkspaceMember
   );
 
-workSpaceRouter.route("/get-members/:workspaceId").get(
-  verifyJWT,
-
-  getWorkspaceMembers
-);
-
+workSpaceRouter
+  .route("/get-members/:workspaceId")
+  .get(verifyJWT, getWorkspaceMembers);
+workSpaceRouter
+  .route("/leave-workspace/:workspaceId")
+  .post(verifyJWT, leaveWorkspace);
 export { workSpaceRouter };
 boardRouter
   .route("/create-board")

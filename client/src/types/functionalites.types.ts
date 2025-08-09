@@ -118,7 +118,7 @@ export interface IBoard {
   __v: number;
 }
 
-export interface IMember {
+export interface IMember extends IUser {
   user: string;
   role: string;
   _id: string;

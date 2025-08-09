@@ -1,18 +1,21 @@
 import CustomBorder from "@/components/resuable/CustomBorder";
 import { useSingleBoardContext } from "@/Context/SingleBoardContext";
-import { AlignLeft, User2 } from "lucide-react";
+import { AlignLeft, Trash, User2 } from "lucide-react";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 import { useState } from "react";
 import { useAddBoardDescriptionMutation } from "@/store/myApi";
 import { toast } from "react-toastify";
+import { useSelector } from "react-redux";
+import { RootState } from "@/store/store";
 
 export const AboutPanel = () => {
   const { board } = useSingleBoardContext();
-  console.log("bobaba", board);
+  console.log(board)
   const [description, setDescription] = useState(board.description);
   const [addDesc, setAddDesc] = useState(false);
   const [addDescription] = useAddBoardDescriptionMutation();
+  const {user} = useSelector((state:RootState) => state.auth)
   const handleDescription = async () => {
     try {
       if (description === "") return;
@@ -23,6 +26,7 @@ export const AboutPanel = () => {
       setAddDesc(false);
     }
   };
+  const myRole = board.members.find((m) => m.user === user?._id)?.role;
   return (
     <div>
       <div className="flex flex-col gap-4 px-2 py-1  rounded-lg shadow-md">
@@ -31,23 +35,30 @@ export const AboutPanel = () => {
           <h1>Board Members</h1>
         </div>
         <div className="h-36 overflow-y-auto custom-scrollbar">
-          {board.membersData.map((member) => (
-            <div key={member._id} className="flex items-center gap-2 p-2">
-              <img
-                src={member.profilePicture}
-                alt={member.firstName}
-                className="w-12 h-12 rounded-full object-cover shadow-sm"
-              />
+          {board.members.map((member) => (
+            <div
+              key={member._id}
+              className="flex items-center justify-between "
+            >
+              <div className="flex items-center gap-2 p-2">
+                <img
+                  src={member.profilePicture}
+                  alt={member.firstName}
+                  className="w-12 h-12 rounded-full object-cover shadow-sm"
+                />
+                <div>
+                  <h1 className="text-lg text-gray-400 font-charlie-text-r underline font-medium">
+                    {member.firstName} {member.secondName}
+                  </h1>
+                  <h1 className="text-sm text-textP underline">
+                    @{member.username}
+                  </h1>
+                </div>
+              </div>
               <div>
-                <h1 className="text-lg text-gray-400 font-charlie-text-r underline font-medium">
-                  {member.firstName} {member.secondName}
-                </h1>
-                <h1 className="text-sm text-textP underline">
-                  @{member.username}
-                </h1>
-                <h1 className="text-sm text-textP underline">
-                  {member.role}
-                </h1>
+                {myRole === "admin" && member.role !== "admin" && (
+                  <Trash size={18} className="text-red-500 mx-1" />
+                )}
               </div>
             </div>
           ))}

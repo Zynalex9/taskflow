@@ -292,6 +292,7 @@ export const allWorkspaces = asyncHandler(
         ],
       })
       .populate("boards")
+      .populate("members.user")
       .lean();
 
     const ownedWorkspaces = allUserWorkspaces.filter(
@@ -726,5 +727,21 @@ export const getWorkspaceMembers = asyncHandler(
     res
       .status(200)
       .json(new ApiResponse(200, workspaceWithMembers, "Members found"));
+  }
+);
+export const leaveWorkspace = asyncHandler(
+  async (req: Request, res: Response) => {
+    const { workspaceId } = req.params;
+    const userId = req.user._id;
+    await workSpaceModel.updateOne(
+      { _id: workspaceId },
+      { $pull: { members: { user: userId } } }
+    );
+    await UserModel.updateOne(
+      { _id: userId },
+      { $pull: { workspace: workspaceId } }
+    );
+    redisClient.del(`workspace:${workspaceId}`);
+    res.status(200).json(new ApiResponse(200, {}, "You left the workspace"));
   }
 );

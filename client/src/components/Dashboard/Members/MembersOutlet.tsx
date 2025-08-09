@@ -1,21 +1,28 @@
 import { useState } from "react";
 import { useWorkspaces } from "@/Context/workspacesContext";
-import { useParams } from "react-router-dom";
-import { IWorkspace } from "@/types/functionalites.types"; 
+import { Link, useParams } from "react-router-dom";
+import { IWorkspace } from "@/types/functionalites.types";
+import { useSelector } from "react-redux";
+import { RootState } from "@/store/store";
 
 const MembersOutlet = () => {
+  const { user } = useSelector((state: RootState) => state.auth);
   const [filter, setFilter] = useState("");
-  const {workspaces} = useWorkspaces();
+  const { workspaces } = useWorkspaces();
   const { workspaceId } = useParams();
-  const workspace: IWorkspace | undefined = workspaces?.find((w) => w._id === workspaceId);
+  const workspace: IWorkspace | undefined = workspaces.ownedWorkspaces.find(
+    (w) => w._id === workspaceId
+  );
   const workspaceMembers = workspace?.members || [];
-
+  console.log("workspaceMembers", workspaceMembers);
   const getBoardsCountForUser = (userId: string) => {
-    return workspaces
-      ?.find((w) => w._id === workspaceId)
-      ?.boards.filter((board) =>
-        board.members.some((member) => member.user === userId)
-      ).length || 0;
+    return (
+      workspaces.ownedWorkspaces
+        ?.find((w) => w._id === workspaceId)
+        ?.boards.filter((board) =>
+          board.members.some((member) => member.user === userId)
+        ).length || 0
+    );
   };
 
   return (
@@ -59,7 +66,7 @@ const MembersOutlet = () => {
             .filter((member) =>
               member.user.username.toLowerCase().includes(filter.toLowerCase())
             )
-            .map((member, index) => (
+            .map((member) => (
               <div
                 key={member._id}
                 className="flex items-center justify-between border-b border-gray-700 pb-3"
@@ -77,15 +84,19 @@ const MembersOutlet = () => {
                     )}
                   </div>
                   <div>
-                    <p className="text-sm font-medium">{member.user.username}</p>
+                    <p className="text-sm font-medium">
+                      {member.user.username}
+                    </p>
                     <p className="text-xs text-gray-400">{member.user.email}</p>
                   </div>
                 </div>
 
                 <div className="flex items-center gap-2">
-                  <button className="text-sm bg-gray-800 px-2.5 py-1.5 rounded-md">
-                    View boards ({getBoardsCountForUser(member.user._id)})
-                  </button>
+                  <Link to={`/user/w/workspace/${workspaceId}`}>
+                    <button className="text-sm bg-gray-800 px-2.5 py-1.5 rounded-md">
+                      View boards ({getBoardsCountForUser(member.user._id)})
+                    </button>
+                  </Link>
                   <select
                     value={member.role}
                     className="bg-gray-800 text-sm px-2 py-1 rounded-md"
@@ -94,9 +105,11 @@ const MembersOutlet = () => {
                     <option value="admin">Admin</option>
                     <option value="member">Member</option>
                   </select>
-                  <button className="text-sm bg-gray-800 px-2.5 py-1.5 rounded-md text-red-400">
-                    {index === 0 ? "Remove" : "Leave"}
-                  </button>
+                  {member.user._id === user?._id && (
+                    <button className="text-sm bg-gray-800 px-2.5 py-1.5 rounded-md text-red-400">
+                      Leave
+                    </button>
+                  )}
                 </div>
               </div>
             ))

@@ -5,7 +5,7 @@ import { NavLink, Outlet, useParams } from "react-router-dom";
 const MembersPageLayout = () => {
   const { workspaceId } = useParams();
   const {workspaces} = useWorkspaces();
-  const workspace = workspaces?.find((w) => w._id === workspaceId);
+  const workspace = workspaces?.ownedWorkspaces?.find((w) => w._id === workspaceId);
   if (!workspace) return <div>No Workspace found</div>;
   return (
     <div>
