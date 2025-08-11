@@ -5,6 +5,7 @@ import "react-big-calendar/lib/css/react-big-calendar.css";
 import { useNavigate, useParams } from "react-router-dom";
 import axios from "axios";
 import "./CalendarStyles.css";
+import { Skeleton } from "../ui/skeleton";
 
 
 const localizer = momentLocalizer(moment);
@@ -120,7 +121,14 @@ const CalendarPage = () => {
       `/user/w/workspace/${workspaceId}/board/${event.boardId}`
     );
   };
-  if (loading) return <div>Loading calendar...</div>;
+ if (loading) {
+  return (
+    <div className="p-4 space-y-4">
+      <Skeleton className="w-48 h-8" /> 
+      <Skeleton className="w-full h-[300px]" /> 
+    </div>
+  );
+}
 
   return (
     <div className="p-4 h-[calc(100vh-100px)] pb-10 ">
