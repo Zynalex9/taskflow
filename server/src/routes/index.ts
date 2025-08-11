@@ -49,6 +49,7 @@ import {
   addBoardDescription,
   copyBoard,
   pdfBoardData,
+  copyBoardIntoNew,
 } from "../controller/board/board";
 import {
   createList,
@@ -419,6 +420,18 @@ boardRouter
 boardRouter
   .route("/update-visibility/:boardId")
   .patch(verifyJWT, updateVisibility);
+boardRouter
+  .route("/copy-board-into-new")
+  .post(
+    verifyJWT,
+    requirePermission(
+      PERMISSIONS.BOARD_COPY_INTO_NEW,
+      "board",
+      "boardId",
+      ERROR_MESSAGES.BOARD_COPY_INTO_NEW
+    ),
+    copyBoardIntoNew
+  );
 export { boardRouter };
 
 listRouter

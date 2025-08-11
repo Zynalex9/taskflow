@@ -23,6 +23,7 @@ export const PERMISSIONS = {
   BOARD_DETAILS: "board:details",
   BOARD_FAVOURITE: "board:favourite",
   BOARD_INVITE:"board:invite",
+  BOARD_COPY_INTO_NEW:"board:copy_into_new",
 
   /* List */
   LIST_VIEW: "list:view",

@@ -1,5 +1,7 @@
 import { Checkbox } from "@/components/ui/checkbox";
 import { useSingleBoardContext } from "@/Context/SingleBoardContext";
+import { useBoardSocketsInvalidate } from "@/hooks/useBoardSocketsInvalidate";
+import { useCopyBoardIntoNewMutation } from "@/store/myApi";
 import { useGetAllWorkspacesQuery } from "@/store/workspaceApi";
 import { IWorkspace } from "@/types/functionalites.types";
 import {
@@ -7,15 +9,10 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@radix-ui/react-popover";
-import axios from "axios";
 import { Copy, X } from "lucide-react";
 import { useState } from "react";
 import { toast } from "react-toastify";
-interface Iresponse {
-  data: {};
-  success: boolean;
-  message: string;
-}
+
 export const CopyBoardPopover = () => {
   const [checked, setChecked] = useState(false);
   const [selectedWorkspace, setSelectedWorkspace] = useState<string>("");
@@ -24,21 +21,21 @@ export const CopyBoardPopover = () => {
   const { data } = useGetAllWorkspacesQuery(undefined);
   const [isLoading, setIsLoading] = useState(false);
   const [openModal, setOpenModal] = useState(false);
-  const handleCopyBoard = async () => {
+  const [copyBoardIntoNew] = useCopyBoardIntoNewMutation();
+  useBoardSocketsInvalidate({ eventName: "boardCreated", id: board._id ?? "" });
+  const handleCopyBoard = async (e: React.MouseEvent) => {
+    e.preventDefault();
     try {
       setIsLoading(true);
-      const response = await axios.patch<Iresponse>(
-        `${import.meta.env.VITE_BASE_URL}/api/board/copy-board`,
-        {
-          workspaceId: selectedWorkspace,
-          boardId: board._id,
-          title: boardName,
-        },
-        { withCredentials: true }
-      );
+      const body = {
+        workspaceId: selectedWorkspace,
+        boardId: board._id,
+      };
+      console.log("I am clicked");
+      const response = await copyBoardIntoNew(body).unwrap();
 
-      if (response.data.success) {
-        toast.success(response.data.message, { theme: "dark" });
+      if (response.success) {
+        toast.success(response.message, { theme: "dark" });
       } else {
         toast.error("Failed to copy board.", { theme: "dark" });
       }
@@ -98,6 +95,9 @@ export const CopyBoardPopover = () => {
                 id="workspaces"
                 className="w-full p-2 border rounded bg-fprimary text-textP font-charlie-text-r focus:outline-none focus:ring-2 focus:ring-blue-primary focus:border-none transition-colors duration-150"
               >
+                <option value="" disabled>
+                  Select workspace
+                </option>
                 {data?.data.ownedWorkspaces.map((workspace: IWorkspace) => (
                   <option key={workspace._id} value={workspace._id}>
                     {workspace.name}
@@ -119,7 +119,7 @@ export const CopyBoardPopover = () => {
                 board.
               </p>
               <button
-                disabled={!selectedWorkspace || isLoading}
+                disabled={isLoading}
                 onClick={handleCopyBoard}
                 className="px-2 py-1.5 text-fprimary bg-blue-primary rounded font-charlie-text-sb text-sm hover:bg-blue-primary/80 transition-colors duration-150 mt-4 w-full"
               >

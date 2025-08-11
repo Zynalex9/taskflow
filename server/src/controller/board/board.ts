@@ -2,12 +2,12 @@ import mongoose, { Mongoose, Types } from "mongoose";
 import { boardModel } from "../../models/board.models";
 import { workSpaceModel } from "../../models/workspace.model";
 import { Request, Response } from "express";
-import { ListModel } from "../../models/list.models";
+import { IList, ListModel } from "../../models/list.models";
 import { commentsModel } from "../../models/card.comments.models";
 import { CardLabelModel } from "../../models/card.label.model";
 import { CheckListModel } from "../../models/card.checklist.model";
 import { CardAttachmentModel } from "../../models/card.attachments.model";
-import { CardModel } from "../../models/card.model";
+import { CardModel, ICard } from "../../models/card.model";
 import { UserModel } from "../../models/user.model";
 import { asyncHandler } from "../../utils/asyncHandler";
 import {
@@ -773,4 +773,206 @@ export const pdfBoardData = asyncHandler(async (req, res) => {
   await redisClient.set(cachedKey, JSON.stringify(board), "EX", 3600);
 
   res.status(200).json(new ApiResponse(200, board, "Board data fetched"));
+});
+export const copyBoardIntoNew = asyncHandler(async (req, res) => {
+  const { workspaceId, boardId } = req.body;
+
+  if (!workspaceId || !boardId) {
+    res
+      .status(400)
+      .json(new ApiResponse(400, {}, "No workspaceId/boardId provided"));
+    return;
+  }
+
+  // Check target workspace existence
+  const targetWorkspace = await workSpaceModel.findById(workspaceId);
+  if (!targetWorkspace) {
+    res.status(404).json(new ApiResponse(404, {}, "No workspace found"));
+    return;
+  }
+
+  // Fetch original board with nested lists, cards, and related entities
+  const [originalBoard] = await boardModel.aggregate([
+    { $match: { _id: new mongoose.Types.ObjectId(boardId) } },
+    {
+      $lookup: {
+        from: "lists",
+        localField: "lists",
+        foreignField: "_id",
+        as: "lists",
+        pipeline: [
+          {
+            $lookup: {
+              from: "todos", // cards collection
+              localField: "cards",
+              foreignField: "_id",
+              as: "cards",
+              pipeline: [
+                {
+                  $lookup: {
+                    from: "labels",
+                    localField: "labels",
+                    foreignField: "_id",
+                    as: "labels",
+                  },
+                },
+                {
+                  $lookup: {
+                    from: "checklists",
+                    localField: "checklist",
+                    foreignField: "_id",
+                    as: "checklist",
+                  },
+                },
+                {
+                  $lookup: {
+                    from: "comments",
+                    localField: "comments",
+                    foreignField: "_id",
+                    as: "comments",
+                  },
+                },
+                {
+                  $lookup: {
+                    from: "attachments",
+                    localField: "attachments",
+                    foreignField: "_id",
+                    as: "attachments",
+                  },
+                },
+              ],
+            },
+          },
+        ],
+      },
+    },
+  ]);
+
+  if (!originalBoard) {
+    res.status(404).json(new ApiResponse(404, {}, "Board not found"));
+    return;
+  }
+
+  // Create new board
+  const newBoard = await boardModel.create({
+    title: `${originalBoard.title} (Copy)`,
+    visibility: originalBoard.visibility,
+    createdBy: originalBoard.createdBy,
+    members: originalBoard.members || originalBoard.boardMembers || [],
+    workspace: workspaceId,
+    cover: originalBoard.cover,
+    favourite: originalBoard.favourite,
+    description: originalBoard.description,
+  });
+
+  const newListIds: mongoose.Types.ObjectId[] = [];
+
+  await Promise.all(
+    originalBoard.lists.map(async (list: any) => {
+      // Create new list without cards first
+      const newList = await ListModel.create({
+        name: `${list.name} (Copy)`,
+        color: list.color,
+        createdBy: list.createdBy,
+        board: newBoard._id,
+        cards: [],
+        isArchived: list.isArchived,
+      });
+
+      const newCardIds: mongoose.Types.ObjectId[] = [];
+
+      await Promise.all(
+        list.cards.map(async (card: any) => {
+          const [newComments, newLabels, newChecklists, newAttachments] =
+            await Promise.all([
+              Promise.all(
+                card.comments.map((c: any) =>
+                  commentsModel.create({
+                    comment: c.comment,
+                    author: c.author,
+                    createdAt: c.createdAt,
+                    updatedAt: c.updatedAt,
+                  })
+                )
+              ),
+              Promise.all(
+                card.labels.map((l: any) =>
+                  CardLabelModel.create({
+                    name: l.name,
+                    color: l.color,
+                  })
+                )
+              ),
+              Promise.all(
+                card.checklist.map((ch: any) =>
+                  CheckListModel.create({
+                    title: ch.title,
+                    items: ch.items,
+                    createdBy: ch.createdBy,
+                  })
+                )
+              ),
+              Promise.all(
+                card.attachments.map((a: any) =>
+                  CardAttachmentModel.create({
+                    fileUrl: a.fileUrl,
+                    filename: a.filename,
+                    uploadedBy: a.uploadedBy,
+                  })
+                )
+              ),
+            ]);
+
+          const newCard = await CardModel.create({
+            name: card.name,
+            description: card.description,
+            createdBy: card.createdBy,
+            comments: newComments.map((c) => c._id),
+            labels: newLabels.map((l) => l._id),
+            checklist: newChecklists.map((ch) => ch._id),
+            attachments: newAttachments.map((a) => a._id),
+            list: newList._id,
+            checked: card.checked,
+            cover: card.cover,
+          });
+
+          await Promise.all([
+            ...newChecklists.map((cl) =>
+              CheckListModel.findByIdAndUpdate(cl._id, { card: newCard._id })
+            ),
+            ...newAttachments.map((att) =>
+              CardAttachmentModel.findByIdAndUpdate(att._id, {
+                card: newCard._id,
+              })
+            ),
+            ...newLabels.map((lbl) =>
+              CardLabelModel.findByIdAndUpdate(lbl._id, { card: newCard._id })
+            ),
+          ]);
+
+          newCardIds.push(newCard._id);
+        })
+      );
+
+      await ListModel.findByIdAndUpdate(newList._id, { cards: newCardIds });
+
+      newListIds.push(newList._id);
+    })
+  );
+
+  await boardModel.findByIdAndUpdate(newBoard._id, { lists: newListIds });
+  targetWorkspace.boards.push(newBoard._id);
+  await targetWorkspace.save();
+  const io = getIO();
+  io.to(targetWorkspace._id.toString()).emit("boardCreated", newBoard);
+
+  res
+    .status(200)
+    .json(
+      new ApiResponse(
+        200,
+        { newBoard, originalBoard },
+        "Board copied successfully"
+      )
+    );
 });

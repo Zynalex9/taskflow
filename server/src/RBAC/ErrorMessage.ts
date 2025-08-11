@@ -31,6 +31,7 @@ export const ERROR_MESSAGES = {
   BOARD_FAVOURITE: "You are not authorized to mark this board as favourite",
   BOARD_DETAILS: "You are not authorized to view board details",
   BOARD_INVITE: "You are not authorized to invite members to this board",
+  BOARD_COPY_INTO_NEW: "You are not authorized to copy this board into a new board",
   
   LIST_CREATE: "You are not authorized to create a list in this board",
   LIST_VIEW: "You are not authorized to view lists in this board",

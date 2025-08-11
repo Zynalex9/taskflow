@@ -1,5 +1,5 @@
 import mongoose, { Schema, Types } from "mongoose";
-interface IList extends Document {
+export interface IList extends Document {
   name: string;
   color: string;
   cards: Types.ObjectId[];
