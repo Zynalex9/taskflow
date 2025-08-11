@@ -487,11 +487,11 @@ export const addAdmin = asyncHandler(async (req: Request, res: Response) => {
     boards.map(async (board) => {
       const existing = board.members.find((m) => m.user.equals(admin._id));
       if (existing) {
-        existing.role = "admin";
+        existing.role = "workspace-admin";
       } else {
         board.members.push({
           user: admin._id,
-          role: "admin",
+          role: "workspace-admin",
         });
       }
       await board.save();
@@ -536,7 +536,7 @@ export const removeAdmin = asyncHandler(async (req: Request, res: Response) => {
   const boards = await boardModel.find({ workspace: workspaceId });
   boards.forEach(async (board) => {
     board.members.map((member) => {
-      if (member.user._id.toString() === adminId) {
+      if (member.user._id.toString() === adminId && member.role === "workspace-admin") {
         member.role = "member";
       }
     });

@@ -48,7 +48,7 @@ export const AboutPanel = () => {
                 />
                 <div>
                   <h1 className="text-lg text-gray-400 font-charlie-text-r underline font-medium">
-                    {member.firstName} {member.secondName}
+                    {member.firstName} {member.secondName} <span className="text-xs text-gray-500">({member.role})</span>
                   </h1>
                   <h1 className="text-sm text-textP underline">
                     @{member.username}

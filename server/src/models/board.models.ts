@@ -12,7 +12,7 @@ interface IBoard extends Document {
   description: string;
   members: {
     user: Types.ObjectId;
-    role: "member" | "admin";
+    role: "member" | "workspace-admin" | "admin";
   }[];
 }
 const boardSchema = new Schema(
@@ -63,7 +63,7 @@ const boardSchema = new Schema(
         },
         role: {
           type: String,
-          enum: ["admin", "member"],
+          enum: ["admin", "workspace-admin", "member"],
           default: "member",
         },
       },
