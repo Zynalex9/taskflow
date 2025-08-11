@@ -1,7 +1,6 @@
 import { useState } from "react";
 import { useWorkspaces } from "@/Context/workspacesContext";
 import { Link, useParams } from "react-router-dom";
-import { IWorkspace } from "@/types/functionalites.types";
 import { useSelector } from "react-redux";
 import { RootState } from "@/store/store";
 
@@ -10,11 +9,12 @@ const MembersOutlet = () => {
   const [filter, setFilter] = useState("");
   const { workspaces } = useWorkspaces();
   const { workspaceId } = useParams();
-  const workspace: IWorkspace | undefined = workspaces.ownedWorkspaces.find(
-    (w) => w._id === workspaceId
-  );
+    const ownedWorkspaces = workspaces.ownedWorkspaces || [];
+  const joinedWorkspaces = workspaces.joinedWorkspaces || [];
+
+  const allWorkspaces = [...ownedWorkspaces, ...joinedWorkspaces];
+  const workspace = allWorkspaces?.find((w) => w._id === workspaceId);
   const workspaceMembers = workspace?.members || [];
-  console.log("workspaceMembers", workspaceMembers);
   const getBoardsCountForUser = (userId: string) => {
     return (
       workspaces.ownedWorkspaces

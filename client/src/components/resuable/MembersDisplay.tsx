@@ -33,7 +33,6 @@ export const MembersDisplay = ({
   const isOwner = user?._id === workspace?.createdBy;
   const loggedInMember = membersData?.data?.find((m) => m.userId === user?._id);
   const isLoggedInAdmin = loggedInMember?.role === "admin";
-
   const [addAdmin] = useAddWorkspaceAdminMutation();
   const [removeAdmin] = useRemoveWorkspaceAdminMutation();
   const [removeMember] = useRemoveWorkspaceMemberMutation();

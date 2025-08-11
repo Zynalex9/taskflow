@@ -3,21 +3,41 @@ import { Link, useParams } from "react-router-dom";
 import BoardPlaceHolder from "../resuable/BoardPlaceHolder";
 
 const BoardView = () => {
-  const {workspaces} = useWorkspaces();
+  const { workspaces } = useWorkspaces();
   const { workspaceId } = useParams();
 
-  if (!workspaceId || !workspaces) return <div>Loading...</div>;
-
-  const workspace = workspaces.find((w) => w._id === workspaceId);
-
-  if (!workspace) {
-    return <div>Couldn't find workspace</div>;
+  if (!workspaces) {
+    return (
+      <div className="text-center py-10 text-gray-400">
+        Loading workspaces...
+      </div>
+    );
   }
 
+  const ownedWorkspaces = workspaces.ownedWorkspaces || [];
+  const joinedWorkspaces = workspaces.joinedWorkspaces || [];
+
+  const allWorkspaces = [...ownedWorkspaces, ...joinedWorkspaces];
+
+  if (!workspaceId) {
+    return (
+      <div className="text-center py-10 text-red-400">Invalid workspace ID</div>
+    );
+  }
+
+  const workspace = allWorkspaces.find((w) => w._id === workspaceId);
+
+  if (!workspace) {
+    return (
+      <div className="text-center py-10 text-red-400">
+        Couldn't find workspace
+      </div>
+    );
+  }
   return (
     <div>
       <h2 className="text-2xl text-textP font-charlie-text-r pl-5 my-4">
-        Your boards
+        Boards
       </h2>
       <div className="flex items-center gap-4 w-full flex-wrap pl-5">
         {workspace.boards.map((board) => (
