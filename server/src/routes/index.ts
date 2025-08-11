@@ -7,6 +7,8 @@ import {
   findByIdentifier,
   forgetPasswordReset,
   GetUserDetail,
+  inviteLinkGenerate,
+  joinEntityViaInvite,
   loginUser,
   logOutUser,
   registerUser,
@@ -121,6 +123,19 @@ userRouter.route("/forget-password").patch(forgetPasswordReset);
 userRouter.route("/activity-log").get(verifyJWT, activityLogs);
 userRouter.route("/verify-otp").post(verifyOTP);
 userRouter.route("/:identifier/find-by-identifier").get(findByIdentifier);
+userRouter
+  .route("/generate-share-link")
+  .post(
+    verifyJWT,
+    requirePermission(
+      PERMISSIONS.BOARD_INVITE,
+      "board",
+      "boardId",
+      ERROR_MESSAGES.BOARD_INVITE
+    ),
+    inviteLinkGenerate
+  );
+userRouter.route("/join-via-link").post(verifyJWT, joinEntityViaInvite);
 export { userRouter };
 
 workSpaceRouter

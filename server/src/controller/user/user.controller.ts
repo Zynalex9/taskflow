@@ -24,6 +24,7 @@ import { CheckListModel } from "../../models/card.checklist.model";
 import jwt from "jsonwebtoken";
 import { RateLimiterRedis } from "rate-limiter-flexible";
 import { redisClient } from "../..";
+import { getIO } from "../../socket";
 
 export const registerUser = async (
   req: Request,
@@ -541,3 +542,98 @@ export const findByIdentifier = asyncHandler(
       .json(new ApiResponse(200, user, "User found by identifier"));
   }
 );
+export const inviteLinkGenerate = asyncHandler(async (req, res) => {
+  const { entityId, entityType } = req.body;
+
+  if (!entityId || !entityType) {
+    res
+      .status(400)
+      .json(new ApiResponse(400, {}, "entityId and entityType are required"));
+    return;
+  }
+
+  // Validate that the type is one of the allowed values
+  const allowedTypes = ["workspace", "board", "card", "list"];
+  if (!allowedTypes.includes(entityType)) {
+    res.status(400).json(new ApiResponse(400, {}, "Invalid entity type"));
+    return;
+  }
+
+  const payload = {
+    entityId,
+    entityType,
+    createdAt: Date.now(),
+  };
+
+  const token = jwt.sign(payload, process.env.JWT_TOKEN_SECRET!, {
+    expiresIn: "1h",
+  });
+
+  res.json(
+    new ApiResponse(200, {
+      inviteLink: token,
+    })
+  );
+});
+
+export const joinEntityViaInvite = asyncHandler(async (req, res) => {
+  const { token } = req.body;
+
+  if (!token) {
+    res.status(400).json(new ApiResponse(400, {}, "Token is required"));
+    return;
+  }
+
+  let payload;
+  try {
+    payload = jwt.verify(token, process.env.JWT_TOKEN_SECRET!) as {
+      entityId: string;
+      entityType: string;
+      createdAt: number;
+    };
+  } catch (err) {
+    res.status(400).json(new ApiResponse(400, {}, "Invalid or expired token"));
+    return;
+  }
+  const io = getIO();
+
+  switch (payload.entityType) {
+    case "workspace":
+      await workSpaceModel.updateOne(
+        { _id: payload.entityId, "members.user": { $ne: req.user.id } },
+        { $push: { members: { user: req.user.id, role: "member" } } }
+      );
+      io.to(payload.entityId.toString()).emit("workspaceAdminUpdated", null);
+
+      break;
+
+    case "board": {
+      const boardDoc = await boardModel.findById(payload.entityId);
+      if (!boardDoc) {
+        res.status(404).json(new ApiResponse(404, {}, "Board not found"));
+        return;
+      }
+
+      await boardModel.updateOne(
+        { _id: payload.entityId, "members.user": { $ne: req.user.id } },
+        { $push: { members: { user: req.user.id, role: "member" } } }
+      );
+
+      if (boardDoc.workspace) {
+        await workSpaceModel.updateOne(
+          { _id: boardDoc.workspace, "members.user": { $ne: req.user.id } },
+          { $push: { members: { user: req.user.id, role: "member" } } }
+        );
+      }
+      io.to(boardDoc.workspace.toString()).emit("boardUpdated", boardDoc);
+      io.to(boardDoc.workspace.toString()).emit("workspaceAdminUpdated", boardDoc);
+      break;
+    }
+
+    default:
+      res.status(400).json(new ApiResponse(400, {}, "Invalid type"));
+      return;
+  }
+
+  res.json(new ApiResponse(200, {}, "Joined successfully"));
+});

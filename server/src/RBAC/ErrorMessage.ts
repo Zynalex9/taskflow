@@ -1,29 +1,37 @@
-
 export const ERROR_MESSAGES = {
   WORKSPACE_CREATE: "You are not authorized to create a workspace",
   WORKSPACE_VIEW: "You are not authorized to view this workspace",
   WORKSPACE_EDIT: "You are not authorized to edit this workspace",
   WORKSPACE_DELETE: "You are not authorized to delete this workspace",
-  WORKSPACE_MANAGE_MEMBERS_ADD: "You are not authorized to add a member in this workspace",
-  WORKSPACE_MANAGE_MEMBERS_REMOVE: "You are not authorized to remove a member from this workspace",
-  WORKSPACE_MANAGE_ADMINS_ADD: "You are not authorized to add an admin in this workspace",
-  WORKSPACE_MANAGE_ADMINS_REMOVE: "You are not authorized to remove an admin in this workspace",
+  WORKSPACE_MANAGE_MEMBERS_ADD:
+    "You are not authorized to add a member in this workspace",
+  WORKSPACE_MANAGE_MEMBERS_REMOVE:
+    "You are not authorized to remove a member from this workspace",
+  WORKSPACE_MANAGE_ADMINS_ADD:
+    "You are not authorized to add an admin in this workspace",
+  WORKSPACE_MANAGE_ADMINS_REMOVE:
+    "You are not authorized to remove an admin in this workspace",
 
   BOARD_CREATE: "You are not authorized to create a board in this workspace",
   BOARD_VIEW: "You are not authorized to view this board",
   BOARD_EDIT: "You are not authorized to edit this board",
   BOARD_DELETE: "You are not authorized to delete this board",
-  BOARD_MANAGE_MEMBERS_ADD: "You are not authorized to add a member to this board",
-  BOARD_MANAGE_MEMBERS_REMOVE: "You are not authorized to remove a member from this board",
-  BOARD_MANAGE_ADMINS_ADD: "You are not authorized to add an admin to this board",
-  BOARD_MANAGE_ADMINS_REMOVE: "You are not authorized to remove an admin from this board",
+  BOARD_MANAGE_MEMBERS_ADD:
+    "You are not authorized to add a member to this board",
+  BOARD_MANAGE_MEMBERS_REMOVE:
+    "You are not authorized to remove a member from this board",
+  BOARD_MANAGE_ADMINS_ADD:
+    "You are not authorized to add an admin to this board",
+  BOARD_MANAGE_ADMINS_REMOVE:
+    "You are not authorized to remove an admin from this board",
   BOARD_UPDATE_COVER: "You are not authorized to update the board cover",
   BOARD_UPDATE_VISIBILITY: "You are not authorized to update board visibility",
   BOARD_DESCRIPTION: "You are not authorized to update board description",
   BOARD_COPY: "You are not authorized to copy this board",
   BOARD_FAVOURITE: "You are not authorized to mark this board as favourite",
   BOARD_DETAILS: "You are not authorized to view board details",
-
+  BOARD_INVITE: "You are not authorized to invite members to this board",
+  
   LIST_CREATE: "You are not authorized to create a list in this board",
   LIST_VIEW: "You are not authorized to view lists in this board",
   LIST_EDIT: "You are not authorized to edit this list",
@@ -44,5 +52,5 @@ export const ERROR_MESSAGES = {
   CARD_LABEL: "You are not authorized to manage labels on this card",
   CARD_DATE: "You are not authorized to manage dates on this card",
   CARD_COPY: "You are not authorized to copy this card",
-  CARD_TOGGLE:"You are not authorized to toggle this card",
+  CARD_TOGGLE: "You are not authorized to toggle this card",
 };

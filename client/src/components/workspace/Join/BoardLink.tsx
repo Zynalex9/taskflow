@@ -1,41 +1,79 @@
 import { RootState } from "@/store/store";
-import { IBoard, ISingleBoardResponse } from "@/types/functionalites.types";
+import { IBoard } from "@/types/functionalites.types";
 import axios from "axios";
 import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
-import { useNavigate, useParams } from "react-router-dom";
+import { useNavigate, useParams, useSearchParams } from "react-router-dom";
+import { toast } from "react-toastify";
 
 export const BoardLink = () => {
+  const [loading, setLoading] = useState(true);
   const [isMember, setIsMember] = useState<boolean | null>(null);
   const [board, setBoard] = useState<IBoard | null>(null);
   const { user } = useSelector((state: RootState) => state.auth);
-  const { boardId, workspaceId } = useParams();
-  const navigator = useNavigate();
-  const checkMemberShip = async () => {
+  const { boardId, workspaceId, token } = useParams();
+console.log(boardId,workspaceId,token)
+  const navigate = useNavigate();
+
+  // Check if the user is already a member
+  const checkMembership = async () => {
     try {
-      const res = await axios.get<ISingleBoardResponse>(
+      const res = await axios.get(
         `${import.meta.env.VITE_BASE_URL}/api/board/single/${boardId}`,
-        {
-          withCredentials: true,
-        }
+        { withCredentials: true }
       );
       const boardData = res.data.data;
       setBoard(boardData);
-      const members = boardData.members?.map((m) => m._id) || [];
+      const members =
+        boardData.members?.map((m: any) => m.user?._id || m._id) || [];
       setIsMember(members.includes(user?._id!));
     } catch (error) {
-      console.error("Error checking board membership:", error);
+      console.error("Error checking membership:", error);
+      toast.error("Failed to check membership", { theme: "dark" });
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Join board via invite
+  const handleJoin = async () => {
+    if (!token) {
+      toast.error("Invalid invite link", { theme: "dark" });
+      return;
+    }
+    try {
+      setLoading(true);
+      const res = await axios.post(
+        `${import.meta.env.VITE_BASE_URL}/api/user/join-via-link`,
+        { token },
+        { withCredentials: true }
+      );
+      if (res.data.success) {
+        toast.success("Joined successfully!", { theme: "dark" });
+        navigate(`/user/w/workspace/${workspaceId}/board/${boardId}`);
+      } else {
+        toast.error(res.data.message || "Failed to join", { theme: "dark" });
+      }
+    } catch (error: any) {
+      console.error("Error joining:", error);
+      toast.error(error.response?.data?.message || "Error joining the board", {
+        theme: "dark",
+      });
+    } finally {
+      setLoading(false);
     }
   };
 
   useEffect(() => {
-    if (boardId && user) checkMemberShip();
+    if (boardId && user) {
+      checkMembership();
+    }
   }, [boardId, user]);
 
-  if (isMember === null) {
+  if (loading) {
     return (
       <div className="w-full h-screen bg-fprimary text-white flex items-center justify-center">
-        <p className="text-lg">Checking membership...</p>
+        <p className="text-lg">Loading...</p>
       </div>
     );
   }
@@ -54,7 +92,7 @@ export const BoardLink = () => {
             <button
               className="mt-4 bg-blue-primary hover:bg-blue-600 text-black font-medium px-6 py-2 rounded-lg shadow-sm transition duration-200"
               onClick={() =>
-                navigator(`/user/w/workspace/${workspaceId}/board/${boardId}`)
+                navigate(`/user/w/workspace/${workspaceId}/board/${boardId}`)
               }
             >
               View Board
@@ -73,7 +111,10 @@ export const BoardLink = () => {
               </span>
               .
             </p>
-            <button className="mt-4 bg-blue-primary hover:bg-blue-600 text-black font-medium px-6 py-2 rounded-lg shadow-sm transition duration-200">
+            <button
+              onClick={handleJoin}
+              className="mt-4 bg-blue-primary hover:bg-blue-600 text-black font-medium px-6 py-2 rounded-lg shadow-sm transition duration-200"
+            >
               Join Board
             </button>
           </>

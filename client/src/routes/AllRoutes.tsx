@@ -150,7 +150,7 @@ const AllRoutes = () => {
         <Route
           element={user ? <LoggedInLayout /> : <Navigate to="/user/sign-in" />}
         >
-          <Route element={<BoardLink />} path="/join/:workspaceId/:boardId" />
+          <Route element={<BoardLink />} path="/join/:workspaceId/:boardId/:token" />
           <Route path="/user/dashboard" element={<Dashboard />}>
             <Route index element={<AllWorkspaces />} />
             <Route path="edit-info" element={<EditComp />} />

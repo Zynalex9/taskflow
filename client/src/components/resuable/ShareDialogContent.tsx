@@ -19,35 +19,65 @@ interface ApiResponse {
   status: string;
   success: boolean;
 }
+
 export const ShareDialogContent = () => {
   const [searchValue, setSearchValue] = useState("");
   const [loading, setIsLoading] = useState(false);
   const [responsedReturned, setResponsedReturned] = useState(false);
   const [apiResponse, setApiResponse] = useState<ApiResponse | null>(null);
   const [linkCreated, setLinkCreated] = useState<boolean>(false);
-  const [textToCopy, setTextToCopy] = useState<string>("");
+  const [inviteLink, setInviteLink] = useState<string>("");
   const [copied, setCopied] = useState<boolean>(false);
   const { board } = useSingleBoardContext();
-  const { workspace } = useSelector((state: RootState) => state.workspace);
   const [selectedMember, setSelectedMember] = useState<string[]>([]);
   const [addMember] = useAddBoardMemberMutation();
+
+  const {workspace} = useSelector((state:RootState) => state.workspace)
   const handleCopy = async () => {
     try {
-      await navigator.clipboard.writeText(textToCopy);
+      if (!inviteLink) {
+        toast.error("No link to copy", { theme: "dark" });
+        return;
+      }
+      await navigator.clipboard.writeText(inviteLink);
       setCopied(true);
-      const newLink = `http://localhost:5173/join/${workspace?._id}/${board._id}`;
-      setTextToCopy(newLink);
-      setTimeout(() => {
-        setCopied(false);
-      }, 2000);
+      setTimeout(() => setCopied(false), 2000);
     } catch (error) {
       toast.error("Failed to copy text", { theme: "dark" });
     }
   };
+
+  const handleLink = async () => {
+    try {
+      setIsLoading(true);
+      const response = await axios.post(
+        `${import.meta.env.VITE_BASE_URL}/api/user/generate-share-link`,
+        {
+          entityId: board._id,
+          entityType: "board",
+          boardId: board._id,
+        },
+        {
+          withCredentials: true,
+        }
+      );
+
+      if (response.data.success) {
+        setInviteLink(`${import.meta.env.VITE_BASE_URL}/join/${workspace?._id}/${board._id}/${response.data.data.inviteLink}`);
+        setLinkCreated(true);
+      } else {
+        toast.error("Failed to create link", { theme: "dark" });
+      }
+    } catch (error) {
+      toast.error("Error creating link", { theme: "dark" });
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   const handleSearch = async () => {
     try {
       setIsLoading(true);
-      console.log("sending request with searchValue:", searchValue);
       if (!searchValue.trim()) return;
       const response = await axios.get<ApiResponse>(
         `${
@@ -65,6 +95,7 @@ export const ShareDialogContent = () => {
       setResponsedReturned(true);
     }
   };
+
   const handleAddMember = async () => {
     const body = {
       boardId: board._id,
@@ -84,6 +115,7 @@ export const ShareDialogContent = () => {
       setIsLoading(false);
     }
   };
+
   useEffect(() => {
     if (!searchValue.trim()) {
       setResponsedReturned(false);
@@ -96,12 +128,6 @@ export const ShareDialogContent = () => {
     }, 800);
     return () => clearTimeout(timer);
   }, [searchValue]);
-  useEffect(() => {
-    console.log("apiResponse", apiResponse);
-  }, [apiResponse]);
-  const handleLink = () => {
-    setLinkCreated(true);
-  };
 
   return (
     <DialogHeader>
@@ -129,10 +155,10 @@ export const ShareDialogContent = () => {
               <div>Searching...</div>
             ) : apiResponse?.success ? (
               <div
-                className={`flex items-center curso gap-2 ${
+                className={`flex items-center gap-2 cursor-pointer ${
                   selectedMember?.includes(apiResponse.data._id)
                     ? "bg-gray-500 p-2"
-                    : " "
+                    : ""
                 }`}
                 onClick={() => {
                   setSelectedMember((prev) => {
@@ -143,7 +169,7 @@ export const ShareDialogContent = () => {
               >
                 <img
                   src={apiResponse.data.profilePicture}
-                  alt="profile-picture"
+                  alt="profile"
                   className="size-6 rounded-full object-cover object-center"
                 />
                 {apiResponse.data.username}
@@ -157,7 +183,7 @@ export const ShareDialogContent = () => {
 
       <DialogDescription className="text-textP/70">
         Share this board with your team members by entering their email
-        addresses. They will receive an invitation to join the board.
+        addresses or creating an invite link.
       </DialogDescription>
       <div className="flex items-center gap-2 mt-4">
         <Link
@@ -180,11 +206,14 @@ export const ShareDialogContent = () => {
                     <CheckCircle size={14} />
                   </div>
                 ) : (
-                  " Copy Link"
+                  "Copy Link"
                 )}
               </button>
               <button
-                onClick={() => setLinkCreated(false)}
+                onClick={() => {
+                  setLinkCreated(false);
+                  setInviteLink("");
+                }}
                 className="text-blue-primary cursor-pointer underline text-sm"
               >
                 Delete Link
@@ -192,6 +221,7 @@ export const ShareDialogContent = () => {
             </div>
           ) : (
             <button
+              disabled={loading}
               onClick={handleLink}
               className="text-blue-primary cursor-pointer underline text-sm"
             >

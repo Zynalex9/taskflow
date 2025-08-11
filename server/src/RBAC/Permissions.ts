@@ -22,6 +22,7 @@ export const PERMISSIONS = {
   BOARD_UPDATE_VISIBILITY: "board:update_visibility",
   BOARD_DETAILS: "board:details",
   BOARD_FAVOURITE: "board:favourite",
+  BOARD_INVITE:"board:invite",
 
   /* List */
   LIST_VIEW: "list:view",

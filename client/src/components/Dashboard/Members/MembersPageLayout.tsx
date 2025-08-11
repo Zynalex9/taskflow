@@ -1,11 +1,10 @@
 import { useWorkspaces } from "@/Context/workspacesContext";
-import { UserPlus } from "lucide-react";
 import { NavLink, Outlet, useParams } from "react-router-dom";
 
 const MembersPageLayout = () => {
   const { workspaceId } = useParams();
-  const {workspaces} = useWorkspaces();
-    const ownedWorkspaces = workspaces.ownedWorkspaces || [];
+  const { workspaces } = useWorkspaces();
+  const ownedWorkspaces = workspaces.ownedWorkspaces || [];
   const joinedWorkspaces = workspaces.joinedWorkspaces || [];
 
   const allWorkspaces = [...ownedWorkspaces, ...joinedWorkspaces];
@@ -15,9 +14,6 @@ const MembersPageLayout = () => {
     <div>
       <div className="flex items-center justify-between w-full">
         <h2 className="text-2xl font-charlie-text-r my-2">Collaborators </h2>
-        <button className="flex items-center px-1.5 py-2 bg-blue-500 justify-between  text-black gap-2">
-          <UserPlus size={18} /> Invite members to workspace
-        </button>
       </div>
       <div className="flex flex-col pl-8 mt-4">
         <NavLink
@@ -31,7 +27,7 @@ const MembersPageLayout = () => {
         >
           <h1 className="font-charlie-display-sm text-sm">
             {" "}
-            Workspace members 
+            Workspace members
           </h1>
         </NavLink>
         <NavLink
