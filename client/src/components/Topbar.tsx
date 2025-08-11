@@ -30,6 +30,7 @@ import { useCreateWorkspaceMutation } from "@/store/workspaceApi";
 import { toast, ToastContainer } from "react-toastify";
 import ModalButton from "./resuable/ModalButton";
 import { logoutUser } from "@/store/AuthSlice";
+import { SearchComponent } from "./TopBarComponents/SearchComponent";
 const Topbar = () => {
   const [openDialog, setOpenDialog] = useState(false);
   const { user } = useSelector((state: RootState) => state.auth);
@@ -62,7 +63,7 @@ const Topbar = () => {
   const getActivities = async () => {
     try {
       const response = await axios.get(
-       `${import.meta.env.VITE_BASE_URL}/api/user/activity-log`,
+        `${import.meta.env.VITE_BASE_URL}/api/user/activity-log`,
         { withCredentials: true }
       );
       setActivities(response.data.data);
@@ -152,7 +153,7 @@ const Topbar = () => {
             >
               More
             </Link>
-            <AlertDialog  open={openDialog}>
+            <AlertDialog open={openDialog}>
               <AlertDialogTrigger asChild>
                 <button
                   onClick={() => setOpenDialog(true)}
@@ -205,15 +206,8 @@ const Topbar = () => {
             </AlertDialog>
           </div>
         )}
-        <div className="hidden md:flex items-center gap-4">
-          <div className="relative">
-            <input
-              type="text"
-              placeholder="Search"
-              className="px-3 py-1.5 text-sm rounded-md bg-white/10 text-white placeholder-white/60 focus:outline-none focus:ring-2 focus:ring-white/20 w-48"
-            />
-            <SearchIcon className="absolute right-3 top-1/2 transform -translate-y-1/2 size-4 text-white/60" />
-          </div>
+        <div className="relativ hidden md:flex items-center gap-4">
+          <SearchComponent />
 
           <DropdownMenu>
             <DropdownMenuTrigger>

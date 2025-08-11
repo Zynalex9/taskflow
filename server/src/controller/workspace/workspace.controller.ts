@@ -745,3 +745,20 @@ export const leaveWorkspace = asyncHandler(
     res.status(200).json(new ApiResponse(200, {}, "You left the workspace"));
   }
 );
+export const queryDB = asyncHandler(async (req, res) => {
+  const { query } = req.query;
+  if (!query) {
+    res.status(400).json(new ApiResponse(400, {}, "Query is required"));
+    return;
+  }
+  const regex = new RegExp(query.toString(), "i");
+  const [workspaces, boards, lists, cards] = await Promise.all([
+    workSpaceModel.find({ name: regex }).lean(),
+    boardModel.find({ title: regex }).lean(),
+    ListModel.find({ name: regex }).lean(),
+    CardModel.find({ name: regex }).lean(),
+  ]);
+  res
+    .status(200)
+    .json(new ApiResponse(200, { workspaces, boards, lists, cards }, "Found"));
+});

@@ -188,3 +188,14 @@ export interface ILabelsResponse {
   labels: ILabel[];
   message: string;
 }
+export interface QueryDBResponse {
+  statusCode: 200;
+  data: {
+    workspaces: IWorkspace[];
+    boards: IBoard[];
+    lists: IList[];
+    cards: ICard[];
+  };
+  success: boolean;
+  message: string;
+}
