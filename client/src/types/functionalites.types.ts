@@ -133,6 +133,12 @@ export interface IWorkspaceResponse {
   message: string;
   success: boolean;
 }
+export interface ISingleWorkspaceResponse {
+  statusCode: number;
+  data: IWorkspace
+  message: string;
+  success: boolean;
+}
 export interface IBoardResponse {
   statusCode: number;
   data: {

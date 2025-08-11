@@ -135,6 +135,18 @@ userRouter
     ),
     inviteLinkGenerate
   );
+userRouter
+  .route("/workspace/generate-share-link")
+  .post(
+    verifyJWT,
+    requirePermission(
+      PERMISSIONS.BOARD_INVITE,
+      "workspace",
+      "workspaceId",
+      ERROR_MESSAGES.BOARD_INVITE
+    ),
+    inviteLinkGenerate
+  );
 userRouter.route("/join-via-link").post(verifyJWT, joinEntityViaInvite);
 export { userRouter };
 

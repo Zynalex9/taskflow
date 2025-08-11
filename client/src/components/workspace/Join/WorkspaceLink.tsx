@@ -1,41 +1,38 @@
 import { RootState } from "@/store/store";
-import { IBoard } from "@/types/functionalites.types";
+import {
+  ISingleWorkspaceResponse,
+  IWorkspace,
+} from "@/types/functionalites.types";
 import axios from "axios";
 import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { useNavigate, useParams } from "react-router-dom";
-import { toast } from "react-toastify";
+import { toast, ToastContainer } from "react-toastify";
 
-export const BoardLink = () => {
-  const [loading, setLoading] = useState(true);
-  const [isMember, setIsMember] = useState<boolean | null>(null);
-  const [board, setBoard] = useState<IBoard | null>(null);
-  const { user } = useSelector((state: RootState) => state.auth);
-  const { boardId, workspaceId, token } = useParams();
-console.log(boardId,workspaceId,token)
+export const WorkspaceLink = () => {
   const navigate = useNavigate();
+  const [loading, setLoading] = useState(true);
 
-  // Check if the user is already a member
-  const checkMembership = async () => {
+  const { workspaceId, token } = useParams();
+  const [workspace, setWorkspace] = useState<IWorkspace | null>(null);
+  const getWorkspace = async () => {
     try {
-      const res = await axios.get(
-        `${import.meta.env.VITE_BASE_URL}/api/board/single/${boardId}`,
+      setLoading(true)
+      const response = await axios.get<ISingleWorkspaceResponse>(
+        `${
+          import.meta.env.VITE_BASE_URL
+        }/api/workspace/get-workspace?workspaceId=${workspaceId}`,
         { withCredentials: true }
       );
-      const boardData = res.data.data;
-      setBoard(boardData);
-      const members =
-        boardData.members?.map((m: any) => m.user?._id || m._id) || [];
-      setIsMember(members.includes(user?._id!));
+      if (response.data.success) {
+        setWorkspace(response.data.data);
+      }
     } catch (error) {
-      console.error("Error checking membership:", error);
-      toast.error("Failed to check membership", { theme: "dark" });
-    } finally {
-      setLoading(false);
+      console.log(error);
+    }finally {
+      setLoading(false)
     }
   };
-
-  // Join board via invite
   const handleJoin = async () => {
     if (!token) {
       toast.error("Invalid invite link", { theme: "dark" });
@@ -50,7 +47,7 @@ console.log(boardId,workspaceId,token)
       );
       if (res.data.success) {
         toast.success("Joined successfully!", { theme: "dark" });
-        navigate(`/user/w/workspace/${workspaceId}/board/${boardId}`);
+        navigate(`/user/w/workspace/${workspaceId}`);
       } else {
         toast.error(res.data.message || "Failed to join", { theme: "dark" });
       }
@@ -63,12 +60,13 @@ console.log(boardId,workspaceId,token)
       setLoading(false);
     }
   };
-
   useEffect(() => {
-    if (boardId && user) {
-      checkMembership();
-    }
-  }, [boardId, user]);
+    getWorkspace();
+  }, [workspaceId]);
+  const { user } = useSelector((state: RootState) => state.auth);
+  const isMember = workspace?.members.some(
+    (u) => u.user.toString() === user?._id.toString()
+  );
 
   if (loading) {
     return (
@@ -84,18 +82,16 @@ console.log(boardId,workspaceId,token)
         {isMember ? (
           <>
             <p className="text-xl font-semibold">
-              ✅ You are already a member of the board:
+              ✅ You are already a member of the workspace:
             </p>
             <h2 className="text-2xl text-blue-primary font-bold">
-              {board?.title}
+              {workspace?.name}
             </h2>
             <button
               className="mt-4 bg-blue-primary hover:bg-blue-600 text-black font-medium px-6 py-2 rounded-lg shadow-sm transition duration-200"
-              onClick={() =>
-                navigate(`/user/w/workspace/${workspaceId}/board/${boardId}`)
-              }
+              onClick={() => navigate(`/user/w/workspace/${workspaceId}`)}
             >
-              View Board
+              View Workspace
             </button>
           </>
         ) : (
@@ -105,9 +101,9 @@ console.log(boardId,workspaceId,token)
               <span className="text-blue-primary">{user?.firstName}</span>!
             </h2>
             <p className="text-lg">
-              You’re invited to join the board{" "}
+              You’re invited to join the workspace{" "}
               <span className="text-blue-primary font-medium">
-                {board?.title}
+                {workspace?.name}
               </span>
               .
             </p>
@@ -115,11 +111,12 @@ console.log(boardId,workspaceId,token)
               onClick={handleJoin}
               className="mt-4 bg-blue-primary hover:bg-blue-600 text-black font-medium px-6 py-2 rounded-lg shadow-sm transition duration-200"
             >
-              Join Board
+              Join workspace
             </button>
           </>
         )}
       </div>
+      <ToastContainer />
     </div>
   );
 };

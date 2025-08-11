@@ -37,6 +37,7 @@ import MembersOutlet from "@/components/Dashboard/Members/MembersOutlet";
 import GuestPage from "@/components/Dashboard/Members/GuestPage";
 import Requests from "@/components/Dashboard/Members/Requests";
 import { BoardLink } from "@/components/workspace/Join/BoardLink";
+import { WorkspaceLink } from "@/components/workspace/Join/WorkspaceLink";
 
 const AllRoutes = () => {
   const { user } = useSelector((state: RootState) => state.auth);
@@ -151,6 +152,7 @@ const AllRoutes = () => {
           element={user ? <LoggedInLayout /> : <Navigate to="/user/sign-in" />}
         >
           <Route element={<BoardLink />} path="/join/:workspaceId/:boardId/:token" />
+          <Route element={<WorkspaceLink />} path="/join/:workspaceId/:token" />
           <Route path="/user/dashboard" element={<Dashboard />}>
             <Route index element={<AllWorkspaces />} />
             <Route path="edit-info" element={<EditComp />} />

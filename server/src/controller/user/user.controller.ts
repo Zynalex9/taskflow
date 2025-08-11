@@ -578,7 +578,7 @@ export const inviteLinkGenerate = asyncHandler(async (req, res) => {
 
 export const joinEntityViaInvite = asyncHandler(async (req, res) => {
   const { token } = req.body;
-
+  console.log("Sup", req.body);
   if (!token) {
     res.status(400).json(new ApiResponse(400, {}, "Token is required"));
     return;
@@ -596,7 +596,7 @@ export const joinEntityViaInvite = asyncHandler(async (req, res) => {
     return;
   }
   const io = getIO();
-
+  console.log(payload);
   switch (payload.entityType) {
     case "workspace":
       await workSpaceModel.updateOne(
@@ -604,6 +604,7 @@ export const joinEntityViaInvite = asyncHandler(async (req, res) => {
         { $push: { members: { user: req.user.id, role: "member" } } }
       );
       io.to(payload.entityId.toString()).emit("workspaceAdminUpdated", null);
+      redisClient.del(`workspace:${payload.entityId}`);
 
       break;
 
@@ -626,7 +627,12 @@ export const joinEntityViaInvite = asyncHandler(async (req, res) => {
         );
       }
       io.to(boardDoc.workspace.toString()).emit("boardUpdated", boardDoc);
-      io.to(boardDoc.workspace.toString()).emit("workspaceAdminUpdated", boardDoc);
+      io.to(boardDoc.workspace.toString()).emit(
+        "workspaceAdminUpdated",
+        boardDoc
+      );
+      redisClient.del(`board:${payload.entityId}`);
+
       break;
     }
 
@@ -634,6 +640,5 @@ export const joinEntityViaInvite = asyncHandler(async (req, res) => {
       res.status(400).json(new ApiResponse(400, {}, "Invalid type"));
       return;
   }
-
   res.json(new ApiResponse(200, {}, "Joined successfully"));
 });

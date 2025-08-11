@@ -3,13 +3,15 @@ import { useWorkspaces } from "@/Context/workspacesContext";
 import { Link, useParams } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { RootState } from "@/store/store";
+import axios from "axios";
+import { toast, ToastContainer } from "react-toastify";
 
 const MembersOutlet = () => {
   const { user } = useSelector((state: RootState) => state.auth);
   const [filter, setFilter] = useState("");
   const { workspaces } = useWorkspaces();
   const { workspaceId } = useParams();
-    const ownedWorkspaces = workspaces.ownedWorkspaces || [];
+  const ownedWorkspaces = workspaces.ownedWorkspaces || [];
   const joinedWorkspaces = workspaces.joinedWorkspaces || [];
 
   const allWorkspaces = [...ownedWorkspaces, ...joinedWorkspaces];
@@ -23,6 +25,60 @@ const MembersOutlet = () => {
           board.members.some((member) => member.user === userId)
         ).length || 0
     );
+  };
+
+  const [loading, setIsLoading] = useState(false);
+  const [linkCreated, setLinkCreated] = useState<boolean>(false);
+  const [inviteLink, setInviteLink] = useState<string>("");
+  const [copied, setCopied] = useState<boolean>(false);
+  const handleCopy = async () => {
+    try {
+      if (!inviteLink) {
+        toast.error("No link to copy", { theme: "dark" });
+        return;
+      }
+      await navigator.clipboard.writeText(inviteLink);
+      setCopied(true);
+      setTimeout(() => {
+        setCopied(false);
+        setInviteLink("");
+      }, 2000);
+    } catch (error) {
+      toast.error("Failed to copy text", { theme: "dark" });
+    }
+  };
+  const handleLink = async () => {
+    try {
+      setIsLoading(true);
+      const response = await axios.post(
+        `${
+          import.meta.env.VITE_BASE_URL
+        }/api/user/workspace/generate-share-link`,
+        {
+          entityId: workspaceId,
+          entityType: "workspace",
+          workspaceId: workspaceId,
+        },
+        {
+          withCredentials: true,
+        }
+      );
+
+      if (response.data.success) {
+        setInviteLink(
+          `${import.meta.env.VITE_CLIENT_URL}/join/${workspace?._id}/${
+            response.data.data.inviteLink
+          }`
+        );
+        setLinkCreated(true);
+      } else {
+        toast.error("Failed to create link", { theme: "dark" });
+      }
+    } catch (error) {
+      toast.error("Error creating link", { theme: "dark" });
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -45,10 +101,21 @@ const MembersOutlet = () => {
           new invite link for this Workspace at any time.
         </p>
         <div className="flex gap-2 mt-4 md:mt-0">
-          <button className="text-sm text-gray-300">Disable invite link</button>
-          <button className="flex items-center gap-1 px-3 py-1.5 bg-gray-700 rounded-md text-sm hover:bg-gray-600">
-            Invite with link
-          </button>
+            {inviteLink.length > 0 ? (
+            <button
+              onClick={handleCopy}
+              className="flex items-center gap-1 px-3 py-1.5 bg-gray-700 rounded-md text-sm hover:bg-gray-600"
+            >
+              {copied ? "Copied" : "Copy"}
+            </button>
+          ) : (
+            <button
+              onClick={handleLink}
+              className="flex items-center gap-1 px-3 py-1.5 bg-gray-700 rounded-md text-sm hover:bg-gray-600"
+            >
+              {loading ? "Generating link..." : "Invite with link"}
+            </button>
+          )}
         </div>
       </div>
 
@@ -117,6 +184,7 @@ const MembersOutlet = () => {
           <div className="text-gray-400">No members found</div>
         )}
       </div>
+      <ToastContainer />
     </div>
   );
 };

@@ -1,8 +1,12 @@
 import { useCardSocketInvalidate } from "@/hooks/useSocketInvalidate";
+import { socket } from "@/socket/socket";
 import { useToggleCompleteMutation } from "@/store/cardApi";
+import { myApi } from "@/store/myApi";
+import { AppDispatch } from "@/store/store";
 import { ICard } from "@/types/functionalites.types";
 import { X } from "lucide-react";
 import { useEffect, useState } from "react";
+import { useDispatch } from "react-redux";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
 
 export const CardModalTopBar = ({ card }: { card: ICard }) => {
@@ -36,6 +40,36 @@ export const CardModalTopBar = ({ card }: { card: ICard }) => {
   };
 
   useCardSocketInvalidate({ eventName: "cardToggled", id: cardId });
+  const dispatch = useDispatch<AppDispatch>();
+useEffect(() => {
+  if (!boardId) return;
+
+  const handleToggled = (payload: { cardId: string; checked: boolean }) => {
+    dispatch(
+      myApi.util.updateQueryData("getSingleBoard", boardId, (draft) => {
+        draft.data.lists.forEach((list) => {
+          list.cards.forEach((card) => {
+            if (card._id === payload.cardId) {
+              card.checked = payload.checked;
+            }
+          });
+        });
+      })
+    );
+
+    if (payload.cardId === cardId) {
+      setIsChecked(payload.checked);
+    }
+  };
+
+  socket.on("cardToggled", handleToggled);
+
+  return () => {
+    socket.off("cardToggled", handleToggled);
+  };
+}, [dispatch, boardId, cardId]);
+
+
   return (
     <div>
       <div className="flex items-center justify-between">

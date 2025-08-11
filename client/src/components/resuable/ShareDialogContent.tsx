@@ -63,7 +63,7 @@ export const ShareDialogContent = () => {
       );
 
       if (response.data.success) {
-        setInviteLink(`${import.meta.env.VITE_BASE_URL}/join/${workspace?._id}/${board._id}/${response.data.data.inviteLink}`);
+        setInviteLink(`${import.meta.env.VITE_CLIENT_URL}/join/${workspace?._id}/${board._id}/${response.data.data.inviteLink}`);
         setLinkCreated(true);
       } else {
         toast.error("Failed to create link", { theme: "dark" });

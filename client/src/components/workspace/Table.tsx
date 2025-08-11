@@ -31,7 +31,7 @@ const Table = () => {
         setTableData(response.data.data);
       }
     } catch (error: any) {
-      toast.error(error?.response.data.message, { theme: "dark" });
+      console.log(error?.response.data.message);
     } finally {
       setLoading(false);
     }

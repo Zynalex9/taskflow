@@ -1,11 +1,9 @@
 import {
   LayoutGrid,
   Users,
-  Settings,
   Table,
   Calendar,
   Plus,
-  ChevronDown,
   ArrowLeftIcon,
   ArrowRight,
 } from "lucide-react";
@@ -25,10 +23,8 @@ import { closeModal, openModal } from "@/store/BoardBGSlice";
 import ShowMore from "./Boards/Single-Board/Add Board Modal/ShowMore";
 import ColorsPopUp from "./Boards/Single-Board/Add Board Modal/ColorsPopUp";
 import ImagesPopUp from "./Boards/Single-Board/Add Board Modal/ImagesPopUp";
-import { myApi, useGetAllBoardsQuery } from "@/store/myApi";
-import { socket } from "@/socket/socket";
-import { IBoard } from "@/types/functionalites.types";
-import { useAllBoardSocketsInvalidate, useBoardSocketsInvalidate } from "@/hooks/useBoardSocketsInvalidate";
+import { useGetAllBoardsQuery } from "@/store/myApi";
+import { useAllBoardSocketsInvalidate } from "@/hooks/useBoardSocketsInvalidate";
 interface Props {
   barOpen: boolean;
   setBarOpen: React.Dispatch<React.SetStateAction<boolean>>;
@@ -42,31 +38,6 @@ const Sidebar = ({ barOpen, setBarOpen }: Props) => {
   });
   const workspaceName = workspace?.name;
   const dispatch = useDispatch<AppDispatch>();
-  useEffect(() => {
-    if (!workspace?._id) return;
-
-    // const handleBoardCreated = (board: IBoard) => {
-    //   dispatch(
-    //     myApi.util.updateQueryData("getAllBoards", workspace._id, (draft) => {
-    //       draft.data.yourBoards = draft.data.yourBoards.filter(
-    //         (b) => !b._id.startsWith("temp-") || b.title !== board.title
-    //       );
-
-    //       if (!draft.data.yourBoards.some((b) => b._id === board._id)) {
-    //         draft.data.yourBoards.push(board);
-    //       }
-    //     })
-    //   );
-    // };
-
-    socket.emit("joinedWorkspace", workspace._id);
-    // socket.on("boardCreated", handleBoardCreated);
-
-    // return () => {
-    //   socket.off("boardCreated", handleBoardCreated);
-    // };
-  }, [workspace?._id, dispatch]);
-
 useAllBoardSocketsInvalidate({
   eventName: "boardCreated",
   id: workspace?._id ?? "",
@@ -168,15 +139,6 @@ useAllBoardSocketsInvalidate({
             </div>
           </Link>
 
-          <div>
-            <div className="flex items-center justify-between p-2 hover:bg-gray-700 rounded cursor-pointer">
-              <div className="flex items-center space-x-2 text-sm">
-                <Settings size={16} />
-                <span>Workspace settings</span>
-              </div>
-              <ChevronDown size={14} />
-            </div>
-          </div>
         </nav>
 
         <div className="text-sm ">

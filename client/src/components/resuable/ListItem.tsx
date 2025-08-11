@@ -46,37 +46,7 @@ export const ListItems: React.FC<IProps> = ({
       type: "panel" as const,
       panelContent: <MoveList listId={listId} setOpenListId={setOpenListId} />,
     },
-    // {
-    //   id: "moveAllCards",
-    //   label: "Move all cards in this list",
-    //   type: "panel" as const,
-    //   panelContent: (
-    //     <>
-    //       Lorem ipsum dolor, sit amet consectetur adipisicing elit. Ipsa alias
-    //       quam inventore architecto maiores officiis sed quod commodi corporis
-    //       dolore eius molestias mollitia provident recusandae quia, delectus eos
-    //       ut nisi sunt ea expedita reiciendis iusto beatae. Obcaecati
-    //       exercitationem perferendis quia iure quod quisquam aliquid sint
-    //       similique harum officia. Nam sed officia debitis quasi fugit numquam
-    //       nulla tenetur ullam ea laudantium delectus facilis ad dolor quaerat
-    //       libero ducimus mollitia, earum fuga, magnam id unde in magni velit
-    //       alias. Debitis laborum natus soluta, illo quasi quo. Quam quia enim,
-    //       necessitatibus molestiae et fugit aliquid. Aut quaerat quod, molestias
-    //       voluptatem odit ab placeat explicabo reiciendis ducimus, rerum fugit
-    //       eligendi minus fuga odio inventore ad quia officiis? Obcaecati esse
-    //       itaque aperiam sapiente soluta facilis ducimus tempora recusandae illo
-    //       iure. Repudiandae in mollitia cumque officia dolorum laborum magni
-    //       sequi repellendus, provident ipsum. Cupiditate molestias numquam
-    //       labore sunt accusamus, suscipit illo optio necessitatibus omnis quis
-    //       sint, dolore esse dicta, voluptas quasi facilis fuga atque nulla.
-    //       Veniam, voluptates similique eum ut adipisci suscipit distinctio?
-    //       Magnam cum consectetur, illo culpa, nulla sint officiis corrupti
-    //       tempora officia, ratione nobis! Cupiditate ipsa voluptatibus dolores
-    //       laborum optio fugiat est unde iste cum, maiores rerum quas magni ea et
-    //       totam. Blanditiis, tempora?
-    //     </>
-    //   ),
-    // },
+    
     {
       id: "deleteList",
       label: "Delete List",
@@ -112,7 +82,7 @@ export const ListItems: React.FC<IProps> = ({
           </div>
         </div>
       ) : (
-        <ul className="space-y-2 h-[19rem]">
+        <ul className="space-y-2 h-[14rem]">
           <div className="flex items-center justify-between px-2 py-1">
             <X size={16} onClick={closeDropdown} />
             <h2 className="text-sm text-textP font-charlie-text-r">
