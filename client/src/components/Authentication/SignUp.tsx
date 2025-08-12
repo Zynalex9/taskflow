@@ -5,8 +5,11 @@ import { z } from "zod";
 import axios from "axios";
 import { toast, ToastContainer } from "react-toastify";
 import { Link, useNavigate } from "react-router-dom";
+import { useLocation } from "react-router-dom";
 type RegisterFormData = z.infer<typeof registerSchema>;
 const SignUp = () => {
+  const location = useLocation();
+  const prefilledEmail = location.state?.email || "";
   const navigator = useNavigate();
   const {
     register,
@@ -14,6 +17,9 @@ const SignUp = () => {
     formState: { isSubmitting, errors },
   } = useForm({
     resolver: zodResolver(registerSchema),
+    defaultValues: {
+      email: prefilledEmail,
+    },
   });
   const onSubmit: SubmitHandler<RegisterFormData> = async (data) => {
     try {
