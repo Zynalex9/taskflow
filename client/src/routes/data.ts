@@ -34,16 +34,16 @@ export const featurePages = [
     itemName: "Inbox",
 
     hero: {
-      heading: "Trello Inbox",
+      heading: "Taskflow Inbox",
       subheading: "Capture, organize, and conquer every to-do",
-      buttonText: "Try Trello For Free",
+      buttonText: "Try Taskflow For Free",
       linkText: "Learn more about Taskflow's plans and pricing.",
       linkTo: "",
       image: "/inbox-hero.png",
     },
     captureHeader: {
       heading: "Capture Anytime",
-      text: `Say goodbye to lost to-dos and scattered ideas! Trello Inbox saves you from the chaos of emails, messages, and notes. Jot down thoughts as they come or effortlessly snatch snippets from your favorite tools—no need to organize them right away.`,
+      text: `Say goodbye to lost to-dos and scattered ideas! Taskflow Inbox saves you from the chaos of emails, messages, and notes. Jot down thoughts as they come or effortlessly snatch snippets from your favorite tools—no need to organize them right away.`,
       image:
         "https://images.ctfassets.net/rz1oowkt5gyp/76s8l9DR2ZxNhjevNpluXZ/04387ada53789d2209416c5fff14d9cd/inbox-subheader_.png?w=2280&fm=webp",
     },
@@ -70,7 +70,7 @@ export const featurePages = [
     page: "planner",
     itemName: "Planner",
     hero: {
-      heading: "Trello Planner",
+      heading: "Taskflow Planner",
       secondHeading: "Plan, stay focused, and get more [sh*t] done",
       subheading:
         "Planner is your ultimate planning companion to unlock the power of staying in the zone and getting more done.",
@@ -82,7 +82,7 @@ export const featurePages = [
     },
     captureHeader: {
       heading: "Plan anytime, anywhere",
-      text: `Focus and make time for what truly matters. Say goodbye to scattered schedules and missed deadlines! Trello Planner is your go-to tool for capturing and organizing your plans, whether you're at your desk or on the go.`,
+      text: `Focus and make time for what truly matters. Say goodbye to scattered schedules and missed deadlines! Taskflow Planner is your go-to tool for capturing and organizing your plans, whether you're at your desk or on the go.`,
       image:
         "https://images.ctfassets.net/rz1oowkt5gyp/76s8l9DR2ZxNhjevNpluXZ/04387ada53789d2209416c5fff14d9cd/inbox-subheader_.png?w=2280&fm=webp",
     },
@@ -105,23 +105,60 @@ export const featurePages = [
         "https://images.ctfassets.net/rz1oowkt5gyp/1EAMkyBfaJLQgiLvUqMiqQ/2c1013ad6d07c9d3a4ab1ef77d3a049e/stay-on-track.png?w=1614&fm=webp",
     },
   },
+  {
+    page: "intregation",
+    itemName: "Integration",
+    hero: {
+      heading: "Taskflow Integrations",
+      subheading: "Connect your favorite tools and work smarter, not harder",
+      buttonText: "Explore Integrations",
+      linkText:
+        "Learn more about supported integrations and how to connect them.",
+      linkTo: "",
+      image: "https://via.placeholder.com/1200x600.png?text=Integration+Hero",
+    },
+    captureHeader: {
+      heading: "Bring all your work together",
+      text: `No more switching between tabs and apps! Taskflow Integrations link your tools so your work stays in one place, boosting productivity and keeping you in the zone.`,
+      image:
+        "https://images.ctfassets.net/rz1oowkt5gyp/76s8l9DR2ZxNhjevNpluXZ/04387ada53789d2209416c5fff14d9cd/inbox-subheader_.png?w=2280&fm=webp",
+    },
+    captureSections1: {
+      heading: "Popular app connections",
+      text: `Connect with Slack, Google Drive, Zoom, and more to create a unified workflow that keeps your team aligned.`,
+      image:
+        "https://images.ctfassets.net/rz1oowkt5gyp/5jLvxYsqWehh4tkm3FqMYj/eec08095626ec26259144e7055dd7d08/planner-hero.png?w=2280&fm=webp",
+    },
+    captureSections2: {
+      heading: "Automate your workflow",
+      text: `Set up rules and triggers between Taskflow and your favorite apps to save time on repetitive work.`,
+      image:
+        "https://images.ctfassets.net/rz1oowkt5gyp/3EKhSNm6rGLbkmQbhL7d6l/9ae2600f804c8ae50c0fd4cb5c6b87dd/intuitive-organization.png?w=1614&fm=webp",
+    },
+    captureSections3: {
+      heading: "Custom integrations",
+      text: `Use our API to connect with niche tools and build exactly the integrations you need.`,
+      image:
+        "https://images.ctfassets.net/rz1oowkt5gyp/1EAMkyBfaJLQgiLvUqMiqQ/2c1013ad6d07c9d3a4ab1ef77d3a049e/stay-on-track.png?w=1614&fm=webp",
+    },
+  },
 ];
 export const solutionPages: PageData[] = [
   {
     page: "marketing-teams",
     to: "/solution/marketing-teams",
     hero: {
-      heading: "Trello For Marketing Teams",
+      heading: "Taskflow For Marketing Teams",
       subheading:
         "Taskflow makes it easy to capture every detail from emails, chats, and tools—all in one place.",
       description:
-        "Whether launching a new product, campaign, or creating content, experience how Trello helps marketing teams around the world organize, plan, and get more done.",
+        "Whether launching a new product, campaign, or creating content, experience how Taskflow helps marketing teams around the world organize, plan, and get more done.",
       buttonText: "Get Started Free",
     },
     captureHeader: {
       image:
         "https://images.ctfassets.net/rz1oowkt5gyp/36PnpdmXvcwbAeIrYlONqB/41927205eb9a3cdcfb08320bc95dd806/Card4_2x.png?w=704&fm=webp",
-      text: "Trello’s boards, lists, and cards enable teams to go from ideas to action in seconds. Visual and easy-to-use, Trello helps teams bring projects to life and keep them moving forward.",
+      text: "Taskflow’s boards, lists, and cards enable teams to go from ideas to action in seconds. Visual and easy-to-use, Taskflow helps teams bring projects to life and keep them moving forward.",
     },
     captureSections1: {
       heading: "Visualize your work from the right angle.",
@@ -131,13 +168,13 @@ export const solutionPages: PageData[] = [
     },
     captureSections2: {
       heading: "Power-Up Your Marketing Team’s Productivity",
-      text: "Simple, adaptable, customizable. Make Trello your marketing hub with Power-Ups. Connect your favorite apps and integrations to Trello and gather all of the information you need to get things done under one roof.",
+      text: "Simple, adaptable, customizable. Make Taskflow your marketing hub with Power-Ups. Connect your favorite apps and integrations to Taskflow and gather all of the information you need to get things done under one roof.",
       image:
         "https://images.ctfassets.net/rz1oowkt5gyp/5YEBb9savBpFjYs3f73V9k/b780c8264ea47498e8e3c370d8c42499/Power-Ups.svg",
     },
     captureSections3: {
       heading: "Move Work Forward, Auto-magically",
-      text: "Trello’s built-in automation makes it easy to automate the repetitive, everyday tasks that keep your team from focusing on the work that matters most.",
+      text: "Taskflow’s built-in automation makes it easy to automate the repetitive, everyday tasks that keep your team from focusing on the work that matters most.",
       image:
         "https://images.ctfassets.net/rz1oowkt5gyp/1ZYlxlyZWPd5fw6WqdnbEC/d2b6e3305528cd6c82f7e6e32a47def6/UI_Illo__Automation_Rules.png?w=1098&fm=webp",
     },
@@ -166,13 +203,13 @@ export const solutionPages: PageData[] = [
     },
     captureSections2: {
       heading: "Power-Up Your Marketing Team’s Productivity",
-      text: "Simple, adaptable, customizable. Make Trello your marketing hub with Power-Ups. Connect your favorite apps and integrations to Trello and gather all of the information you need to get things done under one roof.",
+      text: "Simple, adaptable, customizable. Make Taskflow your marketing hub with Power-Ups. Connect your favorite apps and integrations to Taskflow and gather all of the information you need to get things done under one roof.",
       image:
         "https://images.ctfassets.net/rz1oowkt5gyp/5YEBb9savBpFjYs3f73V9k/b780c8264ea47498e8e3c370d8c42499/Power-Ups.svg",
     },
     captureSections3: {
       heading: "Move Work Forward, Auto-magically",
-      text: "Trello’s built-in automation makes it easy to automate the repetitive, everyday tasks that keep your team from focusing on the work that matters most.",
+      text: "Taskflow’s built-in automation makes it easy to automate the repetitive, everyday tasks that keep your team from focusing on the work that matters most.",
       image:
         "https://images.ctfassets.net/rz1oowkt5gyp/1ZYlxlyZWPd5fw6WqdnbEC/d2b6e3305528cd6c82f7e6e32a47def6/UI_Illo__Automation_Rules.png?w=1098&fm=webp",
     },
@@ -201,13 +238,13 @@ export const solutionPages: PageData[] = [
     },
     captureSections2: {
       heading: "Power-Up Your Marketing Team’s Productivity",
-      text: "Simple, adaptable, customizable. Make Trello your marketing hub with Power-Ups. Connect your favorite apps and integrations to Trello and gather all of the information you need to get things done under one roof.",
+      text: "Simple, adaptable, customizable. Make Taskflow your marketing hub with Power-Ups. Connect your favorite apps and integrations to Taskflow and gather all of the information you need to get things done under one roof.",
       image:
         "https://images.ctfassets.net/rz1oowkt5gyp/5YEBb9savBpFjYs3f73V9k/b780c8264ea47498e8e3c370d8c42499/Power-Ups.svg",
     },
     captureSections3: {
       heading: "Move Work Forward, Auto-magically",
-      text: "Trello’s built-in automation makes it easy to automate the repetitive, everyday tasks that keep your team from focusing on the work that matters most.",
+      text: "Taskflow’s built-in automation makes it easy to automate the repetitive, everyday tasks that keep your team from focusing on the work that matters most.",
       image:
         "https://images.ctfassets.net/rz1oowkt5gyp/1ZYlxlyZWPd5fw6WqdnbEC/d2b6e3305528cd6c82f7e6e32a47def6/UI_Illo__Automation_Rules.png?w=1098&fm=webp",
     },
@@ -236,13 +273,13 @@ export const solutionPages: PageData[] = [
     },
     captureSections2: {
       heading: "Power-Up Your Marketing Team’s Productivity",
-      text: "Simple, adaptable, customizable. Make Trello your marketing hub with Power-Ups. Connect your favorite apps and integrations to Trello and gather all of the information you need to get things done under one roof.",
+      text: "Simple, adaptable, customizable. Make Taskflow your marketing hub with Power-Ups. Connect your favorite apps and integrations to Taskflow and gather all of the information you need to get things done under one roof.",
       image:
         "https://images.ctfassets.net/rz1oowkt5gyp/5YEBb9savBpFjYs3f73V9k/b780c8264ea47498e8e3c370d8c42499/Power-Ups.svg",
     },
     captureSections3: {
       heading: "Move Work Forward, Auto-magically",
-      text: "Trello’s built-in automation makes it easy to automate the repetitive, everyday tasks that keep your team from focusing on the work that matters most.",
+      text: "Taskflow’s built-in automation makes it easy to automate the repetitive, everyday tasks that keep your team from focusing on the work that matters most.",
       image:
         "https://images.ctfassets.net/rz1oowkt5gyp/1ZYlxlyZWPd5fw6WqdnbEC/d2b6e3305528cd6c82f7e6e32a47def6/UI_Illo__Automation_Rules.png?w=1098&fm=webp",
     },
@@ -270,13 +307,13 @@ export const solutionPages: PageData[] = [
     },
     captureSections2: {
       heading: "Power-Up Your Marketing Team’s Productivity",
-      text: "Simple, adaptable, customizable. Make Trello your marketing hub with Power-Ups. Connect your favorite apps and integrations to Trello and gather all of the information you need to get things done under one roof.",
+      text: "Simple, adaptable, customizable. Make Taskflow your marketing hub with Power-Ups. Connect your favorite apps and integrations to Taskflow and gather all of the information you need to get things done under one roof.",
       image:
         "https://images.ctfassets.net/rz1oowkt5gyp/5YEBb9savBpFjYs3f73V9k/b780c8264ea47498e8e3c370d8c42499/Power-Ups.svg",
     },
     captureSections3: {
       heading: "Move Work Forward, Auto-magically",
-      text: "Trello’s built-in automation makes it easy to automate the repetitive, everyday tasks that keep your team from focusing on the work that matters most.",
+      text: "Taskflow’s built-in automation makes it easy to automate the repetitive, everyday tasks that keep your team from focusing on the work that matters most.",
       image:
         "https://images.ctfassets.net/rz1oowkt5gyp/1ZYlxlyZWPd5fw6WqdnbEC/d2b6e3305528cd6c82f7e6e32a47def6/UI_Illo__Automation_Rules.png?w=1098&fm=webp",
     },
@@ -305,13 +342,13 @@ export const solutionPages: PageData[] = [
     },
     captureSections2: {
       heading: "Power-Up Your Marketing Team’s Productivity",
-      text: "Simple, adaptable, customizable. Make Trello your marketing hub with Power-Ups. Connect your favorite apps and integrations to Trello and gather all of the information you need to get things done under one roof.",
+      text: "Simple, adaptable, customizable. Make Taskflow your marketing hub with Power-Ups. Connect your favorite apps and integrations to Taskflow and gather all of the information you need to get things done under one roof.",
       image:
         "https://images.ctfassets.net/rz1oowkt5gyp/5YEBb9savBpFjYs3f73V9k/b780c8264ea47498e8e3c370d8c42499/Power-Ups.svg",
     },
     captureSections3: {
       heading: "Move Work Forward, Auto-magically",
-      text: "Trello’s built-in automation makes it easy to automate the repetitive, everyday tasks that keep your team from focusing on the work that matters most.",
+      text: "Taskflow’s built-in automation makes it easy to automate the repetitive, everyday tasks that keep your team from focusing on the work that matters most.",
       image:
         "https://images.ctfassets.net/rz1oowkt5gyp/1ZYlxlyZWPd5fw6WqdnbEC/d2b6e3305528cd6c82f7e6e32a47def6/UI_Illo__Automation_Rules.png?w=1098&fm=webp",
     },

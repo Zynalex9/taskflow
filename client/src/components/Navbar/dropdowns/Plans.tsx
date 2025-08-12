@@ -1,5 +1,6 @@
 import { Building2, CloudLightningIcon, Lightbulb, Star } from "lucide-react";
 import ContentBox from "../reusables/ContentBox";
+import { Link } from "react-router-dom";
 
 const Plans = () => {
   const contentData = [
@@ -33,7 +34,7 @@ const Plans = () => {
               text={text}
               bg={bg}
               heading={heading}
-              to="/"
+              to="/pricing"
             />
           ))}
         </div>
@@ -48,9 +49,11 @@ const Plans = () => {
               For individuals or small teams looking to keep work organize
             </p>
           </div>
-          <button className="px-1.5 py-2 lg:p-4 bg-white border border-amber-600">
-            Take a tour of Taskflow
-          </button>
+          <Link to="/user/sign-up">
+            <button className="px-1.5 py-2 lg:p-4 bg-white border border-amber-600">
+              Take a tour of Taskflow
+            </button>
+          </Link>
         </div>
       </div>
       <div className="right-side bg-[#F7F5FF]  max-lg:mx-auto w-[95%] lg:w-[25%] space-y-8 p-6">
@@ -62,9 +65,11 @@ const Plans = () => {
           Whether you’re a team of 2 or 2,000, Taskflow’s flexible pricing model
           means you only pay for what you need.
         </p>
-        <button className="bg-white px-2 py-4 border rounded">
-          View Taskflow Pricing
-        </button>
+        <Link to={"/pricing"}>
+          <button className="bg-white px-2 py-4 border rounded">
+            View Taskflow Pricing
+          </button>
+        </Link>
       </div>
     </div>
   );

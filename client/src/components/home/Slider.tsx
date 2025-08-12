@@ -76,7 +76,6 @@ const Slider = () => {
       prev === 0 ? (prev = data.length - 1) : prev - 1
     );
   };
-  console.log(currentSlideIndex);
   return (
     <div className="my-20 w-[100%] ">
       <div className="space-y-3 px-10 lg:pl-32 lg:my-10">

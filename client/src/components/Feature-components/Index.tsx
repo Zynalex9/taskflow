@@ -47,9 +47,11 @@ const Index: React.FC<IndexProps> = ({
             </h1>
           )}
           <h3 className="text-2xl">{hero.subheading}</h3>
-          <button className="bg-white border border-cyan-300 rounded transition-all duration-200 cursor-pointer hover:bg-white/25 px-2 py-4">
-            {hero.buttonText}
-          </button>
+          <Link to={"/user/sign-up"}>
+            <button className="bg-white border border-cyan-300 rounded transition-all duration-200 cursor-pointer hover:bg-white/25 px-2 py-4">
+              {hero.buttonText}
+            </button>
+          </Link>
           <Link to={hero.linkTo} className="text-primary hover:underline">
             <h3>{hero.linkText}</h3>
           </Link>
@@ -136,9 +138,11 @@ const Index: React.FC<IndexProps> = ({
           feedback to make it even better! Try it out, share your thoughts, and
           help us shape the future of planning.
         </p>
-        <button className="bg-white shadow-xl px-3 py-4  mt-3 rounded text-black">
-          Get Started
-        </button>
+        <Link to={"/user/sign-up"}>
+          <button className="bg-white shadow-xl px-3 py-4  mt-3 rounded text-black">
+            Get Started
+          </button>
+        </Link>
       </div>
     </div>
   );

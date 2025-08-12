@@ -1,6 +1,7 @@
 import { PageData } from "@/routes/data";
 import Tabs from "../home/Tabs";
 import Button from "../resuable/Button";
+import { Link } from "react-router-dom";
 
 const SolutionTemplate: React.FC<PageData> = ({
   captureHeader,
@@ -21,9 +22,11 @@ const SolutionTemplate: React.FC<PageData> = ({
           the most effective ways product management teams can track product
           roadmaps, simplify sprints, and launch new updates with ease.
         </p>
-        <button className="mt-4 px-6 py-3 bg-white text-[#0070F9] font-semibold rounded-full shadow-md hover:bg-white/90 transition">
-          {hero.buttonText}
-        </button>
+        <Link to={"/user/sign-up"}>
+          <button className="mt-4 px-6 py-3 bg-white text-[#0070F9] font-semibold rounded-full shadow-md hover:bg-white/90 transition">
+            {hero.buttonText}
+          </button>
+        </Link>
       </div>
       <div className="flex max-lg:flex-col lg:gap-10 w-full px-12 py-20">
         <img
@@ -171,7 +174,9 @@ const SolutionTemplate: React.FC<PageData> = ({
               a ton more.
             </p>
           </div>
-          <Button buttonText="Get Started Today" />
+          <Link to="/user/sign-up">
+            <Button buttonText="Get Started Today" />
+          </Link>
         </div>
       </div>
     </div>

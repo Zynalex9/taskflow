@@ -38,6 +38,7 @@ import GuestPage from "@/components/Dashboard/Members/GuestPage";
 import Requests from "@/components/Dashboard/Members/Requests";
 import { BoardLink } from "@/components/workspace/Join/BoardLink";
 import { WorkspaceLink } from "@/components/workspace/Join/WorkspaceLink";
+import PricingPage from "@/components/Pricing/PricingPage";
 
 const AllRoutes = () => {
   const { user } = useSelector((state: RootState) => state.auth);
@@ -139,6 +140,10 @@ const AllRoutes = () => {
               element={<SolutionTemplate {...pageData} />}
             />
           ))}
+          <Route 
+          path="/pricing"
+          element={<PricingPage />}
+          />
           <Route
             path="/user/sign-in"
             element={user ? <Navigate to={"/user/dashboard"} /> : <SignIn />}

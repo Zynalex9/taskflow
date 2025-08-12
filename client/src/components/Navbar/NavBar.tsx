@@ -187,18 +187,6 @@ const NavBar = () => {
         >
           <span>Pricing</span>
         </NavLink>
-
-        <NavLink
-          to="/resources"
-          className={({ isActive }) =>
-            `flex items-center space-x-1 ${
-              isActive ? "underline underline-offset-4 text-blue-600" : ""
-            }`
-          }
-        >
-          <span>Resources</span>
-          <ChevronDown size={12} color="#000" />
-        </NavLink>
       </div>
 
       <div
