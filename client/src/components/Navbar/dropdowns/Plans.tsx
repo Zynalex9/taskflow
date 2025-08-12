@@ -24,7 +24,7 @@ const Plans = () => {
     },
   ];
   return (
-    <div className="bg-white w-full px-4 lg:pl-20 shadow-2xl flex flex-col lg:flex-row gap-4 max-lg:pb-16">
+    <div className="bg-white dark:bg-[#1D2125] w-full px-4 lg:pl-20 shadow-2xl flex flex-col lg:flex-row gap-4 max-lg:pb-16">
       <div className="left-side lg:w-[75%] lg:py-10">
         <div className="mb-8 flex flex-col lg:flex-row gap-2 py-4">
           {contentData.map(({ Icon, text, bg, heading }, i) => (
@@ -38,9 +38,9 @@ const Plans = () => {
             />
           ))}
         </div>
-        <div className="bg-[#FFFDF5] p-8 flex items-center justify-between ">
+        <div className="bg-[#FFFDF5] dark:border dark:border-amber-50  dark:bg-[#1D2125] p-8 flex items-center justify-between ">
           <div className="space-y-4">
-            <div className="flex gap-2 ">
+            <div className="flex gap-2  ">
               <CloudLightningIcon color="orange" />
               <h1 className="text-xl"> Free Plan</h1>
             </div>
@@ -50,13 +50,13 @@ const Plans = () => {
             </p>
           </div>
           <Link to="/user/sign-up">
-            <button className="px-1.5 py-2 lg:p-4 bg-white border border-amber-600">
+            <button className="px-1.5 py-2 lg:p-4 bg-white dark:bg-[#1D2125] border border-amber-600">
               Take a tour of Taskflow
             </button>
           </Link>
         </div>
       </div>
-      <div className="right-side bg-[#F7F5FF]  max-lg:mx-auto w-[95%] lg:w-[25%] space-y-8 p-6">
+      <div className="right-side bg-[#F7F5FF] dark:bg-[#1D2125]  max-lg:mx-auto w-[95%] lg:w-[25%] space-y-8 p-6">
         <div className="space-y-2">
           <h1 className="text-xl">Compare plans and Pricing</h1>
           <div className="border-b border-gray-200"></div>
@@ -66,7 +66,7 @@ const Plans = () => {
           means you only pay for what you need.
         </p>
         <Link to={"/pricing"}>
-          <button className="bg-white px-2 py-4 border rounded">
+          <button className="bg-white dark:bg-[#1D2125] px-2 py-4 border rounded">
             View Taskflow Pricing
           </button>
         </Link>

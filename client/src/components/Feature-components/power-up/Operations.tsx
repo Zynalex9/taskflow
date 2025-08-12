@@ -1,3 +1,4 @@
+import { ToastContainer } from "react-toastify";
 import { OperationsData } from "../data/data";
 import Card from "./Card";
 
@@ -16,6 +17,7 @@ const Operations = () => {
           />
         )
       )}
+      <ToastContainer style={{ zIndex: 100000 }} />
     </div>
   );
 };

@@ -1,3 +1,5 @@
+import { toast } from "react-toastify";
+
 interface ICARD {
   bannerImg?: string;
   logoImg: string;
@@ -12,6 +14,13 @@ const Card: React.FC<ICARD> = ({
   shortDescription,
   users,
 }) => {
+  const handleClick = (heading: string) => {
+    toast.success(`'${heading}' Feature is coming soon`, {
+      theme: "dark",
+      closeOnClick: true,
+      autoClose: 1500,
+    });
+  };
   return (
     <div className="bg-[#333C43] text-white p-3 rounded-xl shadow-md w-full max-w-xs min-h-[200px] flex flex-col justify-between hover:bg-[#333C43]/50 transition-transform duration-200">
       {bannerImg && (
@@ -27,8 +36,15 @@ const Card: React.FC<ICARD> = ({
           <img src={logoImg} alt="Icon" className="w-12 h-12" />
           <h2 className="text-lg font-semibold truncate">{heading}</h2>
         </div>
-        <button className="bg-[#579DFF] px-4 py-1 rounded-lg w-fit">Add</button>
-        <p className="text-xs text-gray-300 leading-snug line-clamp-3">{shortDescription}</p>
+        <button
+          onClick={() => handleClick(heading)}
+          className="bg-[#579DFF] px-4 py-1 rounded-lg w-fit"
+        >
+          Add
+        </button>
+        <p className="text-xs text-gray-300 leading-snug line-clamp-3">
+          {shortDescription}
+        </p>
         <div className="flex items-center gap-1 text-gray-400 text-sm mt-auto">
           <svg
             width="18"

@@ -1,3 +1,4 @@
+import { ToastContainer } from "react-toastify";
 import { featuredCardData } from "../data/data";
 import Card from "./Card";
 
@@ -40,6 +41,8 @@ const Featured = () => {
           )
         )}
       </div>
+            <ToastContainer style={{zIndex:100000}}/>
+      
     </>
   );
 };

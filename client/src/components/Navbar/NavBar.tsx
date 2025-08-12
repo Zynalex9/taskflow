@@ -90,7 +90,7 @@ const NavBar = () => {
   return (
     <div
       ref={navRef}
-      className=" bg-white fixed top-0 shadow-xl text-xl z-[99999] flex items-center justify-between w-full h-16 py-2 pl-2  font-charlie-text-r"
+      className=" bg-white dark:bg-[#1D2125]  fixed top-0 shadow-xl text-xl z-[99999] flex items-center justify-between w-full h-16 py-2 pl-2  font-charlie-text-r"
     >
       <div className="logo">
         <Link to={"/"}>
@@ -117,14 +117,14 @@ const NavBar = () => {
           </NavLink>
           <button className="cursor-pointer" onClick={handleFeatures}>
             {openFeatures ? (
-              <ChevronUp size={12} color="#000" />
+              <ChevronUp size={12} color="#000" className="dark:text-white"/>
             ) : (
-              <ChevronDown size={12} color="#000" />
+              <ChevronDown size={12} color="#000" className="dark:text-white" />
             )}
           </button>
 
           <div
-            className={`absolute top-16 left-0 w-[100vw] z-50 transition-all duration-300 ease-in-out transform bg-white ${
+            className={`absolute top-16 left-0 w-[100vw] z-50 transition-all duration-300 ease-in-out transform bg-white dark:bg-[#1D2125] ${
               openFeatures
                 ? "opacity-100 scale-100 translate-y-0"
                 : "opacity-0 scale-95 -translate-y-4 pointer-events-none"
@@ -134,15 +134,13 @@ const NavBar = () => {
           </div>
         </div>
 
-        <div
-          className={`flex items-center space-x-1`} ref={solutionsRef}
-        >
+        <div className={`flex items-center space-x-1`} ref={solutionsRef}>
           <span>Solutions</span>
           <button className="cursor-pointer" onClick={handleSolutions}>
-            <ChevronDown size={12} color="#000" />
+            <ChevronDown size={12} color="#000" className="dark:text-white"/>
           </button>
           <div
-            className={`absolute bg-white top-16 left-0 w-full transition-all duration-300 ease-in-out transform ${
+            className={`absolute bg-white dark:bg-[#1D2125] top-16 left-0 w-full transition-all duration-300 ease-in-out transform ${
               openSolutions
                 ? "opacity-100 scale-100 translate-y-0"
                 : "opacity-0 scale-95 -translate-y-4 pointer-events-none"
@@ -164,7 +162,7 @@ const NavBar = () => {
             <span>Plans</span>
           </NavLink>
           <button className="cursor-pointer" onClick={handlePlans}>
-            <ChevronDown size={12} color="#000" />
+            <ChevronDown size={12} color="#000" className="dark:text-white"/>
           </button>
           <div
             className={`absolute top-16 left-0 w-full transition-all ease-in-out duration-200 transform ${
@@ -190,7 +188,7 @@ const NavBar = () => {
       </div>
 
       <div
-        className={`absolute top-16 left-0 w-full bg-white flex flex-col gap-4 py-4 shadow-lg lg:hidden z-50 
+        className={`absolute top-16 left-0 w-full bg-white  dark:bg-[#1D2125] flex flex-col gap-4 py-4 shadow-lg lg:hidden z-50 
           transition-all duration-300 ease-in-out transform 
           ${
             showDropDown
@@ -213,7 +211,7 @@ const NavBar = () => {
             >
               Logout
             </button>
-            <button className="cursor-pointer bg-blue-primary py-4 px-2 mx-1 font-charlie-text-r text-white">
+            <button className="cursor-pointer bg-blue-primary py-4 px-2 mx-1 font-charlie-text-r text-white ">
               <Link to={"/user/dashboard"}> Dashboard</Link>
             </button>
           </div>

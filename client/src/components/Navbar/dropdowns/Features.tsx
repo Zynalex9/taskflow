@@ -12,41 +12,41 @@ const ContentBoxData = [
     Icon: Inbox,
     heading: "Inbox",
     text: "Capture every vital detail from emails, Slack, and more directly into your Taskflow Inbox.",
-    bg: "#F1FDF7",
+    bg: "hover:bg-[#F1FDF7] hover:dark:bg-gray-900",
     to: "/feature/inbox",
   },
   {
     Icon: CalendarCheck,
     heading: "Planner",
     text: "Sync your calendar and allocate focused time slots to boost productivity.",
-    bg: "#FFF5F2",
+    bg: "hover:bg-[#FFF5F2] hover:dark:bg-gray-900",
     to: "/feature/planner",
   },
   {
     Icon: Caravan,
     heading: "Automation",
     text: "Automate tasks and workflows with Butler automation.",
-    bg: "#FFF8FD",
+    bg: "hover:bg-[#FFF8FD] hover:dark:bg-gray-900",
     to: "/feature/automation",
   },
   {
     Icon: PowerSquareIcon,
     heading: "Power-ups",
     text: "Power up your teams by linking their favorite tools with Taskflow plugins.",
-    bg: "#FFFCF2",
+    bg: "hover:bg-[#FFFCF2] hover:dark:bg-gray-900",
     to: "/feature/power-ups/featured",
   },
   {
     Icon: Component,
     heading: "Integration",
     text: "Find the apps your team is already using or discover new ways to get work done in Taskflow.",
-    bg: "#F2FDFF",
+    bg: "hover:bg-[#F2FDFF] hover:dark:bg-gray-900",
     to: "/feature/intregation",
   },
 ];
 const NavBarFeatures = () => {
   return (
-    <div className="bg-white shadow-2xl w-full lg:h-[70%] lg:px-4 flex  flex-col lg:flex-row transition-transform font-charlie-text-r">
+    <div className="bg-white dark:bg-[#1D2125] shadow-2xl w-full lg:h-[70%] lg:px-4 flex  flex-col lg:flex-row transition-transform font-charlie-text-r">
       <div className="left w-full lg:w-[75%]">
         <div className="top pl-8 lg:px-24">
           <h3 className="text-lg lg:text-2xl lg:pt-6">
@@ -67,7 +67,7 @@ const NavBarFeatures = () => {
           ))}
         </div>
       </div>
-      <div className="right lg:w-[25%] bg-[#F7F5FF] lg:px-4 w-[80%] max-lg:mx-auto max-lg:rounded max-lg:shadow-xl max-lg:px-4 max-lg:mb-20 max-lg:pb-4">
+      <div className="right lg:w-[25%] bg-[#F7F5FF] dark:bg-[#1D2125] lg:px-4 w-[80%] max-lg:mx-auto max-lg:rounded max-lg:shadow-xl max-lg:px-4 max-lg:mb-20 max-lg:pb-4">
         <div className="top">
           <h3 className="text-2xl lg:text-start py-6">Meet Taskflow</h3>
           <div className="border-b border-gray-200 w-full"></div>
@@ -78,7 +78,7 @@ const NavBarFeatures = () => {
             Productivity awaits
           </p>
           <Link to={"/user/sign-up"}>
-            <button className="bg-white border border-black px-2 py-3 rounded hover:scale-105 cursor-pointer transition-transform">
+            <button className="bg-white dark:bg-[#1D2125] border border-black px-2 py-3 rounded hover:scale-105 cursor-pointer transition-transform">
               Check out Taskflow
             </button>
           </Link>

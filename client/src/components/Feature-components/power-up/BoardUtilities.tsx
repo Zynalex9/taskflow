@@ -1,4 +1,5 @@
-import {  boardUtilitiesData } from "../data/data";
+import { ToastContainer } from "react-toastify";
+import { boardUtilitiesData } from "../data/data";
 import Card from "./Card";
 
 const BoardUtilities = () => {
@@ -16,6 +17,7 @@ const BoardUtilities = () => {
           />
         )
       )}
+      <ToastContainer style={{ zIndex: 100000 }} />
     </div>
   );
 };

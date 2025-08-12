@@ -54,10 +54,10 @@ const ContentBoxData = [
 
 const Solutions = () => {
   return (
-    <div className="lg:shadow-2xl bg-white w-full flex lg:flex-row flex-col h-[80%] font-charlie-text-r">
+    <div className="lg:shadow-2xl bg-white dark:bg-[#1D2125] w-full flex lg:flex-row flex-col h-[80%] font-charlie-text-r">
       <div className="left lg:w-[75%]">
         <div className="heading px-2 lg:pl-28 pt-4">
-          <h2 className="text-xl text-text-primary leading-tight font-charlie-text-sb">
+          <h2 className="text-xl text-text-primary dark:text-white leading-tight font-charlie-text-sb">
             Take a page out of these pre-built Taskflow playbooks designed for
             all teams
           </h2>
@@ -78,7 +78,7 @@ const Solutions = () => {
           </div>
         </div>
       </div>
-      <div className="right max-lg:mx-auto max-lg:rounded w-[90%]  bg-[#F7F5FF] lg:w-[25%] p-2">
+      <div className="right max-lg:mx-auto max-lg:rounded w-[90%]  bg-[#F7F5FF] dark:bg-[#1D2125] lg:w-[25%] p-2">
         <div className="content px-2">
           <h1 className="font-charlie-text-r text-2xl">
             Our product in action
