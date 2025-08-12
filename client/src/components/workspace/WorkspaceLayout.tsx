@@ -22,6 +22,10 @@ const WorkspaceLayout = () => {
   const user = useSelector((state: RootState) => state.auth.user);
   useEffect(() => {
     socket.emit("joinedWorkspace", workspaceId);
+    document.body.style.overflow = "hidden";
+    return () => {
+      document.body.style.overflow = "auto";
+    }
   }, []);
   useEffect(() => {
     const getWorkspace = async () => {
@@ -137,7 +141,7 @@ const WorkspaceLayout = () => {
         <div className={`h-full ${barOpen ? "bg-fprimary" : "bg-[#535659]"}`}>
           <Sidebar barOpen={barOpen} setBarOpen={setBarOpen} />
         </div>
-        <div className="w-full h-full overflow-y-auto custom-scrollbar">
+        <div className="w-full h-full overflow-y-hidden custom-scrollbar">
           <Outlet />
         </div>
       </div>

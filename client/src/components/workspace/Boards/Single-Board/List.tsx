@@ -37,7 +37,6 @@ const List: React.FC<ListProps> = ({ list }) => {
         toast.error(error.data.message, { theme: "dark" });
         reset();
       }
-      setActiveListId(null);
     }
   };
   const dispatch = useDispatch<AppDispatch>();
@@ -76,7 +75,7 @@ const List: React.FC<ListProps> = ({ list }) => {
   const [openListId, setOpenListId] = useState<string | null>(null);
 
   return (
-    <div className="flex gap-4 items-stretch w-max">
+    <div className="flex gap-4 items-stretch w-max overflow-y-auto">
       {list?.length
         ? list.map((singleList) => (
             <div>
