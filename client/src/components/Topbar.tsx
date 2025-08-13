@@ -141,18 +141,6 @@ const Topbar = () => {
             >
               Workspaces
             </Link>
-            <Link
-              to="#"
-              className="hover:text-white transition-all duration-200 hover:bg-[#333C43] p-2 rounded"
-            >
-              Starred
-            </Link>
-            <Link
-              to="#"
-              className="hover:text-white transition-all duration-200 hover:bg-[#333C43] p-2 rounded"
-            >
-              More
-            </Link>
             <AlertDialog open={openDialog}>
               <AlertDialogTrigger asChild>
                 <button

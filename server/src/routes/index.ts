@@ -632,7 +632,7 @@ cardRouter
   );
 
 cardRouter
-  .route("/edit/:listId/:cardId")
+  .route("/edit/:cardId")
   .patch(
     verifyJWT,
     requirePermission(

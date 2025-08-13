@@ -223,8 +223,8 @@ export const editCardDetails = async (req: Request, res: Response) => {
       removeLabels?: string[];
       priority: string;
     } = req.body;
-    const { listId, cardId } = req.params;
-    if (!listId || !cardId) {
+    const { cardId } = req.params;
+    if (!cardId) {
       res.status(407).json({ message: "Card ID or List ID is missing" });
       return;
     }

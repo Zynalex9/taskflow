@@ -701,6 +701,39 @@ export const cardApi = createApi({
         }
       },
     }),
+    editCard: builder.mutation({
+      query: (body: {
+        cardId: string;
+        name?: string;
+        description?: string;
+        workspaceId: string;
+      }) => ({
+        url: `/api/card/edit/${body.cardId}`,
+        method: "PATCH",
+        body,
+        credentials: "include",
+      }),
+      invalidatesTags: (_, __, { cardId }) => [
+        { type: "singleCard", id: cardId },
+      ],
+      async onQueryStarted(body, { dispatch, queryFulfilled }) {
+        const patchResult = dispatch(
+          cardApi.util.updateQueryData(
+            "getSingleCard",
+            { cardId: body.cardId },
+            (draft) => {
+              if (body.name) draft.data.name = body.name;
+              if (body.description) draft.data.description = body.description;
+            }
+          )
+        );
+        try {
+          await queryFulfilled;
+        } catch (error) {
+          patchResult.undo();
+        }
+      },
+    }),
   }),
 });
 export const {
@@ -722,4 +755,5 @@ export const {
   useUploadCardCoverMutation,
   useEditCommentMutation,
   useDeleteCommentMutation,
+  useEditCardMutation,
 } = cardApi;

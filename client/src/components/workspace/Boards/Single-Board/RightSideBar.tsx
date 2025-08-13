@@ -1,11 +1,9 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import ShareComp from "./RightSidebarComps/Share";
 import AboutBoard from "./RightSidebarComps/AboutBoard";
-import Visibility from "./RightSidebarComps/Visibility";
 import ExportsComp from "./RightSidebarComps/Exports/ExportsComp";
 import StarComp from "./RightSidebarComps/StarComp";
-import { Eye, X } from "lucide-react";
-import SettingsComp from "./RightSidebarComps/Settings/SettingsComp";
+import {  X } from "lucide-react";
 import ChangeBG from "./RightSidebarComps/BG/ChangeBG";
 import CustomBorder from "@/components/resuable/CustomBorder";
 import { useClickOutside } from "@/Context/useRefContext";
@@ -66,9 +64,9 @@ const RightSideBar = ({ openSidebar, setOpenSideBar }: IProps) => {
             <AboutBoard />
           </div>
 
-          <div className="z-[102]">
+          {/* <div className="z-[10000002]">
             <Visibility />
-          </div>
+          </div> */}
 
           <div>
             <ExportsComp boardId={board._id}/>
@@ -78,21 +76,15 @@ const RightSideBar = ({ openSidebar, setOpenSideBar }: IProps) => {
 
           <CustomBorder customStyles="mt-2" />
 
-          <div onClick={() => setActivePanel("settings")}>
+          {/* <div onClick={() => setActivePanel("settings")}>
             <SettingsComp />
-          </div>
+          </div> */}
 
           <div onClick={() => setActivePanel("bg")}>
             <ChangeBG />
           </div>
 
           <CustomBorder customStyles="mt-2" />
-
-          <div className="mt-4 flex items-center gap-6 hover:bg-gray-700 p-1 rounded-md transition-colors duration-150 cursor-pointer">
-            <Eye size={18} />
-            <h2>Watch</h2>
-          </div>
-
           <div>
             <CopyBoardPopover />
           </div>

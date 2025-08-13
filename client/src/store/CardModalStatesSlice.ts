@@ -7,6 +7,7 @@ const initialState = {
   openDates: false,
   openCover: false,
   openAttachments: false,
+  openSettings: false,
 };
 
 const CardModalSlice = createSlice({
@@ -20,6 +21,7 @@ const CardModalSlice = createSlice({
       state.openDates = false;
       state.openLabels = false;
       state.openMembers = false;
+      state.openSettings = false;
     },
     openChecklistDropDown: (state) => {
       state.openAttachments = false;
@@ -28,6 +30,7 @@ const CardModalSlice = createSlice({
       state.openDates = false;
       state.openLabels = false;
       state.openMembers = false;
+      state.openSettings = false;
     },
     openAttachmentsDropDown: (state) => {
       state.openAttachments = true;
@@ -36,6 +39,7 @@ const CardModalSlice = createSlice({
       state.openDates = false;
       state.openLabels = false;
       state.openMembers = false;
+      state.openSettings = false;
     },
     openMembersDropDown: (state) => {
       state.openAttachments = false;
@@ -44,6 +48,7 @@ const CardModalSlice = createSlice({
       state.openDates = false;
       state.openLabels = false;
       state.openMembers = true;
+      state.openSettings = false;
     },
     openLabelsDropDown: (state) => {
       state.openAttachments = false;
@@ -52,6 +57,7 @@ const CardModalSlice = createSlice({
       state.openDates = false;
       state.openLabels = true;
       state.openMembers = false;
+      state.openSettings = false;
     },
     openDatesDropDown: (state) => {
       state.openAttachments = false;
@@ -60,6 +66,7 @@ const CardModalSlice = createSlice({
       state.openDates = true;
       state.openLabels = false;
       state.openMembers = false;
+      state.openSettings = false;
     },
     openCoverDropDown: (state) => {
       state.openAttachments = false;
@@ -68,6 +75,17 @@ const CardModalSlice = createSlice({
       state.openDates = false;
       state.openLabels = false;
       state.openMembers = false;
+      state.openSettings = false;
+    },
+    openSettingsDropDown: (state) => {
+      state.openAttachments = false;
+      state.openChecklist = false;
+      state.openCover = false;
+      state.openDates = false;
+      state.openLabels = false;
+      state.openMembers = false;
+      state.openMembers = false;
+      state.openSettings = true;
     },
   },
 });
@@ -80,6 +98,7 @@ export const {
   openLabelsDropDown,
   openDatesDropDown,
   openCoverDropDown,
+  openSettingsDropDown
 } = CardModalSlice.actions;
 
 export default CardModalSlice.reducer;

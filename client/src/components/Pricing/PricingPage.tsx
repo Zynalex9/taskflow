@@ -1,4 +1,5 @@
 import React from "react";
+import { Link } from "react-router-dom";
 
 const PricingPage: React.FC = () => {
   const plans = [
@@ -6,7 +7,8 @@ const PricingPage: React.FC = () => {
       name: "Free",
       price: "$0",
       period: "/month",
-      description: "For individuals or small teams getting started with Trello.",
+      description:
+        "For individuals or small teams getting started with Trello.",
       features: [
         "Unlimited cards",
         "Up to 10 boards per workspace",
@@ -32,7 +34,8 @@ const PricingPage: React.FC = () => {
       name: "Premium",
       price: "$10",
       period: "/user/month",
-      description: "For teams that need to track multiple projects and visualize work.",
+      description:
+        "For teams that need to track multiple projects and visualize work.",
       features: [
         "Timeline, Calendar, Dashboard views",
         "Admin & security features",
@@ -108,9 +111,11 @@ const PricingPage: React.FC = () => {
         <p className="text-gray-600 mb-6">
           Start with Free, upgrade anytime as your team grows.
         </p>
-        <button className="px-6 py-3 bg-[#0065FF] text-white rounded-lg font-medium hover:bg-[#0065FF]/70">
-          Get Started for Free
-        </button>
+        <Link to={"/user/sign-up"}>
+          <button className="px-6 py-3 cursor-pointer bg-[#0065FF] text-white rounded-lg font-medium hover:bg-[#0065FF]/70">
+            Get Started for Free
+          </button>
+        </Link>
       </div>
     </div>
   );

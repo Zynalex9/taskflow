@@ -3,6 +3,7 @@ import {
   CheckSquare,
   ImageIcon,
   Paperclip,
+  Settings2,
   Tag,
   User,
   UserPlus,
@@ -18,6 +19,7 @@ import {
   openDatesDropDown,
   openLabelsDropDown,
   openMembersDropDown,
+  openSettingsDropDown,
 } from "@/store/CardModalStatesSlice";
 import AddChecklist from "./dropdowns/Checklist/AddChecklist";
 import AddAttachment from "./dropdowns/attachment/AddAttachment";
@@ -36,6 +38,7 @@ import {
 import { toast } from "react-toastify";
 import { useParams } from "react-router-dom";
 import { socket } from "@/socket/socket";
+import { SettingDropDown } from "./dropdowns/Settings/SettingDropDown";
 
 interface Props {
   card: ICard;
@@ -87,6 +90,7 @@ export function ModalSidebar({ card }: Props) {
     openLabels,
     openMembers,
     openCover,
+    openSettings
   } = useSelector((state: RootState) => state.cardModalState);
 
   useEffect(() => {
@@ -198,6 +202,16 @@ export function ModalSidebar({ card }: Props) {
       onClick: openDates
         ? () => dispatch(closeAllDropDown())
         : () => dispatch(openDatesDropDown()),
+    },
+    {
+      icon: Settings2,
+      label: "Card Settings",
+      tooltip: "Card Settings",
+      dropdown: <SettingDropDown cardId={cardId} />,
+      isOpen: openSettings,
+      onClick: openSettings
+        ? () => dispatch(closeAllDropDown())
+        : () => dispatch(openSettingsDropDown()),
     },
   ];
 

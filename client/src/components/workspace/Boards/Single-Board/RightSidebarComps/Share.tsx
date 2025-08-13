@@ -34,23 +34,24 @@ const ShareComp = () => {
           <ShareDialogContent />
         </DialogContent>
       </Dialog>
-
-      <img
-        src={user?.profilePicture}
-        alt="Profile Picture"
-        className="size-9 rounded-full object-cover object-center "
-        onClick={(e) => {
-          e.stopPropagation();
-          setShowCard(!showCard);
-        }}
-      />
-      <div
-        ref={profileCardRef}
-        className="absolute shadow-2xl top-12 left-0 w-4/5 z-100"
-      >
-        {showCard && <ProfileCard setShowCard={setShowCard} />}
+      <div>
+        <img
+          src={user?.profilePicture}
+          alt="Profile Picture"
+          className="size-9 rounded-full object-cover object-center "
+          onClick={(e) => {
+            e.stopPropagation();
+            setShowCard(!showCard);
+          }}
+        />
+        <div
+          ref={profileCardRef}
+          className="absolute shadow-2xl top-12 left-0 w-4/5 z-100"
+        >
+          {showCard && <ProfileCard setShowCard={setShowCard} />}
+        </div>
+        <ToastContainer />
       </div>
-      <ToastContainer />
     </div>
   );
 };
