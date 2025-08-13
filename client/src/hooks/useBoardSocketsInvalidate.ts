@@ -1,6 +1,7 @@
 import { socket } from "@/socket/socket";
 import { myApi } from "@/store/myApi";
 import { AppDispatch } from "@/store/store";
+import { IBoard } from "@/types/functionalites.types";
 import { useEffect } from "react";
 import { useDispatch } from "react-redux";
 
@@ -28,11 +29,11 @@ export const useAllBoardSocketsInvalidate = ({
   id,
 }: socketInvalidateOptions) => {
   const dispatch = useDispatch<AppDispatch>();
-  console.log("I am called");
+  console.log("I am called",eventName);
 
   useEffect(() => {
-    const fn = () => {
-      dispatch(myApi.util.invalidateTags([{ type: "Board", id }]));
+    const fn = (data:IBoard) => {
+      dispatch(myApi.util.invalidateTags([{ type: "Board", id:data.workspace }]));
     };
     socket.on(eventName, fn);
     return () => {

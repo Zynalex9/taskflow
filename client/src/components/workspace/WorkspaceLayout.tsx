@@ -7,6 +7,7 @@ import { AppDispatch, RootState } from "../../store/store";
 import { fetchworkspace } from "../../store/workspaceSlice";
 import { toast } from "react-toastify";
 import { Skeleton } from "../ui/skeleton";
+import { socket } from "@/socket/socket";
 
 const WorkspaceLayout = () => {
   const { workspaceId } = useParams();
@@ -19,7 +20,9 @@ const WorkspaceLayout = () => {
   const error = useSelector((state: RootState) => state.workspace.error);
 
   const user = useSelector((state: RootState) => state.auth.user);
-
+  useEffect(() => {
+    socket.emit("joinedWorkspace", workspaceId);
+  }, []);
   useEffect(() => {
     const getWorkspace = async () => {
       if (workspaceId) {

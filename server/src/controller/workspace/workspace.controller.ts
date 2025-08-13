@@ -505,6 +505,7 @@ export const addAdmin = asyncHandler(async (req: Request, res: Response) => {
     `You added ${admin.username} as an admin of ${workspace.name}`
   );
   const io = getIO();
+  console.log("emitting to workspace", workspaceId);
   io.to(workspaceId).emit("workspaceAdminUpdated", workspace);
   res
     .status(200)
@@ -536,7 +537,10 @@ export const removeAdmin = asyncHandler(async (req: Request, res: Response) => {
   const boards = await boardModel.find({ workspace: workspaceId });
   boards.forEach(async (board) => {
     board.members.map((member) => {
-      if (member.user._id.toString() === adminId && member.role === "workspace-admin") {
+      if (
+        member.user._id.toString() === adminId &&
+        member.role === "workspace-admin"
+      ) {
         member.role = "member";
       }
     });
@@ -557,6 +561,8 @@ export const removeAdmin = asyncHandler(async (req: Request, res: Response) => {
     `You removed ${admin.username} as an admin of ${workspace.name}`
   );
   const io = getIO();
+  console.log("emitting to workspace", workspaceId);
+
   io.to(workspaceId).emit("workspaceAdminUpdated", workspace);
   res
     .status(200)
@@ -621,6 +627,8 @@ export const addWorkspaceMember = asyncHandler(
       `You added ${member.username} as a member of ${workspace.name}`
     );
     const io = getIO();
+    console.log("emitting to workspace", workspaceId);
+
     io.to(workspaceId).emit("workspaceAdminUpdated", workspace);
     res
       .status(200)
@@ -674,6 +682,8 @@ export const removeWorkspaceMember = asyncHandler(
       `You removed ${member.username} from ${workspace.name}`
     );
     const io = getIO();
+    console.log("emitting to workspace", workspaceId);
+
     io.to(workspaceId).emit("workspaceAdminUpdated", workspace);
     res
       .status(200)
