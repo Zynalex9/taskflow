@@ -35,7 +35,7 @@ import {
   useJoinCardMutation,
   useLeaveCardMutation,
 } from "@/store/cardApi";
-import { toast } from "react-toastify";
+import { toast, ToastContainer } from "react-toastify";
 import { useParams } from "react-router-dom";
 import { socket } from "@/socket/socket";
 import { SettingDropDown } from "./dropdowns/Settings/SettingDropDown";
@@ -218,9 +218,9 @@ export function ModalSidebar({ card }: Props) {
     },
   ];
   const ref = useRef<HTMLDivElement>(null);
-  useClickOutside(ref, () => {
-    dispatch(closeAllDropDown());
-  });
+  // useClickOutside(ref, () => {
+  //   dispatch(closeAllDropDown());
+  // });
   return (
     <div className="space-y-2.5">
       {sidebarItems.map((item, index) => (
@@ -245,6 +245,7 @@ export function ModalSidebar({ card }: Props) {
           </div>
         </div>
       ))}
+      <ToastContainer className={"z-50"} />
     </div>
   );
 }
