@@ -767,12 +767,6 @@ cardRouter
   .route("/single-card/:cardId")
   .get(
     verifyJWT,
-    requirePermission(
-      PERMISSIONS.CARD_VIEW,
-      "card",
-      "cardId",
-      ERROR_MESSAGES.CARD_VIEW
-    ),
     getSingleCard
   );
 

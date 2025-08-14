@@ -4,6 +4,7 @@ import Description from "./Single-Card/Description";
 import { useState } from "react";
 import { useAddDescriptionMutation } from "@/store/cardApi";
 import { useParams } from "react-router-dom";
+import { useCardSocketInvalidate } from "@/hooks/useSocketInvalidate";
 
 export const CardModalDescription = ({ card }: { card: ICard }) => {
   const [showDescription, setShowDescription] = useState(false);
@@ -25,6 +26,7 @@ export const CardModalDescription = ({ card }: { card: ICard }) => {
       await addDescription(body);
     }
   };
+  useCardSocketInvalidate({ eventName: "descriptionAdded", id: card?._id });
   return (
     <div>
       {card?.description ? (

@@ -11,7 +11,7 @@ import {
 } from "@/types/functionalites.types";
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 import { RootState } from "./store";
-import { syncBoardtoCard } from "@/utils/SyncCache";
+import { syncBoardtoCard, syncBoardtoLabels } from "@/utils/SyncCache";
 
 export const cardApi = createApi({
   reducerPath: "cardAPIs",
@@ -346,9 +346,7 @@ export const cardApi = createApi({
           )
         );
 
-        syncBoardtoCard(dispatch, body.cardId, body.boardId, {
-          labels: tempLabels,
-        });
+        syncBoardtoLabels(dispatch, body.cardId, body.boardId, tempLabels);
 
         try {
           const { data } = await queryFulfilled;

@@ -212,6 +212,7 @@ export const editCardDetails = async (req: Request, res: Response) => {
       addLabels,
       removeLabels,
       priority,
+      workspaceId,
     }: {
       name?: string;
       description?: string;
@@ -222,6 +223,7 @@ export const editCardDetails = async (req: Request, res: Response) => {
       addLabels?: string[];
       removeLabels?: string[];
       priority: string;
+      workspaceId: string;
     } = req.body;
     const { cardId } = req.params;
     if (!cardId) {
@@ -362,6 +364,8 @@ export const editCardDetails = async (req: Request, res: Response) => {
     await card.save();
     const userId = req.user._id;
     await redisClient.del(`tableData:${userId}`);
+    const io = getIO();
+    io.to(workspaceId).emit("cardEdited", card);
     res.status(201).json({ card });
   } catch (error: unknown) {
     if (error instanceof Error) {

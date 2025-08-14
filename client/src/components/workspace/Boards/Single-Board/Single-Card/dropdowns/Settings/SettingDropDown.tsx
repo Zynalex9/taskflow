@@ -3,6 +3,8 @@ import DropdownHeader from "../../DropdownHeader";
 import { useEditCardMutation } from "@/store/cardApi";
 import { toast } from "react-toastify";
 import { useParams } from "react-router-dom";
+import { useCardSocketInvalidate } from "@/hooks/useSocketInvalidate";
+import { useAllBoardSocketsInvalidate, useBoardSocketsInvalidate } from "@/hooks/useBoardSocketsInvalidate";
 
 interface SettingDropDownProps {
   cardId: string;
@@ -34,6 +36,7 @@ export const SettingDropDown = ({ cardId }: SettingDropDownProps) => {
       setNewName("");
     }
   };
+  useCardSocketInvalidate({ eventName: "cardEdited", id: cardId });
   return (
     <div className="w-72 bg-bgS rounded shadow-md z-10 p-3 space-y-2">
       <DropdownHeader headerText="Card settings" />

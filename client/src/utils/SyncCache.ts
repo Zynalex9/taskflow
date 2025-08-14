@@ -23,24 +23,16 @@ export const syncBoardtoLabels = async (
   dispatch: AppDispatch,
   cardId: string,
   boardId: string,
-  updatedCardData: Partial<ILabel>[]
+  newLabels: ILabel[]
 ) => {
   dispatch(
     myApi.util.updateQueryData("getSingleBoard", boardId, (draft) => {
-      draft.data.lists.forEach((list) => {
-        list.cards.forEach((card) => {
-          if (card._id === cardId) {
-            card.labels.forEach((label) => {
-              const updatedLabel = updatedCardData.find(
-                (l) => l._id === label._id
-              );
-              if (updatedLabel) {
-                Object.assign(label, updatedLabel);
-              }
-            });
-          }
-        });
-      });
+      for (const list of draft.data.lists) {
+        const card = list.cards.find((card) => card._id === cardId);
+        if (card) {
+          card.labels = [...card.labels, ...newLabels];
+        }
+      }
     })
   );
 };
