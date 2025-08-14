@@ -1,7 +1,13 @@
 import ModalButton from "@/components/resuable/ModalButton";
 import { socket } from "@/socket/socket";
 import { cardApi } from "@/store/cardApi";
-import { AppDispatch } from "@/store/store";
+import {
+  closeAllDropDown,
+  openDatesDropDown,
+  openLabelsDropDown,
+  openMembersDropDown,
+} from "@/store/CardModalStatesSlice";
+import { AppDispatch, RootState } from "@/store/store";
 import { ICard, ILabel } from "@/types/functionalites.types";
 import {
   format,
@@ -12,11 +18,15 @@ import {
   parseISO,
 } from "date-fns";
 import { useEffect } from "react";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 
 const CardInfos = ({ card }: { card: ICard }) => {
   if (!card) return null;
   const dispatch = useDispatch<AppDispatch>();
+  const { openLabels, openMembers, openDates } = useSelector(
+    (state: RootState) => state.cardModalState
+  );
+
   const hasStartDate = !!card.startDate;
   const hasEndDate = !!card.endDate;
 
@@ -85,7 +95,15 @@ const CardInfos = ({ card }: { card: ICard }) => {
     <div className="ml-12">
       <div className="flex flex-wrap items-center gap-4">
         {(hasStartDate || hasEndDate) && (
-          <div>
+          <div
+            onClick={() => {
+              if (openDates) {
+                dispatch(closeAllDropDown());
+              } else {
+                dispatch(openDatesDropDown());
+              }
+            }}
+          >
             <h1 className="text-textP font-charlie-text-sb">Date</h1>
             <div className="flex items-center gap-2">
               <button className="transition-colors duration-150 bg-[#B6C2CF]/20 hover:bg-[#B6C2CF]/10 px-4 py-2 rounded text-white text-sm">
@@ -120,13 +138,29 @@ const CardInfos = ({ card }: { card: ICard }) => {
               {card.labels.map((label) => (
                 <div
                   key={label._id}
+                  onClick={() => {
+                    if (openLabels) {
+                      dispatch(closeAllDropDown());
+                    } else {
+                      dispatch(openLabelsDropDown());
+                    }
+                  }}
                   className="px-6 py-2 rounded-xs shadow-sm text-white text-xs truncate max-w-[120px]"
                   style={{ backgroundColor: label.color }}
                 >
                   {label.name}
                 </div>
               ))}
-              <ModalButton btnText="+" />
+              <ModalButton
+                btnText="+"
+                onClickFn={() => {
+                  if (openLabels) {
+                    dispatch(closeAllDropDown());
+                  } else {
+                    dispatch(openLabelsDropDown());
+                  }
+                }}
+              />
             </div>
           </div>
         )}
@@ -144,7 +178,16 @@ const CardInfos = ({ card }: { card: ICard }) => {
                   />
                 </div>
               ))}
-              <ModalButton btnText="+" />
+              <ModalButton
+                btnText="+"
+                onClickFn={() => {
+                  if (openMembers) {
+                    dispatch(closeAllDropDown());
+                  } else {
+                    dispatch(openMembersDropDown());
+                  }
+                }}
+              />
             </div>
           </div>
         )}
