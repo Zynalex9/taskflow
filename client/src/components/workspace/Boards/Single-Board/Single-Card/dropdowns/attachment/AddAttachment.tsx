@@ -57,7 +57,10 @@ const AddAttachment = ({ cardId }: { cardId: string }) => {
     );
 
   return (
-    <div className="absolute top-2 left-2 w-72 rounded bg-[#282E33] p-4 shadow-2xl text-white z-30">
+    <div
+      data-ignore-click-outside="true"
+      className="absolute top-2 left-2 w-72 rounded bg-[#282E33] p-4 shadow-2xl text-white z-30"
+    >
       <DropdownHeader headerText="Add an attachment" />
       <h1 className="text-textP text-center font-charlie-text-r text-sm my-2">
         Add a file from your computer

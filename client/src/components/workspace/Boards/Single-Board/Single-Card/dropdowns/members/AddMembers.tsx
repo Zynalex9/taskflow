@@ -42,7 +42,10 @@ const AddMembers = ({ card }: Props) => {
     }
   };
   return (
-    <div className="absolute -left-10 w-80 rounded bg-[#282E33] p-4 shadow-2xl text-white z-30">
+    <div
+      data-ignore-click-outside="true"
+      className="absolute -left-10 w-80 rounded bg-[#282E33] p-4 shadow-2xl text-white z-30"
+    >
       <DropdownHeader headerText="Members" />
       <input
         type="text"

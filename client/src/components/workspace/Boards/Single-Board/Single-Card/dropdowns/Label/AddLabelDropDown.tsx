@@ -118,7 +118,10 @@ const AddLabelDropdown = ({
     }
   };
   return (
-    <div className="absolute -top-20 left-2 w-80 h-96 rounded bg-[#282E33] p-4 shadow-2xl text-white z-30">
+    <div
+      data-ignore-click-outside="true"
+      className="absolute -top-20 left-2 w-80 h-96 rounded bg-[#282E33] p-4 shadow-2xl text-white z-30"
+    >
       <DropdownHeader headerText="Labels" />
       <div
         className="space-y-2 mt-3 overflow-y-auto custom-scrollbar"

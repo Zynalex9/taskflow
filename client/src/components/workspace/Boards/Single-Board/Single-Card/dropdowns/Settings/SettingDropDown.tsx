@@ -5,6 +5,9 @@ import { toast } from "react-toastify";
 import { useNavigate, useParams } from "react-router-dom";
 import { useCardSocketInvalidate } from "@/hooks/useSocketInvalidate";
 import { useBoardSocketsInvalidate } from "@/hooks/useBoardSocketsInvalidate";
+import { useDispatch } from "react-redux";
+import { AppDispatch } from "@/store/store";
+import { closeAllDropDown } from "@/store/CardModalStatesSlice";
 
 interface SettingDropDownProps {
   cardId: string;
@@ -18,6 +21,7 @@ export const SettingDropDown = ({ cardId, listId }: SettingDropDownProps) => {
   const { workspaceId, boardId } = useParams();
   const [editCard] = useEditCardMutation();
   const navigate = useNavigate();
+  const dispatch = useDispatch<AppDispatch>();
   const handleEditCard = async () => {
     if (!newName) return;
     try {
@@ -47,8 +51,6 @@ export const SettingDropDown = ({ cardId, listId }: SettingDropDownProps) => {
         boardId: boardId!,
         listId,
       };
-      console.log(body);
-      console.log(listId);
       setLoading(true);
       await deleteCard(body).unwrap();
       navigate(`/user/w/workspace/${workspaceId}/board/${boardId}`);
@@ -56,12 +58,16 @@ export const SettingDropDown = ({ cardId, listId }: SettingDropDownProps) => {
       console.log(error);
     } finally {
       setLoading(false);
+      dispatch(closeAllDropDown());
     }
   };
   useBoardSocketsInvalidate({ eventName: "cardDeleted", id: workspaceId! });
 
   return (
-    <div className="w-72 bg-bgS rounded shadow-md z-10 p-3 space-y-2">
+    <div
+      data-ignore-click-outside="true"
+      className="w-72 bg-bgS rounded shadow-md z-10 p-3 space-y-2"
+    >
       <DropdownHeader headerText="Card settings" />
 
       <div>

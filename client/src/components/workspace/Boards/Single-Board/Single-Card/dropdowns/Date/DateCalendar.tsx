@@ -62,7 +62,10 @@ export function DateCalendar({ cardId }: { cardId: string }) {
   }
 
   return (
-    <div className=" absolute bg-[#282E33] -top-50">
+    <div
+      data-ignore-click-outside="true"
+      className=" absolute bg-[#282E33] -top-50"
+    >
       <div className="p-2">
         <DropdownHeader headerText="Add dates to card" />
       </div>

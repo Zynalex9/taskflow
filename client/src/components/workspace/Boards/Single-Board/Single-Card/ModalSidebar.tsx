@@ -218,9 +218,9 @@ export function ModalSidebar({ card }: Props) {
     },
   ];
   const ref = useRef<HTMLDivElement>(null);
-  // useClickOutside(ref, () => {
-  //   dispatch(closeAllDropDown());
-  // });
+  useClickOutside(ref, () => {
+    dispatch(closeAllDropDown());
+  });
   return (
     <div className="space-y-2.5">
       {sidebarItems.map((item, index) => (

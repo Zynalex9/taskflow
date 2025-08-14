@@ -2,7 +2,7 @@ import { closeAllDropDown } from "@/store/CardModalStatesSlice";
 import DropdownHeader from "../../DropdownHeader";
 import { useDispatch } from "react-redux";
 import { AppDispatch } from "@/store/store";
-import {  useState } from "react";
+import { useState } from "react";
 import { useAddChecklistMutation } from "@/store/cardApi";
 import ModalButton from "@/components/resuable/ModalButton";
 import { useParams } from "react-router-dom";
@@ -30,7 +30,10 @@ const AddChecklist = ({ cardId }: { cardId: string }) => {
   };
   useCardSocketInvalidate({ eventName: "checkListCreated", id: cardId });
   return (
-    <div className="absolute top-2 left-2 w-72 rounded bg-[#282E33] p-4 shadow-2xl text-white z-30">
+    <div
+      data-ignore-click-outside="true"
+      className="absolute top-2 left-2 w-72 rounded bg-[#282E33] p-4 shadow-2xl text-white z-30"
+    >
       <DropdownHeader headerText="Add a checklist" />
 
       <div className="mt-4 space-y-2">

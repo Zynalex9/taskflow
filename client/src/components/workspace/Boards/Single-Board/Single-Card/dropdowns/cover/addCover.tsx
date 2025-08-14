@@ -10,7 +10,7 @@ import { socket } from "@/socket/socket";
 import { useParams } from "react-router-dom";
 
 const AddCover = ({ cardId }: { cardId: string }) => {
-  const {workspaceId} = useParams()
+  const { workspaceId } = useParams();
   const [loading, setLoading] = useState(false);
   const [addCover] = useUploadCardCoverMutation();
   const dispatch = useDispatch<AppDispatch>();
@@ -35,13 +35,11 @@ const AddCover = ({ cardId }: { cardId: string }) => {
   };
 
   useEffect(() => {
-const handleUpdateCover = () => {
-  dispatch(
-    cardApi.util.invalidateTags([
-      { type: "singleCard", id: cardId } 
-    ])
-  );
-};
+    const handleUpdateCover = () => {
+      dispatch(
+        cardApi.util.invalidateTags([{ type: "singleCard", id: cardId }])
+      );
+    };
     socket.on("coverAdded", handleUpdateCover);
   }, [dispatch, cardId]);
   if (loading)
@@ -52,7 +50,10 @@ const handleUpdateCover = () => {
     );
 
   return (
-    <div className="absolute top-2 left-2 w-72 rounded bg-[#282E33] p-4 shadow-2xl text-white z-30">
+    <div
+      data-ignore-click-outside="true"
+      className="absolute top-2 left-2 w-72 rounded bg-[#282E33] p-4 shadow-2xl text-white z-30"
+    >
       <DropdownHeader headerText="Add a cover" />
       <h1 className="text-textP text-center font-charlie-text-r text-sm my-2">
         Add an image from your computer
