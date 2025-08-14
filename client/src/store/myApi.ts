@@ -5,6 +5,7 @@ import {
   ICardResponse,
   IListResponse,
   ISingleBoardResponse,
+  ITemplateTypes,
 } from "@/types/functionalites.types";
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 
@@ -21,6 +22,11 @@ export const myApi = createApi({
       providesTags: (__, _, workspaceId) => [
         { type: "Board", id: workspaceId },
       ],
+    }),
+    getAllTemplates: builder.query<ITemplateTypes, void>({
+      query: () => `/api/board/get-templates`,
+      keepUnusedDataFor: 60 * 60, 
+      providesTags: [{ type: "Board", id: "TEMPLATES" }],
     }),
     getSingleBoard: builder.query<ISingleBoardResponse, string>({
       query: (boardId) => `/api/board/single/${boardId}`,
@@ -437,6 +443,7 @@ export const myApi = createApi({
 export const {
   useGetAllBoardsQuery,
   useGetSingleBoardQuery,
+  useGetAllTemplatesQuery,
   useAddBoardMutation,
   useAddListMutation,
   useAddCardMutation,
@@ -449,5 +456,5 @@ export const {
   useDeleteListMutation,
   useCopyListIntoNewListMutation,
   useAddBoardMemberMutation,
-  useCopyBoardIntoNewMutation
+  useCopyBoardIntoNewMutation,
 } = myApi;

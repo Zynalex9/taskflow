@@ -781,10 +781,12 @@ export const pdfBoardData = asyncHandler(async (req, res) => {
 export const copyBoardIntoNew = asyncHandler(async (req, res) => {
   const { workspaceId, boardId } = req.body;
 
-  if (!workspaceId || !boardId) {
+  if (!workspaceId || !boardId ) {
     res
       .status(400)
-      .json(new ApiResponse(400, {}, "No workspaceId/boardId provided"));
+      .json(
+        new ApiResponse(400, {}, "No workspaceId/boardId provided")
+      );
     return;
   }
 
@@ -997,11 +999,11 @@ export const getboardTemplates = asyncHandler(async (req, res) => {
 });
 
 export const createBoardFromTemplate = async (req: Request, res: Response) => {
-  const { templateId, workspaceId } = req.body;
+  const { templateId, workspaceId,boardName } = req.body;
   const ownerId = req.user._id;
 
   if (!templateId || !ownerId) {
-    res.status(400).json({ error: "templateId and ownerId are required" });
+    res.status(400).json({ error: "templateId/boardName and ownerId are required" });
     return;
   }
   const workspace = await workSpaceModel.findById(workspaceId);
@@ -1031,7 +1033,7 @@ export const createBoardFromTemplate = async (req: Request, res: Response) => {
     }
 
     const newBoard = new boardModel({
-      title: template.title,
+      title: boardName,
       description: template.description,
       cover: template.cover,
       createdBy: ownerId,

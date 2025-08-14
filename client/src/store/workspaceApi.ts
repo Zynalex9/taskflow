@@ -1,4 +1,6 @@
-import { IWorkspaceResponse } from "@/types/functionalites.types";
+import {
+  IWorkspaceResponse,
+} from "@/types/functionalites.types";
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 
 export const workspaceApi = createApi({
@@ -9,7 +11,7 @@ export const workspaceApi = createApi({
     credentials: "include",
   }),
   endpoints: (builder) => ({
-    getAllWorkspaces: builder.query<IWorkspaceResponse,void>({
+    getAllWorkspaces: builder.query<IWorkspaceResponse, void>({
       query: () => ({
         url: "/api/workspace/get-workspaces",
       }),
@@ -33,10 +35,23 @@ export const workspaceApi = createApi({
       }),
       invalidatesTags: () => [{ type: "workspace" }],
     }),
+    createBoardFromTemplate: builder.mutation<
+      void,
+      { workspaceId: string; templateId: string; boardName: string }
+    >({
+      query: (body) => ({
+        url: "/api/board/create-board-from-template",
+        credentials: "include",
+        method: "POST",
+        body,
+      }),
+      invalidatesTags: () => [{ type: "workspace" }],
+    }),
   }),
 });
 export const {
   useGetAllWorkspacesQuery,
   useCreateWorkspaceMutation,
   useDeleteWorkspaceMutation,
+  useCreateBoardFromTemplateMutation
 } = workspaceApi;

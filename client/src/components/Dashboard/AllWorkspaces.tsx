@@ -22,6 +22,8 @@ import { toast, ToastContainer } from "react-toastify";
 import { DeleteWorkspacePopover } from "./DeleteWorkspaceDialog";
 import { useSelector } from "react-redux";
 import { RootState } from "@/store/store";
+import { TemplatesComponent } from "./Members/TemplatesComponent";
+import { useGetAllTemplatesQuery } from "@/store/myApi";
 
 const AllWorkspaces = () => {
   const [openDialog, setOpenDialog] = useState(false);
@@ -51,8 +53,14 @@ const AllWorkspaces = () => {
   };
   const { workspaces } = useWorkspaces();
   console.log(workspaces.joinedWorkspaces);
+  const { data: templates } = useGetAllTemplatesQuery();
+
   return (
     <div>
+      <h1 className="py-2 text-textP">Templates</h1>
+
+      <TemplatesComponent templates={templates?.data} />
+
       <h1 className="py-2 text-textP">Your Workspaces</h1>
       {workspaces && workspaces.ownedWorkspaces?.length > 0 ? (
         workspaces.ownedWorkspaces.map((workspace) => (

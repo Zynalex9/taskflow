@@ -135,7 +135,7 @@ export interface IWorkspaceResponse {
 }
 export interface ISingleWorkspaceResponse {
   statusCode: number;
-  data: IWorkspace
+  data: IWorkspace;
   message: string;
   success: boolean;
 }
@@ -202,6 +202,12 @@ export interface QueryDBResponse {
     lists: IList[];
     cards: ICard[];
   };
+  success: boolean;
+  message: string;
+}
+export interface ITemplateTypes {
+  data: IBoard[];
+  statusCode: number;
   success: boolean;
   message: string;
 }
