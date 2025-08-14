@@ -138,6 +138,17 @@ async function seedTemplates() {
       },
     },
   ];
+  const initialLabelColors = [
+    "#216C52",
+    "#8E6E00",
+    "#C9372C",
+    "#5B3FBB",
+    "#0079BF",
+    "#055A8C",
+    "#29CCE5",
+    "#61BD4F",
+    "#A6C5E2",
+  ];
 
   for (const tmpl of templates) {
     const exists = await boardModel.findOne({
@@ -155,6 +166,7 @@ async function seedTemplates() {
       description: tmpl.description,
       isTemplate: true,
     });
+
     let systemUser = await UserModel.findOne({ email: "system@taskflow.com" });
 
     if (!systemUser) {
@@ -163,18 +175,17 @@ async function seedTemplates() {
         secondName: "User",
         username: "system",
         email: "system@taskflow.com",
-        password: await bcryptjs.hash("super-secure-password", 10), 
+        password: await bcryptjs.hash("super-secure-password", 10),
       });
     }
-    // Create labels for the board
-    const labelData = [
-      { title: "Urgent", color: "#e74c3c" },
-      { title: "High Priority", color: "#f39c12" },
-      { title: "Medium Priority", color: "#3498db" },
-      { title: "Low Priority", color: "#2ecc71" },
-    ];
+
+    // Create board labels
     const labels = await CardLabelModel.insertMany(
-      labelData.map((l) => ({ ...l, board: board._id }))
+      initialLabelColors.map((color, idx) => ({
+        name: Math.random() < 0.5 ? `Label ${idx + 1}` : "", // 50% chance to have name
+        color,
+        board: board._id,
+      }))
     );
 
     const listIds: mongoose.Types.ObjectId[] = [];
@@ -187,7 +198,6 @@ async function seedTemplates() {
       listIds.push(list._id);
 
       for (let i = 0; i < cardNames.length; i++) {
-        // Create checklist for the card
         const checklist = await CheckListModel.create({
           title: "Checklist",
           items: [
@@ -198,19 +208,39 @@ async function seedTemplates() {
           createdBy: systemUser._id,
         });
 
-        // Create attachment
         const attachment = await CardAttachmentModel.create({
           fileUrl: "https://via.placeholder.com/300",
           name: "Sample Attachment",
           type: "image/png",
         });
 
+        // Random dates
+        const startDate = new Date();
+        startDate.setDate(
+          startDate.getDate() + Math.floor(Math.random() * 5) - 2
+        );
+
+        const endDate = new Date(startDate);
+        endDate.setDate(
+          startDate.getDate() + Math.floor(Math.random() * 10) + 1
+        );
+
+        // Random 0–5 labels
+        const labelCount = Math.floor(Math.random() * 6);
+        const cardLabels = labels
+          .sort(() => Math.random() - 0.5)
+          .slice(0, labelCount)
+          .map((l) => l._id);
+
         const card = await CardModel.create({
           name: cardNames[i],
           description: `Details about: ${cardNames[i]}`,
+          startDate,
+          endDate,
+          createdBy: systemUser._id,
           list: list._id,
           priority: i % 2 === 0 ? "high" : "medium",
-          labels: [labels[i % labels.length]._id],
+          labels: cardLabels,
           checklist: [checklist._id],
           attachments: [attachment._id],
           position: i + 1,

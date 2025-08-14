@@ -1087,7 +1087,7 @@ export const createBoardFromTemplate = async (req: Request, res: Response) => {
           startDate: card.startDate,
           endDate: card.endDate,
           createdBy: ownerId,
-          members: [ownerId], 
+          members: [ownerId],
           list: newList._id,
           comments: [],
           labels: newLabelIds,
@@ -1109,7 +1109,8 @@ export const createBoardFromTemplate = async (req: Request, res: Response) => {
     workspace.boards.push(newBoard._id);
     await workspace.save();
     await newBoard.save();
-
+    const io = getIO();
+    io.to(newBoard.workspace.toString()).emit("boardCreated", newBoard);
     res
       .status(201)
       .json({ message: "Board created from template", boardId: newBoard._id });

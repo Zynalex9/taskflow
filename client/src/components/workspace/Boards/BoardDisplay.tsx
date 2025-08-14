@@ -18,7 +18,11 @@ const BoardDisplay = ({
   const bboards = useSelector((state: RootState) =>
     myApi.endpoints.getAllBoards.select(workspace?._id ?? "")(state)
   );
-  const filteredBoards = bboards?.data?.data?.yourBoards?.filter((board) =>
+  const allBoards = [
+    ...bboards?.data?.data?.yourBoards,
+    ...bboards?.data?.data?.otherBoards,
+  ];
+  const filteredBoards = allBoards.filter((board) =>
     board.title.toLowerCase().includes(searchTerm.toLowerCase())
   );
   if (sortOption === "asc") {
@@ -48,7 +52,7 @@ const BoardDisplay = ({
     );
 
   return (
-    <div className="py-8 flex flex-wrap items-center justify-center gap-4">
+    <div className="py-8 flex flex-wrap items-center justify-center gap-4 overflow-y-auto custom-scrollbar max-h-[80vh]">
       <div className="bg-[#333C43] aspect-video flex items-center justify-center text-center font-charlie-text-sb text-textP text-2xl w-[30%] rounded-xl shadow-2xl transition-colors duration-150 hover:bg-[#333C43]/50">
         <button onClick={() => dispatch(openModal())}>
           <h2>Create new board</h2>
@@ -67,7 +71,7 @@ const BoardDisplay = ({
                 }
               : { background: board.cover }
           }
-          className="aspect-video flex items-center justify-center w-[30%] rounded-xl shadow-2xl transition-transform duration-200 hover:scale-95"
+          className="aspect-video my-5 flex items-center justify-center w-[30%] rounded-xl shadow-2xl transition-transform duration-200 hover:scale-95"
         >
           <h1 className="text-textP font-bold font-charlie-text-sb text-2xl text-center">
             {board.title}

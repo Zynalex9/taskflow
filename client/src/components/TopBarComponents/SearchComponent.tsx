@@ -66,7 +66,7 @@ export const SearchComponent = () => {
 
       {/* Search Dropdown */}
       {searchQuery.length > 0 && (
-        <div className="absolute top-12 w-full rounded-lg bg-neutral-900 shadow-lg border border-neutral-700 z-50 max-h-80 overflow-y-auto">
+        <div className="absolute top-12 w-full rounded-lg bg-neutral-900 shadow-lg border border-neutral-700 z-50 max-h-80 overflow-y-auto custom-scrollbar">
           <div className="p-3 space-y-4 text-sm text-gray-200">
             {isLoading && <div className="text-center py-4">Loading...</div>}
 

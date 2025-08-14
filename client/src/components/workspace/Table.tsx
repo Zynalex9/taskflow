@@ -49,7 +49,7 @@ const Table = () => {
       <h1 className="font-charlie-display-sm text-5xl text-textP italic">
         Table
       </h1>
-      <div>
+      <div className="mt-6 max-h-[70vh] overflow-y-auto custom-scrollbar ">
         <table className="w-full mt-6 border-collapse border-gray-50/50 table-auto text-textP font-charlie-text-r">
           <thead>
             <tr className="text-left text-md">
@@ -102,7 +102,9 @@ const Table = () => {
                           }}
                         >
                           <h2 className="text-xs text-white drop-shadow-md">
-                            {label.name.trim() !== "" ? label.name : ""}
+                            {label.name && label.name.trim() !== ""
+                              ? label.name
+                              : ""}
                           </h2>
                         </div>
                       ))
