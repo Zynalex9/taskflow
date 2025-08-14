@@ -13,6 +13,7 @@ import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 import { RootState } from "./store";
 import {
   syncBoardtoCard,
+  syncBoardToDeletedCards,
   syncBoardtoLabels,
   syncBoardtoRemovedLabels,
 } from "@/utils/SyncCache";
@@ -792,6 +793,28 @@ export const cardApi = createApi({
         }
       },
     }),
+    deleteCard: builder.mutation({
+      query: (body: {
+        cardId: string;
+        listId: string;
+        workspaceId: string;
+        boardId: string;
+      }) => ({
+        url: `/api/card/${body.workspaceId}/${body.listId}/${body.cardId}/delete-card`,
+        method: "DELETE",
+        body,
+        credentials: "include",
+      }),
+
+      async onQueryStarted(body, { dispatch, queryFulfilled }) {
+        try {
+          await queryFulfilled;
+          syncBoardToDeletedCards(dispatch, body.cardId, body.boardId);
+        } catch (error) {
+          console.error("Delete failed, not syncing board:", error);
+        }
+      },
+    }),
   }),
 });
 export const {
@@ -815,4 +838,5 @@ export const {
   useDeleteCommentMutation,
   useEditCardMutation,
   useRemoveLabelMutation,
+  useDeleteCardMutation,
 } = cardApi;

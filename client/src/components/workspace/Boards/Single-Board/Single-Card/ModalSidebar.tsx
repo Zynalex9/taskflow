@@ -208,7 +208,9 @@ export function ModalSidebar({ card }: Props) {
       icon: Settings2,
       label: "Card Settings",
       tooltip: "Card Settings",
-      dropdown: <SettingDropDown cardId={cardId} />,
+      dropdown: (
+        <SettingDropDown cardId={cardId} listId={card.list._id} />
+      ),
       isOpen: openSettings,
       onClick: openSettings
         ? () => dispatch(closeAllDropDown())

@@ -671,7 +671,7 @@ cardRouter
   );
 
 cardRouter
-  .route("/:workspaceId/:cardId/delete-card")
+  .route("/:workspaceId/:listId/:cardId/delete-card")
   .delete(
     verifyJWT,
     requirePermission(
@@ -763,12 +763,7 @@ cardRouter
     copyCard
   );
 
-cardRouter
-  .route("/single-card/:cardId")
-  .get(
-    verifyJWT,
-    getSingleCard
-  );
+cardRouter.route("/single-card/:cardId").get(verifyJWT, getSingleCard);
 
 cardRouter
   .route("/card-activities/:cardId")

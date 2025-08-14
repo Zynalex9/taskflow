@@ -1,22 +1,23 @@
 import { useState } from "react";
 import DropdownHeader from "../../DropdownHeader";
-import { useEditCardMutation } from "@/store/cardApi";
+import { useDeleteCardMutation, useEditCardMutation } from "@/store/cardApi";
 import { toast } from "react-toastify";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { useCardSocketInvalidate } from "@/hooks/useSocketInvalidate";
-import { useAllBoardSocketsInvalidate, useBoardSocketsInvalidate } from "@/hooks/useBoardSocketsInvalidate";
+import { useBoardSocketsInvalidate } from "@/hooks/useBoardSocketsInvalidate";
 
 interface SettingDropDownProps {
   cardId: string;
+  listId: string;
 }
 
-export const SettingDropDown = ({ cardId }: SettingDropDownProps) => {
+export const SettingDropDown = ({ cardId, listId }: SettingDropDownProps) => {
   const [isOpen, setIsOpen] = useState(false);
   const [newName, setNewName] = useState("");
   const [loading, setLoading] = useState(false);
   const { workspaceId, boardId } = useParams();
   const [editCard] = useEditCardMutation();
-  const handleDeleteCard = async () => {};
+  const navigate = useNavigate();
   const handleEditCard = async () => {
     if (!newName) return;
     try {
@@ -37,6 +38,28 @@ export const SettingDropDown = ({ cardId }: SettingDropDownProps) => {
     }
   };
   useCardSocketInvalidate({ eventName: "cardEdited", id: cardId });
+  const [deleteCard] = useDeleteCardMutation();
+  const handleDeleteCard = async () => {
+    try {
+      const body = {
+        cardId,
+        workspaceId: workspaceId!,
+        boardId: boardId!,
+        listId,
+      };
+      console.log(body);
+      console.log(listId);
+      setLoading(true);
+      await deleteCard(body).unwrap();
+      useBoardSocketsInvalidate({ eventName: "cardDeleted", id: workspaceId! });
+      navigate(`/user/w/workspace/${workspaceId}/board/${boardId}`);
+    } catch (error: any) {
+      toast.error(error.data.message, { theme: "dark" });
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
     <div className="w-72 bg-bgS rounded shadow-md z-10 p-3 space-y-2">
       <DropdownHeader headerText="Card settings" />

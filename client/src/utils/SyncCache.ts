@@ -55,3 +55,16 @@ export const syncBoardtoRemovedLabels = async (
     })
   );
 };
+export const syncBoardToDeletedCards = async (
+  dispatch: AppDispatch,
+  cardId: string,
+  boardId: string
+) => {
+  dispatch(
+    myApi.util.updateQueryData("getSingleBoard", boardId, (draft) => {
+      for (const list of draft.data.lists) {
+        list.cards = list.cards.filter((card) => card._id !== cardId);
+      }
+    })
+  );
+};

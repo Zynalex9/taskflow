@@ -517,10 +517,10 @@ export const deleteCard = async (req: Request, res: Response) => {
   const session = await mongoose.startSession();
   try {
     session.startTransaction();
-    const { workspaceId, cardId } = req.params;
-    const userId = req.user._id;
+    console.log(req.params);
+    const { workspaceId, listId, cardId } = req.params;
 
-    if (!workspaceId || !cardId) {
+    if (!workspaceId || !cardId || !listId) {
       res
         .status(400)
         .json(
@@ -534,21 +534,11 @@ export const deleteCard = async (req: Request, res: Response) => {
       res.status(404).json(new ApiResponse(404, {}, "Card not found"));
       return;
     }
-
-    const isAuthorized = await CheckAdmin(userId, workspaceId);
-    if (!isAuthorized) {
-      res
-        .status(403)
-        .json(
-          new ApiResponse(
-            403,
-            {},
-            "You're not authorized to delete a card in this workspace"
-          )
-        );
+    const list = await ListModel.findById(listId).session(session);
+    if (!list) {
+      res.status(404).json(new ApiResponse(404, {}, "List not found"));
       return;
     }
-
     const allCommentsIds = findData([card], "comments");
     const allLabelsIds = findData([card], "labels");
     const allAttachmentsId = findData([card], "attachments");
@@ -560,9 +550,11 @@ export const deleteCard = async (req: Request, res: Response) => {
     await deleteIfExists(CheckListModel, allChecklistIDs, session);
 
     await CardModel.findByIdAndDelete(cardId).session(session);
-
+    list.cards = list.cards.filter((c) => c.toString() !== cardId.toString());
+    await list.save();
     await session.commitTransaction();
-
+    const io = getIO();
+    io.to(workspaceId).emit("cardDeleted", cardId);
     res.status(200).json(new ApiResponse(200, {}, "Card deleted successfully"));
   } catch (error) {
     await session.abortTransaction();
