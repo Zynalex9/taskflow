@@ -11,7 +11,11 @@ import {
 } from "@/types/functionalites.types";
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 import { RootState } from "./store";
-import { syncBoardtoCard, syncBoardtoLabels } from "@/utils/SyncCache";
+import {
+  syncBoardtoCard,
+  syncBoardtoLabels,
+  syncBoardtoRemovedLabels,
+} from "@/utils/SyncCache";
 
 export const cardApi = createApi({
   reducerPath: "cardAPIs",
@@ -738,6 +742,50 @@ export const cardApi = createApi({
         }
       },
     }),
+    removeLabel: builder.mutation<
+      void,
+      {
+        cardId: string;
+        labelColor: string;
+        workspaceId: string;
+        boardId: string;
+      }
+    >({
+      query: (body) => ({
+        url: "/api/card/delete-label",
+        method: "DELETE",
+        body,
+        credentials: "include",
+      }),
+
+      invalidatesTags: (_, __, { cardId }) => [
+        { type: "singleCard", id: cardId },
+      ],
+      async onQueryStarted(body, { dispatch, queryFulfilled }) {
+        const patchResult = dispatch(
+          cardApi.util.updateQueryData(
+            "getSingleCard",
+            { cardId: body.cardId },
+            (draft) => {
+              draft.data.labels = draft.data.labels.filter(
+                (l) => l.color !== body.labelColor
+              );
+            }
+          )
+        );
+        syncBoardtoRemovedLabels(
+          dispatch,
+          body.cardId,
+          body.boardId,
+          body.labelColor
+        );
+        try {
+          await queryFulfilled;
+        } catch (error) {
+          patchResult.undo();
+        }
+      },
+    }),
   }),
 });
 export const {
@@ -760,4 +808,5 @@ export const {
   useEditCommentMutation,
   useDeleteCommentMutation,
   useEditCardMutation,
+  useRemoveLabelMutation,
 } = cardApi;

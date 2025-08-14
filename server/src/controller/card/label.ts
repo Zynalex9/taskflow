@@ -8,7 +8,7 @@ import { redisClient } from "../..";
 import { getIO } from "../../socket";
 export const addLabel = async (req: Request, res: Response) => {
   try {
-    const { cardId, labels,workspaceId } = req.body;
+    const { cardId, labels, workspaceId } = req.body;
 
     if (!cardId || !Array.isArray(labels) || labels.length === 0) {
       res.status(400).json({
@@ -43,8 +43,7 @@ export const addLabel = async (req: Request, res: Response) => {
 
     await redisClient.del(`tableData:${req.user._id}`);
     await redisClient.del(`singleCard:${cardId}`);
-    const io = getIO()
-    console.log(workspaceId)
+    const io = getIO();
     io.to(workspaceId).emit("labelAdded", labelDocs);
     res.status(201).json({
       message: "Labels added successfully",
@@ -63,21 +62,22 @@ export const addLabel = async (req: Request, res: Response) => {
 
 export const deleteLabel = async (req: Request, res: Response) => {
   try {
-    const required = ["labelId"];
+    const required = ["labelColor", "cardId", "workspaceId"];
     if (!checkRequiredBody(req, res, required)) return;
 
-    const { labelId } = req.body;
-    if (!mongoose.Types.ObjectId.isValid(labelId)) {
-      res.status(400).json(new ApiResponse(400, {}, "Invalid label ID"));
-      return;
-    }
+    const { labelColor, cardId, workspaceId } = req.body;
 
-    const deletedLabel = await CardLabelModel.findByIdAndDelete(labelId);
+    const deletedLabel = await CardLabelModel.findOneAndDelete({
+      color: labelColor,
+      card: cardId,
+    });
     if (!deletedLabel) {
       res.status(404).json(new ApiResponse(404, {}, "Label not found"));
       return;
     }
     await redisClient.del(`tableData:${req.user._id}`);
+    const io = getIO();
+    io.to(workspaceId).emit("labelRemoved", deletedLabel);
     res
       .status(200)
       .json(new ApiResponse(200, {}, "Label deleted successfully"));

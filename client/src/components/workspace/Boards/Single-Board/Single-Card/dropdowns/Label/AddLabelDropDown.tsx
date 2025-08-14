@@ -1,8 +1,8 @@
 import { useEffect, useState } from "react";
-import { Pencil } from "lucide-react";
+import { Pencil, Trash } from "lucide-react";
 import DropdownHeader from "../../DropdownHeader";
 import { Checkbox } from "@/components/ui/checkbox";
-import { useAddLabelsMutation } from "@/store/cardApi";
+import { useAddLabelsMutation, useRemoveLabelMutation } from "@/store/cardApi";
 import { useParams } from "react-router-dom";
 
 interface ILabel {
@@ -46,7 +46,7 @@ const AddLabelDropdown = ({
       prev.includes(id) ? prev.filter((i) => i !== id) : [...prev, id]
     );
   };
-  const { boardId,workspaceId } = useParams();
+  const { boardId, workspaceId } = useParams();
   const startEditing = (label: ILabel) => {
     setEditId(label._id);
     setEditText(label.name);
@@ -97,6 +97,26 @@ const AddLabelDropdown = ({
 
     setLabels(updated);
   }, [existingLabels]);
+  const [isHovered, setHovered] = useState("");
+  const [removeLabel] = useRemoveLabelMutation();
+  const [deletingLabel, setDeletingLabel] = useState(false);
+  const HandleRemoveLabel = async (labelColor: string, cardId: string) => {
+    console.log(labelColor, cardId);
+    const body = {
+      cardId,
+      workspaceId: workspaceId!,
+      labelColor,
+      boardId: boardId!,
+    };
+    try {
+      setDeletingLabel(true);
+      await removeLabel(body);
+    } catch (error) {
+      console.log(error);
+    } finally {
+      setDeletingLabel(false);
+    }
+  };
   return (
     <div className="absolute -top-20 left-2 w-80 h-96 rounded bg-[#282E33] p-4 shadow-2xl text-white z-30">
       <DropdownHeader headerText="Labels" />
@@ -114,7 +134,24 @@ const AddLabelDropdown = ({
             <div
               className="flex-grow rounded p-2 flex   items-center justify-between h-10"
               style={{ backgroundColor: label.color }}
+              onMouseEnter={() => setHovered(label._id)}
             >
+              {label._id === isHovered &&
+                !editId &&
+                (selected.includes(label._id) || label.isChecked) && (
+                  <button
+                    disabled={deletingLabel}
+                    className={`cursor-pointer ${
+                      deletingLabel ? "opacity-50 cursor-not-allowed" : ""
+                    }`}
+                  >
+                    <Trash
+                      size={16}
+                      className="text-red-500"
+                      onClick={() => HandleRemoveLabel(label.color, cardId)}
+                    />
+                  </button>
+                )}
               {editId === label._id ? (
                 <input
                   value={editText}

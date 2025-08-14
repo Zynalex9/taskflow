@@ -36,3 +36,22 @@ export const syncBoardtoLabels = async (
     })
   );
 };
+export const syncBoardtoRemovedLabels = async (
+  dispatch: AppDispatch,
+  cardId: string,
+  boardId: string,
+  labelColor: string
+) => {
+  dispatch(
+    myApi.util.updateQueryData("getSingleBoard", boardId, (draft) => {
+      for (const list of draft.data.lists) {
+        const card = list.cards.find((card) => card._id === cardId);
+        if (card) {
+          card.labels = card.labels.filter(
+            (label) => label.color !== labelColor
+          );
+        }
+      }
+    })
+  );
+};

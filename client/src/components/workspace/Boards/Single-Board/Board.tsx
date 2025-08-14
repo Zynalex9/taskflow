@@ -5,7 +5,7 @@ import { isImageUrl } from "../../../../utils/helper";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useGetSingleBoardQuery } from "@/store/myApi";
 import { SingleBoardContext } from "@/Context/SingleBoardContext";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import RightSideBar from "./RightSideBar";
 import { useBoardSocketsInvalidate } from "@/hooks/useBoardSocketsInvalidate";
 
@@ -26,8 +26,13 @@ const Board = () => {
         }
       : { background: cover }
     : {};
-useBoardSocketsInvalidate({ eventName: "cardCreated", id: boardId?? "" });
-
+  useBoardSocketsInvalidate({ eventName: "cardCreated", id: boardId ?? "" });
+  useEffect(() => {
+    document.body.style.overflow = "hidden";
+    return () => {
+      document.body.style.overflow = "auto";
+    };
+  }, []);
   if (data)
     return (
       <SingleBoardContext.Provider value={{ board: data.data }}>
