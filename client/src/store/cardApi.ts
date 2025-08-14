@@ -11,7 +11,7 @@ import {
 } from "@/types/functionalites.types";
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 import { RootState } from "./store";
-import { syncBoardtoCard, syncBoardtoLabels } from "@/utils/SyncCache";
+import { syncBoardtoCard } from "@/utils/SyncCache";
 
 export const cardApi = createApi({
   reducerPath: "cardAPIs",
@@ -346,7 +346,9 @@ export const cardApi = createApi({
           )
         );
 
-        syncBoardtoLabels(dispatch, body.cardId, body.boardId, tempLabels);
+        syncBoardtoCard(dispatch, body.cardId, body.boardId, {
+          labels: tempLabels,
+        });
 
         try {
           const { data } = await queryFulfilled;
@@ -707,6 +709,7 @@ export const cardApi = createApi({
         name?: string;
         description?: string;
         workspaceId: string;
+        boardId: string;
       }) => ({
         url: `/api/card/edit/${body.cardId}`,
         method: "PATCH",
@@ -727,6 +730,9 @@ export const cardApi = createApi({
             }
           )
         );
+        syncBoardtoCard(dispatch, body.cardId, body.boardId, {
+          name: body.name,
+        });
         try {
           await queryFulfilled;
         } catch (error) {

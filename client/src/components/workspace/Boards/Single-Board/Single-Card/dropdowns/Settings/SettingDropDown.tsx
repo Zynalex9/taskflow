@@ -12,7 +12,7 @@ export const SettingDropDown = ({ cardId }: SettingDropDownProps) => {
   const [isOpen, setIsOpen] = useState(false);
   const [newName, setNewName] = useState("");
   const [loading, setLoading] = useState(false);
-  const { workspaceId } = useParams();
+  const { workspaceId, boardId } = useParams();
   const [editCard] = useEditCardMutation();
   const handleDeleteCard = async () => {};
   const handleEditCard = async () => {
@@ -22,6 +22,7 @@ export const SettingDropDown = ({ cardId }: SettingDropDownProps) => {
         cardId,
         name: newName,
         workspaceId: workspaceId!,
+        boardId: boardId!,
       };
       setLoading(true);
       const response = await editCard(body).unwrap();
@@ -53,6 +54,11 @@ export const SettingDropDown = ({ cardId }: SettingDropDownProps) => {
           <button
             onClick={handleEditCard}
             disabled={loading}
+            onKeyDown={(e) => {
+              if (e.key === "Enter") {
+                handleEditCard();
+              }
+            }}
             className={`flex gap-2 px-2 py-1 rounded cursor-pointer items-center transition-colors duration-150 bg-[#B6C2CF]/20 hover:bg-[#B6C2CF]/10 font-charlie-display-sm shadow-2xl text-[#B3BFCC] ${
               loading ? "opacity-50 cursor-not-allowed" : ""
             }`}
