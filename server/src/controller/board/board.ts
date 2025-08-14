@@ -1,11 +1,11 @@
 import mongoose, { Mongoose, Types } from "mongoose";
-import { boardModel } from "../../models/board.models";
+import { boardModel, IBoard } from "../../models/board.models";
 import { workSpaceModel } from "../../models/workspace.model";
 import { Request, Response } from "express";
 import { IList, ListModel } from "../../models/list.models";
 import { commentsModel } from "../../models/card.comments.models";
-import { CardLabelModel } from "../../models/card.label.model";
-import { CheckListModel } from "../../models/card.checklist.model";
+import { CardLabelModel, ICardLabel } from "../../models/card.label.model";
+import { CheckListModel, IChecklist } from "../../models/card.checklist.model";
 import { CardAttachmentModel } from "../../models/card.attachments.model";
 import { CardModel, ICard } from "../../models/card.model";
 import { UserModel } from "../../models/user.model";
@@ -24,6 +24,10 @@ export interface IBoardMember {
   user: string | Types.ObjectId;
   role: "member" | "admin";
 }
+type PopulatedCard = Omit<ICard, "labels" | "checklist"> & {
+  labels: ICardLabel[];
+  checklist: IChecklist[];
+};
 export const createBoard = async (req: Request, res: Response) => {
   try {
     const {
@@ -976,3 +980,139 @@ export const copyBoardIntoNew = asyncHandler(async (req, res) => {
       )
     );
 });
+export const getboardTemplates = asyncHandler(async (req, res) => {
+  const boardTemplates = await boardModel.find({ isTemplate: true }).populate({
+    path: "lists",
+    populate: {
+      path: "cards",
+      model: "Todo",
+      populate: [
+        { path: "labels", model: "Label" },
+        { path: "checklist", model: "Checklist" },
+      ],
+    },
+  });
+
+  res.status(200).json(new ApiResponse(200, boardTemplates, "Board templates"));
+});
+
+export const createBoardFromTemplate = async (req: Request, res: Response) => {
+  const { templateId, workspaceId } = req.body;
+  const ownerId = req.user._id;
+
+  if (!templateId || !ownerId) {
+    res.status(400).json({ error: "templateId and ownerId are required" });
+    return;
+  }
+  const workspace = await workSpaceModel.findById(workspaceId);
+  if (!workspace) {
+    res.status(404).json({ error: "Workspace not found" });
+    return;
+  }
+
+  try {
+    const template = (await boardModel.findById(templateId).populate({
+      path: "lists",
+      populate: {
+        path: "cards",
+        model: "Todo",
+        populate: [
+          { path: "labels", model: "Label" },
+          { path: "checklist", model: "Checklist" },
+        ],
+      },
+    })) as unknown as IBoard & {
+      lists: (IList & { cards: PopulatedCard[] })[];
+    };
+
+    if (!template) {
+      res.status(404).json({ error: "Template not found" });
+      return;
+    }
+
+    const newBoard = new boardModel({
+      title: template.title,
+      description: template.description,
+      cover: template.cover,
+      createdBy: ownerId,
+      workspace: workspaceId,
+      isTemplate: false,
+      members: [{ user: ownerId, role: "admin" }],
+    });
+    await newBoard.save();
+
+    for (const list of template.lists) {
+      const newList = new ListModel({
+        name: list.name,
+        board: newBoard._id,
+        position: list.position,
+        cards: [],
+      });
+      await newList.save();
+
+      // 4. Clone cards in the list
+      for (const card of list.cards) {
+        // Clone labels
+        const newLabelIds = [];
+        for (const label of card.labels) {
+          const newLabel = new CardLabelModel({
+            name: label.name,
+            color: label.color,
+            board: newBoard._id,
+          });
+          await newLabel.save();
+          newLabelIds.push(newLabel._id);
+        }
+
+        // Clone checklists
+        const newChecklistIds = [];
+        for (const checklist of card.checklist) {
+          const newChecklist = new CheckListModel({
+            title: checklist.title,
+            items: checklist.items.map((i) => ({
+              title: i.title,
+              checked: i.completed,
+            })),
+            createdBy: ownerId,
+          });
+          await newChecklist.save();
+          newChecklistIds.push(newChecklist._id);
+        }
+
+        const newCard = new CardModel({
+          name: card.name,
+          description: card.description,
+          startDate: card.startDate,
+          endDate: card.endDate,
+          createdBy: ownerId,
+          members: [], // or copy from template if needed
+          list: newList._id,
+          comments: [],
+          labels: newLabelIds,
+          cover: card.cover,
+          priority: card.priority,
+          checklist: newChecklistIds,
+          checked: card.checked,
+          attachments: [],
+          position: card.position,
+        });
+        await newCard.save();
+
+        newList.cards.push(newCard._id);
+      }
+
+      await newList.save();
+      newBoard.lists.push(newList._id);
+    }
+    workspace.boards.push(newBoard._id);
+    await workspace.save();
+    await newBoard.save();
+
+    res
+      .status(201)
+      .json({ message: "Board created from template", boardId: newBoard._id });
+  } catch (err) {
+    console.error("Error creating board from template:", err);
+    res.status(500).json({ error: "Internal server error" });
+  }
+};

@@ -50,6 +50,8 @@ import {
   copyBoard,
   pdfBoardData,
   copyBoardIntoNew,
+  getboardTemplates,
+  createBoardFromTemplate,
 } from "../controller/board/board";
 import {
   createList,
@@ -413,7 +415,8 @@ boardRouter
     ),
     pdfBoardData
   );
-
+boardRouter.route("/get-templates").get(verifyJWT, getboardTemplates);
+boardRouter.route("/create-board-from-template").post(verifyJWT, createBoardFromTemplate);
 boardRouter
   .route("/update-cover/:boardId")
   .patch(verifyJWT, upload.single("image"), updateBoardCover);

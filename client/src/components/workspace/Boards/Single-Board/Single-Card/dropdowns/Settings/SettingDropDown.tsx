@@ -51,14 +51,14 @@ export const SettingDropDown = ({ cardId, listId }: SettingDropDownProps) => {
       console.log(listId);
       setLoading(true);
       await deleteCard(body).unwrap();
-      useBoardSocketsInvalidate({ eventName: "cardDeleted", id: workspaceId! });
       navigate(`/user/w/workspace/${workspaceId}/board/${boardId}`);
     } catch (error: any) {
-      toast.error(error.data.message, { theme: "dark" });
+      console.log(error);
     } finally {
       setLoading(false);
     }
   };
+  useBoardSocketsInvalidate({ eventName: "cardDeleted", id: workspaceId! });
 
   return (
     <div className="w-72 bg-bgS rounded shadow-md z-10 p-3 space-y-2">

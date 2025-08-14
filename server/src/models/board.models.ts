@@ -1,6 +1,6 @@
 import mongoose, { Mongoose, Schema } from "mongoose";
 import { Types } from "mongoose";
-interface IBoard extends Document {
+export interface IBoard extends Document {
   title: string;
   lists: Types.ObjectId[];
   favourite: Boolean;
@@ -14,6 +14,8 @@ interface IBoard extends Document {
     user: Types.ObjectId;
     role: "member" | "workspace-admin" | "admin";
   }[];
+  isTemplate: Boolean;
+  templateVersion: Number;
 }
 const boardSchema = new Schema(
   {
@@ -68,6 +70,14 @@ const boardSchema = new Schema(
         },
       },
     ],
+    isTemplate: {
+      type: Boolean,
+      default: false,
+    },
+    templateVersion: {
+      type: Number,
+      default: 1,
+    },
   },
   { timestamps: true }
 );
