@@ -1,6 +1,5 @@
 import {
   LayoutTemplate,
-  Home,
   Trello,
   ChevronDown,
   Plus,
@@ -13,7 +12,6 @@ import { useWorkspaces } from "@/Context/workspacesContext";
 
 const Sidebar = () => {
   const { workspaces } = useWorkspaces();
-  console.log("All Workspaces", workspaces);
   const [openWorkspaceId, setOpenWorkspaceId] = useState<string | null>(null);
 
   const toggleWorkspace = (id: string) => {
@@ -46,17 +44,7 @@ const Sidebar = () => {
             <h1 className="text-md font-charlie-text-r">Templates</h1>
           </div>
         </NavLink>
-        <NavLink
-          to={"/user/dashboard/homes"}
-          className={({ isActive }) =>
-            isActive ? "text-blue-600" : "text-textP"
-          }
-        >
-          <div className="flex items-center gap-2 my-4">
-            <Home size={14} />
-            <h1 className="text-md font-charlie-text-r">Home</h1>
-          </div>
-        </NavLink>
+    
         <NavLink
           to={"/user/dashboard/edit-info"}
           className={({ isActive }) =>

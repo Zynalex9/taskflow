@@ -1,5 +1,5 @@
 import BoardPlaceHolder from "@/components/resuable/BoardPlaceHolder";
-import { IBoard, IWorkspace } from "@/types/functionalites.types";
+import { IWorkspace } from "@/types/functionalites.types";
 import {
   AlertDialog,
   AlertDialogCancel,
@@ -14,18 +14,15 @@ import { useWorkspaces } from "@/Context/workspacesContext";
 import { useState } from "react";
 import { useCreateBoardFromTemplateMutation } from "@/store/workspaceApi";
 import { toast, ToastContainer } from "react-toastify";
+import { useGetAllTemplatesQuery } from "@/store/myApi";
 
-export const TemplatesComponent = ({
-  templates,
-}: {
-  templates: IBoard[] | undefined;
-}) => {
+export const TemplatesComponent = () => {
   const { workspaces } = useWorkspaces();
   const allWorkspaces = [
     ...(workspaces?.ownedWorkspaces || []),
     ...(workspaces?.joinedWorkspaces || []),
   ];
-
+  const { data: templates } = useGetAllTemplatesQuery();
   const [selectedWorkspace, setSelectedWorkspace] = useState<IWorkspace | null>(
     null
   );
@@ -57,7 +54,7 @@ export const TemplatesComponent = ({
 
   return (
     <div className="flex items-center gap-2 flex-wrap">
-      {templates?.map((template) => (
+      {templates?.data.map((template) => (
         <AlertDialog key={template._id} open={openDialog}>
           <AlertDialogTrigger onClick={() => setOpenDialog(true)}>
             <BoardPlaceHolder

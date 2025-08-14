@@ -39,6 +39,7 @@ import Requests from "@/components/Dashboard/Members/Requests";
 import { BoardLink } from "@/components/workspace/Join/BoardLink";
 import { WorkspaceLink } from "@/components/workspace/Join/WorkspaceLink";
 import PricingPage from "@/components/Pricing/PricingPage";
+import { TemplatesPage } from "@/components/Dashboard/TemplatesPage";
 
 const AllRoutes = () => {
   const { user } = useSelector((state: RootState) => state.auth);
@@ -161,6 +162,7 @@ const AllRoutes = () => {
           <Route path="/user/dashboard" element={<Dashboard />}>
             <Route index element={<AllWorkspaces />} />
             <Route path="edit-info" element={<EditComp />} />
+            <Route path="templates" element={<TemplatesPage/>} />
             <Route path=":workspaceId/boards-view" element={<BoardView />} />
             <Route path=":workspaceId" element={<MembersPageLayout />}>
               <Route path="members" element={<MembersOutlet />} />
