@@ -712,6 +712,7 @@ export const cardApi = createApi({
         description?: string;
         workspaceId: string;
         boardId: string;
+        removeMembers?: string[];
       }) => ({
         url: `/api/card/edit/${body.cardId}`,
         method: "PATCH",
@@ -729,6 +730,11 @@ export const cardApi = createApi({
             (draft) => {
               if (body.name) draft.data.name = body.name;
               if (body.description) draft.data.description = body.description;
+              if (body.removeMembers) {
+                draft.data.members = draft.data.members.filter(
+                  (m) => !body.removeMembers!.includes(m._id)
+                );
+              }
             }
           )
         );

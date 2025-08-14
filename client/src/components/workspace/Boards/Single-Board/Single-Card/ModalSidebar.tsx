@@ -29,7 +29,7 @@ import AddMembers from "./dropdowns/members/AddMembers";
 import { CustomTooltip } from "./CustomTooltip";
 import { ICard } from "@/types/functionalites.types";
 import AddCover from "./dropdowns/cover/addCover";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import {
   cardApi,
   useJoinCardMutation,
@@ -39,6 +39,7 @@ import { toast } from "react-toastify";
 import { useParams } from "react-router-dom";
 import { socket } from "@/socket/socket";
 import { SettingDropDown } from "./dropdowns/Settings/SettingDropDown";
+import { useClickOutside } from "@/Context/useRefContext";
 
 interface Props {
   card: ICard;
@@ -90,7 +91,7 @@ export function ModalSidebar({ card }: Props) {
     openLabels,
     openMembers,
     openCover,
-    openSettings
+    openSettings,
   } = useSelector((state: RootState) => state.cardModalState);
 
   useEffect(() => {
@@ -214,7 +215,10 @@ export function ModalSidebar({ card }: Props) {
         : () => dispatch(openSettingsDropDown()),
     },
   ];
-
+  const ref = useRef<HTMLDivElement>(null);
+  useClickOutside(ref, () => {
+    dispatch(closeAllDropDown());
+  });
   return (
     <div className="space-y-2.5">
       {sidebarItems.map((item, index) => (
@@ -230,6 +234,7 @@ export function ModalSidebar({ card }: Props) {
           </CustomTooltip>
 
           <div
+            ref={ref}
             className={`absolute transition-all duration-75 top-5 mt-2 -left-0 z-20 bg-[#282E33] shadow-lg  ${
               item.isOpen ? "block" : "hidden"
             }`}
