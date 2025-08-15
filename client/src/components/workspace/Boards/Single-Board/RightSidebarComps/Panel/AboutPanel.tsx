@@ -5,24 +5,27 @@ import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 import { useState } from "react";
 import { useAddBoardDescriptionMutation } from "@/store/myApi";
-import { toast } from "react-toastify";
+import { toast } from "sonner";
 import { useSelector } from "react-redux";
 import { RootState } from "@/store/store";
 
 export const AboutPanel = () => {
   const { board } = useSingleBoardContext();
-  console.log(board)
   const [description, setDescription] = useState(board.description);
+  const [loading, setLoading] = useState(false);
   const [addDesc, setAddDesc] = useState(false);
   const [addDescription] = useAddBoardDescriptionMutation();
-  const {user} = useSelector((state:RootState) => state.auth)
+  const { user } = useSelector((state: RootState) => state.auth);
   const handleDescription = async () => {
     try {
       if (description === "") return;
-      await addDescription({ description, boardId: board._id });
-    } catch (error) {
-      toast.error("Error adding description", { theme: "dark" });
+      setLoading(true);
+      await addDescription({ description, boardId: board._id }).unwrap();
+    } catch (error: any) {
+      toast.error(error.data.message || "Error adding description");
+      setDescription(board.description);
     } finally {
+      setLoading(false);
       setAddDesc(false);
     }
   };
@@ -48,7 +51,10 @@ export const AboutPanel = () => {
                 />
                 <div>
                   <h1 className="text-lg text-gray-400 font-charlie-text-r underline font-medium">
-                    {member.firstName} {member.secondName} <span className="text-xs text-gray-500">({member.role})</span>
+                    {member.firstName} {member.secondName}{" "}
+                    <span className="text-xs text-gray-500">
+                      ({member.role})
+                    </span>
                   </h1>
                   <h1 className="text-sm text-textP underline">
                     @{member.username}
@@ -71,18 +77,21 @@ export const AboutPanel = () => {
           </div>
 
           {addDesc ? (
-            <div className="grid w-full gap-2">
+            <div className="grid w-full mb-4 gap-2">
               <Textarea
                 placeholder="Type your message here."
                 className="h-44 mt-4"
                 value={description}
+                disabled={loading}
                 onChange={(e) => setDescription(e.target.value)}
               />
-              <Button onClick={handleDescription}>Add Description</Button>
+              <Button disabled={loading} onClick={handleDescription}>
+                {loading ? "Adding..." : "Add Description"}
+              </Button>
             </div>
           ) : (
             <div
-              className="grid w-full gap-2 bg-gray-600 rounded h-44 mt-4 p-2 cursor-pointer"
+              className="grid w-full gap-2 bg-gray-600 rounded h-44 my-4 p-2 cursor-pointer"
               onClick={() => setAddDesc(true)}
             >
               <h1 className="">

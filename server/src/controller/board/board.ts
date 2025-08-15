@@ -571,17 +571,34 @@ export const editBoard = asyncHandler(async (req, res) => {
 });
 export const toggleFavourite = asyncHandler(async (req, res) => {
   const { boardId } = req.body;
+  const userId = req.user._id; 
+
   if (!boardId) {
-    res.status(401).json(new ApiResponse(401, {}, "No Board Id provided"));
+    res.status(400).json(new ApiResponse(400, {}, "No Board Id provided"));
+    return 
   }
+
   const board = await boardModel.findById(boardId);
-  if (!board) return;
-  board.favourite = !board.favourite;
+  if (!board) {
+    res.status(404).json(new ApiResponse(404, {}, "Board not found"));
+    return 
+  }
+
+  const index = board.favouritedBy.findIndex(id => id.toString() === userId.toString());
+
+  if (index === -1) {
+    board.favouritedBy.push(userId);
+  } else {
+    board.favouritedBy.splice(index, 1);
+  }
+
   await board.save();
+
   const io = getIO();
   io.to(board.workspace.toString()).emit("boardUpdated", board);
-  res.status(200).json(new ApiResponse(200, {}, "Updated"));
+  res.status(200).json(new ApiResponse(200, board, "Favourite updated"));
 });
+
 export const updateVisibility = asyncHandler(
   async (req: Request, res: Response) => {
     console.log(req.params, req.body);

@@ -403,18 +403,10 @@ boardRouter
     copyBoard
   );
 
-boardRouter
-  .route("/full-details/:boardId")
-  .get(
-    verifyJWT,
-    requirePermission(
-      PERMISSIONS.BOARD_DETAILS,
-      "board",
-      "boardId",
-      ERROR_MESSAGES.BOARD_DETAILS
-    ),
-    pdfBoardData
-  );
+boardRouter.route("/full-details/:boardId").get(
+  verifyJWT,
+  pdfBoardData
+);
 boardRouter.route("/get-templates").get(verifyJWT, getboardTemplates);
 boardRouter
   .route("/create-board-from-template")

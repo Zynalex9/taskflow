@@ -11,7 +11,7 @@ import axios from "axios";
 import { CheckCircle, Link } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
-import { toast } from "react-toastify";
+import { toast } from "sonner";
 
 interface ApiResponse {
   data: IUser;
@@ -23,6 +23,7 @@ interface ApiResponse {
 export const ShareDialogContent = () => {
   const [searchValue, setSearchValue] = useState("");
   const [loading, setIsLoading] = useState(false);
+  const [loadingLink, setIsLoadingLink] = useState(false);
   const [responsedReturned, setResponsedReturned] = useState(false);
   const [apiResponse, setApiResponse] = useState<ApiResponse | null>(null);
   const [linkCreated, setLinkCreated] = useState<boolean>(false);
@@ -32,24 +33,24 @@ export const ShareDialogContent = () => {
   const [selectedMember, setSelectedMember] = useState<string[]>([]);
   const [addMember] = useAddBoardMemberMutation();
 
-  const {workspace} = useSelector((state:RootState) => state.workspace)
+  const { workspace } = useSelector((state: RootState) => state.workspace);
   const handleCopy = async () => {
     try {
       if (!inviteLink) {
-        toast.error("No link to copy", { theme: "dark" });
+        toast.error("No link to copy");
         return;
       }
       await navigator.clipboard.writeText(inviteLink);
       setCopied(true);
       setTimeout(() => setCopied(false), 2000);
     } catch (error) {
-      toast.error("Failed to copy text", { theme: "dark" });
+      toast.error("Failed to copy text");
     }
   };
 
   const handleLink = async () => {
     try {
-      setIsLoading(true);
+      setIsLoadingLink(true);
       const response = await axios.post(
         `${import.meta.env.VITE_BASE_URL}/api/user/generate-share-link`,
         {
@@ -63,15 +64,17 @@ export const ShareDialogContent = () => {
       );
 
       if (response.data.success) {
-        setInviteLink(`${import.meta.env.VITE_CLIENT_URL}/join/${workspace?._id}/${board._id}/${response.data.data.inviteLink}`);
+        setInviteLink(
+          `${import.meta.env.VITE_CLIENT_URL}/join/${workspace?._id}/${
+            board._id
+          }/${response.data.data.inviteLink}`
+        );
         setLinkCreated(true);
-      } else {
-        toast.error("Failed to create link", { theme: "dark" });
       }
-    } catch (error) {
-      toast.error("Error creating link", { theme: "dark" });
+    } catch (error: any) {
+      toast.error(error.response.data.message || "Error creating link");
     } finally {
-      setIsLoading(false);
+      setIsLoadingLink(true);
     }
   };
 
@@ -106,11 +109,11 @@ export const ShareDialogContent = () => {
       setIsLoading(true);
       await addMember(body).unwrap();
       setSearchValue("");
-      toast.success("Member added successfully!", { theme: "dark" });
+      toast.success("Member added successfully!");
       setSelectedMember([]);
       setApiResponse(null);
     } catch (error: any) {
-      toast.error(error.data.message, { theme: "dark" });
+      toast.error(error.data.message);
     } finally {
       setIsLoading(false);
     }
@@ -144,9 +147,9 @@ export const ShareDialogContent = () => {
           <button
             disabled={loading}
             onClick={handleAddMember}
-            className="bg-blue-primary px-2 py-2 text-black rounded border-black border-1"
+            className="bg-blue-primary px-2 py-2 text-black rounded cursor-pointer border-black border-1"
           >
-            Add
+            {loading ? "Adding" : "Add"}{" "}
           </button>
         </div>
         {searchValue.trim() && (
@@ -221,11 +224,13 @@ export const ShareDialogContent = () => {
             </div>
           ) : (
             <button
-              disabled={loading}
+              disabled={loadingLink}
               onClick={handleLink}
-              className="text-blue-primary cursor-pointer underline text-sm"
+              className={`text-blue-primary cursor-pointer underline text-sm ${
+                loadingLink ? "opacity-50 cursor-not-allowed" : ""
+              }`}
             >
-              Create link
+              {loadingLink ? "Creating link..." : " Create link"}
             </button>
           )}
         </div>

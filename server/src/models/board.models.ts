@@ -4,6 +4,7 @@ export interface IBoard extends Document {
   title: string;
   lists: Types.ObjectId[];
   favourite: Boolean;
+  favouritedBy: Types.Array<Types.ObjectId>;
   background: string;
   visibility: string;
   createdBy: Types.ObjectId;
@@ -33,6 +34,13 @@ const boardSchema = new Schema(
       type: Boolean,
       default: false,
     },
+    favouritedBy: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "User",
+      },
+    ],
+
     background: {
       type: String,
       default: "#ffffff",

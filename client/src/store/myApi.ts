@@ -25,7 +25,7 @@ export const myApi = createApi({
     }),
     getAllTemplates: builder.query<ITemplateTypes, void>({
       query: () => `/api/board/get-templates`,
-      keepUnusedDataFor: 60 * 60, 
+      keepUnusedDataFor: 60 * 60,
       providesTags: [{ type: "Board", id: "TEMPLATES" }],
     }),
     getSingleBoard: builder.query<ISingleBoardResponse, string>({
@@ -233,15 +233,18 @@ export const myApi = createApi({
       },
     }),
     toggleFavourite: builder.mutation({
-      query: (boardId) => ({
+      query: (body: { boardId: string; userId: string }) => ({
         url: "/api/board/toggle-favourite",
         method: "PATCH",
-        body: { boardId },
+        body: { boardId: body.boardId },
       }),
-      async onQueryStarted(boardId, { dispatch, queryFulfilled }) {
+
+      async onQueryStarted({ boardId, userId }, { dispatch, queryFulfilled }) {
         const patchResult = dispatch(
           myApi.util.updateQueryData("getSingleBoard", boardId, (draft) => {
-            draft.data.favourite = !draft.data.favourite;
+            draft.data.favouritedBy = draft.data.favouritedBy.includes(userId)
+              ? draft.data.favouritedBy.filter((id) => id !== userId)
+              : [...draft.data.favouritedBy, userId];
           })
         );
 

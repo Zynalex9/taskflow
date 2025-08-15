@@ -106,6 +106,7 @@ export interface IBoard {
   lists: IList[];
   description: string;
   favourite: boolean;
+  favouritedBy: string[];
   background: string;
   visibility: string;
   createdBy: string;
