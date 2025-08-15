@@ -11,11 +11,11 @@ import {
   useToggleCheckListItemCompleteMutation,
 } from "@/store/cardApi";
 import { Checkbox } from "@/components/ui/checkbox";
-import { toast, ToastContainer } from "react-toastify";
 import { useSelector } from "react-redux";
 import { RootState } from "@/store/store";
 import { useCardSocketInvalidate } from "@/hooks/useSocketInvalidate";
 import { useParams } from "react-router-dom";
+import { toast } from "sonner";
 interface ChecklistProps {
   Checklist: IChecklist[];
   cardId: string;
@@ -48,7 +48,11 @@ const Checklist: React.FC<ChecklistProps> = ({ Checklist, cardId }) => {
       };
       setItemTitle("");
       setActiveChecklistId(null);
-      await addItemToChecklist(body);
+      try {
+        await addItemToChecklist(body).unwrap();
+      } catch (error: any) {
+        toast.error(error.data.message || "Failed to add item");
+      }
     } else {
       setActiveChecklistId(checkListId);
     }
@@ -57,9 +61,13 @@ const Checklist: React.FC<ChecklistProps> = ({ Checklist, cardId }) => {
   const handleDelete = async (cardId: string, checkListId: string) => {
     try {
       setIsLoading(true);
-      await deleteCheckList({ cardId, checkListId, workspaceId: workspaceId! });
-    } catch (error) {
-      toast.error("Error deleteing checklist", { theme: "dark" });
+      await deleteCheckList({
+        cardId,
+        checkListId,
+        workspaceId: workspaceId!,
+      }).unwrap();
+    } catch (error: any) {
+      toast.error(error.data.message || "Error deleteing checklist");
     } finally {
       setIsLoading(false);
     }
@@ -72,9 +80,9 @@ const Checklist: React.FC<ChecklistProps> = ({ Checklist, cardId }) => {
       workspaceId: workspaceId!,
     };
     try {
-      await toggleItem(body);
-    } catch (error) {
-      console.log("Error in toggling");
+      await toggleItem(body).unwrap();
+    } catch (error: any) {
+      toast.error(error.data.message || "Error in toggling");
     }
   };
   const handleDeleteItem = async (checklistId: string, itemId: string) => {
@@ -86,8 +94,8 @@ const Checklist: React.FC<ChecklistProps> = ({ Checklist, cardId }) => {
         cardId,
         workspaceId: workspaceId!,
       });
-    } catch (error) {
-      console.log("Error in deleting item");
+    } catch (error: any) {
+      toast.error(error.data.message || "Error in deleting item");
     } finally {
       setIsItemLoading(false);
     }
@@ -174,7 +182,7 @@ const Checklist: React.FC<ChecklistProps> = ({ Checklist, cardId }) => {
             {activeChecklistId === c._id ? (
               <div>
                 <button
-                  onClick={() => HandleSubmit(c.card, c._id)}
+                  onClick={() => HandleSubmit(cardId, c._id)}
                   className="px-2 py-1 mt-2  rounded cursor-pointer items-center transition-colors duration-150 bg-[#B6C2CF]/20 hover:bg-[#B6C2CF]/10 font-charlie-display-sm shadow-2xl text-[#B3BFCC]"
                 >
                   Add Item
@@ -188,7 +196,7 @@ const Checklist: React.FC<ChecklistProps> = ({ Checklist, cardId }) => {
               </div>
             ) : (
               <button
-                onClick={() => HandleSubmit(c.card, c._id)}
+                onClick={() => HandleSubmit(cardId, c._id)}
                 className="px-2 mt-4 py-1 rounded cursor-pointer items-center transition-colors duration-150 bg-[#B6C2CF]/20 hover:bg-[#B6C2CF]/10 font-charlie-display-sm shadow-2xl text-[#B3BFCC]"
               >
                 Add Item
@@ -197,7 +205,6 @@ const Checklist: React.FC<ChecklistProps> = ({ Checklist, cardId }) => {
           </div>
         </div>
       ))}
-      <ToastContainer />
     </div>
   );
 };

@@ -351,7 +351,7 @@ export const deleteItem = asyncHandler(async (req, res) => {
     await checkList.save();
     await redisClient.del(`singleCard:${req.body.cardId}`);
     const io = getIO();
-    io.to(workspaceId).emit("checkListItemDeleted", checkListId);
+    io.to(workspaceId).emit("checkListItemCreated", checkListId);
     res.status(200).json(new ApiResponse(200, {}, "Item deleted"));
   } catch (error) {
     console.error("Error in deleteItem:", error);
