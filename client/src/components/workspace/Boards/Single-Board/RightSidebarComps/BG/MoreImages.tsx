@@ -4,6 +4,7 @@ import { ImageProps } from "../../Add Board Modal/Images";
 import ImageSkeleton from "@/components/Skeletons/ImageSkeleton";
 import { useUpdateBoardCoverMutation } from "@/store/myApi";
 import { useSingleBoardContext } from "@/Context/SingleBoardContext";
+import { toast } from "sonner";
 
 export const MoreImages = () => {
   const [selectedImage, setSelectedImage] = useState("");
@@ -24,10 +25,11 @@ export const MoreImages = () => {
         boardId: board._id,
         cover: imageUrl,
       }).unwrap();
+    } catch (error: any) {
+      toast.error(error.data.message || "Error uploading image");
+    } finally {
       setSelectedImage("");
       setUploadingImage(false);
-    } catch (error) {
-      console.error("Error uploading image:", error);
     }
   };
   useEffect(() => {

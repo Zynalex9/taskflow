@@ -1,6 +1,7 @@
 import { useSingleBoardContext } from "@/Context/SingleBoardContext";
 import { useUpdateBoardCoverMutation } from "@/store/myApi";
 import { useEffect, useState } from "react";
+import { toast } from "sonner";
 
 export const BGColors = () => {
   const [updateCover] = useUpdateBoardCoverMutation();
@@ -13,8 +14,10 @@ export const BGColors = () => {
         cover: color,
       }).unwrap();
       changeSelectedColor(color);
-    } catch (error) {
-      console.error("Error updating cover color:", error);
+    } catch (error: any) {
+      toast.error(error.data.message || "Error updating cover color");
+    } finally {
+      changeSelectedColor("");
     }
   };
   useEffect(() => {

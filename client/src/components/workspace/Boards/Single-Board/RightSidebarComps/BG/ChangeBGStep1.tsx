@@ -1,8 +1,9 @@
 import CustomBorder from "@/components/resuable/CustomBorder";
 import { useSingleBoardContext } from "@/Context/SingleBoardContext";
 import { useUpdateBoardCoverMutation } from "@/store/myApi";
-import { Circle, LoaderCircle, Plus } from "lucide-react";
+import { LoaderCircle, Plus } from "lucide-react";
 import { useState } from "react";
+import { toast } from "sonner";
 
 export const ChangeBGStep1 = ({ goTo }: { goTo: (param: string) => void }) => {
   const [isLoading, setIsLoading] = useState(false);
@@ -17,9 +18,9 @@ export const ChangeBGStep1 = ({ goTo }: { goTo: (param: string) => void }) => {
       await updateCover({
         boardId: board._id,
         cover: formData,
-      });
-    } catch (error) {
-      console.error("Error uploading image:", error);
+      }).unwrap();
+    } catch (error: any) {
+      toast.error(error.data.message || "Error uploading image");
     } finally {
       setIsLoading(false);
       event.target.value = "";
