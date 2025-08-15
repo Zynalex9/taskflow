@@ -5,6 +5,7 @@ import { useState } from "react";
 import { useAddDescriptionMutation } from "@/store/cardApi";
 import { useParams } from "react-router-dom";
 import { useCardSocketInvalidate } from "@/hooks/useSocketInvalidate";
+import { toast } from "sonner";
 
 export const CardModalDescription = ({ card }: { card: ICard }) => {
   const [showDescription, setShowDescription] = useState(false);
@@ -23,9 +24,15 @@ export const CardModalDescription = ({ card }: { card: ICard }) => {
         cardId,
         workspaceId: workspaceId!,
       };
-      await addDescription(body);
+      console.log("body:",body)
+      try {
+        await addDescription(body).unwrap();
+      } catch (error: any) {
+        toast.error(error.data.message || "Something went wrong");
+      }
     }
   };
+  console.log(card);
   useCardSocketInvalidate({ eventName: "descriptionAdded", id: card?._id });
   return (
     <div>
