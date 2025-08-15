@@ -59,7 +59,7 @@ const CardModal = () => {
 
   if (card)
     return (
-      <div ref={modalRef}>
+      <div ref={modalRef} className="h-full">
         {isImageUrl(card.cover) ? (
           <div className="w-full h-44">
             <img
@@ -72,7 +72,7 @@ const CardModal = () => {
           ""
         )}
         <div
-          className="fixed inset-0 z-[90] bg-black/70 top-[20px]"
+          className="fixed inset-0 z-[90] bg-black/70"
         />
 
         <div className=" fixed inset-0 z-[100] overflow-y-auto flex items-start justify-center p-4 top-[60px]">

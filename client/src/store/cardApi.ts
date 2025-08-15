@@ -232,7 +232,7 @@ export const cardApi = createApi({
         formData.append("workspaceId", workspaceId);
 
         return {
-          url: "/api/card/add-attachment",
+          url: `/api/card/add-attachment?cardId=${cardId}`,
           method: "POST",
           body: formData,
         };

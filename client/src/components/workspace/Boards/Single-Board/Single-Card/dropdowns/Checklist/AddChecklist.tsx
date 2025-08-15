@@ -7,6 +7,7 @@ import { useAddChecklistMutation } from "@/store/cardApi";
 import ModalButton from "@/components/resuable/ModalButton";
 import { useParams } from "react-router-dom";
 import { useCardSocketInvalidate } from "@/hooks/useSocketInvalidate";
+import { toast } from "sonner";
 
 const AddChecklist = ({ cardId }: { cardId: string }) => {
   const dispatch = useDispatch<AppDispatch>();
@@ -22,10 +23,10 @@ const AddChecklist = ({ cardId }: { cardId: string }) => {
     try {
       setTitle("");
       dispatch(closeAllDropDown());
-      await addChecklist(body);
+      await addChecklist(body).unwrap();
       console.log(body);
-    } catch (error) {
-      console.log(error);
+    } catch (error:any) {
+      toast.error(error.data.message || "Failed ot add checklist");
     }
   };
   useCardSocketInvalidate({ eventName: "checkListCreated", id: cardId });

@@ -19,9 +19,10 @@ const BoardDisplay = ({
     myApi.endpoints.getAllBoards.select(workspace?._id ?? "")(state)
   );
   const allBoards = [
-    ...bboards?.data?.data?.yourBoards,
-    ...bboards?.data?.data?.otherBoards,
+    ...(bboards?.data?.data?.yourBoards || []),
+    ...(bboards?.data?.data?.otherBoards || []),
   ];
+
   const filteredBoards = allBoards.filter((board) =>
     board.title.toLowerCase().includes(searchTerm.toLowerCase())
   );

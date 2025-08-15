@@ -1,13 +1,13 @@
 import { useState } from "react";
 import DropdownHeader from "../../DropdownHeader";
 import { useDeleteCardMutation, useEditCardMutation } from "@/store/cardApi";
-import { toast } from "react-toastify";
 import { useNavigate, useParams } from "react-router-dom";
 import { useCardSocketInvalidate } from "@/hooks/useSocketInvalidate";
 import { useBoardSocketsInvalidate } from "@/hooks/useBoardSocketsInvalidate";
 import { useDispatch } from "react-redux";
 import { AppDispatch } from "@/store/store";
 import { closeAllDropDown } from "@/store/CardModalStatesSlice";
+import { toast } from "sonner";
 
 interface SettingDropDownProps {
   cardId: string;
@@ -33,9 +33,10 @@ export const SettingDropDown = ({ cardId, listId }: SettingDropDownProps) => {
       };
       setLoading(true);
       const response = await editCard(body).unwrap();
-      toast.success(response.message, { theme: "dark" });
-    } catch (error) {
-      console.log(error);
+      toast.success("Card name updated");
+      console.log(response)
+    } catch (error:any) {
+      toast.error(error.data.message || "Something went wrong");
     } finally {
       setLoading(false);
       setNewName("");
@@ -55,7 +56,7 @@ export const SettingDropDown = ({ cardId, listId }: SettingDropDownProps) => {
       await deleteCard(body).unwrap();
       navigate(`/user/w/workspace/${workspaceId}/board/${boardId}`);
     } catch (error: any) {
-      console.log(error);
+      toast.error(error.data.message || "Something went wrong");
     } finally {
       setLoading(false);
       dispatch(closeAllDropDown());

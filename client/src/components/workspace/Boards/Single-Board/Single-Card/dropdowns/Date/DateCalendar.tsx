@@ -27,6 +27,7 @@ import { AppDispatch } from "@/store/store";
 import { closeAllDropDown } from "@/store/CardModalStatesSlice";
 import { useAddCardDateMutation } from "@/store/cardApi";
 import { useParams } from "react-router-dom";
+import { toast } from "sonner";
 
 const FormSchema = z.object({
   startDate: z.date().optional(),
@@ -54,10 +55,9 @@ export function DateCalendar({ cardId }: { cardId: string }) {
     };
     try {
       dispatch(closeAllDropDown());
-
-      await addDate(body);
-    } catch (error) {
-      console.log(error);
+      await addDate(body).unwrap();
+    } catch (error:any) {
+      toast.error(error.data.message);
     }
   }
 
@@ -100,7 +100,7 @@ export function DateCalendar({ cardId }: { cardId: string }) {
                     className="w-auto p-0 z-[20000]"
                     align="start"
                   >
-                    <Calendar
+                    <Calendar   data-ignore-click-outside="true"
                       mode="single"
                       selected={field.value}
                       onSelect={field.onChange}

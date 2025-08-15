@@ -4,7 +4,7 @@ import { useSelector } from "react-redux";
 import { RootState } from "./store/store";
 import AllRoutes from "./routes/AllRoutes";
 import { socket } from "./socket/socket";
-import { ToastContainer } from "react-toastify";
+import { Toaster } from "./components/ui/sonner";
 
 function App() {
   const theme = useSelector((state: RootState) => state.theme.theme);
@@ -18,7 +18,7 @@ function App() {
   return (
     <>
       <AllRoutes />
-      <ToastContainer />
+      <Toaster  theme="dark"/>
     </>
   );
 }

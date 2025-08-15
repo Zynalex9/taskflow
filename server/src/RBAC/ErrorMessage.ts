@@ -47,6 +47,7 @@ export const ERROR_MESSAGES = {
   CARD_MOVE: "You are not authorized to move this card",
   CARD_COMMENT: "You are not authorized to comment on this card",
   CARD_ATTACHMENT: "You are not authorized to add attachments to this card",
+  CARD_ATTACHMENT_DELETE: "You are not authorized to delete attachments to this card",
   CARD_CHECKLIST: "You are not authorized to manage checklists on this card",
   CARD_JOIN: "You are not authorized to join this card",
   CARD_LEAVE: "You are not authorized to leave this card",

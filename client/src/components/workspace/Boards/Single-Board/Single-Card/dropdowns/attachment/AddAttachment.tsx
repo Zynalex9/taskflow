@@ -1,6 +1,6 @@
 import DropdownHeader from "../../DropdownHeader";
 import { useEffect, useState } from "react";
-import { toast, ToastContainer } from "react-toastify";
+import { toast } from "sonner";
 import { cardApi, useAddAttachmentMutation } from "@/store/cardApi";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useDispatch } from "react-redux";
@@ -41,9 +41,11 @@ const AddAttachment = ({ cardId }: { cardId: string }) => {
         cardId,
         workspaceId: workspaceId!,
       }).unwrap();
-    } catch (error) {
-      console.error(error);
-      toast.error("Upload failed");
+    } catch (error: any) {
+      console.error("error", error);
+      toast(error.data.message, {
+        position: "top-right",
+      });
     } finally {
       setLoading(false);
       dispatch(closeAllDropDown());
@@ -68,7 +70,6 @@ const AddAttachment = ({ cardId }: { cardId: string }) => {
       <div className="bg-[#B6C2CF]/20 rounded hover:bg-[#B6C2CF]/10 w-full my-4 p-2">
         <input type="file" onChange={handleFileChange} />
       </div>
-      <ToastContainer />
     </div>
   );
 };

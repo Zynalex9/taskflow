@@ -24,7 +24,9 @@ export const requirePermission = (
       }
       const userId = req.user._id;
       const resourceId =
-        req.params[resourceIdParam] || req.body[resourceIdParam];
+        req.params[resourceIdParam] ||
+        req.query[resourceIdParam] ||
+        req.body[resourceIdParam];
 
       if (!resourceId) {
         res

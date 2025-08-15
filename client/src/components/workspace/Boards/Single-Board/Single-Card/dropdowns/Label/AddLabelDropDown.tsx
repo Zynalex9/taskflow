@@ -4,6 +4,7 @@ import DropdownHeader from "../../DropdownHeader";
 import { Checkbox } from "@/components/ui/checkbox";
 import { useAddLabelsMutation, useRemoveLabelMutation } from "@/store/cardApi";
 import { useParams } from "react-router-dom";
+import { toast } from "sonner";
 
 interface ILabel {
   color: string;
@@ -80,10 +81,11 @@ const AddLabelDropdown = ({
     };
 
     try {
-      await addLabels(body);
+      await addLabels(body).unwrap();
       console.log("Labels added successfully");
-    } catch (error) {
+    } catch (error: any) {
       console.error("Error adding labels:", error);
+      toast.error(error.data.message || "Something went wrong adding labels.");
     }
   };
   useEffect(() => {
@@ -110,9 +112,10 @@ const AddLabelDropdown = ({
     };
     try {
       setDeletingLabel(true);
-      await removeLabel(body);
-    } catch (error) {
+      await removeLabel(body).unwrap();
+    } catch (error: any) {
       console.log(error);
+      toast.error(error.data.message || "Something went wrong removing label.");
     } finally {
       setDeletingLabel(false);
     }

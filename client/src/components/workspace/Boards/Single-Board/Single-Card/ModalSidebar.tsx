@@ -35,7 +35,7 @@ import {
   useJoinCardMutation,
   useLeaveCardMutation,
 } from "@/store/cardApi";
-import { toast, ToastContainer } from "react-toastify";
+import { toast } from "react-toastify";
 import { useParams } from "react-router-dom";
 import { socket } from "@/socket/socket";
 import { SettingDropDown } from "./dropdowns/Settings/SettingDropDown";
@@ -245,7 +245,6 @@ export function ModalSidebar({ card }: Props) {
           </div>
         </div>
       ))}
-      <ToastContainer className={"z-50"} />
     </div>
   );
 }

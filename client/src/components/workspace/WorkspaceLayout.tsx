@@ -5,7 +5,7 @@ import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "../../store/store";
 import { fetchworkspace } from "../../store/workspaceSlice";
-import { toast } from "react-toastify";
+import { toast, ToastContainer } from "react-toastify";
 import { Skeleton } from "../ui/skeleton";
 import { socket } from "@/socket/socket";
 
@@ -25,7 +25,7 @@ const WorkspaceLayout = () => {
     document.body.style.overflow = "hidden";
     return () => {
       document.body.style.overflow = "auto";
-    }
+    };
   }, []);
   useEffect(() => {
     const getWorkspace = async () => {
@@ -134,7 +134,7 @@ const WorkspaceLayout = () => {
 
   return (
     <div className="w-full h-screen flex flex-col bg-fprimary">
-      <div className="sticky top-0 z-[999]">
+      <div className="sticky top-0 ">
         <Topbar />
       </div>
       <div className="flex flex-1 overflow-hidden">
@@ -145,6 +145,7 @@ const WorkspaceLayout = () => {
           <Outlet />
         </div>
       </div>
+      <ToastContainer className={"z-[1000]"} closeOnClick={true} />
     </div>
   );
 };

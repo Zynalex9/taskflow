@@ -416,7 +416,9 @@ boardRouter
     pdfBoardData
   );
 boardRouter.route("/get-templates").get(verifyJWT, getboardTemplates);
-boardRouter.route("/create-board-from-template").post(verifyJWT, createBoardFromTemplate);
+boardRouter
+  .route("/create-board-from-template")
+  .post(verifyJWT, createBoardFromTemplate);
 boardRouter
   .route("/update-cover/:boardId")
   .patch(verifyJWT, upload.single("image"), updateBoardCover);
@@ -568,19 +570,18 @@ cardRouter
     addComment
   );
 
-cardRouter
-  .route("/add-attachment")
-  .post(
-    verifyJWT,
-    upload.fields([{ name: "uploadedFile", maxCount: 1 }]),
-    requirePermission(
-      PERMISSIONS.CARD_ATTACHMENT,
-      "card",
-      "cardId",
-      ERROR_MESSAGES.CARD_ATTACHMENT
-    ),
-    addAttachment
-  );
+cardRouter.route("/add-attachment").post(
+  verifyJWT,
+  requirePermission(
+    PERMISSIONS.CARD_ATTACHMENT,
+    "card",
+    "cardId",
+    ERROR_MESSAGES.CARD_ATTACHMENT
+  ),
+  upload.fields([{ name: "uploadedFile", maxCount: 1 }]),
+
+  addAttachment
+);
 
 cardRouter
   .route("/add-checklist")
@@ -709,7 +710,7 @@ cardRouter
       PERMISSIONS.CARD_ATTACHMENT,
       "card",
       "cardId",
-      ERROR_MESSAGES.CARD_ATTACHMENT
+      ERROR_MESSAGES.CARD_ATTACHMENT_DELETE
     ),
     deleteAttachment
   );

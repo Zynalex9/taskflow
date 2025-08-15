@@ -1,6 +1,5 @@
 import DropdownHeader from "../../DropdownHeader";
 import { useEffect, useState } from "react";
-import { toast, ToastContainer } from "react-toastify";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useDispatch } from "react-redux";
 import { AppDispatch } from "@/store/store";
@@ -8,7 +7,7 @@ import { closeAllDropDown } from "@/store/CardModalStatesSlice";
 import { cardApi, useUploadCardCoverMutation } from "@/store/cardApi";
 import { socket } from "@/socket/socket";
 import { useParams } from "react-router-dom";
-
+import { toast } from "sonner";
 const AddCover = ({ cardId }: { cardId: string }) => {
   const { workspaceId } = useParams();
   const [loading, setLoading] = useState(false);
@@ -24,10 +23,8 @@ const AddCover = ({ cardId }: { cardId: string }) => {
     try {
       setLoading(true);
       await addCover(formdata).unwrap();
-      toast.success("Cover added successfully", { theme: "dark" });
-    } catch (error) {
-      console.error(error);
-      toast.error("Upload failed");
+    } catch (error: any) {
+      toast.error(error.data.message || "Upload failed");
     } finally {
       setLoading(false);
       dispatch(closeAllDropDown());
@@ -61,7 +58,6 @@ const AddCover = ({ cardId }: { cardId: string }) => {
       <div className="bg-[#B6C2CF]/20 rounded hover:bg-[#B6C2CF]/10 w-full my-4 p-2">
         <input type="file" accept="image/*" onChange={handleFileChange} />
       </div>
-      <ToastContainer />
     </div>
   );
 };

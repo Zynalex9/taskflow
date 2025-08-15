@@ -9,8 +9,8 @@ import {
   useDeleteCommentMutation,
   useEditCommentMutation,
 } from "@/store/cardApi";
+import { toast } from "sonner";
 import { Pencil, Trash } from "lucide-react";
-import { toast, ToastContainer } from "react-toastify";
 import { useParams } from "react-router-dom";
 import { socket } from "@/socket/socket";
 import { useCardSocketInvalidate } from "@/hooks/useSocketInvalidate";
@@ -63,9 +63,8 @@ const CommentInput = ({ comments, cardId }: IProps) => {
         workspaceId: workspaceId!,
       }).unwrap();
     } catch (error: any) {
-      toast.error(error.data?.message || "Failed to delete comment", {
-        theme: "dark",
-      });
+      console.log(error);
+      toast(error.data?.message || "Failed to delete comment");
     }
   };
   const handleSubmit = async () => {
@@ -79,8 +78,8 @@ const CommentInput = ({ comments, cardId }: IProps) => {
       };
       await addComment(newCommentData).unwrap();
       setIsInputFocused(false);
-    } catch (error) {
-      console.log(error);
+    } catch (error: any) {
+      toast.error(error.data.message||"Failed to add comment");
     }
   };
   const handleEdit = async () => {
@@ -92,19 +91,16 @@ const CommentInput = ({ comments, cardId }: IProps) => {
         comment: editText,
         commentId: editingCommentId,
         workspaceId: workspaceId!,
-
       };
       await editComment(newCommentData).unwrap();
       setIsEditing(false);
       setEditingCommentId(null);
-      toast("Comment edited successfully", {
-        theme: "dark",
-        type: "success",
+      toast.success("Comment edited successfully", {
       });
     } catch (error: any) {
-      toast.error(error.data?.message || "Failed to edit comment", {
-        theme: "dark",
-      });
+      console.log(error);
+
+      toast.error(error.data?.message || "Failed to edit comment", {});
     }
   };
   return (
@@ -202,7 +198,6 @@ const CommentInput = ({ comments, cardId }: IProps) => {
             </div>
           </>
         ))}
-      <ToastContainer />
     </div>
   );
 };
