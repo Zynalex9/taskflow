@@ -8,6 +8,7 @@ import {
 import { LoaderCircle, Minus, X } from "lucide-react";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { toast } from "sonner";
 
 export const CloseBoard = () => {
   const [openModal, setOpenModal] = useState(false);
@@ -23,8 +24,8 @@ export const CloseBoard = () => {
       navigate(`/user/w/workspace/${board.workspace}`, {
         replace: true,
       });
-    } catch (error) {
-      console.error("Failed to delete board:", error);
+    } catch (error:any) {
+      toast.error(error.data.message || "Failed to delete board");
     } finally {
       setLoading(false);
     }

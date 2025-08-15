@@ -1,4 +1,3 @@
-import { Checkbox } from "@/components/ui/checkbox";
 import { useSingleBoardContext } from "@/Context/SingleBoardContext";
 import { useBoardSocketsInvalidate } from "@/hooks/useBoardSocketsInvalidate";
 import { useCopyBoardIntoNewMutation } from "@/store/myApi";
@@ -11,10 +10,9 @@ import {
 } from "@radix-ui/react-popover";
 import { Copy, X } from "lucide-react";
 import { useState } from "react";
-import { toast } from "react-toastify";
+import { toast } from "sonner";
 
 export const CopyBoardPopover = () => {
-  const [checked, setChecked] = useState(false);
   const [selectedWorkspace, setSelectedWorkspace] = useState<string>("");
   const { board } = useSingleBoardContext();
   const [boardName, setBoardName] = useState(board.title);
@@ -31,24 +29,21 @@ export const CopyBoardPopover = () => {
         workspaceId: selectedWorkspace,
         boardId: board._id,
       };
-      console.log("I am clicked");
       const response = await copyBoardIntoNew(body).unwrap();
 
       if (response.success) {
-        toast.success(response.message, { theme: "dark" });
-      } else {
-        toast.error("Failed to copy board.", { theme: "dark" });
+        toast.success(response.message);
       }
     } catch (error: any) {
-      console.log(error);
-      toast.error(error?.response?.data?.message || "Something went wrong.", {
-        theme: "dark",
-      });
+      toast.error(error.data.message || "Something went wrong.");
     } finally {
       setIsLoading(false);
     }
   };
-
+  const allWorkspaces = [
+    ...(data?.data.ownedWorkspaces || []),
+    ...(data?.data.joinedWorkspaces || []),
+  ] as IWorkspace[];
   return (
     <div>
       <Popover open={openModal} onOpenChange={setOpenModal}>
@@ -59,7 +54,7 @@ export const CopyBoardPopover = () => {
           </div>
         </PopoverTrigger>
         <PopoverContent
-          className="bg-fprimary p-4 rounded-lg w-96 overflow-y-auto custom-scrollbar h-96"
+          className="bg-fprimary p-4 rounded-lg w-96 overflow-y-auto custom-scrollbar h-80"
           data-ignore-click-outside="true"
           side="bottom"
           sideOffset={-30}
@@ -98,7 +93,7 @@ export const CopyBoardPopover = () => {
                 <option value="" disabled>
                   Select workspace
                 </option>
-                {data?.data.ownedWorkspaces.map((workspace: IWorkspace) => (
+                {allWorkspaces.map((workspace: IWorkspace) => (
                   <option key={workspace._id} value={workspace._id}>
                     {workspace.name}
                   </option>
@@ -106,22 +101,16 @@ export const CopyBoardPopover = () => {
               </select>
             </div>
             <div className="mt-4 space-y-2">
-              <label className="flex items-center gap-2 cursor-pointer">
-                <Checkbox
-                  checked={checked}
-                  onCheckedChange={() => setChecked(!checked)}
-                  className="data-[state=checked]:bg-blue-600 data-[state=checked]:border-blue-600"
-                />
-                <span>Keep cards</span>
-              </label>
               <p className="text-sm text-gray-500 font-charlie-text-r">
                 Activity, comments, and members will not be copied to the new
                 board.
               </p>
               <button
-                disabled={isLoading}
+                disabled={isLoading || !selectedWorkspace}
                 onClick={handleCopyBoard}
-                className="px-2 py-1.5 text-fprimary bg-blue-primary rounded font-charlie-text-sb text-sm hover:bg-blue-primary/80 transition-colors duration-150 mt-4 w-full"
+                className={`px-2 py-1.5 text-fprimary bg-blue-primary rounded font-charlie-text-sb text-sm hover:bg-blue-primary/80 transition-colors duration-150 mt-4 w-full ${
+                  !selectedWorkspace ? "opacity-50 cursor-not-allowed" : ""
+                }`}
               >
                 {isLoading ? "Creating..." : "Create"}
               </button>
