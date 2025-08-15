@@ -6,11 +6,12 @@ import { Plus } from "lucide-react";
 import AddList from "./AddList";
 import { useParams } from "react-router-dom";
 import { myApi, useAddCardMutation } from "@/store/myApi";
-import { toast, ToastContainer } from "react-toastify";
+import { toast } from "sonner";
 import { socket } from "@/socket/socket";
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "@/store/store";
 import { ListDropdown } from "@/components/resuable/ListMenu";
+import { ToastContainer } from "react-toastify";
 
 interface ListProps {
   list: IList[] | undefined;
@@ -34,7 +35,7 @@ const List: React.FC<ListProps> = ({ list }) => {
         reset();
         await addCard(body).unwrap();
       } catch (error: any) {
-        toast.error(error.data.message, { theme: "dark" });
+        toast.error(error.data.message || "Failed to add card");
         reset();
       }
     }

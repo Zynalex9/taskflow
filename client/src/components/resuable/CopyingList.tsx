@@ -2,6 +2,7 @@ import { useSingleBoardContext } from "@/Context/SingleBoardContext";
 import { DialogContent } from "../ui/dialog";
 import { useState } from "react";
 import { useCopyListIntoNewListMutation } from "@/store/myApi";
+import { toast } from "sonner";
 
 export const CopyingList = ({ listId }: { listId: string }) => {
   const { board } = useSingleBoardContext();
@@ -21,8 +22,8 @@ export const CopyingList = ({ listId }: { listId: string }) => {
       setLoading(true);
       await copyList(body).unwrap();
       setLoading(false);
-    } catch (error) {
-      console.error("Failed to copy list:", error);
+    } catch (error:any) {
+      toast.error(error.data.message||"Failed to copy list");
       setLoading(false);
     }
   };

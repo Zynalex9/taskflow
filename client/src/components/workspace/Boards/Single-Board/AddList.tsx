@@ -3,7 +3,7 @@ import { Plus } from "lucide-react";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { useParams } from "react-router-dom";
-import { toast } from "react-toastify";
+import { toast } from "sonner";
 
 const AddList = () => {
   const [isAddList, setIsAddList] = useState(false);
@@ -22,7 +22,7 @@ const AddList = () => {
         await addList(body).unwrap();
       } catch (error: any) {
         console.log(error.data.message);
-        toast.error(error.data.message, { theme: "dark" });
+        toast.error(error.data.message);
       }
     }
   };

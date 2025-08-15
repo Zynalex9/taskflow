@@ -8,15 +8,13 @@ import CommentInput from "./Single-Card/CommentInput";
 import Attachments from "./Single-Card/Attachments";
 import Checklist from "./Single-Card/dropdowns/Checklist/Checklist";
 import { Skeleton } from "@/components/ui/skeleton";
-import {
-  useGetSingleCardQuery,
-} from "@/store/cardApi";
+import { useGetSingleCardQuery } from "@/store/cardApi";
 import { isImageUrl } from "@/utils/helper";
 import { socket } from "@/socket/socket";
 import { CardModalDescription } from "./CardModalDescription";
 import { CardModalTopBar } from "./CardModalTopBar";
 const CardModal = () => {
-  const { cardId,workspaceId } = useParams();
+  const { cardId, workspaceId } = useParams();
   if (!cardId) return;
   const { data, isLoading, error } = useGetSingleCardQuery({ cardId });
   const card = data?.data;
@@ -25,6 +23,10 @@ const CardModal = () => {
 
   useEffect(() => {
     socket.emit("joinedWorkspace", workspaceId);
+    document.body.style.overflow = "hidden";
+    return () => {
+      document.body.style.overflow = "auto";
+    };
   }, []);
 
   if (isLoading)
@@ -71,9 +73,7 @@ const CardModal = () => {
         ) : (
           ""
         )}
-        <div
-          className="fixed inset-0 z-[90] bg-black/70"
-        />
+        <div className="fixed inset-0 z-[90] bg-black/70" />
 
         <div className=" fixed inset-0 z-[100] overflow-y-auto flex items-start justify-center p-4 top-[60px]">
           <div

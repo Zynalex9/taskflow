@@ -1,7 +1,7 @@
 import { useDeleteListMutation } from "@/store/myApi";
 import { useState } from "react";
 import { useParams } from "react-router-dom";
-import { toast } from "react-toastify";
+import { toast } from "sonner";
 
 export const DeleteList = ({ listId }: { listId: string }) => {
   const { workspaceId, boardId } = useParams();
@@ -17,8 +17,8 @@ export const DeleteList = ({ listId }: { listId: string }) => {
       await deleteList({ workspaceId, boardId, listId }).unwrap();
       setLoading(false);
     } catch (error: any) {
-      toast.error(error.data.message, { theme: "dark" });
-      setLoading(false);  
+      toast.error(error.data.message || "Failed to delete list");
+      setLoading(false);
     }
   };
 
