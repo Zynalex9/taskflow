@@ -10,12 +10,7 @@ import { CardAttachmentModel } from "../../models/card.attachments.model";
 import { CardModel, ICard } from "../../models/card.model";
 import { UserModel } from "../../models/user.model";
 import { asyncHandler } from "../../utils/asyncHandler";
-import {
-  checkRequiredBody,
-  getRandomColor,
-  lPushList,
-  notFound,
-} from "../../utils/helpers";
+import { checkRequiredBody, lPushList, notFound } from "../../utils/helpers";
 import ApiResponse from "../../utils/ApiResponse";
 import { UploadOnCloudinary } from "../../utils/cloudinary";
 import { redisClient } from "../..";
@@ -981,18 +976,84 @@ export const copyBoardIntoNew = asyncHandler(async (req, res) => {
     );
 });
 export const getboardTemplates = asyncHandler(async (req, res) => {
-  const boardTemplates = await boardModel.find({ isTemplate: true }).populate({
-    path: "lists",
-    populate: {
-      path: "cards",
-      model: "Todo",
-      populate: [
-        { path: "labels", model: "Label" },
-        { path: "checklist", model: "Checklist" },
-      ],
-    },
-  });
+  const cachedKey = `boardTemplates`;
 
+  const cachedBoardTemplates = await redisClient.get(cachedKey);
+  if (cachedBoardTemplates) {
+    res
+      .status(200)
+      .json(
+        new ApiResponse(
+          200,
+          JSON.parse(cachedBoardTemplates),
+          "Board templates from cache"
+        )
+      );
+    return;
+  }
+
+  const boardTemplates = await boardModel.aggregate([
+    { $match: { isTemplate: true } },
+    {
+      $lookup: {
+        from: "lists",
+        localField: "lists",
+        foreignField: "_id",
+        as: "lists",
+      },
+    },
+    {
+      $unwind: { path: "$lists", preserveNullAndEmptyArrays: true },
+    },
+    {
+      $lookup: {
+        from: "todos",
+        localField: "lists.cards",
+        foreignField: "_id",
+        as: "lists.cards",
+      },
+    },
+    { $unwind: { path: "$lists.cards", preserveNullAndEmptyArrays: true } },
+    {
+      $lookup: {
+        from: "labels",
+        localField: "lists.cards.labels",
+        foreignField: "_id",
+        as: "lists.cards.labels",
+      },
+    },
+    {
+      $lookup: {
+        from: "checklists",
+        localField: "lists.cards.checklist",
+        foreignField: "_id",
+        as: "lists.cards.checklist",
+      },
+    },
+    {
+      $group: {
+        _id: "$lists._id",
+        name: { $first: "$lists.name" },
+        cards: { $push: "$lists.cards" },
+        boardFields: { $first: "$$ROOT" }, 
+      },
+    },
+
+    {
+      $group: {
+        _id: "$boardFields._id",
+        title: { $first: "$boardFields.title" },
+        lists: { $push: { _id: "$_id", name: "$name", cards: "$cards" } },
+        cover: { $first: "$boardFields.cover" },
+        description: { $first: "$boardFields.description" },
+        isTemplate: { $first: "$boardFields.isTemplate" },
+        templateVersion: { $first: "$boardFields.templateVersion" },
+        createdAt: { $first: "$boardFields.createdAt" },
+        updatedAt: { $first: "$boardFields.updatedAt" },
+      },
+    },
+  ]);
+  await redisClient.set(cachedKey, JSON.stringify(boardTemplates), "EX", 1300);
   res.status(200).json(new ApiResponse(200, boardTemplates, "Board templates"));
 });
 

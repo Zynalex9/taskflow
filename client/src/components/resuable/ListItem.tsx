@@ -67,7 +67,7 @@ export const ListItems: React.FC<IProps> = ({
   return (
     <div
       ref={dropdownRef}
-      className="absolute -top-10 bg-bgS w-[18rem] rounded-md z-[30]"
+      className="absolute bg-bgS w-[18rem] rounded-md z-[30]"
     >
       {activePanel ? (
         <div className="overflow-y-auto custom-scrollbar p-4 font-charlie-text-r">

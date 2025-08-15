@@ -60,7 +60,7 @@ export const TemplatesComponent = () => {
   };
 
   return (
-    <div className="flex items-center gap-2 flex-wrap">
+    <div className="flex items-center justify-between gap-2 flex-wrap">
       {isLoading &&
         Array.from({ length: 4 }).map((_, idx) => (
           <Skeleton

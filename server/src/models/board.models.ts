@@ -73,6 +73,7 @@ const boardSchema = new Schema(
     isTemplate: {
       type: Boolean,
       default: false,
+      index: true,
     },
     templateVersion: {
       type: Number,
