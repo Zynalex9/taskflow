@@ -43,7 +43,7 @@ const Sidebar = () => {
 </div>
 
       <div className="min-h-screen hidden lg:flex flex-col gap-3 text-white/80 text-lg ">
-        <div className="relative">
+        {/* <div className="relative">
           <input
             type="text"
             placeholder="Search"
@@ -52,12 +52,12 @@ const Sidebar = () => {
           <span className="absolute left-2 top-1/2 transform -translate-y-1/2 text-gray-200">
             <Search size={20} />
           </span>
-        </div>
+        </div> */}
         <NavLink
           to="/feature/power-ups/featured"
           className={({ isActive }) =>
             `text-lg ${
-              isActive ? "text-blue-primary underline underline-offset-4" : ""
+              isActive ? "text-blue-primary mt-14 underline underline-offset-4" : ""
             }`
           }
         >

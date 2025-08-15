@@ -3,8 +3,6 @@ import { featuredCardData } from "../data/data";
 import Card from "./Card";
 
 const Featured = () => {
-
-
   return (
     <>
       <div
@@ -20,8 +18,8 @@ const Featured = () => {
         </h1>
         <p className="lg:text-lg">
           Calendars, Voting, Repeating Cards and so much more with integrations
-          like Jira,  Slack, Google Drive, InVision - get your Trello
-          superpowers now!
+          like Jira, Slack, Google Drive, InVision - get your Trello superpowers
+          now!
         </p>
       </div>
       <div
@@ -41,8 +39,7 @@ const Featured = () => {
           )
         )}
       </div>
-            <ToastContainer style={{zIndex:100000}}/>
-      
+      <ToastContainer style={{ zIndex: 100000 }} />
     </>
   );
 };
