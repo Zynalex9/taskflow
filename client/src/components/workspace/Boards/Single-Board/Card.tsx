@@ -2,6 +2,9 @@ import { ICard } from "../../../../types/functionalites.types";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { useToggleCompleteMutation } from "@/store/cardApi";
+import { useCardSocketInvalidate } from "@/hooks/useSocketInvalidate";
+import { useBoardSocketsInvalidate } from "@/hooks/useBoardSocketsInvalidate";
+import { toast } from "sonner";
 
 interface IProps {
   card: ICard | undefined;
@@ -21,13 +24,22 @@ const Card: React.FC<IProps> = ({ card }) => {
   const handleCheckChange = async () => {
     if (!cardId) return;
     const newCheckedState = !isChecked;
-    setIsChecked(newCheckedState);
-    await toggleCard({
-      cardId,
-      isComplete: newCheckedState,
-      boardId: boardId!,
-    });
+
+    try {
+      await toggleCard({
+        cardId,
+        isComplete: newCheckedState,
+        boardId: boardId!,
+        workspaceId: workspaceId!,
+      }).unwrap();
+      setIsChecked(newCheckedState);
+    } catch (error: any) {
+      toast.error(error.data.message || "Something went wrong");
+    }
   };
+  useCardSocketInvalidate({ eventName: "cardToggled", id: cardId });
+
+  useBoardSocketsInvalidate({ eventName: "cardToggled", id: boardId! });
   const [showChecked, setShowChecked] = useState(false);
   return (
     <div

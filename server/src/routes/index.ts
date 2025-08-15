@@ -364,18 +364,10 @@ boardRouter
     editBoard
   );
 
-boardRouter
-  .route("/toggle-favourite")
-  .patch(
-    verifyJWT,
-    requirePermission(
-      PERMISSIONS.BOARD_FAVOURITE,
-      "board",
-      "boardId",
-      ERROR_MESSAGES.BOARD_FAVOURITE
-    ),
-    toggleFavourite
-  );
+boardRouter.route("/toggle-favourite").patch(
+  verifyJWT,
+  toggleFavourite
+);
 
 boardRouter
   .route("/add-description")
@@ -403,10 +395,7 @@ boardRouter
     copyBoard
   );
 
-boardRouter.route("/full-details/:boardId").get(
-  verifyJWT,
-  pdfBoardData
-);
+boardRouter.route("/full-details/:boardId").get(verifyJWT, pdfBoardData);
 boardRouter.route("/get-templates").get(verifyJWT, getboardTemplates);
 boardRouter
   .route("/create-board-from-template")

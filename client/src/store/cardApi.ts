@@ -380,6 +380,7 @@ export const cardApi = createApi({
         cardId: string;
         isComplete: boolean;
         boardId: string;
+        workspaceId: string;
       }) => ({
         url: "/api/card/toggle-complete",
         method: "PATCH",
