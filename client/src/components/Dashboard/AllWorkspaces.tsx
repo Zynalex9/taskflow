@@ -50,28 +50,30 @@ const AllWorkspaces = () => {
       SetLoading(false);
     }
   };
+
   const { workspaces } = useWorkspaces();
 
   return (
     <div>
       <h1 className="py-2 text-textP">Templates</h1>
+      <TemplatesComponent />
 
-      <TemplatesComponent  />
-
+      {/* Owned Workspaces */}
       <h1 className="py-2 text-textP">Your Workspaces</h1>
       {workspaces && workspaces.ownedWorkspaces?.length > 0 ? (
         workspaces.ownedWorkspaces.map((workspace) => (
-          <div key={workspace._id}>
-            <div className="flex gap-2 items-center  w-full cursor-pointer rounded py-0.5 px-1">
+          <div key={workspace._id} className="mb-6">
+            {/* Workspace Header */}
+            <div className="flex flex-col sm:flex-row sm:items-center gap-3 w-full cursor-pointer rounded py-1 px-1">
               <Link to={`/user/w/workspace/${workspace._id}`}>
                 {isImageUrl(workspace.cover) ? (
                   <img
                     src={workspace.cover}
-                    className="size-12 object-cover object-center rounded"
+                    className="size-12 object-cover object-center rounded mx-auto sm:mx-0"
                   />
                 ) : (
                   <div
-                    className="size-10 rounded-lg text-center flex items-center justify-center"
+                    className="size-12 rounded-lg text-center flex items-center justify-center"
                     style={{ backgroundColor: workspace.cover }}
                   >
                     <h2 className="text-black text-2xl font-charlie-text-sb">
@@ -80,13 +82,14 @@ const AllWorkspaces = () => {
                   </div>
                 )}
               </Link>
-              <div className="flex items-center justify-between w-[88%]">
+
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between w-full gap-2">
                 <Link to={`/user/w/workspace/${workspace._id}`}>
-                  <h1 className="text-lg text-textP font-charlie-text-r">
+                  <h1 className="text-lg text-textP font-charlie-text-r text-center sm:text-left">
                     {workspace.name}
                   </h1>
                 </Link>
-                <div className="flex items-center gap-4">
+                <div className="flex flex-wrap gap-2 sm:gap-4 justify-center sm:justify-end">
                   <Link to={`/user/dashboard/${workspace._id}/boards-view`}>
                     <ModalButton btnText="Boards" />
                   </Link>
@@ -97,7 +100,9 @@ const AllWorkspaces = () => {
                 </div>
               </div>
             </div>
-            <div className="flex gap-2 flex-wrap items-center  my-6 w-full">
+
+            {/* Boards Section */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 my-6 w-full">
               {workspace.boards.map((board) => (
                 <BoardPlaceHolder
                   key={board._id}
@@ -108,7 +113,7 @@ const AllWorkspaces = () => {
                 />
               ))}
               <Link to={`/user/w/workspace/${workspace._id}`}>
-                <button className="min-w-[12rem] h-32 bg-[#333C43] flex items-center justify-center text-center font-charlie-text-sb text-textP text-lg rounded-xl shadow-2xl transition-colors duration-150 hover:bg-[#333C43]/50">
+                <button className="w-full h-32 bg-[#333C43] flex items-center justify-center text-center font-charlie-text-sb text-textP text-lg rounded-xl shadow-2xl transition-colors duration-150 hover:bg-[#333C43]/50">
                   <h2>Create new board</h2>
                 </button>
               </Link>
@@ -116,7 +121,7 @@ const AllWorkspaces = () => {
           </div>
         ))
       ) : (
-        <div className="flex items-center gap-4">
+        <div className="flex items-center gap-4 flex-wrap">
           <p className="text-sm text-gray-400 font-charlie-text-r italic">
             Add a workspace
           </p>
@@ -124,13 +129,13 @@ const AllWorkspaces = () => {
             <AlertDialogTrigger asChild>
               <button
                 onClick={() => setOpenDialog(true)}
-                className="bg-blue-primary px-1.5 py-1 rounded text-white hover:text-textP hover:bg-blue-primary/50 cursor-pointer"
+                className="bg-blue-primary px-2 py-1 rounded text-white hover:text-textP hover:bg-blue-primary/50 cursor-pointer"
               >
                 <Plus size={16} />
               </button>
             </AlertDialogTrigger>
 
-            <AlertDialogContent className="bg-bgS border-none text-textP">
+            <AlertDialogContent className="bg-bgS border-none text-textP max-w-lg w-[90%]">
               <AlertDialogHeader>
                 <AlertDialogTitle>Create a new workspace</AlertDialogTitle>
                 <AlertDialogDescription>
@@ -149,9 +154,9 @@ const AllWorkspaces = () => {
                       accept="image/*"
                       className="w-full p-2 border rounded text-textP"
                     />
-                    <AlertDialogFooter>
+                    <AlertDialogFooter className="flex flex-col sm:flex-row gap-2 sm:gap-4">
                       <AlertDialogCancel
-                        className="bg-bgS hover:bg-S/60 text-white hover:text-white cursor-pointers"
+                        className="bg-bgS hover:bg-S/60 text-white hover:text-white cursor-pointer w-full sm:w-auto"
                         onClick={() => setOpenDialog(false)}
                       >
                         Cancel
@@ -159,11 +164,11 @@ const AllWorkspaces = () => {
                       <button
                         type="submit"
                         disabled={loading}
-                        className={` ${
+                        className={`w-full sm:w-auto ${
                           loading ? "bg-blue-primary/80" : "bg-blue-primary"
                         } text-white px-4 py-2 rounded hover:bg-blue-primary/80`}
                       >
-                        {loading ? "Creating workspace" : " Continue "}
+                        {loading ? "Creating workspace" : "Continue"}
                       </button>
                     </AlertDialogFooter>
                   </form>
@@ -173,20 +178,23 @@ const AllWorkspaces = () => {
           </AlertDialog>
         </div>
       )}
+
+      {/* Joined Workspaces */}
       <h1 className="py-2 text-textP">Joined Workspaces</h1>
       {workspaces && workspaces.joinedWorkspaces?.length > 0 ? (
         workspaces.joinedWorkspaces.map((workspace) => (
-          <div key={workspace._id}>
-            <div className="flex gap-2 items-center  w-full cursor-pointer rounded py-0.5 px-1">
+          <div key={workspace._id} className="mb-6">
+            {/* Workspace Header */}
+            <div className="flex flex-col sm:flex-row sm:items-center gap-3 w-full cursor-pointer rounded py-1 px-1">
               <Link to={`/user/w/workspace/${workspace._id}`}>
                 {isImageUrl(workspace.cover) ? (
                   <img
                     src={workspace.cover}
-                    className="size-12 object-cover object-center rounded"
+                    className="size-12 object-cover object-center rounded mx-auto sm:mx-0"
                   />
                 ) : (
                   <div
-                    className="size-10 rounded-lg text-center flex items-center justify-center"
+                    className="size-12 rounded-lg text-center flex items-center justify-center"
                     style={{ backgroundColor: workspace.cover }}
                   >
                     <h2 className="text-black text-2xl font-charlie-text-sb">
@@ -195,13 +203,14 @@ const AllWorkspaces = () => {
                   </div>
                 )}
               </Link>
-              <div className="flex items-center justify-between w-[88%]">
+
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between w-full gap-2">
                 <Link to={`/user/w/workspace/${workspace._id}`}>
-                  <h1 className="text-lg text-textP font-charlie-text-r">
+                  <h1 className="text-lg text-textP font-charlie-text-r text-center sm:text-left">
                     {workspace.name}
                   </h1>
                 </Link>
-                <div className="flex items-center gap-4">
+                <div className="flex flex-wrap gap-2 sm:gap-4 justify-center sm:justify-end">
                   <Link to={`/user/dashboard/${workspace._id}/boards-view`}>
                     <ModalButton btnText="Boards" />
                   </Link>
@@ -214,7 +223,9 @@ const AllWorkspaces = () => {
                 </div>
               </div>
             </div>
-            <div className="flex gap-2 flex-wrap items-center  my-6 w-full">
+
+            {/* Boards Section */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 my-6 w-full">
               {workspace.boards.map((board) => (
                 <BoardPlaceHolder
                   key={board._id}
@@ -225,7 +236,7 @@ const AllWorkspaces = () => {
                 />
               ))}
               <Link to={`/user/w/workspace/${workspace._id}`}>
-                <button className="min-w-[12rem] h-32 bg-[#333C43] flex items-center justify-center text-center font-charlie-text-sb text-textP text-lg rounded-xl shadow-2xl transition-colors duration-150 hover:bg-[#333C43]/50">
+                <button className="w-full h-32 bg-[#333C43] flex items-center justify-center text-center font-charlie-text-sb text-textP text-lg rounded-xl shadow-2xl transition-colors duration-150 hover:bg-[#333C43]/50">
                   <h2>Create new board</h2>
                 </button>
               </Link>
@@ -233,12 +244,13 @@ const AllWorkspaces = () => {
           </div>
         ))
       ) : (
-        <div className="flex items-center gap-4">
+        <div className="flex items-center gap-4 flex-wrap">
           <p className="text-sm text-gray-400 font-charlie-text-r italic">
             You're not member of any other workspace
           </p>
         </div>
       )}
+
       <ToastContainer />
     </div>
   );

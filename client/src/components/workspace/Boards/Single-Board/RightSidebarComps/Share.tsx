@@ -17,7 +17,7 @@ const ShareComp = () => {
   const { user } = useSelector((state: RootState) => state.auth);
   const [showCard, setShowCard] = useState(false);
   return (
-    <div className="text-textP flex w-full justify-between items-center pt-2 pb-1">
+    <div className="text-textP z-[200] flex w-full justify-between items-center pt-2 pb-1">
       <Dialog>
         <DialogTrigger>
           <div className="flex items-center gap-2">

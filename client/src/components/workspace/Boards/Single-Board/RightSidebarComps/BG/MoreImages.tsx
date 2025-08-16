@@ -5,6 +5,7 @@ import ImageSkeleton from "@/components/Skeletons/ImageSkeleton";
 import { useUpdateBoardCoverMutation } from "@/store/myApi";
 import { useSingleBoardContext } from "@/Context/SingleBoardContext";
 import { toast } from "sonner";
+import { Loader2 } from "lucide-react";
 
 export const MoreImages = () => {
   const [selectedImage, setSelectedImage] = useState("");
@@ -14,30 +15,40 @@ export const MoreImages = () => {
   const [images, setImages] = useState<ImageProps[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [hasMore, setHasMore] = useState(true);
+
   const observer = useRef<IntersectionObserver | null>(null);
   const abortControllerRef = useRef<AbortController | null>(null);
   const controller = new AbortController();
+
   const { board } = useSingleBoardContext();
   const [updateCover] = useUpdateBoardCoverMutation();
+
   const handleUpload = async (imageUrl: string) => {
     try {
+      setUploadingImage(true);
+      setSelectedImage(imageUrl);
+
       await updateCover({
         boardId: board._id,
         cover: imageUrl,
       }).unwrap();
+
+      toast.success("Board cover updated!");
     } catch (error: any) {
-      toast.error(error.data.message || "Error uploading image");
+      toast.error(error.data?.message || "Error uploading image");
     } finally {
-      setSelectedImage("");
       setUploadingImage(false);
+      setSelectedImage("");
     }
   };
+
   useEffect(() => {
     setPageNumber(1);
     setImages([]);
     setHasMore(true);
     setIsLoading(true);
   }, [searchTerm]);
+
   const lastElemRef = useCallback<(node: HTMLDivElement | null) => void>(
     (node) => {
       if (isLoading || !hasMore) return;
@@ -59,6 +70,7 @@ export const MoreImages = () => {
     },
     [isLoading, hasMore]
   );
+
   const fetchImages = async () => {
     if (!searchTerm.trim()) return;
 
@@ -71,42 +83,36 @@ export const MoreImages = () => {
 
     try {
       setIsLoading(true);
-      const response = await axios.get(
-        "https://api.unsplash.com/search/photos",
-        {
-          params: {
-            query: searchTerm || "nature",
-            per_page: 20,
-            page: pageNumber,
-          },
-          headers: {
-            Authorization: `Client-ID ${import.meta.env.VITE_CLIENT_ID}`,
-          },
-          signal: controller.signal,
-        }
-      );
+      const response = await axios.get("https://api.unsplash.com/search/photos", {
+        params: {
+          query: searchTerm || "nature",
+          per_page: 20,
+          page: pageNumber,
+        },
+        headers: {
+          Authorization: `Client-ID ${import.meta.env.VITE_CLIENT_ID}`,
+        },
+        signal: controller.signal,
+      });
 
       if (response.status !== 200) {
         throw new Error("Failed to fetch images");
       }
 
       setImages((prev) =>
-        pageNumber === 1
-          ? response.data.results
-          : [...prev, ...response.data.results]
+        pageNumber === 1 ? response.data.results : [...prev, ...response.data.results]
       );
 
       setHasMore(response.data.results.length > 0);
     } catch (err) {
-      if (axios.isCancel(err)) {
-        console.log("Request canceled:", err.message);
-      } else {
+      if (!axios.isCancel(err)) {
         console.error("Error fetching images:", err);
       }
     } finally {
       setIsLoading(false);
     }
   };
+
   useEffect(() => {
     fetchImages();
     const delayDebounce = setTimeout(() => {
@@ -117,22 +123,20 @@ export const MoreImages = () => {
       controller.abort();
     };
   }, [searchTerm, pageNumber]);
+
   useEffect(() => {
     return () => {
-      if (observer.current) {
-        observer.current.disconnect();
-      }
-      if (abortControllerRef.current) {
-        abortControllerRef.current.abort();
-      }
+      if (observer.current) observer.current.disconnect();
+      if (abortControllerRef.current) abortControllerRef.current.abort();
     };
   }, []);
+
   return (
     <div>
       <h1 className="text-center my-4">
         Images from
         <a
-          href={"https://unsplash.com/"}
+          href="https://unsplash.com/"
           target="_blank"
           className="text-blue-500 pl-0.5"
         >
@@ -147,11 +151,10 @@ export const MoreImages = () => {
         onChange={(e) => setSearchTerm(e.target.value)}
         className="block p-2 bg-[#22272B] text-textP/60 w-full border-1 border-[#22272B]/50 focus:outline-none focus:border-blue-500 rounded-md mb-4"
       />
+
       <div className="w-full">
         {isLoading && pageNumber === 1 ? (
-          <div>
-            <ImageSkeleton />
-          </div>
+          <ImageSkeleton />
         ) : (
           <>
             {images.length > 0 ? (
@@ -160,34 +163,37 @@ export const MoreImages = () => {
                   <div
                     ref={idx === images.length - 1 ? lastElemRef : null}
                     key={image.id}
-                    className="aspect-square overflow-hidden rounded"
+                    className="relative aspect-square overflow-hidden rounded cursor-pointer"
+                    onClick={() => handleUpload(image.urls.full)}
                   >
                     <img
-                      onClick={() => {
-                        setSelectedImage(image.urls.full);
-                        setUploadingImage(true);
-                        handleUpload(image.urls.full);
-                      }}
                       src={image.urls.small}
                       alt={image.alt_description || "Unsplash image"}
-                      className={`h-full w-full object-cover ${
+                      className={`h-full w-full object-cover transition ${
                         uploadingImage && selectedImage === image.urls.full
-                          ? "opacity-50  transition-opacity duration-300"
+                          ? "opacity-50"
                           : ""
                       }`}
                     />
+
+                    {/* Spinner overlay */}
+                    {uploadingImage && selectedImage === image.urls.full && (
+                      <div className="absolute inset-0 flex items-center justify-center bg-black/40">
+                        <Loader2 className="w-8 h-8 animate-spin text-white" />
+                      </div>
+                    )}
                   </div>
                 ))}
               </div>
             ) : (
-              <h1 className="text-center mt-10 text-3xl font-charlie-display-sm custom-scrollbar">
+              <h1 className="text-center mt-10 text-3xl font-charlie-display-sm">
                 {searchTerm ? "Loading Images..." : "Type to search images"}
               </h1>
             )}
 
             {isLoading && pageNumber > 1 && (
               <div className="flex justify-center py-4">
-                <div className="animate-pulse">Loading more images...</div>
+                <Loader2 className="w-6 h-6 animate-spin text-gray-400" />
               </div>
             )}
           </>
